@@ -224,6 +224,7 @@ GameObject:
   - component: {fileID: 697760018}
   - component: {fileID: 697760017}
   - component: {fileID: 697760016}
+  - component: {fileID: 697760021}
   m_Layer: 0
   m_Name: BackHalf
   m_TagString: Untagged
@@ -351,6 +352,19 @@ Transform:
   - {fileID: 2022644975}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
+--- !u!114 &697760021
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 697760015}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6bf8578f5249444aa6b710eda169f4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 5
 --- !u!1 &781607508
 GameObject:
   m_ObjectHideFlags: 0
@@ -585,6 +599,7 @@ GameObject:
   - component: {fileID: 810990546}
   - component: {fileID: 810990545}
   - component: {fileID: 810990550}
+  - component: {fileID: 810990551}
   m_Layer: 0
   m_Name: FrontHalf
   m_TagString: Untagged
@@ -728,6 +743,19 @@ FixedJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &810990551
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 810990544}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00ad4cf89514d4c55b5edf13f0800b89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 5
 --- !u!1 &1660314965
 GameObject:
   m_ObjectHideFlags: 0
