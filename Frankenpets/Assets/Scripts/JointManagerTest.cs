@@ -2,85 +2,78 @@ using UnityEngine;
 
 public class JointManagerTest : MonoBehaviour
 {
-    [Tooltip("Reference to the front half of the pet.")]
+    [Header("References")]
     public Transform frontHalf;
-
-    [Tooltip("Reference to the bottom half of the pet.")]
     public Transform bottomHalf;
+    public Transform frontMagnet;
+    public Transform bottomMagnet;
 
-    [Tooltip("Maximum distance within which reconnection can occur.")]
-    public float reconnectionDistance = 3f;
-
-    [Tooltip("Key used to toggle connection/disconnection.")]
+    [Header("Settings")]
+    public float reconnectionDistance = 1.0f;
     public KeyCode toggleKey = KeyCode.Space;
 
     private FixedJoint fixedJoint;
-
-    // Store initial relative position and rotation
-    private Vector3 initialRelativePosition;
     private Quaternion initialRelativeRotation;
-
-    // Store original joint anchor configuration
-    private Vector3 originalAnchor;
-    private Vector3 originalConnectedAnchor;
-    private bool hasStoredOriginalConfig = false;
+    private bool shouldReconnect = false;
 
     void Start()
     {
-        // Store the initial relative transform between halves
-        initialRelativePosition = bottomHalf.position - frontHalf.position;
         initialRelativeRotation = Quaternion.Inverse(frontHalf.rotation) * bottomHalf.rotation;
-
-        // Attempt to get an existing FixedJoint on frontHalf at startup
         fixedJoint = frontHalf.GetComponent<FixedJoint>();
-        if (fixedJoint != null)
-        {
-            // Store original joint anchor configurations
-            originalAnchor = fixedJoint.anchor;
-            fixedJoint.autoConfigureConnectedAnchor = false;
-            originalConnectedAnchor = fixedJoint.connectedAnchor;
-            hasStoredOriginalConfig = true;
-        }
     }
 
     void Update()
     {
-        // Check if the toggle key (Space) is pressed
         if (Input.GetKeyDown(toggleKey))
         {
-            // If currently connected, disconnect the halves
             if (fixedJoint != null)
             {
                 Destroy(fixedJoint);
                 fixedJoint = null;
                 Debug.Log("Halves disconnected.");
             }
-            // If currently disconnected, attempt to reconnect if close enough
             else
             {
-                float distance = Vector3.Distance(frontHalf.position, bottomHalf.position);
-                if (distance < reconnectionDistance && hasStoredOriginalConfig)
-                {
-                    // Snap bottomHalf back to its original relative position and rotation
-                    bottomHalf.position = frontHalf.position + initialRelativePosition;
-                    bottomHalf.rotation = frontHalf.rotation * initialRelativeRotation;
+                // Flag that we want to attempt reconnection on the next FixedUpdate
+                shouldReconnect = true;
+            }
+        }
+    }
 
-                    // Recreate the FixedJoint on frontHalf and configure it
-                    fixedJoint = frontHalf.gameObject.AddComponent<FixedJoint>();
-                    Rigidbody bottomRb = bottomHalf.GetComponent<Rigidbody>();
-                    if (bottomRb != null)
-                    {
-                        fixedJoint.connectedBody = bottomRb;
-                        fixedJoint.autoConfigureConnectedAnchor = false;
-                        fixedJoint.anchor = originalAnchor;
-                        fixedJoint.connectedAnchor = originalConnectedAnchor;
-                    }
-                    Debug.Log("Halves reconnected.");
-                }
-                else
+    void FixedUpdate()
+    {
+        if (shouldReconnect)
+        {
+            float distance = Vector3.Distance(frontMagnet.position, bottomMagnet.position);
+            if (distance < reconnectionDistance)
+            {
+                // Temporarily disable bottomHalf physics
+                Rigidbody bottomRb = bottomHalf.GetComponent<Rigidbody>();
+                bool originalKinematic = bottomRb.isKinematic;
+                bottomRb.isKinematic = true;
+
+                // Align orientation and position
+                bottomHalf.rotation = frontHalf.rotation * initialRelativeRotation;
+                Vector3 positionOffset = frontMagnet.position - bottomMagnet.position;
+                bottomHalf.position += positionOffset;
+
+                // Re-enable physics
+                bottomRb.isKinematic = originalKinematic;
+
+                // Re-establish joint
+                fixedJoint = frontHalf.gameObject.AddComponent<FixedJoint>();
+                if (bottomRb != null)
                 {
-                    Debug.Log("Halves too far to reconnect or original config not stored.");
+                    fixedJoint.connectedBody = bottomRb;
                 }
+
+                Debug.Log("Halves reconnected along magnet faces.");
+                shouldReconnect = false;  // reset flag after reconnection
+            }
+            else
+            {
+                Debug.Log("Magnet points are not close enough to reconnect.");
+                shouldReconnect = false;  // reset flag after failed reconnection
             }
         }
     }
