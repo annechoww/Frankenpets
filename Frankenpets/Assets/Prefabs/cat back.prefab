@@ -308,6 +308,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 837fea1bfe2eb9d4581fed7cb2a92a27, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7660012281861858129}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 837fea1bfe2eb9d4581fed7cb2a92a27, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -2225638052248592386}
   m_SourcePrefab: {fileID: 100100000, guid: 837fea1bfe2eb9d4581fed7cb2a92a27, type: 3}
 --- !u!4 &539981122687647645 stripped
 Transform:
@@ -457,12 +460,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7453903577019716702}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b6bf8578f5249444aa6b710eda169f4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
+  walkSpeed: 6
+  turnSpeed: 6
 --- !u!54 &7605391954555348986
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -471,7 +475,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7453903577019716702}
   serializedVersion: 4
-  m_Mass: 5
+  m_Mass: 100
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -533,6 +537,24 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.27138194, y: 0.3192234, z: 0.40274748}
   m_Center: {x: 0.19430366, y: 0.16052738, z: -0.24358924}
+--- !u!114 &-2225638052248592386
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7453903577019716702}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: accb727ab3c1d4b68b0fcb4cf6f84ebb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  walkSpeed: 6
+  turnSpeed: 6
+  turnBoost: 2
+  frontHalf: {fileID: 0}
+  backHalf: {fileID: 0}
+  frontRigidBody: {fileID: 0}
 --- !u!4 &7798621996399873764 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 837fea1bfe2eb9d4581fed7cb2a92a27, type: 3}

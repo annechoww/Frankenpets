@@ -307,6 +307,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: dc70e988d4f1a37469785da5a66a2db3, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8308464510268382887}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: dc70e988d4f1a37469785da5a66a2db3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1242116308930188598}
   m_SourcePrefab: {fileID: 100100000, guid: dc70e988d4f1a37469785da5a66a2db3, type: 3}
 --- !u!1 &178573511289939228 stripped
 GameObject:
@@ -376,12 +379,14 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 178573511289939228}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 00ad4cf89514d4c55b5edf13f0800b89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
+  walkSpeed: 6
+  turnSpeed: 6
+  myRigidBody: {fileID: 0}
 --- !u!54 &5154291747204426823
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -390,7 +395,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 178573511289939228}
   serializedVersion: 4
-  m_Mass: 10
+  m_Mass: 100
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -468,6 +473,24 @@ FixedJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &1242116308930188598
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 178573511289939228}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: accb727ab3c1d4b68b0fcb4cf6f84ebb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  walkSpeed: 6
+  turnSpeed: 6
+  turnBoost: 2
+  frontHalf: {fileID: 0}
+  backHalf: {fileID: 0}
+  frontRigidBody: {fileID: 0}
 --- !u!4 &247571809675685957 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 996578955792787464, guid: dc70e988d4f1a37469785da5a66a2db3, type: 3}
