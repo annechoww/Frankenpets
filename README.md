@@ -15,3 +15,12 @@ Navigate to the Assets/Managers folder, and add the JointManager to the scene. E
 
 Add the corresponding references under the references field of 'Joint Manager Test (Script)'. 
 
+<img src="https://github.com/user-attachments/assets/d786d37d-5cfa-4136-900e-5f0e7d6b4d42" width="300">
+
+# Neccessary Packages
+Make sure you have the following packages installed for this project:
+* Animation Rigging
+* Input System
+
+
+
