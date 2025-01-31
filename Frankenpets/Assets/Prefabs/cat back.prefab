@@ -280,6 +280,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: -0
       objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: 837fea1bfe2eb9d4581fed7cb2a92a27, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: f308a4f4f91d74636a00a0f755062bdf, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -555,6 +559,8 @@ MonoBehaviour:
   frontHalf: {fileID: 0}
   backHalf: {fileID: 0}
   frontRigidBody: {fileID: 0}
+  backHalfAnimator: {fileID: 0}
+  frontHalfAnimator: {fileID: 0}
 --- !u!4 &7798621996399873764 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 837fea1bfe2eb9d4581fed7cb2a92a27, type: 3}
