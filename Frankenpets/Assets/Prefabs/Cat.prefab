@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6642664785474380347}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0.12704863, z: -0, w: 0.99189657}
+  m_LocalRotation: {x: 0, y: -0.12704727, z: 0, w: 0.9918967}
   m_LocalPosition: {x: -17.89244, y: -26.61147, z: 3.0010242}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -247,7 +247,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 662516250484375462, guid: 451ad3231d03bbc42a6cbd317836c629, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 662516250484375462, guid: 451ad3231d03bbc42a6cbd317836c629, type: 3}
       propertyPath: m_LocalRotation.y
@@ -255,7 +255,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 662516250484375462, guid: 451ad3231d03bbc42a6cbd317836c629, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 662516250484375462, guid: 451ad3231d03bbc42a6cbd317836c629, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -317,7 +317,10 @@ PrefabInstance:
     - {fileID: 9164549544340824446, guid: 451ad3231d03bbc42a6cbd317836c629, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 178573511289939228, guid: 451ad3231d03bbc42a6cbd317836c629, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 376462386339903706}
   m_SourcePrefab: {fileID: 100100000, guid: 451ad3231d03bbc42a6cbd317836c629, type: 3}
 --- !u!4 &1412547477214722282 stripped
 Transform:
@@ -329,6 +332,25 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 662516250484375462, guid: 451ad3231d03bbc42a6cbd317836c629, type: 3}
   m_PrefabInstance: {fileID: 4584506726934619206}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &4460000957000352090 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 178573511289939228, guid: 451ad3231d03bbc42a6cbd317836c629, type: 3}
+  m_PrefabInstance: {fileID: 4584506726934619206}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &376462386339903706
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4460000957000352090}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e5655fcdcc2343aa85624b9cd8523bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  climbSpeed: 2
+  climbCheckDistance: 0.5
 --- !u!54 &8653888360232470529 stripped
 Rigidbody:
   m_CorrespondingSourceObject: {fileID: 5154291747204426823, guid: 451ad3231d03bbc42a6cbd317836c629, type: 3}
