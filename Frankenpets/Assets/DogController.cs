@@ -8,7 +8,7 @@ public class DogController : MonoBehaviour
     private Quaternion initialRotation;
     private Quaternion standingRotation;
 
-    public float standRotationAngle = 150f;
+    public float standRotationAngle = 50f;
     public float rotationSpeed = 5f;
     
     private bool isStanding = false;
@@ -17,6 +17,7 @@ public class DogController : MonoBehaviour
     void Start()
     {
         rb = backHalf.GetComponent<Rigidbody>();
+        rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
 
         initialRotation = rb.rotation;
         standingRotation = Quaternion.Euler(-standRotationAngle, 0, 0);
@@ -38,11 +39,9 @@ public class DogController : MonoBehaviour
     {
         if (isStanding)
         {
+            standingRotation = Quaternion.Euler(-standRotationAngle, rb.rotation.eulerAngles.y, 0);
             rb.MoveRotation(Quaternion.Lerp(rb.rotation, standingRotation, Time.fixedDeltaTime * rotationSpeed));
-        }
-        else
-        {
-            rb.MoveRotation(Quaternion.Lerp(rb.rotation, initialRotation, Time.fixedDeltaTime * rotationSpeed));
+            // rb.MoveRotation(Quaternion.Lerp(rb.rotation, standingRotation, Time.fixedDeltaTime * rotationSpeed));
         }
     }
 }
