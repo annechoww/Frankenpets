@@ -21,7 +21,7 @@ public class PetMovement : MonoBehaviour
         Vector3 frontHalfDirection = getFrontDirection();
         Vector3 backHalfDirection = getBackDirection();
         setMovement(frontHalfDirection, backHalfDirection);
-
+        setInPlace();
     }
 
     void setMovement(Vector3 frontHalfDirection, Vector3 backHalfDirection)
@@ -101,7 +101,7 @@ public class PetMovement : MonoBehaviour
             Debug.Log("Front half constraints are frozen.");
         }
 
-        if (Input.GetKey(KeyCode.F)) 
+        if (Input.GetKey(KeyCode.G)) 
         {
             frontRigidBody.constraints = RigidbodyConstraints.None;
             Debug.Log("Unfrozen.");
