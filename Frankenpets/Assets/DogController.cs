@@ -41,7 +41,6 @@ public class DogController : MonoBehaviour
         {
             standingRotation = Quaternion.Euler(-standRotationAngle, rb.rotation.eulerAngles.y, 0);
             rb.MoveRotation(Quaternion.Lerp(rb.rotation, standingRotation, Time.fixedDeltaTime * rotationSpeed));
-            // rb.MoveRotation(Quaternion.Lerp(rb.rotation, standingRotation, Time.fixedDeltaTime * rotationSpeed));
         }
     }
 }
