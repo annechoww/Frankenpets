@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class PetMovement : MonoBehaviour
 {
-    public float walkSpeed = -4f;
-    public float turnSpeed = -3f;
-    public float turnBoost = -1f;
+    public float walkSpeed = 0.8f;
+    public float turnSpeed = 0.5f;
+    public float turnBoost = 0.5f;
     public Transform frontHalf;
     public Transform backHalf;
     public Rigidbody frontRigidBody;
