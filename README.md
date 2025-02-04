@@ -17,6 +17,20 @@ Add the corresponding references under the references field of 'Joint Manager Te
 
 <img src="https://github.com/user-attachments/assets/d786d37d-5cfa-4136-900e-5f0e7d6b4d42" width="300">
 
+# Controls
+## Keyboard Character Controls
+_Note: Movement is relative to the pet's perspective._
+| Keys | Control |
+| :----: | ------- |
+| Arrow Keys | Controls the movement of the front half of the pet. |
+| WASD Keys | Controls the movement of the back half of the pet. |
+| Spacebar | Splits and Reconnects halves of pet. |
+| c | Press and hold down 'c' to climb "climbable" objects. |
+| h | Press and hold down 'h' to stand dog back on hind legs. |
+| f | Freezes front half. |
+| g | Unfreezes front half. |
+ 
+
 # Neccessary Packages
 Make sure you have the following packages installed for this project:
 * Animation Rigging
