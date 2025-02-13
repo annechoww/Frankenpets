@@ -7,24 +7,33 @@ public class PetMovement : MonoBehaviour
     public float turnBoost = 0.5f;
     public Transform frontHalf;
     public Transform backHalf;
-    public Rigidbody frontRigidBody;
     private FixedJoint fixedJoint;
 
     void Start()
     {
         fixedJoint = frontHalf.GetComponent<FixedJoint>();
-        frontRigidBody = frontHalf.GetComponent<Rigidbody>();
     }
 
     void Update()
     {
         Vector3 frontHalfDirection = getFrontDirection();
         Vector3 backHalfDirection = getBackDirection();
-        setMovement(frontHalfDirection, backHalfDirection);
-        setInPlace();
+
+        fixedJoint = frontHalf.GetComponent<FixedJoint>();
+
+        if (fixedJoint != null) setSplitMovement(frontHalfDirection, backHalfDirection);
+        else setConnectedMovement(frontHalfDirection, backHalfDirection);
+
+        // setInPlace();
     }
 
-    void setMovement(Vector3 frontHalfDirection, Vector3 backHalfDirection)
+    void setSplitMovement(Vector3 frontHalfDirection, Vector3 backHalfDirection)
+    {
+        // frontHalf.Translate(frontHalfDirection * Time.deltaTime, Space.Self);
+        // backHalf.Translate(backHalfDirection * Time.deltaTime, Space.Self);
+    }
+
+    void setConnectedMovement(Vector3 frontHalfDirection, Vector3 backHalfDirection)
     {
         // Check if both halves are trying to turn together while connected
         if (bothHalvesTurningLeft()) 
@@ -34,9 +43,15 @@ public class PetMovement : MonoBehaviour
             frontHalfDirection += Vector3.left * turnBoost; 
         }
 
-        if (bothHalvesTurningRight()) {
+        if (bothHalvesTurningRight()) 
+        {
             backHalfDirection = new Vector3(0, backHalfDirection.y, backHalfDirection.z);
             frontHalfDirection += Vector3.right * turnBoost; 
+        }
+
+        if (bothHalvesTurningOpposite())
+        {
+            
         }
 
         frontHalf.Translate(frontHalfDirection * Time.deltaTime, Space.Self);
@@ -71,22 +86,23 @@ public class PetMovement : MonoBehaviour
 
     bool bothHalvesTurningLeft()
     {
-        if (fixedJoint != null && Input.GetKey(KeyCode.LeftArrow) && Input.GetKey(KeyCode.A))
-        {
-            Debug.Log("Both halves turning left.");
-            return true;
-        }
+        if (fixedJoint != null && Input.GetKey(KeyCode.LeftArrow) && Input.GetKey(KeyCode.A)) return true;
         
         return false;
     }
 
     bool bothHalvesTurningRight()
     {
-        if (fixedJoint != null && Input.GetKey(KeyCode.RightArrow) && Input.GetKey(KeyCode.D))
-        {
-            Debug.Log("Both halves turning right.");
-            return true;
-        }
+        if (fixedJoint != null && Input.GetKey(KeyCode.RightArrow) && Input.GetKey(KeyCode.D)) return true;
+        
+        return false;
+    }
+
+    bool bothHalvesTurningOpposite()
+    {
+        if (fixedJoint != null && Input.GetKey(KeyCode.LeftArrow) && Input.GetKey(KeyCode.D)) return true;
+
+        if (fixedJoint != null && Input.GetKey(KeyCode.RightArrow) && Input.GetKey(KeyCode.A)) return true;
 
         return false;
     }
@@ -97,13 +113,13 @@ public class PetMovement : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.F)) 
         {
-            frontRigidBody.constraints = RigidbodyConstraints.FreezeAll;
+            frontHalf.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
             Debug.Log("Front half constraints are frozen.");
         }
 
         if (Input.GetKey(KeyCode.G)) 
         {
-            frontRigidBody.constraints = RigidbodyConstraints.None;
+            frontHalf.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
             Debug.Log("Unfrozen.");
         }
     }
