@@ -10,11 +10,12 @@ public class BoxCollisionManager : MonoBehaviour
     public Image taskItem;
     public Color completedColor;
 
-    //public static HashSet<GameObject> collidedBoxes = new HashSet<GameObject>(); 
     public static int collidedBoxes = 0;
-    public static HashSet<GameObject> frontBoxes = new HashSet<GameObject>(); 
-    public static HashSet<GameObject> backBoxes = new HashSet<GameObject>(); 
-    private static int totalBoxes = 4; 
+    //public static HashSet<GameObject> frontBoxes = new HashSet<GameObject>(); 
+    //public static HashSet<GameObject> backBoxes = new HashSet<GameObject>(); 
+    private static bool frontBoxes = false;
+    private static bool backBoxes = false;
+
 
     // awake singleton
     private void Awake()
@@ -34,23 +35,26 @@ public class BoxCollisionManager : MonoBehaviour
     {
         if (tag == "front")
         {
-            if (!frontBoxes.Contains(obj)) {
-                frontBoxes.Add(obj);
-                Debug.Log($"{obj.name} collided. Front Total: {frontBoxes.Count}");
-            }
+            // if (!frontBoxes.Contains(obj)) {
+            //     frontBoxes.Add(obj);
+            //     Debug.Log($"{obj.name} collided. Front Total: {frontBoxes.Count}");
+            // }
+            frontBoxes = true;
 
-            if (frontBoxes.Count + backBoxes.Count == totalBoxes)
+            if (frontBoxes && backBoxes)
             {
                 Instance.FinishTask();
             }
 
         } else if (tag == "back")
         {
-            if (!backBoxes.Contains(obj)) {
-                backBoxes.Add(obj);
-                Debug.Log($"{obj.name} collided. Back Total: {backBoxes.Count}");
-            }
-            if (frontBoxes.Count + backBoxes.Count == totalBoxes)
+            // if (!backBoxes.Contains(obj)) {
+            //     backBoxes.Add(obj);
+            //     Debug.Log($"{obj.name} collided. Back Total: {backBoxes.Count}");
+            // }
+            backBoxes = true;
+            //if (frontBoxes.Count + backBoxes.Count == totalBoxes)
+            if (frontBoxes && backBoxes)
             {
                 Instance.FinishTask();
             }
