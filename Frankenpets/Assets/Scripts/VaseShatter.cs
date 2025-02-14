@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class VaseShatter : MonoBehaviour
 {
@@ -6,6 +7,11 @@ public class VaseShatter : MonoBehaviour
     public GameObject brokenVase;
     public float shatterForce = 1f;
     public AudioClip shatterSound;
+
+    [Header("Task Manager")]
+    public Image taskItem;
+    public Color completedColor;
+
     private bool isShattered = false;
 
     void OnCollisionEnter(Collision collision)
@@ -32,5 +38,11 @@ public class VaseShatter : MonoBehaviour
 
         // Destroy the intact vase after shattering
         Destroy(gameObject);
+
+        FinishTask();
+    }
+
+    private void FinishTask(){
+        taskItem.color = completedColor;
     }
 }
