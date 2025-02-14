@@ -1,24 +1,39 @@
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 
 public class PetMovement : MonoBehaviour
 {
     public float walkSpeed = 0.8f;
-    public float frontTurnSpeed = 1.5f;
+    public float frontTurnSpeed = 1.0f;
     public float backTurnSpeed = 0.7f;
 
     // public float turnBoost = 0.5f;
-    public Transform frontHalf;
-    public Transform backHalf;
-    // private FixedJoint fixedJoint;
+    public GameObject frontHalf;
+    public GameObject backHalf;
+    private FixedJoint fixedJoint;
 
     void Start()
     {
-        // fixedJoint = frontHalf.GetComponent<FixedJoint>();
+        fixedJoint = frontHalf.GetComponent<FixedJoint>();
     }
 
     void Update()
     {
-        // fixedJoint = frontHalf.GetComponent<FixedJoint>();
+        fixedJoint = frontHalf.GetComponent<FixedJoint>();
+
+        if (fixedJoint != null && bothHalvesTurningOpposite())
+        {
+            while (fixedJoint != null && bothHalvesTurningOpposite())
+            {
+                frontHalf.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition;
+                backHalf.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition;
+            }
+
+            frontHalf.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
+            backHalf.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
+
+        }
+
         setFrontHalfMovement();
         setBackHalfMovement();
 
@@ -27,17 +42,17 @@ public class PetMovement : MonoBehaviour
     // TODO: turn into one function with parameters for controls (because plays can switch halves)
     void setFrontHalfMovement() 
     {
-        if (Input.GetKey(KeyCode.LeftArrow)) frontHalf.Rotate(0.0f, -frontTurnSpeed, 0.0f, Space.Self);
-        if (Input.GetKey(KeyCode.RightArrow)) frontHalf.Rotate(0.0f, frontTurnSpeed, 0.0f, Space.Self);
-        if (Input.GetKey(KeyCode.UpArrow)) frontHalf.Translate(Vector3.forward * walkSpeed * Time.deltaTime, Space.Self);
-        if (Input.GetKey(KeyCode.DownArrow)) frontHalf.Translate(Vector3.back * walkSpeed * Time.deltaTime, Space.Self);
+        if (Input.GetKey(KeyCode.LeftArrow)) frontHalf.transform.Rotate(0.0f, -frontTurnSpeed, 0.0f, Space.Self);
+        if (Input.GetKey(KeyCode.RightArrow)) frontHalf.transform.Rotate(0.0f, frontTurnSpeed, 0.0f, Space.Self);
+        if (Input.GetKey(KeyCode.UpArrow)) frontHalf.transform.Translate(Vector3.forward * walkSpeed * Time.deltaTime, Space.Self);
+        if (Input.GetKey(KeyCode.DownArrow)) frontHalf.transform.Translate(Vector3.back * walkSpeed * Time.deltaTime, Space.Self);
     }
     void setBackHalfMovement() 
     {
-        if (Input.GetKey(KeyCode.A)) backHalf.Rotate(0.0f, -backTurnSpeed, 0.0f, Space.Self);
-        if (Input.GetKey(KeyCode.D)) backHalf.Rotate(0.0f, backTurnSpeed, 0.0f, Space.Self);
-        if (Input.GetKey(KeyCode.W)) backHalf.Translate(Vector3.forward * walkSpeed * Time.deltaTime, Space.Self);
-        if (Input.GetKey(KeyCode.S)) backHalf.Translate(Vector3.back * walkSpeed * Time.deltaTime, Space.Self);
+        if (Input.GetKey(KeyCode.A)) backHalf.transform.Rotate(0.0f, -backTurnSpeed, 0.0f, Space.Self);
+        if (Input.GetKey(KeyCode.D)) backHalf.transform.Rotate(0.0f, backTurnSpeed, 0.0f, Space.Self);
+        if (Input.GetKey(KeyCode.W)) backHalf.transform.Translate(Vector3.forward * walkSpeed * Time.deltaTime, Space.Self);
+        if (Input.GetKey(KeyCode.S)) backHalf.transform.Translate(Vector3.back * walkSpeed * Time.deltaTime, Space.Self);
     }
 
     // void setSplitMovement(Vector3 frontHalfDirection, Vector3 backHalfDirection)
@@ -122,13 +137,13 @@ public class PetMovement : MonoBehaviour
     //     return false;
     // }
 
-    // private bool bothHalvesTurningOpposite()
-    // {
-    //     if (fixedJoint != null && Input.GetKey(KeyCode.LeftArrow) && Input.GetKey(KeyCode.D)) return true;
+    private bool bothHalvesTurningOpposite()
+    {
+        if (fixedJoint != null && Input.GetKey(KeyCode.LeftArrow) && Input.GetKey(KeyCode.D)) return true;
 
-    //     if (fixedJoint != null && Input.GetKey(KeyCode.RightArrow) && Input.GetKey(KeyCode.A)) return true;
+        if (fixedJoint != null && Input.GetKey(KeyCode.RightArrow) && Input.GetKey(KeyCode.A)) return true;
 
-    //     return false;
-    // }
+        return false;
+    }
 
 }
