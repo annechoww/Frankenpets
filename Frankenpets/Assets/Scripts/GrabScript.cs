@@ -23,8 +23,16 @@ public class GrabScript : MonoBehaviour
             grabbableObject.transform.SetParent(null);
             
             grabbableObject.gameObject.GetComponent<Rigidbody>().isKinematic = false;
-            grabbableObject.gameObject.AddComponent<MeshCollider>();
-            grabbableObject.gameObject.GetComponent<MeshCollider>().convex = true;
+            // Physics.IgnoreCollision(grabbableObject, transform.GetComponent<Collider>(), false);
+            // transform.GetComponent<Rigidbody>().detectCollisions = true;
+            Physics.IgnoreLayerCollision(8, 9, false);
+            // grabbableObject.gameObject.GetComponent<Rigidbody>().detectCollisions = true;
+
+
+            // grabbableObject.gameObject.layer = 8;
+            // grabbableObject.gameObject.AddComponent<MeshCollider>();
+            // grabbableObject.gameObject.GetComponent<MeshCollider>().convex = true;
+            // try adding cat as layer ovvertide
 
             isGrabbing = false;
 
@@ -58,7 +66,14 @@ public class GrabScript : MonoBehaviour
             // grabbableObject.transform.GetChild(0).transform.position = mouthPosition;
 
             grabbableObject.gameObject.GetComponent<Rigidbody>().isKinematic = true;
-            Destroy(grabbableObject.gameObject.GetComponent<MeshCollider>());
+                        Physics.IgnoreLayerCollision(8, 9, true);
+
+            // grabbableObject.gameObject.GetComponent<Rigidbody>().detectCollisions = false;
+            // Physics.IgnoreCollision(grabbableObject, transform.GetComponent<Collider>(), true);
+            // transform.GetComponent<Rigidbody>().detectCollisions = false;
+            // grabbableObject.gameObject.layer = 0;
+
+            // Destroy(grabbableObject.gameObject.GetComponent<MeshCollider>());
             grabbableObject.transform.SetParent(transform);
             grabbableObject.transform.position = mouthPosition;
 
@@ -70,7 +85,7 @@ public class GrabScript : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         Debug.Log("Something is grabbable.");
-        if (other.CompareTag("Grabbable"))
+        if (other.CompareTag("Grabbable") && !isGrabbing)
         {
             grabbableObject = other;
             canGrab = true;

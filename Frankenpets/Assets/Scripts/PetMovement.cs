@@ -16,21 +16,34 @@ public class PetMovement : MonoBehaviour
 
     void Update()
     {
-        Vector3 frontHalfDirection = getFrontDirection();
-        Vector3 backHalfDirection = getBackDirection();
-
         fixedJoint = frontHalf.GetComponent<FixedJoint>();
 
-        if (fixedJoint != null) setConnectedMovement(frontHalfDirection, backHalfDirection);
-        else setSplitMovement(frontHalfDirection, backHalfDirection);
+        if (fixedJoint != null) 
+        {
+            Vector3 frontHalfDirection = getFrontDirection(isSplit: false);
+            Vector3 backHalfDirection = getBackDirection(isSplit: false);
+            setConnectedMovement(frontHalfDirection, backHalfDirection);
+        }
+        else 
+        {
+            Vector3 frontHalfDirection = getFrontDirection(isSplit: true);
+            Vector3 backHalfDirection = getBackDirection(isSplit: true);
+            setSplitMovement(frontHalfDirection, backHalfDirection);
+        }
 
         // setInPlace();
     }
 
     void setSplitMovement(Vector3 frontHalfDirection, Vector3 backHalfDirection)
     {
-        // frontHalf.Translate(frontHalfDirection * Time.deltaTime, Space.Self);
-        // backHalf.Translate(backHalfDirection * Time.deltaTime, Space.Self);
+        if (Input.GetKey(KeyCode.LeftArrow)) frontHalf.Rotate(1.0f, 0.0f, 0.0f, Space.Self);
+        if (Input.GetKey(KeyCode.RightArrow)) frontHalf.Rotate(-1.0f, 0.0f, 0.0f, Space.Self);
+
+        if (Input.GetKey(KeyCode.A)) backHalf.Rotate(0.0f, 1.0f, 0.0f, Space.Self);
+        if (Input.GetKey(KeyCode.D)) backHalf.Rotate(0.0f, -1.0f, 0.0f, Space.Self);
+
+        frontHalf.Translate(frontHalfDirection * Time.deltaTime, Space.Self);
+        backHalf.Translate(backHalfDirection * Time.deltaTime, Space.Self);
     }
 
     void setConnectedMovement(Vector3 frontHalfDirection, Vector3 backHalfDirection)
@@ -60,24 +73,24 @@ public class PetMovement : MonoBehaviour
 
     // Set the direction vector for the front half. 
     // Do not use Time.deltaTime here; it's used in setMovement().
-    Vector3 getFrontDirection()
+    Vector3 getFrontDirection(bool isSplit)
     {
         Vector3 direction = new Vector3();
 
-        if (Input.GetKey(KeyCode.LeftArrow)) direction += Vector3.left * turnSpeed;
-        if (Input.GetKey(KeyCode.RightArrow)) direction += Vector3.right * turnSpeed;
+        if (Input.GetKey(KeyCode.LeftArrow) && !isSplit) direction += Vector3.left * turnSpeed;
+        if (Input.GetKey(KeyCode.RightArrow) && !isSplit) direction += Vector3.right * turnSpeed;
         if (Input.GetKey(KeyCode.UpArrow)) direction += Vector3.forward * walkSpeed;
         if (Input.GetKey(KeyCode.DownArrow)) direction += Vector3.back * walkSpeed;
 
         return direction;
     }
 
-    Vector3 getBackDirection()
+    Vector3 getBackDirection(bool isSplit)
     {
         Vector3 direction = new Vector3();
 
-        if (Input.GetKey(KeyCode.A)) direction += Vector3.left * turnSpeed;
-        if (Input.GetKey(KeyCode.D)) direction += Vector3.right * turnSpeed;
+        if (Input.GetKey(KeyCode.A) && !isSplit) direction += Vector3.left * turnSpeed;
+        if (Input.GetKey(KeyCode.D) && !isSplit) direction += Vector3.right * turnSpeed;
         if (Input.GetKey(KeyCode.W)) direction += Vector3.forward * walkSpeed;
         if (Input.GetKey(KeyCode.S)) direction += Vector3.back * walkSpeed;
 
