@@ -23,16 +23,10 @@ public class GrabScript : MonoBehaviour
             grabbableObject.transform.SetParent(null);
             
             grabbableObject.gameObject.GetComponent<Rigidbody>().isKinematic = false;
-            // Physics.IgnoreCollision(grabbableObject, transform.GetComponent<Collider>(), false);
-            // transform.GetComponent<Rigidbody>().detectCollisions = true;
             Physics.IgnoreLayerCollision(8, 9, false);
+
+            // Physics.IgnoreCollision(grabbableObject, transform.GetComponent<Collider>(), false);
             // grabbableObject.gameObject.GetComponent<Rigidbody>().detectCollisions = true;
-
-
-            // grabbableObject.gameObject.layer = 8;
-            // grabbableObject.gameObject.AddComponent<MeshCollider>();
-            // grabbableObject.gameObject.GetComponent<MeshCollider>().convex = true;
-            // try adding cat as layer ovvertide
 
             isGrabbing = false;
 
@@ -48,6 +42,7 @@ public class GrabScript : MonoBehaviour
             
             Vector3 mouthPosition = transform.position + transform.TransformDirection(Vector3.forward * 0.34f + Vector3.up * 0.3f + Vector3.right * 0.2f); //0.24f
             Vector3 mouthDirection = mouthPosition + transform.TransformDirection(Vector3.forward);
+
             // Draw a line protruding from the mouth of the dog
             // Debug.DrawLine(mouthPosition, mouthDirection, Color.red, 2, false);
 
@@ -66,14 +61,11 @@ public class GrabScript : MonoBehaviour
             // grabbableObject.transform.GetChild(0).transform.position = mouthPosition;
 
             grabbableObject.gameObject.GetComponent<Rigidbody>().isKinematic = true;
-                        Physics.IgnoreLayerCollision(8, 9, true);
+            Physics.IgnoreLayerCollision(8, 9, true);
 
             // grabbableObject.gameObject.GetComponent<Rigidbody>().detectCollisions = false;
             // Physics.IgnoreCollision(grabbableObject, transform.GetComponent<Collider>(), true);
-            // transform.GetComponent<Rigidbody>().detectCollisions = false;
-            // grabbableObject.gameObject.layer = 0;
 
-            // Destroy(grabbableObject.gameObject.GetComponent<MeshCollider>());
             grabbableObject.transform.SetParent(transform);
             grabbableObject.transform.position = mouthPosition;
 
