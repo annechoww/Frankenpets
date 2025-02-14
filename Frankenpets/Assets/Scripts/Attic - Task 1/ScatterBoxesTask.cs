@@ -7,10 +7,12 @@ public class ScatterBoxesTask : MonoBehaviour
 {
     public float forceMagnitude;
 
+
     void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("cat front") && gameObject.layer == LayerMask.NameToLayer("Front Task")){
             BoxCollisionManager.RegisterCollision(gameObject, "front");
+            //HalvesInstruction.hideInstruction();
             Debug.Log($"cat front collided.");
             Debug.Log($"layer: {gameObject.layer}");
             // Vector3 forceDirection = collision.gameObject.transform.position - transform.position;
