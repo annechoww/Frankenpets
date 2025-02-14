@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class Instruction : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class Instruction : MonoBehaviour
 
     private bool isShown = false;
     private GameObject floatingTextInstance;
+    //private TMPro.TextMeshProUGUI floatingTextComponent;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -16,10 +18,14 @@ public class Instruction : MonoBehaviour
             Debug.Log($"enter collider.");
             
             floatingTextInstance = Instantiate(floatingTextPrefab, transform.position, Quaternion.identity);
-            floatingTextInstance.transform.SetParent(GameObject.Find("Canvas").transform, false);
-
-            // Make sure it's visible
+            floatingTextInstance.transform.SetParent(GameObject.Find("Task Manager Canvas").transform, false);
             floatingTextInstance.SetActive(true);
+
+            // floatingTextComponent = floatingTextInstance.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+            // if (floatingTextComponent != null)
+            // {
+            //     floatingTextComponent.text = "Click 'space' to split";
+            // }
             isShown = true;
         }
     } 
@@ -28,7 +34,8 @@ public class Instruction : MonoBehaviour
     {
         if (Input.GetKeyDown(toggleKey) && floatingTextInstance != null)
         {
-            Destroy(floatingTextInstance);  // Destroy the floating text instance
+            //floatingTextComponent.text = "P1 scatter red glowing boxes";
+            Destroy(floatingTextInstance); 
         }
     }
 
