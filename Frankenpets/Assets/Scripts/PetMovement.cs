@@ -21,8 +21,8 @@ public class PetMovement : MonoBehaviour
 
         fixedJoint = frontHalf.GetComponent<FixedJoint>();
 
-        if (fixedJoint != null) setSplitMovement(frontHalfDirection, backHalfDirection);
-        else setConnectedMovement(frontHalfDirection, backHalfDirection);
+        if (fixedJoint != null) setConnectedMovement(frontHalfDirection, backHalfDirection);
+        else setSplitMovement(frontHalfDirection, backHalfDirection);
 
         // setInPlace();
     }
@@ -49,10 +49,10 @@ public class PetMovement : MonoBehaviour
             frontHalfDirection += Vector3.right * turnBoost; 
         }
 
-        if (bothHalvesTurningOpposite())
-        {
+        // if (bothHalvesTurningOpposite())
+        // {
             
-        }
+        // }
 
         frontHalf.Translate(frontHalfDirection * Time.deltaTime, Space.Self);
         backHalf.Translate(backHalfDirection * Time.deltaTime, Space.Self);
