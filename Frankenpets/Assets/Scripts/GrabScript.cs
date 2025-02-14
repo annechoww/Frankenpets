@@ -43,7 +43,7 @@ public class GrabScript : MonoBehaviour
             Vector3 mouthPosition = transform.position + transform.TransformDirection(Vector3.forward * 0.34f + Vector3.up * 0.3f + Vector3.right * 0.2f); //0.24f
             Vector3 mouthDirection = mouthPosition + transform.TransformDirection(Vector3.forward);
 
-            // Draw a line protruding from the mouth of the dog
+            // Debug.DrawLine(mouthPosition, Vector3.forward + Vector3.up, Color.red, 2, false);
             // Debug.DrawLine(mouthPosition, mouthDirection, Color.red, 2, false);
 
             // Future: maybe need to Raycast (double hit) to calculate mouth opening angle 
