@@ -23,7 +23,7 @@ public class GrabScript : MonoBehaviour
             grabbableObject.transform.SetParent(null);
             
             grabbableObject.gameObject.GetComponent<Rigidbody>().isKinematic = false;
-            Physics.IgnoreLayerCollision(8, 9, false);
+            Physics.IgnoreLayerCollision(10, 9, false);
 
             // Physics.IgnoreCollision(grabbableObject, transform.GetComponent<Collider>(), false);
             // grabbableObject.gameObject.GetComponent<Rigidbody>().detectCollisions = true;
@@ -61,7 +61,7 @@ public class GrabScript : MonoBehaviour
             // grabbableObject.transform.GetChild(0).transform.position = mouthPosition;
 
             grabbableObject.gameObject.GetComponent<Rigidbody>().isKinematic = true;
-            Physics.IgnoreLayerCollision(8, 9, true);
+            Physics.IgnoreLayerCollision(10, 9, true);
 
             // grabbableObject.gameObject.GetComponent<Rigidbody>().detectCollisions = false;
             // Physics.IgnoreCollision(grabbableObject, transform.GetComponent<Collider>(), true);

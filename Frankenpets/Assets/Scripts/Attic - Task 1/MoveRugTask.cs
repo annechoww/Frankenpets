@@ -27,7 +27,7 @@ public class MoveRugTask : MonoBehaviour
     {
         Debug.Log("Exit " + collision.transform.name);
 
-        if (collision.transform.name == "rug") 
+        if (collision.transform.name == "Rug") 
         {
             FinishTask();
         }

@@ -6,7 +6,7 @@ public class SplitLogic : MonoBehaviour
     private Stopwatch stopwatch = new Stopwatch();
     private Quaternion initialRelativeRotation;
 
-    public float splitTime = 2.5f;
+    public float splitTime = 2.0f;
     public float reconnectionDistance = 1.0f;
     public KeyCode toggleKey = KeyCode.Space;
 
