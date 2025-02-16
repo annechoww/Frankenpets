@@ -6,7 +6,7 @@ public class SplitLogic : MonoBehaviour
     private Stopwatch stopwatch = new Stopwatch();
     private Quaternion initialRelativeRotation;
 
-    public float splitTime = 2.0f;
+    private float splitTime = 1.5f;
     public float reconnectionDistance = 1.0f;
     public KeyCode toggleKey = KeyCode.Space;
 
@@ -106,6 +106,8 @@ public class SplitLogic : MonoBehaviour
             // Create a new FixedJoint
             fixedJoint = frontHalf.AddComponent<FixedJoint>();
             fixedJoint.connectedBody = backHalf.GetComponent<Rigidbody>();
+
+            // Apply animation
 
             UnityEngine.Debug.Log("Halves reconnected.");
         }
