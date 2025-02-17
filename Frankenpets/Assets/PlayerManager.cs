@@ -241,8 +241,7 @@ public class PlayerManager : MonoBehaviour
             
 
             Vector3 positionOffset = frontMagnet.transform.position - backMagnet.transform.position;
-            // Vector3 newPositionOffet = 
-            // backHalf.transform.position += positionOffset;
+            backHalf.transform.position += positionOffset;
 
             // Re-enable physics
             bottomRb.isKinematic = originalKinematic;
