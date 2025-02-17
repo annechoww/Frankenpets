@@ -6,8 +6,13 @@ public class SwitchLogic : MonoBehaviour
     private Stopwatch stopwatch = new Stopwatch();
     public float switchTime = 1.5f;
 
-    public Player P1;
-    public Player P2;
+    private Player P1;
+    private Player P2;
+
+    private FixedJoint fixedJoint;
+    public GameObject frontHalf;
+    public GameObject backHalf;
+
 
     [Header("Pet Halves")]
     public GameObject catFront;
@@ -17,13 +22,9 @@ public class SwitchLogic : MonoBehaviour
 
     void Awake()
     {
-        P1 = GetComponent<Player>().P1;
-        P2 = GetComponent<Player>().P2;
+        P1 = GetComponent<PlayerMovement>().P1;
+        P2 = GetComponent<PlayerMovement>().P2;
     }
-
-    private FixedJoint fixedJoint;
-    public GameObject frontHalf;
-    public GameObject backHalf;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -83,18 +84,21 @@ public class SwitchLogic : MonoBehaviour
                 {
                     // front half = cat = P1
                     // back half = dog = P2
-                    catFront.SetActive(true);
-                    catBack.SetActive(false);
-                    dogFront.SetActive(false);
-                    dogBack.SetActive(true);
+
+                    // set the position before changing the parent 
+                    // o/w it will use world space instead of local (relative to parent) space!!!
+                    catFront.transform.position = frontHalf.transform.position; 
+                    dogBack.transform.position = backHalf.transform.position;
 
                     catFront.transform.SetParent(transform.GetChild(0));
                     catBack.transform.SetParent(null);
                     dogFront.transform.SetParent(null);
                     dogBack.transform.SetParent(transform.GetChild(1));
 
-                    catFront.transform.position = dogFront.transform.position;
-                    dogBack.transform.position = catBack.transform.position;
+                    catFront.SetActive(true);
+                    catBack.SetActive(false);
+                    dogFront.SetActive(false);
+                    dogBack.SetActive(true);
 
                     frontHalf = catFront;
                     backHalf = dogBack;
@@ -103,25 +107,22 @@ public class SwitchLogic : MonoBehaviour
                 {
                     // front half = dog = P1
                     // back half = cat = P2
-                    catFront.SetActive(false);
-                    catBack.SetActive(true);
-                    dogFront.SetActive(true);
-                    dogBack.SetActive(false);
+                    catBack.transform.position = backHalf.transform.position;
+                    dogFront.transform.position = frontHalf.transform.position;
 
                     catFront.transform.SetParent(null);
                     catBack.transform.SetParent(transform.GetChild(1));
                     dogFront.transform.SetParent(transform.GetChild(0));
                     dogBack.transform.SetParent(null);
 
-                    catBack.transform.position = dogBack.transform.position;
-                    dogFront.transform.position = catFront.transform.position;
-
+                    catFront.SetActive(false);
+                    catBack.SetActive(true);
+                    dogFront.SetActive(true);
+                    dogBack.SetActive(false);
+                    
                     frontHalf = dogFront;
                     backHalf = catBack;
                 }
-
-
-            
             }
             else // if P2.IsFront
             {
@@ -130,18 +131,18 @@ public class SwitchLogic : MonoBehaviour
                 {
                     // front half = cat = P2
                     // back half = dog = P1
-                    catFront.SetActive(true);
-                    catBack.SetActive(false);
-                    dogFront.SetActive(false);
-                    dogBack.SetActive(true);
+                    catFront.transform.position = frontHalf.transform.position;
+                    dogBack.transform.position = backHalf.transform.position;
 
                     catFront.transform.SetParent(transform.GetChild(1));
                     catBack.transform.SetParent(null);
                     dogFront.transform.SetParent(null);
                     dogBack.transform.SetParent(transform.GetChild(0));
 
-                    catFront.transform.position = dogFront.transform.position;
-                    dogBack.transform.position = catBack.transform.position;
+                    catFront.SetActive(true);
+                    catBack.SetActive(false);
+                    dogFront.SetActive(false);
+                    dogBack.SetActive(true);
 
                     frontHalf = catFront;
                     backHalf = dogBack;
@@ -150,18 +151,19 @@ public class SwitchLogic : MonoBehaviour
                 {
                     // front half = dog = P2
                     // back half = cat = P1
-                    catFront.SetActive(false);
-                    catBack.SetActive(true);
-                    dogFront.SetActive(true);
-                    dogBack.SetActive(false);
-
+                    catBack.transform.position = backHalf.transform.position;
+                    dogFront.transform.position = frontHalf.transform.position;
+                    
                     catFront.transform.SetParent(null);
                     catBack.transform.SetParent(transform.GetChild(0));
                     dogFront.transform.SetParent(transform.GetChild(1));
                     dogBack.transform.SetParent(null);
 
-                    catBack.transform.position = dogBack.transform.position;
-                    dogFront.transform.position = catFront.transform.position;
+                    catFront.SetActive(false);
+                    catBack.SetActive(true);
+                    dogFront.SetActive(true);
+                    dogBack.SetActive(false);
+
 
                     frontHalf = dogFront;
                     backHalf = catBack;
@@ -170,9 +172,15 @@ public class SwitchLogic : MonoBehaviour
            
             // Restablish the fixed joint
             fixedJoint = frontHalf.GetComponent<FixedJoint>();
+
+            UnityEngine.Debug.Log("curr fixed joint: ", fixedJoint);
+
             if (fixedJoint == null) fixedJoint = frontHalf.AddComponent<FixedJoint>();
             fixedJoint.connectedBody = backHalf.GetComponent<Rigidbody>();
 
+            // SplitLogic splitLogicScript = GetComponent<SplitLogic>();
+            // splitLogicScript.reconnect();
+            
             UnityEngine.Debug.Log("Switched!");
         }
     }

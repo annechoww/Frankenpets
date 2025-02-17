@@ -5,44 +5,38 @@ public class PlayerMovement : MonoBehaviour
     public Player P1;
     public Player P2;
 
+    public GameObject P1Half;
+    public GameObject P2Half;
+
     private FixedJoint fixedJoint;
-    public GameObject frontHalf;
-    public GameObject backHalf;
-    public GameObject player1;
-    public GameObject player2;
 
-    public float walkSpeed = 0.8f;
-    public float frontTurnSpeed = 1.0f;
-    public float backTurnSpeed = 0.7f;
-
+    public float walkSpeed = -0.8f;
+    public float frontTurnSpeed = 0.2f;
+    public float backTurnSpeed = 0.2f;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        // Initialize the players
-        // P1.PlayerNumber = 1;
-        // P1.IsFront = true;
-        // P1.Species = "cat";
-        // P2.PlayerNumber = 2;   
-        // P2.IsFront = false;
-        // P2.Species = "dog";
-        P1 = GetComponent<Player>().P1;
-        P2 = GetComponent<Player>().P2;
+
     }
 
     // Update is called once per frame
     void Update()
     {
+        
+        if (P1.IsFront) fixedJoint = GetComponent<PlayerManager>().getFixedJoint(P1);
+        else fixedJoint = GetComponent<PlayerManager>().getFixedJoint(P2);
+
         if (fixedJoint != null && bothHalvesTurningOpposite())
         {
             while (fixedJoint != null && bothHalvesTurningOpposite())
             {
-                frontHalf.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition;
-                backHalf.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition;
+                P1.Half.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition;
+                P2.Half.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition;
             }
 
-            frontHalf.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
-            backHalf.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
+            P1.Half.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
+            P2.Half.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
 
         }
 
@@ -53,7 +47,8 @@ public class PlayerMovement : MonoBehaviour
     private void setPlayer1Movement()
     {
         // GameObject half = P1.IsFront ? frontHalf : backHalf;
-        GameObject half = player1.transform.GetChild(0).gameObject;
+        // GameObject half = player1.transform.GetChild(0).gameObject;
+        GameObject half = P1.Half;
         float turnSpeed = P1.IsFront ? frontTurnSpeed : backTurnSpeed;
         
         if (Input.GetKey(KeyCode.A)) half.transform.Rotate(0.0f, -turnSpeed, 0.0f, Space.Self);
@@ -65,7 +60,7 @@ public class PlayerMovement : MonoBehaviour
     private void setPlayer2Movement()
     {
         // GameObject half = P2.IsFront ? frontHalf : backHalf;
-        GameObject half = player2.transform.GetChild(0).gameObject;
+        GameObject half = P2.Half;
         float turnSpeed = P2.IsFront ? frontTurnSpeed : backTurnSpeed;
         
         if (Input.GetKey(KeyCode.LeftArrow)) half.transform.Rotate(0.0f, -turnSpeed, 0.0f, Space.Self);
@@ -73,7 +68,6 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKey(KeyCode.UpArrow)) half.transform.Translate(Vector3.forward * walkSpeed * Time.deltaTime, Space.Self);
         if (Input.GetKey(KeyCode.DownArrow)) half.transform.Translate(Vector3.back * walkSpeed * Time.deltaTime, Space.Self);
     }
-
 
     private bool bothHalvesTurningOpposite()
     {

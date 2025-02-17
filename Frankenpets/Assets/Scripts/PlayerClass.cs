@@ -1,16 +1,17 @@
 using UnityEngine;
 
-[System.Serializable]
-public class Player : MonoBehaviour
+public class Player
 {
     private int playerNumber;
-    public bool isFront;
-    public string species;
+    private bool isFront;
+    private string species;
+    private GameObject half;
+    private GameObject magnet;
 
     public int PlayerNumber
     {
-        set { playerNumber = value; }
         get { return playerNumber; }
+        set { playerNumber = value; }
     }
 
     public bool IsFront
@@ -22,39 +23,19 @@ public class Player : MonoBehaviour
     public string Species
     {
         get { return species; }
-        set { species = species == "cat" ? "dog" : "cat"; }
+        set { species = value; }
     }
 
-    public Player P1 = new Player();
-    public Player P2 = new Player();
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public GameObject Half
     {
-        // Initialize the players
-        P1.PlayerNumber = 1;
-        P1.IsFront = true;
-        P1.Species = "cat";
-        P2.PlayerNumber = 2;
-        P2.IsFront = false;
-        P2.Species = "dog";
+        get { return half; }
+        set { half = value; }
     }
+
+    public GameObject Magnet
+    {
+        get { return magnet; }
+        set { magnet = value; }
+    }
+
 }
-
-// public class InitializePlayers : MonoBehaviour
-// {
-//     public Player P1 = new Player();
-//     public Player P2 = new Player();
-
-//     // Start is called once before the first execution of Update after the MonoBehaviour is created
-//     void Start()
-//     {
-//         // Initialize the players
-//         P1.PlayerNumber = 1;
-//         P1.IsFront = true;
-//         P1.Species = "cat";
-//         P2.PlayerNumber = 2;
-//         P2.IsFront = false;
-//         P2.Species = "dog";
-//     }
-// }
