@@ -17,7 +17,7 @@ public class Player
     public bool IsFront
     {
         get { return isFront; }
-        set { isFront = !isFront; }
+        set { isFront = value; }
     }
 
     public string Species
