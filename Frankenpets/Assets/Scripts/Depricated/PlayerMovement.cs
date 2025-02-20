@@ -8,7 +8,7 @@ public class PlayerMovement : MonoBehaviour
     public GameObject P1Half;
     public GameObject P2Half;
 
-    private FixedJoint fixedJoint;
+    public FixedJoint fixedJoint;
 
     public float walkSpeed = -0.8f;
     public float frontTurnSpeed = 0.2f;
@@ -17,6 +17,16 @@ public class PlayerMovement : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        // Initialize the players
+        P1.PlayerNumber = 1;
+        P1.IsFront = true;
+        P1.Species = "cat";
+        P1.Half = P1Half;
+
+        P2.PlayerNumber = 2;   
+        P2.IsFront = false;
+        P2.Species = "dog";
+        P2.Half = P2Half;
 
     }
 
@@ -24,8 +34,8 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         
-        if (P1.IsFront) fixedJoint = GetComponent<PlayerManager>().getFixedJoint(P1);
-        else fixedJoint = GetComponent<PlayerManager>().getFixedJoint(P2);
+        // if (P1.IsFront) fixedJoint = GetComponent<PlayerManager>().getFixedJoint(P1);
+        // else fixedJoint = GetComponent<PlayerManager>().getFixedJoint(P2);
 
         if (fixedJoint != null && bothHalvesTurningOpposite())
         {
@@ -48,8 +58,8 @@ public class PlayerMovement : MonoBehaviour
     {
         // GameObject half = P1.IsFront ? frontHalf : backHalf;
         // GameObject half = player1.transform.GetChild(0).gameObject;
-        GameObject half = P1.Half;
-        float turnSpeed = P1.IsFront ? frontTurnSpeed : backTurnSpeed;
+        GameObject half = P1Half;
+        float turnSpeed =frontTurnSpeed;
         
         if (Input.GetKey(KeyCode.A)) half.transform.Rotate(0.0f, -turnSpeed, 0.0f, Space.Self);
         if (Input.GetKey(KeyCode.D)) half.transform.Rotate(0.0f, turnSpeed, 0.0f, Space.Self);
@@ -60,8 +70,8 @@ public class PlayerMovement : MonoBehaviour
     private void setPlayer2Movement()
     {
         // GameObject half = P2.IsFront ? frontHalf : backHalf;
-        GameObject half = P2.Half;
-        float turnSpeed = P2.IsFront ? frontTurnSpeed : backTurnSpeed;
+        GameObject half = P2Half;
+        float turnSpeed = backTurnSpeed;
         
         if (Input.GetKey(KeyCode.LeftArrow)) half.transform.Rotate(0.0f, -turnSpeed, 0.0f, Space.Self);
         if (Input.GetKey(KeyCode.RightArrow)) half.transform.Rotate(0.0f, turnSpeed, 0.0f, Space.Self);
