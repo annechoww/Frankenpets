@@ -127,19 +127,12 @@ public class PlayerManager : MonoBehaviour
     // MOVEMENT METHODS ////////////////////////////////////////////
     private void runMovementLogic()
     {
-        if (fixedJoint != null && bothHalvesTurningOpposite())
-        {
-            P1.Half.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition;
-            P2.Half.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition;
-            isFrozen = true;
-        }
         // if (fixedJoint != null && bothHalvesTurningOpposite())
         // {
-        //     while (fixedJoint != null && bothHalvesTurningOpposite())
-        //     {
-        //         P1.Half.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition;
-        //         P2.Half.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition;
-        //     }
+        //     P1.Half.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition;
+        //     P2.Half.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition;
+        //     isFrozen = true;
+        // }
 
         // if (isFrozen) 
         // {
@@ -219,45 +212,45 @@ public class PlayerManager : MonoBehaviour
     }
 
     private void runSeparatedMovementLogic()
-{
-    // Movement for Player 1’s half (using WASD)
-    float turnSpeedP1 = P1.IsFront ? frontTurnSpeed : backTurnSpeed;
-    if (Input.GetKey(KeyCode.A))
     {
-        P1.Half.transform.Rotate(0.0f, -turnSpeedP1, 0.0f, Space.Self);
+        // Movement for Player 1’s half (using WASD)
+        float turnSpeedP1 = P1.IsFront ? frontTurnSpeed : backTurnSpeed;
+        if (Input.GetKey(KeyCode.A))
+        {
+            P1.Half.transform.Rotate(0.0f, -turnSpeedP1, 0.0f, Space.Self);
+        }
+        if (Input.GetKey(KeyCode.D))
+        {
+            P1.Half.transform.Rotate(0.0f, turnSpeedP1, 0.0f, Space.Self);
+        }
+        if (Input.GetKey(KeyCode.W))
+        {
+            P1.Half.transform.Translate(Vector3.forward * walkSpeed * Time.deltaTime, Space.Self);
+        }
+        if (Input.GetKey(KeyCode.S))
+        {
+            P1.Half.transform.Translate(Vector3.back * walkSpeed * Time.deltaTime, Space.Self);
+        }
+        
+        // Movement for Player 2’s half (using Arrow keys)
+        float turnSpeedP2 = P2.IsFront ? frontTurnSpeed : backTurnSpeed;
+        if (Input.GetKey(KeyCode.LeftArrow))
+        {
+            P2.Half.transform.Rotate(0.0f, -turnSpeedP2, 0.0f, Space.Self);
+        }
+        if (Input.GetKey(KeyCode.RightArrow))
+        {
+            P2.Half.transform.Rotate(0.0f, turnSpeedP2, 0.0f, Space.Self);
+        }
+        if (Input.GetKey(KeyCode.UpArrow))
+        {
+            P2.Half.transform.Translate(Vector3.forward * walkSpeed * Time.deltaTime, Space.Self);
+        }
+        if (Input.GetKey(KeyCode.DownArrow))
+        {
+            P2.Half.transform.Translate(Vector3.back * walkSpeed * Time.deltaTime, Space.Self);
+        }
     }
-    if (Input.GetKey(KeyCode.D))
-    {
-        P1.Half.transform.Rotate(0.0f, turnSpeedP1, 0.0f, Space.Self);
-    }
-    if (Input.GetKey(KeyCode.W))
-    {
-        P1.Half.transform.Translate(Vector3.forward * walkSpeed * Time.deltaTime, Space.Self);
-    }
-    if (Input.GetKey(KeyCode.S))
-    {
-        P1.Half.transform.Translate(Vector3.back * walkSpeed * Time.deltaTime, Space.Self);
-    }
-    
-    // Movement for Player 2’s half (using Arrow keys)
-    float turnSpeedP2 = P2.IsFront ? frontTurnSpeed : backTurnSpeed;
-    if (Input.GetKey(KeyCode.LeftArrow))
-    {
-        P2.Half.transform.Rotate(0.0f, -turnSpeedP2, 0.0f, Space.Self);
-    }
-    if (Input.GetKey(KeyCode.RightArrow))
-    {
-        P2.Half.transform.Rotate(0.0f, turnSpeedP2, 0.0f, Space.Self);
-    }
-    if (Input.GetKey(KeyCode.UpArrow))
-    {
-        P2.Half.transform.Translate(Vector3.forward * walkSpeed * Time.deltaTime, Space.Self);
-    }
-    if (Input.GetKey(KeyCode.DownArrow))
-    {
-        P2.Half.transform.Translate(Vector3.back * walkSpeed * Time.deltaTime, Space.Self);
-    }
-}
     // MOVEMENT METHODS ////////////////////////////////////////////
     
 
