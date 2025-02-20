@@ -24,10 +24,12 @@ public class TestMovement : MonoBehaviour
     }
     private void Update()
     {
-        
+
         transform.position = currentPosition;
         transform.up = currentNormal;
         Ray ray =  new Ray(body.position + (body.right * footSpacing), Vector3.down);
+        Debug.Log("Current position: " + transform.position);
+        //UnityEngine.Debug.DrawLine(transform.position, Vector3.down, Color.green, 2, false);
         if (Physics.Raycast(ray, out RaycastHit hit, 10, terrainLayer.value))
         {
             UnityEngine.Debug.Log("yes");
