@@ -29,6 +29,8 @@ _Note: Movement is relative to the pet's perspective._
 | h | Press and hold down 'h' to stand dog back on hind legs. |
 | f | Freezes front half. |
 | g | Unfreezes front half. |
+| m | Grabbing |
+| x (P1)  ","(P2) | Basic jump - key will only activate if player is back half |
  
 
 # Neccessary Packages
