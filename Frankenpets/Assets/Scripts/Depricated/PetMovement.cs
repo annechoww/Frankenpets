@@ -3,7 +3,7 @@ using UnityEngine.Animations.Rigging;
 
 public class PetMovement : MonoBehaviour
 {
-    public float walkSpeed = 0.8f;
+    public float walkSpeed = 0.6f;
     public float frontTurnSpeed = 1.0f;
     public float backTurnSpeed = 0.7f;
 

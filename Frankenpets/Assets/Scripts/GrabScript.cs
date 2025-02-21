@@ -7,16 +7,23 @@ public class GrabScript : MonoBehaviour
     private Collider grabbableObject;
     private bool canGrab = false;
     private bool isGrabbing = false;
+    private GameObject grabText;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-
+        grabText = GameObject.FindGameObjectWithTag("GrabText");
     }
 
     // Update is called once per frame
     void Update()
     {
+        // FOR DEBUGGING
+        // Vector3 mouthPosition = transform.position + transform.TransformDirection(Vector3.forward * 0.23f + Vector3.up * 0.202f + Vector3.right * 0.2f); //0.24f
+        // Vector3 mouthDirection = mouthPosition + transform.TransformDirection(Vector3.forward); //Vector3.forward * 0.34f + 
+        // Debug.DrawLine(mouthPosition, Vector3.forward + Vector3.up, Color.red, 2, false);
+        // Debug.DrawLine(mouthPosition, mouthDirection, Color.red, 2, false);
+
         if (Input.GetKeyDown(KeyCode.M) && isGrabbing)
         {
             Debug.Log("Released item");
@@ -70,6 +77,7 @@ public class GrabScript : MonoBehaviour
             grabbableObject.transform.position = mouthPosition;
 
             isGrabbing = true;
+            grabText.SetActive(false);
         }
         
     }
@@ -80,6 +88,11 @@ public class GrabScript : MonoBehaviour
         if (other.CompareTag("Grabbable") && !isGrabbing)
         {
             grabbableObject = other;
+            
+            // Show UI Popover
+            grabText.transform.position = grabbableObject.transform.position + (Vector3.up * 0.30f);
+            grabText.SetActive(true);
+            
             canGrab = true;
         }
     }
@@ -89,6 +102,8 @@ public class GrabScript : MonoBehaviour
         Debug.Log("Not within grabbable range anymore.");
         if (other.CompareTag("Grabbable"))
         {
+            // Hide UI Popover
+            grabText.SetActive(false);
             canGrab = false;
         }
     }

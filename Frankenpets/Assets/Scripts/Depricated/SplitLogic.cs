@@ -6,8 +6,8 @@ public class SplitLogic : MonoBehaviour
     private Stopwatch stopwatch = new Stopwatch();
     private Quaternion initialRelativeRotation;
 
-    public float splitTime = 2.0f;
-    public float reconnectionDistance = 1.0f;
+    private float splitTime = 1.0f;
+    public float reconnectionDistance = 10.0f;
     public KeyCode toggleKey = KeyCode.Space;
 
     public GameObject frontHalf;
@@ -15,13 +15,28 @@ public class SplitLogic : MonoBehaviour
     public GameObject frontMagnet;
     public GameObject backMagnet;
     public FixedJoint fixedJoint;
-    
 
+    private Player P1;
+    private Player P2;
+
+    // void Awake()
+    // {
+    //     P1 = GetComponent<PlayerManager>().P1;
+    //     frontHalf = P1.Half;
+    //     frontMagnet = frontHalf.transform.GetChild(3).gameObject;
+
+    //     P2 = GetComponent<PlayerManager>().P2;
+    //     backHalf = P2.Half;
+    //     backMagnet = backHalf.transform.GetChild(3).gameObject;
+
+    //     fixedJoint = P1.Half.GetComponent<FixedJoint>();
+    // }
+    
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         // frontHalf = gameObject.transform.GetChild(0).gameObject;
-        fixedJoint = frontHalf.GetComponent<FixedJoint>();
+        // fixedJoint = frontHalf.GetComponent<FixedJoint>();
         initialRelativeRotation = Quaternion.Inverse(frontHalf.transform.rotation) * backHalf.transform.rotation;
     }
 
@@ -107,7 +122,29 @@ public class SplitLogic : MonoBehaviour
             fixedJoint = frontHalf.AddComponent<FixedJoint>();
             fixedJoint.connectedBody = backHalf.GetComponent<Rigidbody>();
 
+            // Apply animation
+
             UnityEngine.Debug.Log("Halves reconnected.");
         }
+    }
+
+    public void reconnect()
+    {
+        // Temporarily disable bottomHalf physics
+        Rigidbody bottomRb = backHalf.GetComponent<Rigidbody>();
+        bool originalKinematic = bottomRb.isKinematic;
+        bottomRb.isKinematic = true;
+
+        // Align orientation and position
+        backHalf.transform.rotation = frontHalf.transform.rotation * initialRelativeRotation;
+        Vector3 positionOffset = frontMagnet.transform.position - backMagnet.transform.position;
+        backHalf.transform.position += positionOffset;
+
+        // Re-enable physics
+        bottomRb.isKinematic = originalKinematic;
+
+        // Create a new FixedJoint
+        fixedJoint = frontHalf.AddComponent<FixedJoint>();
+        fixedJoint.connectedBody = backHalf.GetComponent<Rigidbody>();
     }
 }
