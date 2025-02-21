@@ -4,44 +4,44 @@ public class CameraMovement : MonoBehaviour
 {
     [Header("References")]
     public Camera mainCamera;
+    public Camera p1Camera;
+    public Camera p2Camera;
     public Transform frontHalf;
 
-    [Header("Camera Details")]
-    public int fieldOfViewConnected = 49;
-    public int fieldOfViewDisconnected = 120;
-    public Vector3 zoomOutPosition = new Vector3(-16.759f, 0.767f, -22.652f);
-    public Vector3 zoomInAdjustment = new Vector3(1.0f, 0.8f, 2.25f);
-
     private FixedJoint fixedJoint;
-    private bool zoomOut = false;
+    private bool splitScreen = false;
 
-    // Update is called once per frame
+    void Start()
+    {
+        mainCamera.gameObject.SetActive(true);
+        p1Camera.gameObject.SetActive(false);
+        p2Camera.gameObject.SetActive(false);
+    }
+
     void Update()
     {
         fixedJoint = frontHalf.GetComponent<FixedJoint>();
-
-        // If connected, camera zooms in and follows the pet
+        
         if (fixedJoint != null)
         {
-            mainCamera.fieldOfView = fieldOfViewConnected;
-            mainCamera.transform.position = frontHalf.position + zoomInAdjustment;
+            mainCamera.gameObject.SetActive(true);
+            p1Camera.gameObject.SetActive(false);
+            p2Camera.gameObject.SetActive(false);
         }
         else
         {
-            zoomOut = true;
+            splitScreen = true;
         }
     }
 
     void FixedUpdate()
     {
-        if (zoomOut)
+        if (splitScreen)
         {
-            // If no FixedJoint, zoom out the camera and set its position
-            mainCamera.fieldOfView = fieldOfViewDisconnected;
-            
-            // Move the camera to the specified position
-            mainCamera.transform.position = zoomOutPosition;
-            zoomOut = false;
+            mainCamera.gameObject.SetActive(false);
+            p1Camera.gameObject.SetActive(true);
+            p2Camera.gameObject.SetActive(true);
+            splitScreen = false;
         }
     }
 }
