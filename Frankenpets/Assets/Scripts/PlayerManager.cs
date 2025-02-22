@@ -62,6 +62,9 @@ public class PlayerManager : MonoBehaviour
         frontHalf = getFrontHalf();
         backHalf = getBackHalf();
         initialRelativeRotation = Quaternion.Inverse(frontHalf.transform.rotation) * backHalf.transform.rotation;
+
+        alignHalves();
+        setJoint();
     }
 
     // Update is called once per frame
@@ -121,14 +124,27 @@ public class PlayerManager : MonoBehaviour
         else return P2.Magnet;
     }
 
-    public void setFixedJoint()
-    {
-        GameObject frontPlayer = getFrontHalf();
-        GameObject backPlayer = getBackHalf();
-        FixedJoint fixedJoint = frontPlayer.transform.GetChild(0).gameObject.AddComponent<FixedJoint>();
-        fixedJoint.connectedBody = backPlayer.GetComponent<Rigidbody>();
+    public void setJoint(){
+
+            frontHalf.GetComponent<Rigidbody>().constraints &= ~RigidbodyConstraints.FreezeRotationX;
+            frontHalf.GetComponent<Rigidbody>().constraints &= ~RigidbodyConstraints.FreezeRotationZ;
+            backHalf.GetComponent<Rigidbody>().constraints &= ~RigidbodyConstraints.FreezeRotationX;
+            backHalf.GetComponent<Rigidbody>().constraints &= ~RigidbodyConstraints.FreezeRotationZ;
+
+            // Create a new FixedJoint
+            fixedJoint = frontHalf.AddComponent<FixedJoint>();
+            fixedJoint.connectedBody = backHalf.GetComponent<Rigidbody>();
+
+            // Set anchor points
+            fixedJoint.anchor = frontMagnet.transform.localPosition;
+            fixedJoint.connectedAnchor = backMagnet.transform.localPosition;
+
+            // Apply Rigidbody constraints to prevent tilting
+            frontHalf.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+            
     }
-    public FixedJoint getFixedJoint(Player frontPlayer)
+
+    public FixedJoint GetJoint(Player frontPlayer)
     {
         return frontPlayer.Half.transform.GetChild(0).gameObject.GetComponent<FixedJoint>();
     }
@@ -300,6 +316,13 @@ public class PlayerManager : MonoBehaviour
             splitStopwatch.Reset();
             Destroy(fixedJoint); // Split the halves
             fixedJoint = null;
+
+            // Add rotation constraints when split
+            frontHalf.GetComponent<Rigidbody>().constraints |= RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+            backHalf.GetComponent<Rigidbody>().constraints |= RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+
+
+
             UnityEngine.Debug.Log("Halves disconnected due to opposing pull.");
         }
 
@@ -359,13 +382,32 @@ public class PlayerManager : MonoBehaviour
             // // Re-enable physics
             // bottomRb.isKinematic = originalKinematic;
 
+            setJoint();
+
             // Create a new FixedJoint
-            fixedJoint = frontHalf.AddComponent<FixedJoint>();
-            fixedJoint.connectedBody = backHalf.GetComponent<Rigidbody>();
+            // fixedJoint = frontHalf.AddComponent<ConfigurableJoint>();
+            // fixedJoint.connectedBody = backHalf.GetComponent<Rigidbody>();
+
+            // // Configure joint constraints
+            // fixedJoint.angularXMotion = ConfigurableJointMotion.Locked;
+            // fixedJoint.angularZMotion = ConfigurableJointMotion.Locked;
+            // fixedJoint.angularYMotion = ConfigurableJointMotion.Free;
+
+            // // Set anchor points
+            // fixedJoint.anchor = frontMagnet.transform.localPosition;
+            // fixedJoint.connectedAnchor = backMagnet.transform.localPosition;
+
+            // frontHalf.GetComponent<Rigidbody>().constraints &= ~RigidbodyConstraints.FreezeRotationX;
+            // frontHalf.GetComponent<Rigidbody>().constraints &= ~RigidbodyConstraints.FreezeRotationZ;
+            // backHalf.GetComponent<Rigidbody>().constraints &= ~RigidbodyConstraints.FreezeRotationX;
+            // backHalf.GetComponent<Rigidbody>().constraints &= ~RigidbodyConstraints.FreezeRotationZ;
+
+            // initialRelativeRotation = Quaternion.Inverse(frontHalf.transform.rotation) * backHalf.transform.rotation;
 
             // TODO: Apply animation
 
             UnityEngine.Debug.Log("Halves reconnected.");
+        
 
             // Reset the relative rotation
             initialRelativeRotation = Quaternion.Inverse(frontHalf.transform.rotation) * backHalf.transform.rotation;
@@ -556,8 +598,7 @@ public class PlayerManager : MonoBehaviour
             UnityEngine.Debug.Log("curr fixed joint: ", fixedJoint);
             if (fixedJoint == null) 
             {
-                fixedJoint = frontHalf.AddComponent<FixedJoint>();
-                fixedJoint.connectedBody = backHalf.GetComponent<Rigidbody>();
+                setJoint();
             }
 
             // SplitLogic splitLogicScript = GetComponent<SplitLogic>();
