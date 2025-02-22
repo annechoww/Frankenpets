@@ -80,6 +80,7 @@ public class PlayerManager : MonoBehaviour
         
         runSplitLogic();
         runSwitchLogic();
+        EnsureUpright();
 
         // Debugging
         // UnityEngine.Debug.DrawLine(backHalf.transform.position, Vector3.up, Color.blue, 2, false);
@@ -154,24 +155,6 @@ public class PlayerManager : MonoBehaviour
     // MOVEMENT METHODS ////////////////////////////////////////////
     private void runMovementLogic()
     {
-        // OLD CODE USING setPlayer1Movement() and setPlayer2Movement() methods ////////////////
-        // if (fixedJoint != null && bothHalvesTurningOpposite())
-        // {
-        //     P1.Half.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition;
-        //     P2.Half.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition;
-        //     isFrozen = true;
-        // }
-
-        // if (isFrozen) 
-        // {
-        //     P1.Half.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
-        //     P1.Half.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
-        //     isFrozen = false;
-        // }
-
-        // setPlayer1Movement();
-        // setPlayer2Movement();
-        // OLD CODE USING setPlayer1Movement() and setPlayer2Movement() methods ////////////////
 
         // Get turning input from player1 (WASD keys) for turning:
         float turnInputP1 = 0.0f;
@@ -184,7 +167,7 @@ public class PlayerManager : MonoBehaviour
         if (Input.GetKey(KeyCode.RightArrow)) turnInputP2 += backTurnSpeed;
         
         // Average the turn inputs
-        float combinedTurn = (turnInputP1 + turnInputP2) / 2.0f;
+        float combinedTurn = turnInputP1 + turnInputP2;
         
         // Get movement (forward/back) input from player1:
         float moveInputP1 = 0.0f;
@@ -197,7 +180,7 @@ public class PlayerManager : MonoBehaviour
         if (Input.GetKey(KeyCode.DownArrow)) moveInputP2 -= walkSpeed;
         
         // Average the movement inputs
-        float combinedMove = (moveInputP1 + moveInputP2) / 2.0f;
+        float combinedMove = moveInputP1 + moveInputP2;
         
         // Apply the combined rotation to both halves:
         frontHalf.transform.Rotate(0.0f, combinedTurn, 0.0f, Space.Self);
@@ -610,5 +593,22 @@ public class PlayerManager : MonoBehaviour
         }
     }
     // SWITCHING METHODS ////////////////////////////////////////////
+
+    // COLLISION METHODS ////////////////////////////////////////////
+    void EnsureUpright() {
+    if (fixedJoint != null) {  // Only enforce when connected
+        // Lock rotation around X and Z axes while preserving Y rotation
+        Quaternion frontRotation = frontHalf.transform.rotation;
+        Quaternion backRotation = backHalf.transform.rotation;
+        
+        // Keep only the Y rotation
+        Vector3 frontEuler = frontRotation.eulerAngles;
+        Vector3 backEuler = backRotation.eulerAngles;
+        
+        frontHalf.transform.rotation = Quaternion.Euler(0, frontEuler.y, 0);
+        backHalf.transform.rotation = Quaternion.Euler(0, backEuler.y, 0);
+    }
+}
+    // COLLISION METHODS ////////////////////////////////////////////
 
 }
