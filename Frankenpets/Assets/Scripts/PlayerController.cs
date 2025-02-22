@@ -22,6 +22,10 @@ public class PlayerController : MonoBehaviour
     public float chargedJumpCooldown = 0.8f;
     private float lastJumpTime = -10f;
 
+    [Header("Noise Variables")]
+    public AudioClip dogClip;
+    public AudioClip catClip;
+
     private PlayerManager playerManager; 
     private Player P1;
     private Player P2;
@@ -60,6 +64,7 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         runJumpLogic();
+        runNoiseLogic();
     }
 
 
@@ -67,7 +72,7 @@ public class PlayerController : MonoBehaviour
     private void runJumpLogic()
     {
         // Basic Jump
-        if (((Input.GetKey(KeyCode.Z) && !P1.IsFront)) || ((Input.GetKey(KeyCode.M)) && !P2.IsFront))
+        if ((Input.GetKey(KeyCode.Z) && !P1.IsFront) || ((Input.GetKey(KeyCode.M)) && !P2.IsFront))
         {
             tryStartJump(jumpForce, jumpCooldown);
         }
@@ -86,6 +91,23 @@ public class PlayerController : MonoBehaviour
             frontRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             backRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             lastJumpTime = Time.time;
+        }
+    }
+
+////////////////////////////////////// Noise Logic /////////////////////////////////////
+    private void runNoiseLogic()
+    {
+        if ((Input.GetKey(KeyCode.X) && P1.IsFront) || ((Input.GetKey(KeyCode.Comma)) && P2.IsFront))
+        {
+            string frontSpecies = P1.IsFront ? P1.Species : P2.Species;
+            AudioSource audioSource = gameObject.GetComponent<AudioSource>();
+            if (audioSource == null)
+            {
+                audioSource = gameObject.AddComponent<AudioSource>();
+            }
+
+            audioSource.clip = (frontSpecies == "cat") ? catClip : dogClip;
+            audioSource.Play();
         }
     }
 
