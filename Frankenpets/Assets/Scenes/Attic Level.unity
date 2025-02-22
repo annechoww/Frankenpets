@@ -3909,7 +3909,7 @@ MonoBehaviour:
   P2Half: {fileID: 553499043371561543}
   P1Magnet: {fileID: 4065513032044160511}
   P2Magnet: {fileID: 8948957479547863907}
-  fixedJoint: {fileID: 4290633509308786066}
+  fixedJoint: {fileID: 0}
   walkSpeed: 0.8
   frontTurnSpeed: 1.2
   backTurnSpeed: 0.9
@@ -7554,7 +7554,8 @@ PrefabInstance:
       propertyPath: m_ConnectedBody
       value: 
       objectReference: {fileID: 3812848135962478479}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5844972310404882743, guid: bf7f36e6c127c4fb7be1a62760dc9ff4, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -8004,11 +8005,6 @@ Transform:
   - {fileID: 3006713465388338674}
   m_Father: {fileID: 543450652241948858}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!138 &4290633509308786066 stripped
-FixedJoint:
-  m_CorrespondingSourceObject: {fileID: 5844972310404882743, guid: bf7f36e6c127c4fb7be1a62760dc9ff4, type: 3}
-  m_PrefabInstance: {fileID: 1596110518176139746}
-  m_PrefabAsset: {fileID: 0}
 --- !u!23 &4432071487984926603
 MeshRenderer:
   m_ObjectHideFlags: 0
