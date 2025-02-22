@@ -13,9 +13,9 @@ public class PlayerManager : MonoBehaviour
     public Player P2 = new Player();
 
     [Header("Movement Variables")]
-    public float walkSpeed = 0.6f;
-    public float frontTurnSpeed = 1.0f;
-    public float backTurnSpeed = 0.7f;
+    public float walkSpeed = 0.8f;
+    public float frontTurnSpeed = 1.2f;
+    public float backTurnSpeed = 0.9f;
     private bool isFrozen = false; // whether the half's RigidBody's position is frozen in place 
 
     [Header("Splitting Variables")]
@@ -78,12 +78,9 @@ public class PlayerManager : MonoBehaviour
 
         // UnityEngine.Debug.DrawLine(backHalf.transform.position, Vector3.up, Color.blue, 2, false);
         // UnityEngine.Debug.DrawLine(backMagnet.transform.position, Vector3.up, Color.green, 2, false);
-
         // UnityEngine.Debug.DrawLine(frontHalf.transform.position, Vector3.up, Color.red, 2, false);
-        // UnityEngine.Debug.DrawLine(frontHalf.transform.position, Vector3.forward, Color.blue, 2, false);
-        // UnityEngine.Debug.DrawLine(frontHalf.transform.position, Vector3.right, Color.green, 2, false);
+        // UnityEngine.Debug.DrawLine(frontMagnet.transform.position, Vector3.up, Color.magenta, 2, false);
 
-        // // UnityEngine.Debug.DrawLine(frontMagnet.transform.position, Vector3.up, Color.magenta, 2, false);
     }
 
     // ADVANCED GETTERS/SETTERS ////////////////////////////////////////////
@@ -128,6 +125,7 @@ public class PlayerManager : MonoBehaviour
     // MOVEMENT METHODS ////////////////////////////////////////////
     private void runMovementLogic()
     {
+        // OLD CODE USING setPlayer1Movement() and setPlayer2Movement() methods ////////////////
         // if (fixedJoint != null && bothHalvesTurningOpposite())
         // {
         //     P1.Half.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition;
@@ -141,12 +139,10 @@ public class PlayerManager : MonoBehaviour
         //     P1.Half.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
         //     isFrozen = false;
         // }
-        //     P1.Half.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
-        //     P2.Half.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
-        // }
 
         // setPlayer1Movement();
         // setPlayer2Movement();
+        // OLD CODE USING setPlayer1Movement() and setPlayer2Movement() methods ////////////////
 
         // Get turning input from player1 (WASD keys) for turning:
         float turnInputP1 = 0.0f;

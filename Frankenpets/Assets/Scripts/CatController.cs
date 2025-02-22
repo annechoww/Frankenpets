@@ -12,6 +12,8 @@ public class CatController : MonoBehaviour, CatControls.IGameplayActions
     private bool isClimbing = false;
     private Vector3 climbDirection;
     private CatControls controls;
+    private GameObject climbText;
+
 
     private void Awake()
     {
@@ -20,6 +22,8 @@ public class CatController : MonoBehaviour, CatControls.IGameplayActions
         
         // Subscribe to input events through the interface
         controls.Gameplay.SetCallbacks(this);
+
+        climbText = GameObject.FindGameObjectWithTag("ClimbText");
     }
 
     private void OnEnable()
@@ -77,6 +81,10 @@ public class CatController : MonoBehaviour, CatControls.IGameplayActions
     {
         if (other.CompareTag("Climbable"))
         {
+            // Show UI Popover
+            climbText.SetActive(true);
+            climbText.transform.position = other.transform.position + (Vector3.forward * 0.05f);
+
             isNearClimbable = true;
             // Get the surface normal to determine climb direction
             if (Physics.Raycast(transform.position, other.transform.position - transform.position, out RaycastHit hit, climbCheckDistance))
@@ -95,6 +103,9 @@ public class CatController : MonoBehaviour, CatControls.IGameplayActions
     {
         if (other.CompareTag("Climbable"))
         {
+            // Hide UI popover
+            climbText.SetActive(false);
+
             isNearClimbable = false;
             if (isClimbing)
             {
