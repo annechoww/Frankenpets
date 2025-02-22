@@ -13,7 +13,7 @@ Actions NOT implemented in this script:
     - Tail Usage
     - Front Paw Usage
 */
-public class PlayerController : MonoBehaviour
+public class PlayerActions : MonoBehaviour
 {
     [Header("Jumping Variables")]
     public float jumpForce = 15f;
@@ -36,7 +36,7 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
-        // Find the PlayerManager in the scene (assuming it's attached to a GameObject)
+        // Find the PlayerManager in the scene
         playerManager = FindObjectOfType<PlayerManager>();
 
         // Now you can access Player details like P1.Species
@@ -99,6 +99,7 @@ public class PlayerController : MonoBehaviour
     {
         if ((Input.GetKey(KeyCode.X) && P1.IsFront) || ((Input.GetKey(KeyCode.Comma)) && P2.IsFront))
         {
+            // TODO: Add animation trigger when this happens to frontHalf
             string frontSpecies = P1.IsFront ? P1.Species : P2.Species;
             AudioSource audioSource = gameObject.GetComponent<AudioSource>();
             if (audioSource == null)
