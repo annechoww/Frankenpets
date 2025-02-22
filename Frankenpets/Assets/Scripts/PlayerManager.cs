@@ -38,8 +38,6 @@ public class PlayerManager : MonoBehaviour
     public GameObject dogBack;
     private Stopwatch switchStopwatch = new Stopwatch();
 
-
-
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -75,14 +73,17 @@ public class PlayerManager : MonoBehaviour
             runSeparatedMovementLogic();
         }
         
-        runSplitLogic();
-        runSwitchLogic();
+        // runSplitLogic();
+        // runSwitchLogic();
 
-        UnityEngine.Debug.DrawLine(backHalf.transform.position, Vector3.up, Color.blue, 2, false);
-        UnityEngine.Debug.DrawLine(backMagnet.transform.position, Vector3.up, Color.green, 2, false);
+        // UnityEngine.Debug.DrawLine(backHalf.transform.position, Vector3.up, Color.blue, 2, false);
+        // UnityEngine.Debug.DrawLine(backMagnet.transform.position, Vector3.up, Color.green, 2, false);
 
-        UnityEngine.Debug.DrawLine(frontHalf.transform.position, Vector3.up, Color.red, 2, false);
-        UnityEngine.Debug.DrawLine(frontMagnet.transform.position, Vector3.up, Color.magenta, 2, false);
+        // UnityEngine.Debug.DrawLine(frontHalf.transform.position, Vector3.up, Color.red, 2, false);
+        // UnityEngine.Debug.DrawLine(frontHalf.transform.position, Vector3.forward, Color.blue, 2, false);
+        // UnityEngine.Debug.DrawLine(frontHalf.transform.position, Vector3.right, Color.green, 2, false);
+
+        // // UnityEngine.Debug.DrawLine(frontMagnet.transform.position, Vector3.up, Color.magenta, 2, false);
     }
 
     // ADVANCED GETTERS/SETTERS ////////////////////////////////////////////
@@ -180,6 +181,25 @@ public class PlayerManager : MonoBehaviour
         // Apply the combined translation (forward/back) to both halves:
         frontHalf.transform.Translate(Vector3.forward * combinedMove * Time.deltaTime, Space.Self);
         backHalf.transform.Translate(Vector3.forward * combinedMove * Time.deltaTime, Space.Self);
+
+        // Update rig movement directionality
+        int direction = combinedMove >= 0 ? 1:-1;
+        RiggingMovement[] catFrontRigs = catFront.GetComponentsInChildren<RiggingMovement>();
+        //RiggingMovement[] catBackRigs = catBack.GetComponentsInChildren<RiggingMovement>();
+        //RiggingMovement[] dogFrontRigs = dogFront.GetComponentsInChildren<RiggingMovement>();
+        RiggingMovement[] dogBackRigs = dogBack.GetComponentsInChildren<RiggingMovement>();
+
+        //RiggingMovement[] allRigs = new RiggingMovement[catFrontRigs.Length + catBackRigs.Length + dogFrontRigs.Length + dogBackRigs.Length];
+        RiggingMovement[] allRigs = new RiggingMovement[catFrontRigs.Length + dogBackRigs.Length];
+        catFrontRigs.CopyTo(allRigs, 0);
+        dogBackRigs.CopyTo(allRigs, catFrontRigs.Length);
+        //dogFrontRigs.CopyTo(allRigs, catFrontRigs.Length + catBackRigs.Length);
+        //dogBackRigs.CopyTo(allRigs, catFrontRigs.Length + catBackRigs.Length + dogFrontRigs.Length);
+
+        foreach (RiggingMovement rigging in allRigs)
+        {
+            rigging.changeTargetDirection(direction);
+        }
     }
 
     private void setPlayer1Movement()
