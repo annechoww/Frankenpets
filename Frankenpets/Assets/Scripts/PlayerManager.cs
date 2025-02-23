@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Diagnostics;
+using Unity.Cinemachine;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -36,6 +37,15 @@ public class PlayerManager : MonoBehaviour
     public GameObject dogFront;
     public GameObject catBack;
     public GameObject dogBack;
+
+    public PetStationManager stationManager;
+
+    [Header("Cameras")]
+    public CinemachineCamera player1Camera;
+    public CinemachineCamera player2Camera;
+    public CameraMovement cameraMovement;
+    public CinemachineCamera mainCamera;
+
     private Stopwatch switchStopwatch = new Stopwatch();
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -63,6 +73,7 @@ public class PlayerManager : MonoBehaviour
 
         alignHalves();
         setJoint();
+
     }
 
     // Update is called once per frame
@@ -351,6 +362,7 @@ public class PlayerManager : MonoBehaviour
 
     private void tryReconnect()
     {
+
         float distance = Vector3.Distance(frontMagnet.transform.position, backMagnet.transform.position);
         if (distance < reconnectionDistance)
         {
@@ -599,6 +611,90 @@ public class PlayerManager : MonoBehaviour
         }
     }
     // SWITCHING METHODS ////////////////////////////////////////////
+    public void TransferControl(GameObject dockedHalf, GameObject counterpart)
+    {
+        // First determine which player owns this half
+        bool isPlayer1Docked = false;
+        
+        // Check under Player1's children
+        foreach (Transform child in transform.GetChild(0))
+        {
+            if (child.gameObject == dockedHalf)
+            {
+                isPlayer1Docked = true;
+                break;
+            }
+        }
+
+        Player controllingPlayer = isPlayer1Docked ? P1 : P2;
+        Player otherPlayer = isPlayer1Docked ? P2 : P1;
+
+        // Update the controlling player's half reference
+        controllingPlayer.Half = counterpart;
+        
+        // Update magnet reference - make sure magnet exists
+        GameObject petMagnet = null;
+
+        foreach (Transform child in counterpart.GetComponentsInChildren<Transform>())
+        {
+            if (child.CompareTag("PetMagnet"))
+            {
+                petMagnet = child.gameObject;
+                break;
+            }
+        }
+
+        if (petMagnet != null)
+        {
+            controllingPlayer.Magnet = petMagnet;
+        }
+        else
+        {
+            UnityEngine.Debug.LogError($"No magnet found on {counterpart.name}");
+        }
+
+        // Update front/back status if needed
+        bool wasControllingFront = dockedHalf.name.Contains("Front");
+        bool willControlFront = counterpart.name.Contains("Front");
+        
+        if (wasControllingFront != willControlFront)
+        {
+            controllingPlayer.IsFront = willControlFront;
+            otherPlayer.IsFront = !willControlFront;
+        }
+
+        // Make sure the Rigidbody is not kinematic after transfer
+        Rigidbody rb = counterpart.GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.isKinematic = false;
+        }
+
+        bool isDocked = dockedHalf.GetComponent<Rigidbody>().isKinematic;
+        if (isDocked && counterpart != null) {
+            if (controllingPlayer.PlayerNumber == 1) {
+                player1Camera.Follow = counterpart.transform;
+                player1Camera.LookAt = counterpart.transform;
+            } else {
+                player2Camera.Follow = counterpart.transform;
+                player2Camera.LookAt = counterpart.transform;
+            }
+        }
+
+        refreshHalves();
+    }
+
+    public void refreshHalves()
+    {
+        frontHalf = getFrontHalf();
+        backHalf = getBackHalf();
+        frontMagnet = getFrontMagnet();
+        backMagnet = getBackMagnet();
+
+        cameraMovement.frontHalf = frontHalf.transform;
+        mainCamera.Follow = frontHalf.transform;
+        mainCamera.LookAt = frontHalf.transform;
+    }
 
     // COLLISION METHODS ////////////////////////////////////////////
     void EnsureUpright() {
