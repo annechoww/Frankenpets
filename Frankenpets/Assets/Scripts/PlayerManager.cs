@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Diagnostics;
+using UnityEditor.VersionControl;
+using UnityEngine.Rendering;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -8,18 +10,18 @@ public class PlayerManager : MonoBehaviour
     public GameObject P2Half; // Only use for initializing
     public GameObject P1Magnet; // Only use for initializing
     public GameObject P2Magnet; // Only use for initializing
-    public FixedJoint fixedJoint;
+    private FixedJoint fixedJoint;
     public Player P1 = new Player();
     public Player P2 = new Player();
 
     [Header("Movement Variables")]
     public float walkSpeed = 0.8f;
-    public float frontTurnSpeed = 1.2f;
-    public float backTurnSpeed = 0.9f;
-    private bool isFrozen = false; // whether the half's RigidBody's position is frozen in place 
+    public float frontTurnSpeed = 1.5f;
+    public float backTurnSpeed = 1.5f;
+    // private bool isFrozen = false; // whether the half's RigidBody's position is frozen in place 
 
     [Header("Splitting Variables")]
-    public float reconnectionDistance = 10.0f;
+    public float reconnectionDistance = 0.3f;
     public float splitTime = 1.0f;
     public KeyCode reconnectToggleKey = KeyCode.Space;
     private Stopwatch splitStopwatch = new Stopwatch();
@@ -38,6 +40,12 @@ public class PlayerManager : MonoBehaviour
     public GameObject dogBack;
     private Stopwatch switchStopwatch = new Stopwatch();
 
+    [Header("Emoticons")]
+    public GameObject sadEmote;    
+    public GameObject happyEmote;
+
+    // Others
+    private MessageManager messageManager;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -65,6 +73,12 @@ public class PlayerManager : MonoBehaviour
 
         alignHalves();
         setJoint();
+
+        // Other variables
+        // sadEmote = GameObject.FindGameObjectWithTag("SadEmote");
+        // happyEmote = GameObject.FindGameObjectWithTag("HappyEmote");
+        messageManager = GameObject.Find("Messages").GetComponent<MessageManager>();
+
     }
 
     // Update is called once per frame
@@ -80,23 +94,6 @@ public class PlayerManager : MonoBehaviour
         
         runSplitLogic();
         runSwitchLogic();
-
-        // Debugging
-        // UnityEngine.Debug.DrawLine(backHalf.transform.position, Vector3.up, Color.blue, 2, false);
-        // UnityEngine.Debug.DrawLine(backMagnet.transform.position, Vector3.up, Color.green, 2, false);
-        // UnityEngine.Debug.DrawLine(frontHalf.transform.position, Vector3.up, Color.red, 2, false);
-        // UnityEngine.Debug.DrawLine(frontMagnet.transform.position, Vector3.up, Color.magenta, 2, false);
-
-        // UnityEngine.Debug.DrawLine(backHalf.transform.position, backHalf.transform.up, Color.green, 2, false);
-        // UnityEngine.Debug.DrawLine(backHalf.transform.position, backHalf.transform.right, Color.blue, 2, false);
-        // UnityEngine.Debug.DrawLine(backHalf.transform.position, backHalf.transform.forward, Color.red, 2, false);
-        // UnityEngine.Debug.DrawLine(backHalf.transform.position, backHalf.transform.position+Vector3.up, Color.red, 2, false);
-        // UnityEngine.Debug.DrawLine(backHalf.transform.position, backHalf.transform.position+Vector3.right, Color.green, 2, false);
-        // UnityEngine.Debug.DrawLine(backHalf.transform.position, backHalf.transform.position+Vector3.forward, Color.blue, 2, false);
-        // UnityEngine.Debug.DrawLine(frontHalf.transform.position, Vector3.up, Color.red, 2, false);
-        // UnityEngine.Debug.DrawLine(frontHalf.transform.position, Vector3.forward, Color.blue, 2, false);
-        // UnityEngine.Debug.DrawLine(frontHalf.transform.position, Vector3.right, Color.green, 2, false);
-
     }
 
     // ADVANCED GETTERS/SETTERS ////////////////////////////////////////////
@@ -141,12 +138,12 @@ public class PlayerManager : MonoBehaviour
 
             // Apply Rigidbody constraints to prevent tilting
             frontHalf.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
-            
+      
     }
 
-    public FixedJoint GetJoint(Player frontPlayer)
+    public FixedJoint getJoint()
     {
-        return frontPlayer.Half.transform.GetChild(0).gameObject.GetComponent<FixedJoint>();
+        return getFrontHalf().GetComponent<FixedJoint>(); // frontPlayer.Half.transform.GetChild(0).gameObject.GetComponent<FixedJoint>();
     }
     // ADVANCED GETTERS/SETTERS ////////////////////////////////////////////
 
@@ -321,13 +318,12 @@ public class PlayerManager : MonoBehaviour
             frontHalf.GetComponent<Rigidbody>().constraints |= RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
             backHalf.GetComponent<Rigidbody>().constraints |= RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
-
-
+            messageManager.cameraIndicatorMessage();
             UnityEngine.Debug.Log("Halves disconnected due to opposing pull.");
         }
 
         // Reconnection: if there's no fixed joint and the reconnect key is pressed, try to reconnect.
-        if (fixedJoint == null && Input.GetKeyDown(reconnectToggleKey))
+        if (fixedJoint == null && Input.GetKeyDown(reconnectToggleKey)) 
         {
             tryReconnect();
         }
@@ -363,6 +359,7 @@ public class PlayerManager : MonoBehaviour
     private void tryReconnect()
     {
         float distance = Vector3.Distance(frontMagnet.transform.position, backMagnet.transform.position);
+        UnityEngine.Debug.Log("distance = " + distance);
         if (distance < reconnectionDistance)
         {
             UnityEngine.Debug.Log("Trying to reconnect.");
@@ -413,6 +410,11 @@ public class PlayerManager : MonoBehaviour
             initialRelativeRotation = Quaternion.Inverse(frontHalf.transform.rotation) * backHalf.transform.rotation;
 
         }
+        else
+        {
+            // error message
+            messageManager.reconnectFailMessage();
+        }
     }
 
     private void alignHalves()
@@ -448,7 +450,7 @@ public class PlayerManager : MonoBehaviour
         if (fixedJoint == null)
         {
             // not allowed; show text to players saying they must be together 
-
+            messageManager.switchFailMessage();
         }
         else
         {
@@ -483,7 +485,9 @@ public class PlayerManager : MonoBehaviour
                     dogFront.transform.SetParent(null);
 
                     catFront.transform.position = frontHalf.transform.position; 
+                    catFront.transform.rotation = frontHalf.transform.rotation;
                     dogBack.transform.position = backHalf.transform.position;
+                    dogBack.transform.rotation = backHalf.transform.rotation;
 
                     // set the correct halves as children under P1 and P2
                     catFront.transform.SetParent(transform.GetChild(0));
@@ -511,8 +515,11 @@ public class PlayerManager : MonoBehaviour
                     // back half = cat = P2
                     catFront.transform.SetParent(null);
                     dogBack.transform.SetParent(null);
+
                     catBack.transform.position = backHalf.transform.position;
+                    catBack.transform.rotation = backHalf.transform.rotation;
                     dogFront.transform.position = frontHalf.transform.position;
+                    dogFront.transform.rotation = frontHalf.transform.rotation;
 
                     // catFront.transform.SetParent(null);
                     catBack.transform.SetParent(transform.GetChild(1));
@@ -541,8 +548,11 @@ public class PlayerManager : MonoBehaviour
                     // back half = dog = P1
                     catBack.transform.SetParent(null);
                     dogFront.transform.SetParent(null);
+
                     catFront.transform.position = frontHalf.transform.position;
+                    catFront.transform.rotation = frontHalf.transform.rotation;
                     dogBack.transform.position = backHalf.transform.position;
+                    dogBack.transform.rotation = backHalf.transform.rotation;
 
                     catFront.transform.SetParent(transform.GetChild(1));
                     // catBack.transform.SetParent(null);
@@ -560,7 +570,7 @@ public class PlayerManager : MonoBehaviour
                     backHalf = dogBack;
                     P2.Magnet = frontHalf.transform.GetChild(3).gameObject;
                     P1.Magnet = backHalf.transform.GetChild(3).gameObject;
-                    
+
                 }
                 else
                 {
@@ -568,8 +578,11 @@ public class PlayerManager : MonoBehaviour
                     // back half = cat = P1
                     catFront.transform.SetParent(null);
                     dogBack.transform.SetParent(null);
+
                     catBack.transform.position = backHalf.transform.position;
+                    catBack.transform.rotation = backHalf.transform.rotation;
                     dogFront.transform.position = frontHalf.transform.position;
+                    dogFront.transform.rotation = frontHalf.transform.rotation;
                     
                     // catFront.transform.SetParent(null);
                     catBack.transform.SetParent(transform.GetChild(0));
@@ -591,24 +604,50 @@ public class PlayerManager : MonoBehaviour
                 }
             }
            
-            alignHalves();
+            // alignHalves();
 
             // Restablish the fixed joint
-            fixedJoint = frontHalf.GetComponent<FixedJoint>();
-            UnityEngine.Debug.Log("curr fixed joint: ", fixedJoint);
-            if (fixedJoint == null) 
-            {
-                setJoint();
-            }
+
+            // fixedJoint = frontHalf.GetComponent<FixedJoint>();
+            // UnityEngine.Debug.Log("curr fixed joint: ", fixedJoint);
+            // if (fixedJoint == null) 
+            // {
+            //     setJoint();
+            // }
 
             // SplitLogic splitLogicScript = GetComponent<SplitLogic>();
             // splitLogicScript.reconnect();
 
+            // Reset the rotation according to the new halves (maybe don't need this though because new halves should be in same rotation as old ones?)
             // initialRelativeRotation = Quaternion.Inverse(frontHalf.transform.rotation) * backHalf.transform.rotation;
 
             UnityEngine.Debug.Log("Switched!");
         }
     }
     // SWITCHING METHODS ////////////////////////////////////////////
+
+    // EMOTES ////////////////////////////////////////////
+    public GameObject startEmote(GameObject half, string emotion)
+    {
+        GameObject emoticon;
+
+        switch (emotion)
+        {
+            case "sad": emoticon = sadEmote; break;
+            default: emoticon = happyEmote; break;
+        }
+
+        emoticon.SetActive(true);
+        emoticon.transform.SetParent(half.transform);
+        emoticon.transform.position = half.transform.position + (Vector3.up * 0.35f);
+        return emoticon;
+    }
+
+    public void cancelEmote(GameObject emoticon)
+    {
+        emoticon.transform.SetParent(null);
+        emoticon.SetActive(false);
+    }
+    // EMOTES ////////////////////////////////////////////
 
 }
