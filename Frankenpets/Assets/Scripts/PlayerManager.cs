@@ -189,7 +189,6 @@ public class PlayerManager : MonoBehaviour
         backHalf.transform.Translate(Vector3.forward * combinedMove * Time.deltaTime, Space.Self);
 
         // Update rig movement directionality
-        int direction = combinedMove >= 0 ? 1:-1;
         RiggingMovement[] catFrontRigs = catFront.GetComponentsInChildren<RiggingMovement>();
         //RiggingMovement[] catBackRigs = catBack.GetComponentsInChildren<RiggingMovement>();
         //RiggingMovement[] dogFrontRigs = dogFront.GetComponentsInChildren<RiggingMovement>();
@@ -204,7 +203,7 @@ public class PlayerManager : MonoBehaviour
 
         foreach (RiggingMovement rigging in allRigs)
         {
-            rigging.changeTargetDirection(direction);
+            rigging.changeTargetDirection(combinedMove);
         }
     }
 

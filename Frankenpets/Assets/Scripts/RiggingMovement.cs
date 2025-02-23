@@ -9,6 +9,7 @@ public class RiggingMovement : MonoBehaviour
     public float stepDistance, stepHeight, stepLength, footSpacing, speed;
     public Transform defaultTargetBody;
     public Transform altTargetBody;
+    //public Transform stillBody;
     public Vector3 footOffset;
 
     Vector3 oldPosition, newPosition, currentPosition;
@@ -24,14 +25,13 @@ public class RiggingMovement : MonoBehaviour
         body = defaultTargetBody;
     }
 
-    public void changeTargetDirection(int direction){
+    public void changeTargetDirection(float direction){
 
-         if (direction == 1)  //forward
+         if (direction >= 0)  //forward
         {
             body = defaultTargetBody;
         }
-        else
-        {
+        else{
             body = altTargetBody;
         }
     }
