@@ -49,12 +49,15 @@ public class PlayerActions : MonoBehaviour
     private Rigidbody frontRb;
     private Rigidbody backRb;
 
+    private HavocManager havocMeter;
+
     private void Start()
     {
         climbText = GameObject.FindGameObjectWithTag("ClimbText");
         grabText = GameObject.FindGameObjectWithTag("GrabText");
         
         Invoke("getPlayerManager", 1f);
+        havocMeter = GameObject.Find("HavocManager").GetComponent<HavocManager>();
     }
 
     private void Update()
@@ -103,6 +106,9 @@ public class PlayerActions : MonoBehaviour
             
             canGrab = true;
         }
+
+        // One point is added per collision
+        havocMeter.collectHavocPoints(1);
     }
 
     private void OnTriggerExit(Collider other)
@@ -192,6 +198,8 @@ public class PlayerActions : MonoBehaviour
 
             audioSource.clip = (frontSpecies == "cat") ? catClip : dogClip;
             audioSource.Play();
+
+            havocMeter.collectHavocPoints(2);
         }
     }
 
@@ -222,6 +230,7 @@ public class PlayerActions : MonoBehaviour
         frontRb.angularVelocity = Vector3.zero;
         // Freeze rotation while climbing
         frontRb.constraints = RigidbodyConstraints.FreezeRotation;
+        havocMeter.collectHavocPoints(1);
     }
 
     private void StopClimbing()
@@ -262,6 +271,7 @@ public class PlayerActions : MonoBehaviour
         } else if (((Input.GetKeyDown(KeyCode.C) && P1.IsFront) || (Input.GetKeyDown(KeyCode.Slash) && P2.IsFront)) && canGrab)
         {
             Debug.Log("Grabbed item");
+            havocMeter.collectHavocPoints(5);
             
             mouthPosition = transform.position + transform.TransformDirection(Vector3.forward * 0.23f + Vector3.up * 0.202f);
             Physics.IgnoreLayerCollision(10, 9, true);

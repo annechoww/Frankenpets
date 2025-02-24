@@ -7,6 +7,7 @@ public class MoveRugTask : MonoBehaviour
     public Color completedColor;
     public GameObject openedAtticDoor;
 
+    private HavocManager havocMeter; 
     private TutorialText tutorialText;
 
     void Awake()
@@ -43,6 +44,8 @@ public class MoveRugTask : MonoBehaviour
             tutorialText.advanceTutorialStage();
         }
 
+        havocMeter = GameObject.Find("HavocManager").GetComponent<HavocManager>();
+        havocMeter.collectHavocPoints(10);
         openedAtticDoor.SetActive(true);
         gameObject.SetActive(false);
     }
