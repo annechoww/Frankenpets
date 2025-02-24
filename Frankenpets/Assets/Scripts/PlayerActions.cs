@@ -6,8 +6,8 @@ This Class handles all player actions. The actions are mapped as follows:
     ----------------------------------------------
     |         Front         |        Back        |
     |--------------------------------------------|
-    | Make Noise (X or .)   | Jump (X or ,)      |
-    | Front Paws (Z or ,)   | Use Tail (Z or ,)  |
+    | Make Noise (X or .)   | Jump (Z or ,)      |
+    | Front Paws (Z or ,)   | Use Tail (X or .)  |
     ----------------------------------------------
 */
 
