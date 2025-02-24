@@ -3,7 +3,6 @@ using UnityEngine;
 public class PlayAudioOnDrop : MonoBehaviour
 {
     [Header("References")]
-    public GameObject obj;
     public float force = 1f;
     public AudioClip audioClip;
 

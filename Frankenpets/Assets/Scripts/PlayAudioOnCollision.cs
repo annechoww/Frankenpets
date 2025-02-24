@@ -3,7 +3,7 @@ using UnityEngine;
 public class PlayAudioOnCollision : MonoBehaviour
 {
     [Header("References")]
-    public float force = 0.1f;
+    public float force = 0.05f;
     public AudioClip audioClip;
 
     void OnCollisionEnter(Collision collision)

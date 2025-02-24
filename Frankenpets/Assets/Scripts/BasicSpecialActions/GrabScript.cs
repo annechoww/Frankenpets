@@ -10,6 +10,7 @@ public class GrabScript : MonoBehaviour
     private GameObject grabText;
     private Vector3 mouthPosition;
     private Vector3 mouthDirection;
+    private FixedJoint draggableJoint;
 
 
 
@@ -31,54 +32,54 @@ public class GrabScript : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.M) && isGrabbing)
         {
             Debug.Log("Released item");
-            grabbableObject.transform.SetParent(null);
-            
-            grabbableObject.gameObject.GetComponent<Rigidbody>().isKinematic = false;
             Physics.IgnoreLayerCollision(10, 9, false);
-
             // Physics.IgnoreCollision(grabbableObject, transform.GetComponent<Collider>(), false);
-            // grabbableObject.gameObject.GetComponent<Rigidbody>().detectCollisions = true;
+
+            if (grabbableObject.CompareTag("Draggable"))
+            {
+                grabbableObject.transform.parent.SetParent(null);
+                grabbableObject.transform.parent.gameObject.GetComponent<Rigidbody>().isKinematic = false;
+            }
+            else
+            {
+                grabbableObject.transform.SetParent(null);
+                grabbableObject.gameObject.GetComponent<Rigidbody>().isKinematic = false;
+            }
 
             isGrabbing = false;
 
         } else if (Input.GetKeyDown(KeyCode.M) && canGrab)
         {
             Debug.Log("Grabbed item");
-
-            ////////////////////////////////////////////////////////
-            // CODE FOR FIXED JOINT STUFF BUT CURRENTLY NOT USING 
-            // FixedJoint grabbableObjectJoint = grabbableObject.transform.GetChild(0).transform.GetComponent<FixedJoint>();
-            // grabbableObjectJoint.connectedBody = transform.GetChild(0).transform.GetComponent<Rigidbody>();
-            ////////////////////////////////////////////////////////
             
             mouthPosition = transform.position + transform.TransformDirection(Vector3.forward * 0.23f + Vector3.up * 0.202f);
             // mouthDirection = mouthPosition + transform.TransformDirection(Vector3.forward);
 
-            // Future: maybe need to Raycast (double hit) to calculate mouth opening angle 
-            // if (Physics.Raycast(mouthPosition, grabbableObject.transform.position, out hit, maxHitDistance))
-            // {
-            //     Debug.DrawLine(mouthPosition, hit.point, Color.red, 2, false);
-            //     Debug.Log("Raycast");
-            //     grabbableObject.transform.GetChild(0).transform.GetChild
-            // } 
-            // else 
-            // {
-            //     Debug.Log("No raycast");
-            //     grabbableObject.transform.position = mouthPosition;
-            // }
-            // grabbableObject.transform.GetChild(0).transform.position = mouthPosition;
-
-            grabbableObject.gameObject.GetComponent<Rigidbody>().isKinematic = true;
             Physics.IgnoreLayerCollision(10, 9, true);
-
-            // grabbableObject.gameObject.GetComponent<Rigidbody>().detectCollisions = false;
             // Physics.IgnoreCollision(grabbableObject, transform.GetComponent<Collider>(), true);
 
-            grabbableObject.transform.SetParent(transform);
-            grabbableObject.transform.position = mouthPosition;
+            // GameObjects tagged as Draggable are actually just small target points of a parent GameObject; dog will use drag animation
+            // Examples of Draggable items: carpets
+            // GameObjects tagged as Grabbable are directly grabbed by the dog
+            // Examples of Grabbable: small items like vases, books
+            if (grabbableObject.CompareTag("Draggable"))
+            {                                
+                grabbableObject.transform.parent.gameObject.GetComponent<Rigidbody>().isKinematic = true;
+                grabbableObject.transform.parent.SetParent(transform);
+                grabbableObject.transform.parent.position += transform.TransformDirection(Vector3.up * 0.05f);
+
+                // bite animation
+            } 
+            else
+            {
+                grabbableObject.gameObject.GetComponent<Rigidbody>().isKinematic = true;
+                grabbableObject.transform.SetParent(transform);
+                grabbableObject.transform.position = mouthPosition;
+            }
 
             isGrabbing = true;
             grabText.SetActive(false);
+
         }
         
     }
@@ -86,7 +87,7 @@ public class GrabScript : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         Debug.Log("Something is grabbable.");
-        if (other.CompareTag("Grabbable") && !isGrabbing)
+        if ((other.CompareTag("Grabbable") || other.CompareTag("Draggable")) && !isGrabbing)
         {
             grabbableObject = other;
             
@@ -96,6 +97,16 @@ public class GrabScript : MonoBehaviour
             
             canGrab = true;
         }
+
+        // if (other.CompareTag("Carpet") && !isGrabbing)
+        // {
+        //     carpetJoint = other.gameObject.AddComponent<FixedJoint>();
+        //     carpetJoint.connectedBody = GetComponent<Rigidbody>(); // Attach carpet to the dog
+
+        //     other.transform.position = mouthPosition;
+
+        //     // bite animation
+        // }
     }
 
     void OnTriggerExit(Collider other)
@@ -106,6 +117,18 @@ public class GrabScript : MonoBehaviour
             // Hide UI Popover
             grabText.SetActive(false);
             canGrab = false;
+        }
+
+        if (other.CompareTag("Draggable"))
+        {
+            // Hide UI Popover
+            grabText.SetActive(false);
+            canGrab = false;
+            
+            // if (draggableJoint != null)
+            // {
+            //     Destroy(draggableJoint);
+            // }
         }
     }
 }

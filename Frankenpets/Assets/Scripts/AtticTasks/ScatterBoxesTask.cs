@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public class ScatterBoxesTask : MonoBehaviour
 {
-    public float forceMagnitude;
+    // public float forceMagnitude;
 
 
     void OnCollisionEnter(Collision collision)
