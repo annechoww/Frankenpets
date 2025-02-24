@@ -1,6 +1,9 @@
 using UnityEngine;
 using System.Diagnostics;
 using Unity.Cinemachine;
+using UnityEditor.VersionControl;
+using UnityEngine.Rendering;
+using Unity.VisualScripting;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -9,18 +12,18 @@ public class PlayerManager : MonoBehaviour
     public GameObject P2Half; // Only use for initializing
     public GameObject P1Magnet; // Only use for initializing
     public GameObject P2Magnet; // Only use for initializing
-    public FixedJoint fixedJoint;
+    private FixedJoint fixedJoint;
     public Player P1 = new Player();
     public Player P2 = new Player();
 
     [Header("Movement Variables")]
     public float walkSpeed = 0.8f;
-    public float frontTurnSpeed = 1.2f;
-    public float backTurnSpeed = 0.9f;
-    private bool isFrozen = false; // whether the half's RigidBody's position is frozen in place 
+    public float frontTurnSpeed = 1.5f;
+    public float backTurnSpeed = 1.5f;
+    // private bool isFrozen = false; // whether the half's RigidBody's position is frozen in place 
 
     [Header("Splitting Variables")]
-    public float reconnectionDistance = 10.0f;
+    public float reconnectionDistance = 0.3f;
     public float splitTime = 1.0f;
     public KeyCode reconnectToggleKey = KeyCode.Space;
     private Stopwatch splitStopwatch = new Stopwatch();
@@ -48,6 +51,14 @@ public class PlayerManager : MonoBehaviour
 
     private Stopwatch switchStopwatch = new Stopwatch();
 
+    [Header("Emoticons")]
+    public GameObject sadEmote;    
+    public GameObject happyEmote;
+
+    // Others
+    private MessageManager messageManager;
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -74,6 +85,11 @@ public class PlayerManager : MonoBehaviour
         alignHalves();
         setJoint();
 
+        // Other variables
+        // sadEmote = GameObject.FindGameObjectWithTag("SadEmote");
+        // happyEmote = GameObject.FindGameObjectWithTag("HappyEmote");
+        messageManager = GameObject.Find("Messages").GetComponent<MessageManager>();
+
     }
 
     // Update is called once per frame
@@ -90,11 +106,6 @@ public class PlayerManager : MonoBehaviour
         runSplitLogic();
         runSwitchLogic();
         EnsureUpright();
-
-        // UnityEngine.Debug.DrawLine(backHalf.transform.position, Vector3.up, Color.blue, 2, false);
-        // UnityEngine.Debug.DrawLine(backMagnet.transform.position, Vector3.up, Color.green, 2, false);
-        // UnityEngine.Debug.DrawLine(frontHalf.transform.position, Vector3.up, Color.red, 2, false);
-        // UnityEngine.Debug.DrawLine(frontMagnet.transform.position, Vector3.up, Color.magenta, 2, false);
 
     }
 
@@ -140,12 +151,12 @@ public class PlayerManager : MonoBehaviour
 
             // Apply Rigidbody constraints to prevent tilting
             frontHalf.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
-            
+      
     }
 
-    public FixedJoint GetJoint(Player frontPlayer)
+    public FixedJoint getJoint()
     {
-        return frontPlayer.Half.transform.GetChild(0).gameObject.GetComponent<FixedJoint>();
+        return getFrontHalf().GetComponent<FixedJoint>(); // frontPlayer.Half.transform.GetChild(0).gameObject.GetComponent<FixedJoint>();
     }
     // ADVANCED GETTERS/SETTERS ////////////////////////////////////////////
 
@@ -153,7 +164,6 @@ public class PlayerManager : MonoBehaviour
     // MOVEMENT METHODS ////////////////////////////////////////////
     private void runMovementLogic()
     {
-
         // Get turning input from player1 (WASD keys) for turning:
         float turnInputP1 = 0.0f;
         if (Input.GetKey(KeyCode.A)) turnInputP1 -= frontTurnSpeed;
@@ -320,13 +330,12 @@ public class PlayerManager : MonoBehaviour
             frontHalf.GetComponent<Rigidbody>().constraints |= RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
             backHalf.GetComponent<Rigidbody>().constraints |= RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
-
-
+            messageManager.cameraIndicatorMessage(); // Will have split camera, so temporarily display the "P1" / "P2" labels
             UnityEngine.Debug.Log("Halves disconnected due to opposing pull.");
         }
 
         // Reconnection: if there's no fixed joint and the reconnect key is pressed, try to reconnect.
-        if (fixedJoint == null && Input.GetKeyDown(reconnectToggleKey))
+        if (fixedJoint == null && Input.GetKeyDown(reconnectToggleKey)) 
         {
             tryReconnect();
         }
@@ -413,6 +422,11 @@ public class PlayerManager : MonoBehaviour
             initialRelativeRotation = Quaternion.Inverse(frontHalf.transform.rotation) * backHalf.transform.rotation;
 
         }
+        else
+        {
+            // error message
+            messageManager.reconnectFailMessage();
+        }
     }
 
     private void alignHalves()
@@ -448,7 +462,7 @@ public class PlayerManager : MonoBehaviour
         if (fixedJoint == null)
         {
             // not allowed; show text to players saying they must be together 
-
+            messageManager.switchFailMessage();
         }
         else
         {
@@ -461,7 +475,7 @@ public class PlayerManager : MonoBehaviour
         switchStopwatch.Reset();
     }
 
-    private void tryFinishSwitch()
+    private bool tryFinishSwitch()
     {
         if ((switchStopwatch.Elapsed.TotalSeconds > switchTime) && (fixedJoint != null))
         {
@@ -470,6 +484,16 @@ public class PlayerManager : MonoBehaviour
             // Switch which half the players are controlling
             P1.IsFront = !P1.IsFront;
             P2.IsFront = !P2.IsFront;
+
+            catFront.SetActive(false);
+            catBack.SetActive(false);
+            dogFront.SetActive(false);
+            dogBack.SetActive(false);
+
+            catFront.GetComponent<Rigidbody>().isKinematic = true;
+            catBack.GetComponent<Rigidbody>().isKinematic = true;
+            dogFront.GetComponent<Rigidbody>().isKinematic = true;
+            dogBack.GetComponent<Rigidbody>().isKinematic = true;
 
             // Switch the half to the player's species
             if (P1.IsFront)
@@ -483,7 +507,9 @@ public class PlayerManager : MonoBehaviour
                     dogFront.transform.SetParent(null);
 
                     catFront.transform.position = frontHalf.transform.position; 
+                    catFront.transform.rotation = frontHalf.transform.rotation;
                     dogBack.transform.position = backHalf.transform.position;
+                    dogBack.transform.rotation = backHalf.transform.rotation;
 
                     // set the correct halves as children under P1 and P2
                     catFront.transform.SetParent(transform.GetChild(0));
@@ -492,18 +518,16 @@ public class PlayerManager : MonoBehaviour
                     dogBack.transform.SetParent(transform.GetChild(1));
 
                     // hide/unhide the halves
-                    catFront.SetActive(true);
-                    catBack.SetActive(false);
-                    dogFront.SetActive(false);
-                    dogBack.SetActive(true);
+                    // catFront.SetActive(true);
+                    // catBack.SetActive(false);
+                    // dogFront.SetActive(false);
+                    // dogBack.SetActive(true);
 
                     // update players and variables
                     P1.Half = catFront;
                     P2.Half = dogBack;
                     frontHalf = catFront;
                     backHalf = dogBack;
-                    P1.Magnet = frontHalf.transform.GetChild(3).gameObject;
-                    P2.Magnet = backHalf.transform.GetChild(3).gameObject;
                 }
                 else
                 {
@@ -511,26 +535,33 @@ public class PlayerManager : MonoBehaviour
                     // back half = cat = P2
                     catFront.transform.SetParent(null);
                     dogBack.transform.SetParent(null);
-                    catBack.transform.position = backHalf.transform.position;
-                    dogFront.transform.position = frontHalf.transform.position;
+
+                    catBack.transform.position = backHalf.transform.position + transform.TransformDirection(Vector3.up * 0.15f);
+                    catBack.transform.rotation = backHalf.transform.rotation;
+                    dogFront.transform.position = frontHalf.transform.position + transform.TransformDirection(Vector3.up * 0.15f);
+                    dogFront.transform.rotation = frontHalf.transform.rotation;
 
                     // catFront.transform.SetParent(null);
                     catBack.transform.SetParent(transform.GetChild(1));
                     dogFront.transform.SetParent(transform.GetChild(0));
                     // dogBack.transform.SetParent(null);
 
-                    catFront.SetActive(false);
-                    catBack.SetActive(true);
-                    dogFront.SetActive(true);
-                    dogBack.SetActive(false);
+                    // catFront.SetActive(false);
+                    // catBack.SetActive(true);
+                    // dogFront.SetActive(true);
+                    // dogBack.SetActive(false);
                     
                     P1.Half = dogFront;
                     P2.Half = catBack;
                     frontHalf = dogFront;
                     backHalf = catBack;
-                    P1.Magnet = frontHalf.transform.GetChild(3).gameObject;
-                    P2.Magnet = backHalf.transform.GetChild(3).gameObject;
                 }
+
+                P1.Magnet = frontHalf.transform.GetChild(2).gameObject;
+                P2.Magnet = backHalf.transform.GetChild(2).gameObject;
+                frontMagnet = P1.Magnet;
+                backMagnet = P2.Magnet;
+
             }
             else // if P2.IsFront
             {
@@ -541,26 +572,26 @@ public class PlayerManager : MonoBehaviour
                     // back half = dog = P1
                     catBack.transform.SetParent(null);
                     dogFront.transform.SetParent(null);
+
                     catFront.transform.position = frontHalf.transform.position;
+                    catFront.transform.rotation = frontHalf.transform.rotation;
                     dogBack.transform.position = backHalf.transform.position;
+                    dogBack.transform.rotation = backHalf.transform.rotation;
 
                     catFront.transform.SetParent(transform.GetChild(1));
                     // catBack.transform.SetParent(null);
                     // dogFront.transform.SetParent(null);
                     dogBack.transform.SetParent(transform.GetChild(0));
 
-                    catFront.SetActive(true);
-                    catBack.SetActive(false);
-                    dogFront.SetActive(false);
-                    dogBack.SetActive(true);
+                    // catFront.SetActive(true);
+                    // catBack.SetActive(false);
+                    // dogFront.SetActive(false);
+                    // dogBack.SetActive(true);
 
                     P2.Half = catFront;
                     P1.Half = dogBack;
                     frontHalf = catFront;
                     backHalf = dogBack;
-                    P2.Magnet = frontHalf.transform.GetChild(3).gameObject;
-                    P1.Magnet = backHalf.transform.GetChild(3).gameObject;
-                    
                 }
                 else
                 {
@@ -568,46 +599,53 @@ public class PlayerManager : MonoBehaviour
                     // back half = cat = P1
                     catFront.transform.SetParent(null);
                     dogBack.transform.SetParent(null);
-                    catBack.transform.position = backHalf.transform.position;
-                    dogFront.transform.position = frontHalf.transform.position;
+
+                    catBack.transform.position = backHalf.transform.position + transform.TransformDirection(Vector3.up * 0.15f);
+                    catBack.transform.rotation = backHalf.transform.rotation;
+                    dogFront.transform.position = frontHalf.transform.position + transform.TransformDirection(Vector3.up * 0.15f);
+                    dogFront.transform.rotation = frontHalf.transform.rotation;
+
                     
                     // catFront.transform.SetParent(null);
                     catBack.transform.SetParent(transform.GetChild(0));
                     dogFront.transform.SetParent(transform.GetChild(1));
                     // dogBack.transform.SetParent(null);
 
-                    catFront.SetActive(false);
-                    catBack.SetActive(true);
-                    dogFront.SetActive(true);
-                    dogBack.SetActive(false);
+                    // catFront.SetActive(false);
+                    // catBack.SetActive(true);
+                    // dogFront.SetActive(true);
+                    // dogBack.SetActive(false);
+
 
                     P2.Half = dogFront;
                     P1.Half = catBack;
                     frontHalf = dogFront;
                     backHalf = catBack;
-                    P2.Magnet = frontHalf.transform.GetChild(3).gameObject;
-                    P1.Magnet = backHalf.transform.GetChild(3).gameObject;
-
                 }
+                    P2.Magnet = frontHalf.transform.GetChild(2).gameObject;
+                    P1.Magnet = backHalf.transform.GetChild(2).gameObject;
+                    frontMagnet = P2.Magnet;
+                    backMagnet = P1.Magnet;
             }
            
             alignHalves();
+            setJoint(); // Restablish fixed joint 
+            
+            catFront.GetComponent<Rigidbody>().isKinematic = false;
+            catBack.GetComponent<Rigidbody>().isKinematic = false;
+            dogFront.GetComponent<Rigidbody>().isKinematic = false;
+            dogBack.GetComponent<Rigidbody>().isKinematic = false;
 
-            // Restablish the fixed joint
-            fixedJoint = frontHalf.GetComponent<FixedJoint>();
-            UnityEngine.Debug.Log("curr fixed joint: ", fixedJoint);
-            if (fixedJoint == null) 
-            {
-                setJoint();
-            }
-
-            // SplitLogic splitLogicScript = GetComponent<SplitLogic>();
-            // splitLogicScript.reconnect();
-
+            // Reset the rotation according to the new halves (maybe don't need this though because new halves should be in same rotation as old ones?)
             // initialRelativeRotation = Quaternion.Inverse(frontHalf.transform.rotation) * backHalf.transform.rotation;
+
+            P1.Half.SetActive(true);
+            P2.Half.SetActive(true);
 
             UnityEngine.Debug.Log("Switched!");
         }
+
+        return false;
     }
     // SWITCHING METHODS ////////////////////////////////////////////
     public void TransferControl(GameObject dockedHalf, GameObject counterpart)
@@ -711,5 +749,30 @@ public class PlayerManager : MonoBehaviour
     }
 }
     // COLLISION METHODS ////////////////////////////////////////////
+
+
+    // EMOTES ////////////////////////////////////////////
+    public GameObject startEmote(GameObject half, string emotion)
+    {
+        GameObject emoticon;
+
+        switch (emotion)
+        {
+            case "sad": emoticon = sadEmote; break;
+            default: emoticon = happyEmote; break;
+        }
+
+        emoticon.SetActive(true);
+        emoticon.transform.SetParent(half.transform);
+        emoticon.transform.position = half.transform.position + (Vector3.up * 0.35f);
+        return emoticon;
+    }
+
+    public void cancelEmote(GameObject emoticon)
+    {
+        emoticon.transform.SetParent(null);
+        emoticon.SetActive(false);
+    }
+    // EMOTES ////////////////////////////////////////////
 
 }

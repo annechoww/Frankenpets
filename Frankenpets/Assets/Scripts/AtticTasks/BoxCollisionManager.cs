@@ -16,6 +16,9 @@ public class BoxCollisionManager : MonoBehaviour
     private static bool frontBoxes = false;
     private static bool backBoxes = false;
 
+    private TutorialText tutorialText;
+    private bool isFirstCollision = true;
+
 
     // awake singleton
     private void Awake()
@@ -28,6 +31,8 @@ public class BoxCollisionManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        tutorialText = GameObject.Find("TutorialTextManager").GetComponent<TutorialText>();
     }
     
     // register collision
@@ -63,5 +68,10 @@ public class BoxCollisionManager : MonoBehaviour
 
     private void FinishTask(){
         taskItem.color = completedColor;
+        if (isFirstCollision && (tutorialText.getCurrTutorialStage() == TutorialText.tutScatterBoxes))
+        {
+            tutorialText.advanceTutorialStage();
+            isFirstCollision = false;
+        }
     }
 }

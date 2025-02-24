@@ -14,6 +14,13 @@ public class VaseShatter : MonoBehaviour
 
     private bool isShattered = false;
 
+    private TutorialText tutorialText;
+
+    void Awake()
+    {
+        tutorialText = GameObject.Find("TutorialTextManager").GetComponent<TutorialText>();
+    }
+
     void OnCollisionEnter(Collision collision)
     {
         // Check if the vase hits the ground with enough force
@@ -44,5 +51,6 @@ public class VaseShatter : MonoBehaviour
 
     private void FinishTask(){
         taskItem.color = completedColor;
+        tutorialText.advanceTutorialStage();
     }
 }
