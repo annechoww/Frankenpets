@@ -48,7 +48,6 @@ public class TutorialText : MonoBehaviour
 
             if (fixedJoint == null)
             {
-                // Debug.Log("tut split");
                 hasSplit = true;
                 advanceTutorialStage();
             }
@@ -61,7 +60,6 @@ public class TutorialText : MonoBehaviour
 
             if (fixedJoint)
             {
-                // Debug.Log("tut reconnect");
                 hasReconnected = true;
                 advanceTutorialStage();
             }
@@ -72,7 +70,6 @@ public class TutorialText : MonoBehaviour
         {
             if (!playerManager.P1.IsFront && playerManager.P2.IsFront)
             {
-                // Debug.Log("tut switch");
                 hasSwitched = true;
                 advanceTutorialStage();
             }
