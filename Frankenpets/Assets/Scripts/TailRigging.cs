@@ -43,22 +43,28 @@ public class TailRigging : MonoBehaviour
         float duration = tailSpeed;
         float elapsedTime = 0f;
 
+        Debug.Log(tailSpeed);
+        Debug.Log(tailRange);
+
         while (elapsedTime < duration)
         {
             float phase = (elapsedTime / duration) * Mathf.PI * 2; // Maps time to sin wave
             float targetZ = Mathf.Sin(phase) * tailRange; // Move left → right → neutral
 
             Vector3 targetPosition = neutralPosition + transform.right * targetZ;
-            transform.position = Vector3.Lerp(transform.position, targetPosition, tailSpeed * Time.deltaTime);
+            transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime*tailSpeed);
+            
+            //Ray ray =  new Ray(targetPosition, Vector3.down);
+            //Debug.DrawRay(ray.origin, ray.direction * 2f, Color.red, duration=2.0f);
+            
             elapsedTime += Time.deltaTime;
             yield return null;
         }
 
         // Ensure the tail returns exactly to neutral
-        //transform.position = neutralPosition;
+        // transform.position = neutralPosition;
         isMovingNaturally = false;
         isMoving= false;
-
     }
 
 
