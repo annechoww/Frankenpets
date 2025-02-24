@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Diagnostics;
+using Unity.Cinemachine;
 using UnityEditor.VersionControl;
 using UnityEngine.Rendering;
 using Unity.VisualScripting;
@@ -39,6 +40,15 @@ public class PlayerManager : MonoBehaviour
     public GameObject dogFront;
     public GameObject catBack;
     public GameObject dogBack;
+
+    public PetStationManager stationManager;
+
+    [Header("Cameras")]
+    public CinemachineCamera player1Camera;
+    public CinemachineCamera player2Camera;
+    public CameraMovement cameraMovement;
+    public CinemachineCamera mainCamera;
+
     private Stopwatch switchStopwatch = new Stopwatch();
 
     [Header("Emoticons")]
@@ -95,22 +105,8 @@ public class PlayerManager : MonoBehaviour
         
         runSplitLogic();
         runSwitchLogic();
+        EnsureUpright();
 
-        // debugging
-        if (Input.GetKeyDown(KeyCode.I))
-        {
-            UnityEngine.Debug.Log(fixedJoint);
-        }
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            UnityEngine.Debug.Log("p1 front " + P1.IsFront);
-            UnityEngine.Debug.Log("p1 " + P1.Half);
-            UnityEngine.Debug.Log("p2 front " + P2.IsFront);
-            UnityEngine.Debug.Log("p2 " + P2.Half);
-            UnityEngine.Debug.Log("front half " + frontHalf);
-            UnityEngine.Debug.Log("back half " + backHalf);
-
-        }
     }
 
     // ADVANCED GETTERS/SETTERS ////////////////////////////////////////////
@@ -168,25 +164,6 @@ public class PlayerManager : MonoBehaviour
     // MOVEMENT METHODS ////////////////////////////////////////////
     private void runMovementLogic()
     {
-        // OLD CODE USING setPlayer1Movement() and setPlayer2Movement() methods ////////////////
-        // if (fixedJoint != null && bothHalvesTurningOpposite())
-        // {
-        //     P1.Half.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition;
-        //     P2.Half.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition;
-        //     isFrozen = true;
-        // }
-
-        // if (isFrozen) 
-        // {
-        //     P1.Half.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
-        //     P1.Half.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
-        //     isFrozen = false;
-        // }
-
-        // setPlayer1Movement();
-        // setPlayer2Movement();
-        // OLD CODE USING setPlayer1Movement() and setPlayer2Movement() methods ////////////////
-
         // Get turning input from player1 (WASD keys) for turning:
         float turnInputP1 = 0.0f;
         if (Input.GetKey(KeyCode.A)) turnInputP1 -= frontTurnSpeed;
@@ -198,7 +175,7 @@ public class PlayerManager : MonoBehaviour
         if (Input.GetKey(KeyCode.RightArrow)) turnInputP2 += backTurnSpeed;
         
         // Average the turn inputs
-        float combinedTurn = (turnInputP1 + turnInputP2) / 2.0f;
+        float combinedTurn = turnInputP1 + turnInputP2;
         
         // Get movement (forward/back) input from player1:
         float moveInputP1 = 0.0f;
@@ -211,7 +188,7 @@ public class PlayerManager : MonoBehaviour
         if (Input.GetKey(KeyCode.DownArrow)) moveInputP2 -= walkSpeed;
         
         // Average the movement inputs
-        float combinedMove = (moveInputP1 + moveInputP2) / 2.0f;
+        float combinedMove = moveInputP1 + moveInputP2;
         
         // Apply the combined rotation to both halves:
         frontHalf.transform.Rotate(0.0f, combinedTurn, 0.0f, Space.Self);
@@ -220,6 +197,24 @@ public class PlayerManager : MonoBehaviour
         // Apply the combined translation (forward/back) to both halves:
         frontHalf.transform.Translate(Vector3.forward * combinedMove * Time.deltaTime, Space.Self);
         backHalf.transform.Translate(Vector3.forward * combinedMove * Time.deltaTime, Space.Self);
+
+        // Update rig movement directionality
+        RiggingMovement[] catFrontRigs = catFront.GetComponentsInChildren<RiggingMovement>();
+        //RiggingMovement[] catBackRigs = catBack.GetComponentsInChildren<RiggingMovement>();
+        //RiggingMovement[] dogFrontRigs = dogFront.GetComponentsInChildren<RiggingMovement>();
+        RiggingMovement[] dogBackRigs = dogBack.GetComponentsInChildren<RiggingMovement>();
+
+        //RiggingMovement[] allRigs = new RiggingMovement[catFrontRigs.Length + catBackRigs.Length + dogFrontRigs.Length + dogBackRigs.Length];
+        RiggingMovement[] allRigs = new RiggingMovement[catFrontRigs.Length + dogBackRigs.Length];
+        catFrontRigs.CopyTo(allRigs, 0);
+        dogBackRigs.CopyTo(allRigs, catFrontRigs.Length);
+        //dogFrontRigs.CopyTo(allRigs, catFrontRigs.Length + catBackRigs.Length);
+        //dogBackRigs.CopyTo(allRigs, catFrontRigs.Length + catBackRigs.Length + dogFrontRigs.Length);
+
+        foreach (RiggingMovement rigging in allRigs)
+        {
+            rigging.changeTargetDirection(combinedMove);
+        }
     }
 
     private void setPlayer1Movement()
@@ -375,6 +370,7 @@ public class PlayerManager : MonoBehaviour
 
     private void tryReconnect()
     {
+
         float distance = Vector3.Distance(frontMagnet.transform.position, backMagnet.transform.position);
         if (distance < reconnectionDistance)
         {
@@ -652,6 +648,108 @@ public class PlayerManager : MonoBehaviour
         return false;
     }
     // SWITCHING METHODS ////////////////////////////////////////////
+    public void TransferControl(GameObject dockedHalf, GameObject counterpart)
+    {
+        // First determine which player owns this half
+        bool isPlayer1Docked = false;
+        
+        // Check under Player1's children
+        foreach (Transform child in transform.GetChild(0))
+        {
+            if (child.gameObject == dockedHalf)
+            {
+                isPlayer1Docked = true;
+                break;
+            }
+        }
+
+        Player controllingPlayer = isPlayer1Docked ? P1 : P2;
+        Player otherPlayer = isPlayer1Docked ? P2 : P1;
+
+        // Update the controlling player's half reference
+        controllingPlayer.Half = counterpart;
+        
+        // Update magnet reference - make sure magnet exists
+        GameObject petMagnet = null;
+
+        foreach (Transform child in counterpart.GetComponentsInChildren<Transform>())
+        {
+            if (child.CompareTag("PetMagnet"))
+            {
+                petMagnet = child.gameObject;
+                break;
+            }
+        }
+
+        if (petMagnet != null)
+        {
+            controllingPlayer.Magnet = petMagnet;
+        }
+        else
+        {
+            UnityEngine.Debug.LogError($"No magnet found on {counterpart.name}");
+        }
+
+        // Update front/back status if needed
+        bool wasControllingFront = dockedHalf.name.Contains("Front");
+        bool willControlFront = counterpart.name.Contains("Front");
+        
+        if (wasControllingFront != willControlFront)
+        {
+            controllingPlayer.IsFront = willControlFront;
+            otherPlayer.IsFront = !willControlFront;
+        }
+
+        // Make sure the Rigidbody is not kinematic after transfer
+        Rigidbody rb = counterpart.GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.isKinematic = false;
+        }
+
+        bool isDocked = dockedHalf.GetComponent<Rigidbody>().isKinematic;
+        if (isDocked && counterpart != null) {
+            if (controllingPlayer.PlayerNumber == 1) {
+                player1Camera.Follow = counterpart.transform;
+                player1Camera.LookAt = counterpart.transform;
+            } else {
+                player2Camera.Follow = counterpart.transform;
+                player2Camera.LookAt = counterpart.transform;
+            }
+        }
+
+        refreshHalves();
+    }
+
+    public void refreshHalves()
+    {
+        frontHalf = getFrontHalf();
+        backHalf = getBackHalf();
+        frontMagnet = getFrontMagnet();
+        backMagnet = getBackMagnet();
+
+        cameraMovement.frontHalf = frontHalf.transform;
+        mainCamera.Follow = frontHalf.transform;
+        mainCamera.LookAt = frontHalf.transform;
+    }
+
+    // COLLISION METHODS ////////////////////////////////////////////
+    void EnsureUpright() {
+    if (fixedJoint != null) {  // Only enforce when connected
+        // Lock rotation around X and Z axes while preserving Y rotation
+        Quaternion frontRotation = frontHalf.transform.rotation;
+        Quaternion backRotation = backHalf.transform.rotation;
+        
+        // Keep only the Y rotation
+        Vector3 frontEuler = frontRotation.eulerAngles;
+        Vector3 backEuler = backRotation.eulerAngles;
+        
+        frontHalf.transform.rotation = Quaternion.Euler(0, frontEuler.y, 0);
+        backHalf.transform.rotation = Quaternion.Euler(0, backEuler.y, 0);
+    }
+}
+    // COLLISION METHODS ////////////////////////////////////////////
+
 
     // EMOTES ////////////////////////////////////////////
     public GameObject startEmote(GameObject half, string emotion)

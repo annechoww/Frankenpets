@@ -1,7 +1,6 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
-public class CatController : MonoBehaviour, CatControls.IGameplayActions
+public class CatController : MonoBehaviour
 {
     [Header("Climbing Settings")]
     public float climbSpeed = 2f;
@@ -11,42 +10,32 @@ public class CatController : MonoBehaviour, CatControls.IGameplayActions
     private bool isNearClimbable = false;
     private bool isClimbing = false;
     private Vector3 climbDirection;
-    private CatControls controls;
     private GameObject climbText;
 
-
-    private void Awake()
+    private void Start()
     {
         rb = GetComponent<Rigidbody>();
-        controls = new CatControls();
-        
-        // Subscribe to input events through the interface
-        controls.Gameplay.SetCallbacks(this);
-
         climbText = GameObject.FindGameObjectWithTag("ClimbText");
     }
 
-    private void OnEnable()
+    private void Update()
     {
-        controls.Gameplay.Enable();
-    }
-
-    private void OnDisable()
-    {
-        controls.Gameplay.Disable();
-    }
-
-    public void OnClimb(InputAction.CallbackContext context)
-    {
-        // Start climbing when button is pressed
-        if (context.started && isNearClimbable)
+        if (Input.GetKeyDown(KeyCode.C) && isNearClimbable && !isClimbing)
         {
             StartClimbing();
         }
-        // Stop climbing when button is released
-        else if (context.canceled && isClimbing)
+        else if (Input.GetKeyUp(KeyCode.C) && isClimbing)
         {
             StopClimbing();
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        if (isClimbing)
+        {
+            // Apply climbing movement in FixedUpdate for smooth physics
+            rb.linearVelocity = climbDirection * climbSpeed;
         }
     }
 
@@ -66,15 +55,6 @@ public class CatController : MonoBehaviour, CatControls.IGameplayActions
         isClimbing = false;
         rb.useGravity = true;
         rb.constraints = RigidbodyConstraints.None;
-    }
-
-    private void FixedUpdate()
-    {
-        if (isClimbing)
-        {
-            // Apply climbing movement in FixedUpdate for smooth physics
-            rb.linearVelocity = climbDirection * climbSpeed;
-        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -112,10 +92,5 @@ public class CatController : MonoBehaviour, CatControls.IGameplayActions
                 StopClimbing();
             }
         }
-    }
-
-    private void OnDestroy()
-    {
-        controls.Dispose();
     }
 }
