@@ -198,8 +198,6 @@ public class PlayerActions : MonoBehaviour
 
             audioSource.clip = (frontSpecies == "cat") ? catClip : dogClip;
             audioSource.Play();
-
-            havocMeter.collectHavocPoints(2);
         }
     }
 
