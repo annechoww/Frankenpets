@@ -642,6 +642,13 @@ public class PlayerManager : MonoBehaviour
             P1.Half.SetActive(true);
             P2.Half.SetActive(true);
 
+            // Camera Tracking Updates
+            refreshHalves();
+            player1Camera.Follow = P1.Half.transform;
+            player1Camera.LookAt = P1.Half.transform;
+            player2Camera.Follow = P2.Half.transform;
+            player2Camera.LookAt = P2.Half.transform;
+
             UnityEngine.Debug.Log("Switched!");
         }
 
