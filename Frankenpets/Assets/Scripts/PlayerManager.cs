@@ -485,6 +485,8 @@ public class PlayerManager : MonoBehaviour
             P1.IsFront = !P1.IsFront;
             P2.IsFront = !P2.IsFront;
 
+            Destroy(frontHalf.GetComponent<FixedJoint>());
+
             catFront.SetActive(false);
             catBack.SetActive(false);
             dogFront.SetActive(false);
@@ -743,9 +745,6 @@ public class PlayerManager : MonoBehaviour
         backHalf = getBackHalf();
         frontMagnet = getFrontMagnet();
         backMagnet = getBackMagnet();
-
-        UnityEngine.Debug.Log("zzz" + frontHalf);
-        UnityEngine.Debug.Log("zzz" + frontHalf.GetComponent<FixedJoint>());
 
         cameraMovement.frontHalf = frontHalf.transform;
         mainCamera.Follow = frontHalf.transform;
