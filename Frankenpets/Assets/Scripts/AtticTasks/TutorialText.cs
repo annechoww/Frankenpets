@@ -1,14 +1,17 @@
 using System.Collections;
 using System.Diagnostics;
-using System.Threading;
 using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem.Controls;
 
 public class TutorialText : MonoBehaviour
 {
     public TextMeshProUGUI tutorialText;
     public TextMeshProUGUI tutorialSmallText;
+    public GameObject movementUI;
+    public GameObject splitUI;
+    public GameObject grabUI;
+
+
     private int currTutorialStage = 0;
     private bool hasSplit = false;
     private bool hasReconnected = false;
@@ -20,7 +23,6 @@ public class TutorialText : MonoBehaviour
     private FixedJoint fixedJoint;
     private PlayerManager playerManager;
     private Stopwatch stopwatch = new Stopwatch();
-    private bool startSpeech = false;
     private GameObject emote;
 
     void Awake()
