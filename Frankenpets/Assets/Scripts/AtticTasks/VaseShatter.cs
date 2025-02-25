@@ -13,7 +13,7 @@ public class VaseShatter : MonoBehaviour
     public Color completedColor;
 
     private bool isShattered = false;
-
+    private HavocManager havocMeter; 
     private TutorialText tutorialText;
 
     void Awake()
@@ -50,6 +50,8 @@ public class VaseShatter : MonoBehaviour
     }
 
     private void FinishTask(){
+        havocMeter = GameObject.Find("HavocManager").GetComponent<HavocManager>();
+        havocMeter.collectHavocPoints(15);
         taskItem.color = completedColor;
         tutorialText.advanceTutorialStage();
     }

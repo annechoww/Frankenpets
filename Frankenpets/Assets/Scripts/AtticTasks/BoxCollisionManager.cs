@@ -15,7 +15,8 @@ public class BoxCollisionManager : MonoBehaviour
     //public static HashSet<GameObject> backBoxes = new HashSet<GameObject>(); 
     private static bool frontBoxes = false;
     private static bool backBoxes = false;
-
+    
+    private HavocManager havocMeter; 
     private TutorialText tutorialText;
     private bool isFirstCollision = true;
 
@@ -72,6 +73,8 @@ public class BoxCollisionManager : MonoBehaviour
         {
             tutorialText.advanceTutorialStage();
             isFirstCollision = false;
+            havocMeter = GameObject.Find("HavocManager").GetComponent<HavocManager>();
+            havocMeter.collectHavocPoints(5);
         }
     }
 }
