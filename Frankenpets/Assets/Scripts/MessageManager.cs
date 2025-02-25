@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Diagnostics;
+using TMPro;
 using UnityEngine;
 
 public class MessageManager : MonoBehaviour
@@ -7,6 +8,10 @@ public class MessageManager : MonoBehaviour
     public GameObject reconnectFail;
     public GameObject cameraIndicator;
     public GameObject switchFail;
+    public GameObject switchSuccess;
+    public GameObject fellOver;
+    public GameObject buttonHoldFail;
+    public GameObject custom;
 
     public void reconnectFailMessage()
     {
@@ -15,12 +20,33 @@ public class MessageManager : MonoBehaviour
 
     public void cameraIndicatorMessage()
     {
-        StartCoroutine(disableAfterSeconds(cameraIndicator, 4.0f));
+        StartCoroutine(disableAfterSeconds(cameraIndicator, 3.0f));
     }
 
     public void switchFailMessage()
     {
         StartCoroutine(disableAfterSeconds(switchFail, 3.0f));
+    }
+
+    public void switchSuccessMessage()
+    {
+        StartCoroutine(disableAfterSeconds(switchSuccess, 3.0f));
+    }
+
+    public void fellOverMessage()
+    {
+        StartCoroutine(disableAfterSeconds(fellOver, 3.0f));
+    }
+
+    public void buttonHoldFailMessage()
+    {
+        StartCoroutine(disableAfterSeconds(buttonHoldFail, 3.0f));
+    }
+
+    public void customMessage(string message)
+    {
+        custom.GetComponent<TextMeshProUGUI>().text = message;
+        StartCoroutine(disableAfterSeconds(custom, 3.0f));
     }
 
     // Coroutines

@@ -27,6 +27,7 @@ public class TutorialText : MonoBehaviour
     private Task3Tutorial task3Tutorial;
     private FixedJoint fixedJoint;
     private PlayerManager playerManager;
+    private MessageManager messageManager;
     private Stopwatch stopwatch = new Stopwatch();
     private GameObject emote;
 
@@ -35,6 +36,8 @@ public class TutorialText : MonoBehaviour
         task2Tutorial = GameObject.Find("Task 2").GetComponent<Task2Tutorial>();
         task3Tutorial = GameObject.Find("Task 3").GetComponent<Task3Tutorial>();
         playerManager = GameObject.Find("Pet").GetComponent<PlayerManager>();
+        messageManager = GameObject.Find("Messages").GetComponent<MessageManager>();
+
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -90,6 +93,8 @@ public class TutorialText : MonoBehaviour
     public const int tutSwitch = 8;
     public const int tutDragRug = 9;
     public const int tutComplete = 10;
+    // Living room
+    public const int lrEnter = 11;
 
     // Update is called once per frame
     private void updateTutorialText()
@@ -115,12 +120,12 @@ public class TutorialText : MonoBehaviour
                 break;
             case 3:
                 speechBubbleTwoTails.SetActive(false);
-                speechBubbleLeft.SetActive(true);
+                speechBubbleRight.SetActive(true);
                 splitUI.SetActive(false);
                 tutorialText.text = "creepy...";
                 tutorialSmallText.text = "";
 
-                emote = playerManager.startEmote(playerManager.getBackHalf(), "sad");
+                emote = playerManager.startEmote(playerManager.getFrontHalf(), "sad");
                 // play sad dog sound
 
                 StartCoroutine(waitForSeconds(4.0f));
@@ -130,14 +135,15 @@ public class TutorialText : MonoBehaviour
                 playerManager.cancelEmote(emote);
                 tutorialText.text = "sorry, i take that back.";
                 
-                emote = playerManager.startEmote(playerManager.getBackHalf(), "happy");
+                emote = playerManager.startEmote(playerManager.getFrontHalf(), "happy");
                 // play happy dog sound
 
                 StartCoroutine(waitForSeconds(4.0f));
                 // StartCoroutine(waitForKeypress(KeyCode.Return));
                 break;              
             case tutScatterBoxes:
-                speechBubbleRight.SetActive(true);
+                speechBubbleRight.SetActive(false);
+                speechBubbleLeft.SetActive(false);
                 playerManager.cancelEmote(emote);   
                 tutorialText.text = "let's scatter the coloured boxes around!";
                 tutorialSmallText.text = ""; // "move the boxes while split apart";
@@ -147,20 +153,18 @@ public class TutorialText : MonoBehaviour
                 tutorialSmallText.text = "align your halves and press space";
                 break;
             case tutMoveToRug:
-                speechBubbleRight.SetActive(false);
-                speechBubbleLeft.SetActive(true);
+                speechBubbleRight.SetActive(true);
+                speechBubbleLeft.SetActive(false);
                 tutorialText.text = "hey, what's under that pink rug?";
                 tutorialSmallText.text = "";
                 break;
             case tutSwitch:
                 task3Tutorial.enabled = false;
-                tutorialText.text = "i can't grab this... can you help?";
+                tutorialText.text = "P1 and P2, switch sides with each other";
                 tutorialSmallText.text = "P1 hold LShift                     P2 hold RShift";
                 break;
             case tutDragRug:
-                speechBubbleLeft.SetActive(false);
-                speechBubbleRight.SetActive(true);
-                tutorialText.text = "woah! i'm at the front now!";
+                tutorialText.text = "that felt weird...";
                 // tutorialSmallText.text = "P2 press '/' to grab";
                 tutorialSmallText.text = "";
                 grabUI.SetActive(true);
@@ -171,8 +175,19 @@ public class TutorialText : MonoBehaviour
                 grabUI.SetActive(false);
                 tutorialText.text = "let's wreck this house!";
                 tutorialSmallText.text = "leave the attic, or take a look around first";
-                if (Input.GetKeyDown(KeyCode.Return)) advanceTutorialStage();
+                messageManager.customMessage("press return to hide the tutorial");
+                if (Input.GetKeyDown(KeyCode.Return)) 
+                {
+                    catIcon.SetActive(false);
+                    dogIcon.SetActive(false);
+                    advanceTutorialStage();
+                }
                 break;
+            // case lrEnter:
+
+            //     catIcon.SetActive(false);
+            //     dogIcon.SetActive(false);
+            //     break;
         }
     }
 
