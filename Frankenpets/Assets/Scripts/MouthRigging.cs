@@ -24,7 +24,9 @@ public class MouthRigging : MonoBehaviour
     void Update()
     {
         //mouthTargetPosition = mouthTarget.position;
-        mouthTargetPosition = mouthTarget.position + transform.right * horizontalOffset + Vector3.down * verticalOffset;
+        mouthTargetPosition = mouthTarget.position + transform.forward * horizontalOffset + Vector3.down * verticalOffset;
+        Ray ray =  new Ray(mouthTargetPosition, Vector3.down);
+        Debug.DrawRay(ray.origin, ray.direction * 2f, Color.red);
         
     }
 
