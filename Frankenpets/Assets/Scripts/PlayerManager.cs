@@ -87,7 +87,19 @@ public class PlayerManager : MonoBehaviour
         // Other variables
         // sadEmote = GameObject.FindGameObjectWithTag("SadEmote");
         // happyEmote = GameObject.FindGameObjectWithTag("HappyEmote");
-        messageManager = GameObject.Find("Messages").GetComponent<MessageManager>();
+
+        GameObject messageObject = GameObject.Find("Messages");
+        if (messageObject != null)
+        {
+            messageManager = messageObject.GetComponent<MessageManager>();
+            if (messageManager != null)
+            {
+                UnityEngine.Debug.Log("MessageManager component found!");
+            }
+        } else
+        {
+            UnityEngine.Debug.LogError("GameObject 'Messages' not found in the scene.");
+        }
 
     }
 
