@@ -454,7 +454,8 @@ public class PlayerManager : MonoBehaviour
         if (Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.RightShift)) tryStartSwitch();
         if (Input.GetKeyUp(KeyCode.LeftShift) || Input.GetKeyUp(KeyCode.RightShift)) cancelSwitch();
 
-        tryFinishSwitch();
+        // tryFinishSwitch();
+        tryFinishSwitchV2();
     }
 
     private void tryStartSwitch()
@@ -662,6 +663,53 @@ public class PlayerManager : MonoBehaviour
             P1.Half.SetActive(true);
             P2.Half.SetActive(true);
             
+            UnityEngine.Debug.Log("Switched!");
+        }
+    }
+
+    private void tryFinishSwitchV2() 
+    {
+        if ((switchStopwatch.Elapsed.TotalSeconds > switchTime) && (fixedJoint != null))
+        {
+            switchStopwatch.Reset();
+
+            // Switch which half the players are controlling
+            P1.IsFront = !P1.IsFront;
+            P2.IsFront = !P2.IsFront;
+
+            string P1PrevSpecies = P1.Species;
+            P1.Species = P2.Species;
+            P2.Species = P1PrevSpecies;
+
+            if (P1.IsFront)
+            {
+                P1.Half = frontHalf;
+                P2.Half = backHalf;
+                P1.Magnet = frontHalf.transform.GetChild(2).gameObject;
+                P2.Magnet = backHalf.transform.GetChild(2).gameObject;
+            }
+            else
+            {
+                P1.Half = backHalf;
+                P2.Half = frontHalf;
+                P1.Magnet = backHalf.transform.GetChild(2).gameObject;
+                P2.Magnet = frontHalf.transform.GetChild(2).gameObject;
+            }
+
+            player1Camera.Follow = P1.Half.transform;
+            player1Camera.LookAt = P1.Half.transform;
+            player2Camera.Follow = P2.Half.transform;
+            player2Camera.LookAt = P2.Half.transform;
+
+            refreshHalves();
+
+            // alignHalves();
+
+            if (getJoint() == null)
+            {
+                setJoint();
+            }
+
             UnityEngine.Debug.Log("Switched!");
         }
     }
