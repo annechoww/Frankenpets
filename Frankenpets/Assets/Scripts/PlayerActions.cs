@@ -299,6 +299,8 @@ public class PlayerActions : MonoBehaviour
 
             isGrabbing = true;
             grabText.SetActive(false);
+        } else if (((Input.GetKeyDown(KeyCode.C) && P1.IsFront) || (Input.GetKeyDown(KeyCode.Slash) && P2.IsFront))){
+            mouthRiggingScript.openMouth();
         }
     }
 
