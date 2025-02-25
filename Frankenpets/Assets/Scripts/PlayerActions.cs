@@ -1,5 +1,6 @@
 using UnityEngine;
 
+
 /**
 This Class handles all player actions. The actions are mapped as follows:
     - (C) and (/) handles the special actions of the corresponding half and its species (Climb, Grab, Charged Jump, Hind Legs[TBF])
@@ -49,12 +50,18 @@ public class PlayerActions : MonoBehaviour
     private Rigidbody frontRb;
     private Rigidbody backRb;
 
+    [Header("Rigging Variables")]
+    private MouthRigging mouthRiggingScript;
+    private TailRigging tailRiggingScript;
+    private HindLegsRigging hindLegsRiggingScript;
+    private PawRigging pawRiggingScript;
+
     private void Start()
     {
         climbText = GameObject.FindGameObjectWithTag("ClimbText");
         grabText = GameObject.FindGameObjectWithTag("GrabText");
         
-        Invoke("getPlayerManager", 1f);
+        Invoke("getPlayerManager", 0f);
     }
 
     private void Update()
@@ -63,6 +70,8 @@ public class PlayerActions : MonoBehaviour
         runNoiseLogic();
         runClimbLogic();
         runGrablogic();
+        runTailLogic();
+        runPawLogic();
     }
 
     private void FixedUpdate()
@@ -144,6 +153,11 @@ public class PlayerActions : MonoBehaviour
 
             frontRb = frontHalf.GetComponent<Rigidbody>();
             backRb = backHalf.GetComponent<Rigidbody>();
+
+            mouthRiggingScript = frontHalf.GetComponentInChildren<MouthRigging>();
+            tailRiggingScript = backHalf.GetComponentInChildren<TailRigging>();
+            pawRiggingScript = frontHalf.GetComponentInChildren<PawRigging>();
+            //hindLegsRiggingScript = backHalf.GetComponentInChildren<HindLegsRigging>();
         }
         else
         {
@@ -161,7 +175,7 @@ public class PlayerActions : MonoBehaviour
         }
         // Charged Jump - TODO: Update with valid species 
         else if ((Input.GetKey(KeyCode.C) && !P1.IsFront && P1.Species == "cat") || 
-                (Input.GetKey(KeyCode.Slash) && !P2.IsFront && P2.Species == "dog"))
+                (Input.GetKey(KeyCode.Slash) && !P2.IsFront && P2.Species == "cat"))
         {
             tryStartJump(chargedJumpForce, chargedJumpCooldown);
         }
@@ -192,6 +206,7 @@ public class PlayerActions : MonoBehaviour
 
             audioSource.clip = (frontSpecies == "cat") ? catClip : dogClip;
             audioSource.Play();
+            mouthRiggingScript.openMouth();
         }
     }
 
@@ -292,9 +307,26 @@ public class PlayerActions : MonoBehaviour
 
 
 ////////////////////////////////////////// Front Paws Action //////////////////////////////////////////////
-// TODO: Implement
+private void runPawLogic()
+{
+    if (((Input.GetKeyDown(KeyCode.Z) && P1.IsFront) || (Input.GetKeyDown(KeyCode.Comma) && P2.IsFront)))
+    {
+        pawRiggingScript.liftPaw();
+    }
+    
+}
 
 ////////////////////////////////////////// Tail Action ////////////////////////////////////////////////////
-// TODO: Implement
+private void runTailLogic()
+{
+    if (((Input.GetKeyDown(KeyCode.Z) && !P1.IsFront) || (Input.GetKeyDown(KeyCode.Period) && !P2.IsFront)))
+    {
+        tailRiggingScript.useTail();
+    }
+    else{
+        tailRiggingScript.naturalTailMovement();
+    }
+
+}
 
 }

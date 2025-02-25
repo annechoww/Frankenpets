@@ -64,13 +64,13 @@ public class PlayerManager : MonoBehaviour
         // Initialize the players
         P1.PlayerNumber = 1;
         P1.IsFront = true;
-        P1.Species = "cat";
+        P1.Species = "dog";
         P1.Half = P1Half;
         P1.Magnet = P1Magnet;
 
         P2.PlayerNumber = 2;   
         P2.IsFront = false;
-        P2.Species = "dog";
+        P2.Species = "cat";
         P2.Half = P2Half;
         P2.Magnet = P2Magnet;
 
@@ -198,17 +198,11 @@ public class PlayerManager : MonoBehaviour
         backHalf.transform.Translate(Vector3.forward * combinedMove * Time.deltaTime, Space.Self);
 
         // Update rig movement directionality
-        RiggingMovement[] catFrontRigs = catFront.GetComponentsInChildren<RiggingMovement>();
-        //RiggingMovement[] catBackRigs = catBack.GetComponentsInChildren<RiggingMovement>();
-        //RiggingMovement[] dogFrontRigs = dogFront.GetComponentsInChildren<RiggingMovement>();
-        RiggingMovement[] dogBackRigs = dogBack.GetComponentsInChildren<RiggingMovement>();
-
-        //RiggingMovement[] allRigs = new RiggingMovement[catFrontRigs.Length + catBackRigs.Length + dogFrontRigs.Length + dogBackRigs.Length];
-        RiggingMovement[] allRigs = new RiggingMovement[catFrontRigs.Length + dogBackRigs.Length];
-        catFrontRigs.CopyTo(allRigs, 0);
-        dogBackRigs.CopyTo(allRigs, catFrontRigs.Length);
-        //dogFrontRigs.CopyTo(allRigs, catFrontRigs.Length + catBackRigs.Length);
-        //dogBackRigs.CopyTo(allRigs, catFrontRigs.Length + catBackRigs.Length + dogFrontRigs.Length);
+        RiggingMovement[] frontRigs = frontHalf.GetComponentsInChildren<RiggingMovement>();
+        RiggingMovement[] backRigs = backHalf.GetComponentsInChildren<RiggingMovement>();
+        RiggingMovement[] allRigs = new RiggingMovement[frontRigs.Length + backRigs.Length];
+        frontRigs.CopyTo(allRigs, 0);
+        backRigs.CopyTo(allRigs, frontRigs.Length);
 
         foreach (RiggingMovement rigging in allRigs)
         {

@@ -6,6 +6,8 @@ public class MouthRigging : MonoBehaviour
 {
     public Transform mouthTarget;
     public float moveDistance; // Distance to move down
+    public float horizontalOffset; // Distance to move down
+    public float verticalOffset; // Distance to move down
     public float moveSpeed; // Speed of movement
 
     Vector3 oldPosition, newPosition;
@@ -21,7 +23,9 @@ public class MouthRigging : MonoBehaviour
 
     void Update()
     {
-        mouthTargetPosition = mouthTarget.position;
+        //mouthTargetPosition = mouthTarget.position;
+        mouthTargetPosition = mouthTarget.position + transform.right * horizontalOffset + Vector3.down * verticalOffset;
+        
     }
 
     // public void grab(){
