@@ -56,6 +56,12 @@ public class PlayerManager : MonoBehaviour
     public GameObject sadEmote;    
     public GameObject happyEmote;
 
+    [Header("Icons")]
+    public GameObject P1CatIcon;    
+    public GameObject P1DogIcon;
+    public GameObject P2CatIcon;    
+    public GameObject P2DogIcon;
+
     // Others
     private MessageManager messageManager;
 
@@ -646,6 +652,7 @@ public class PlayerManager : MonoBehaviour
 
             refreshHalves();
             alignHalves();
+            updatePlayerIcons();
 
             if (getJoint() == null)
             {
@@ -702,14 +709,14 @@ public class PlayerManager : MonoBehaviour
             player2Camera.LookAt = P2.Half.transform;
 
             refreshHalves();
-
-            // alignHalves();
+            updatePlayerIcons();
 
             if (getJoint() == null)
             {
                 setJoint();
             }
 
+            messageManager.switchSuccessMessage();
             UnityEngine.Debug.Log("Switched!");
         }
     }
@@ -785,6 +792,7 @@ public class PlayerManager : MonoBehaviour
         }
 
         refreshHalves();
+        updatePlayerIcons();
     }
 
     public void refreshHalves()
@@ -843,6 +851,27 @@ public class PlayerManager : MonoBehaviour
         emoticon.SetActive(false);
     }
     // EMOTES ////////////////////////////////////////////
+
+
+    // ICONS ////////////////////////////////////////////
+    public void updatePlayerIcons()
+    {
+        if (P1.Species == "cat")
+        {
+            P1CatIcon.SetActive(true);
+            P1DogIcon.SetActive(false);
+            P2CatIcon.SetActive(false);
+            P2DogIcon.SetActive(true);
+        }
+        else
+        {
+            P1CatIcon.SetActive(false);
+            P1DogIcon.SetActive(true);
+            P2CatIcon.SetActive(true);
+            P2DogIcon.SetActive(false);
+        }
+    }
+    // ICONS ////////////////////////////////////////////
 
 
     // COROUTINES //////////////////////////////////////
