@@ -7,6 +7,11 @@ public class TutorialText : MonoBehaviour
 {
     public TextMeshProUGUI tutorialText;
     public TextMeshProUGUI tutorialSmallText;
+    public GameObject speechBubbleTwoTails;
+    public GameObject speechBubbleLeft;
+    public GameObject speechBubbleRight;
+    public GameObject catIcon;
+    public GameObject dogIcon;
     public GameObject movementUI;
     public GameObject splitUI;
     public GameObject grabUI;
@@ -48,7 +53,6 @@ public class TutorialText : MonoBehaviour
 
             if (fixedJoint == null)
             {
-                // Debug.Log("tut split");
                 hasSplit = true;
                 advanceTutorialStage();
             }
@@ -61,7 +65,6 @@ public class TutorialText : MonoBehaviour
 
             if (fixedJoint)
             {
-                // Debug.Log("tut reconnect");
                 hasReconnected = true;
                 advanceTutorialStage();
             }
@@ -72,7 +75,6 @@ public class TutorialText : MonoBehaviour
         {
             if (!playerManager.P1.IsFront && playerManager.P2.IsFront)
             {
-                // Debug.Log("tut switch");
                 hasSwitched = true;
                 advanceTutorialStage();
             }
@@ -95,19 +97,26 @@ public class TutorialText : MonoBehaviour
         switch (currTutorialStage)
         {
             case tutMoveToVase:
+                speechBubbleTwoTails.SetActive(true);
                 tutorialText.text = "let's move to the vase";
-                tutorialSmallText.text = "P1 WASD                     P2 arrows";
+                // tutorialSmallText.text = "P1 WASD                     P2 arrows";
+                movementUI.SetActive(true);
                 break;
             case tutBreakVase:
+                movementUI.SetActive(false);
                 tutorialText.text = "hmm... can we break the vase?";
                 tutorialSmallText.text = "";
                 break;
             case tutSplit:
                 task2Tutorial.enabled = false;
                 tutorialText.text = "chaos! now, let's split apart";
-                tutorialSmallText.text = "P1 hold W                     P2 hold dArrow";
+                // tutorialSmallText.text = "P1 hold W                     P2 hold dArrow";
+                splitUI.SetActive(true);
                 break;
             case 3:
+                speechBubbleTwoTails.SetActive(false);
+                speechBubbleLeft.SetActive(true);
+                splitUI.SetActive(false);
                 tutorialText.text = "creepy...";
                 tutorialSmallText.text = "";
 
@@ -128,6 +137,7 @@ public class TutorialText : MonoBehaviour
                 // StartCoroutine(waitForKeypress(KeyCode.Return));
                 break;              
             case tutScatterBoxes:
+                speechBubbleRight.SetActive(true);
                 playerManager.cancelEmote(emote);   
                 tutorialText.text = "let's scatter the coloured boxes around!";
                 tutorialSmallText.text = ""; // "move the boxes while split apart";
@@ -137,6 +147,8 @@ public class TutorialText : MonoBehaviour
                 tutorialSmallText.text = "align your halves and press space";
                 break;
             case tutMoveToRug:
+                speechBubbleRight.SetActive(false);
+                speechBubbleLeft.SetActive(true);
                 tutorialText.text = "hey, what's under that pink rug?";
                 tutorialSmallText.text = "";
                 break;
@@ -146,10 +158,17 @@ public class TutorialText : MonoBehaviour
                 tutorialSmallText.text = "P1 hold LShift                     P2 hold RShift";
                 break;
             case tutDragRug:
+                speechBubbleLeft.SetActive(false);
+                speechBubbleRight.SetActive(true);
                 tutorialText.text = "woah! i'm at the front now!";
-                tutorialSmallText.text = "P2 press '/' to grab";
+                // tutorialSmallText.text = "P2 press '/' to grab";
+                tutorialSmallText.text = "";
+                grabUI.SetActive(true);
                 break;
             case tutComplete:
+                speechBubbleLeft.SetActive(false);
+                speechBubbleTwoTails.SetActive(true);
+                grabUI.SetActive(false);
                 tutorialText.text = "let's wreck this house!";
                 tutorialSmallText.text = "leave the attic, or take a look around first";
                 if (Input.GetKeyDown(KeyCode.Return)) advanceTutorialStage();
