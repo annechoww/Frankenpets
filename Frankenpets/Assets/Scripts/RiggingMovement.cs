@@ -42,7 +42,7 @@ public class RiggingMovement : MonoBehaviour
         transform.up = currentNormal;
         Ray ray =  new Ray(body.position + (body.right * footSpacing), Vector3.down);
         // Ray ray2 =  new Ray(body.position, Vector3.down);
-        // Debug.DrawRay(ray.origin, ray.direction * 2f, Color.red);
+        //Debug.DrawRay(ray.origin, ray.direction * 2f, Color.red);
         // Debug.DrawRay(ray2.origin, ray2.direction * 2f, Color.blue);
 
         if (Physics.Raycast(ray, out RaycastHit hit, 10, terrainLayer.value))

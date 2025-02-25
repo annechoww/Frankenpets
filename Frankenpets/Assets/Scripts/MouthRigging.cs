@@ -77,6 +77,7 @@ public class MouthRigging : MonoBehaviour
         while (elapsedTime < duration)
         {
             transform.position = Vector3.Lerp(newPosition, oldPosition, elapsedTime / duration);
+            
             elapsedTime += Time.deltaTime;
             yield return null;
         }
