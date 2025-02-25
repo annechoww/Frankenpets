@@ -14,6 +14,13 @@ public class PetStationManager : MonoBehaviour
 
     private Dictionary<string, DockingPoint> dockedHalves = new Dictionary<string, DockingPoint>();
 
+    private LivingRoomTextManager livingRoomText;
+
+    void Awake()
+    {
+        livingRoomText = GameObject.Find("TextManager").GetComponent<LivingRoomTextManager>();
+    }
+
     void Start()
     {
         // Validate setup
@@ -144,6 +151,14 @@ public class PetStationManager : MonoBehaviour
         {
             // Update player control through PlayerManager
             playerManager.TransferControl(dockedHalf, counterpart);
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("cat front") || other.CompareTag("cat back") || other.CompareTag("dog front") || other.CompareTag("dog back"))
+        {
+            livingRoomText.advanceLivingRoomStage();
         }
     }
 }
