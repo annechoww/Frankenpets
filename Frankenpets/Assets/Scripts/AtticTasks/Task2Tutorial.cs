@@ -13,7 +13,7 @@ public class Task2Tutorial : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {            
 
-        if (other.CompareTag("cat front") && isFirstTrigger && (tutorialText.getCurrTutorialStage() == TutorialText.tutMoveToVase))
+        if (other.CompareTag("dog front") && isFirstTrigger && (tutorialText.getCurrTutorialStage() == TutorialText.tutMoveToVase))
         {
             isFirstTrigger = false;
             tutorialText.advanceTutorialStage();
