@@ -43,10 +43,20 @@ public class MessageManager : MonoBehaviour
         StartCoroutine(disableAfterSeconds(buttonHoldFail, 3.0f));
     }
 
-    public void customMessage(string message)
+    public void autoCustomMessage(string message, float seconds = 3.0)
     {
         custom.GetComponent<TextMeshProUGUI>().text = message;
-        StartCoroutine(disableAfterSeconds(custom, 3.0f));
+        StartCoroutine(disableAfterSeconds(custom, seconds));
+    }
+
+    public void startCustomMessage(string message)
+    {
+        custom.GetComponent<TextMeshProUGUI>().text = message;
+    }
+
+    public void cancelCustomMessage(string message)
+    {
+        custom.GetComponent<TextMeshProUGUI>().text = "";
     }
 
     // Coroutines

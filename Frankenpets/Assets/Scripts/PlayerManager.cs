@@ -173,7 +173,7 @@ public class PlayerManager : MonoBehaviour
 
     public FixedJoint getJoint()
     {
-        return getFrontHalf().GetComponent<FixedJoint>(); // frontPlayer.Half.transform.GetChild(0).gameObject.GetComponent<FixedJoint>();
+        return getFrontHalf().GetComponent<FixedJoint>();
     }
     // ADVANCED GETTERS/SETTERS ////////////////////////////////////////////
 
@@ -352,33 +352,6 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    private void tryStartSplit()
-    {
-        splitStopwatch.Start();
-    }
-
-    private void cancelSplit()
-    {
-        splitStopwatch.Reset();
-    }
-
-    private void tryFinishSplit()
-    {
-        if ((splitStopwatch.Elapsed.TotalSeconds > splitTime) && (fixedJoint != null)) 
-        {
-            splitStopwatch.Reset();
-            Destroy(fixedJoint); // Split the halves
-            fixedJoint = null;
-
-            UnityEngine.Debug.Log("Halves disconnected.");
-        }      
-    }
-
-    private bool canReconnect()
-    {
-        return (fixedJoint == null) && Input.GetKeyDown(reconnectToggleKey);
-    }
-
     private void tryReconnect()
     {
 
@@ -386,56 +359,18 @@ public class PlayerManager : MonoBehaviour
         if (distance < reconnectionDistance)
         {
             UnityEngine.Debug.Log("Trying to reconnect.");
-            // Temporarily disable bottomHalf physics
             alignHalves();
-            // Rigidbody bottomRb = backHalf.GetComponent<Rigidbody>();
-            // bool originalKinematic = bottomRb.isKinematic;
-            // bottomRb.isKinematic = true;
-
-            // // Align orientation and position
-            // backHalf.transform.rotation = frontHalf.transform.rotation * initialRelativeRotation;
-            
-
-            // Vector3 positionOffset = frontMagnet.transform.position - backMagnet.transform.position;
-            // backHalf.transform.position += positionOffset;
-
-            // // Re-enable physics
-            // bottomRb.isKinematic = originalKinematic;
-
             setJoint();
-
-            // Create a new FixedJoint
-            // fixedJoint = frontHalf.AddComponent<ConfigurableJoint>();
-            // fixedJoint.connectedBody = backHalf.GetComponent<Rigidbody>();
-
-            // // Configure joint constraints
-            // fixedJoint.angularXMotion = ConfigurableJointMotion.Locked;
-            // fixedJoint.angularZMotion = ConfigurableJointMotion.Locked;
-            // fixedJoint.angularYMotion = ConfigurableJointMotion.Free;
-
-            // // Set anchor points
-            // fixedJoint.anchor = frontMagnet.transform.localPosition;
-            // fixedJoint.connectedAnchor = backMagnet.transform.localPosition;
-
-            // frontHalf.GetComponent<Rigidbody>().constraints &= ~RigidbodyConstraints.FreezeRotationX;
-            // frontHalf.GetComponent<Rigidbody>().constraints &= ~RigidbodyConstraints.FreezeRotationZ;
-            // backHalf.GetComponent<Rigidbody>().constraints &= ~RigidbodyConstraints.FreezeRotationX;
-            // backHalf.GetComponent<Rigidbody>().constraints &= ~RigidbodyConstraints.FreezeRotationZ;
-
-            // initialRelativeRotation = Quaternion.Inverse(frontHalf.transform.rotation) * backHalf.transform.rotation;
 
             // TODO: Apply animation
 
             UnityEngine.Debug.Log("Halves reconnected.");
         
-
             // Reset the relative rotation
             initialRelativeRotation = Quaternion.Inverse(frontHalf.transform.rotation) * backHalf.transform.rotation;
-
         }
         else
         {
-            // error message
             messageManager.reconnectFailMessage();
         }
     }
@@ -448,7 +383,6 @@ public class PlayerManager : MonoBehaviour
 
         // Align orientation and position
         backHalf.transform.rotation = frontHalf.transform.rotation * initialRelativeRotation;
-        
 
         Vector3 positionOffset = frontMagnet.transform.position - backMagnet.transform.position;
         backHalf.transform.position += positionOffset;
@@ -466,8 +400,8 @@ public class PlayerManager : MonoBehaviour
         if (Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.RightShift)) tryStartSwitch();
         if (Input.GetKeyUp(KeyCode.LeftShift) || Input.GetKeyUp(KeyCode.RightShift)) cancelSwitch();
 
-        // tryFinishSwitch();
-        tryFinishSwitchV2();
+        tryFinishSwitch(); // P1 and P2 switch halves but not species 
+        // tryFinishSwitchV2(); // P1 and P2 switch halves and species
     }
 
     private void tryStartSwitch()
@@ -494,6 +428,9 @@ public class PlayerManager : MonoBehaviour
         {
             switchStopwatch.Reset();
 
+            // Update the rotation according to the new halves (maybe don't need this though because new halves should be in same rotation as old ones?)
+            // initialRelativeRotation = Quaternion.Inverse(frontHalf.transform.rotation) * backHalf.transform.rotation;
+
             // Switch which half the players are controlling
             P1.IsFront = !P1.IsFront;
             P2.IsFront = !P2.IsFront;
@@ -505,10 +442,10 @@ public class PlayerManager : MonoBehaviour
             dogFront.SetActive(false);
             dogBack.SetActive(false);
 
-            catFront.GetComponent<Rigidbody>().isKinematic = true;
-            catBack.GetComponent<Rigidbody>().isKinematic = true;
-            dogFront.GetComponent<Rigidbody>().isKinematic = true;
-            dogBack.GetComponent<Rigidbody>().isKinematic = true;
+            // catFront.GetComponent<Rigidbody>().isKinematic = true;
+            // catBack.GetComponent<Rigidbody>().isKinematic = true;
+            // dogFront.GetComponent<Rigidbody>().isKinematic = true;
+            // dogBack.GetComponent<Rigidbody>().isKinematic = true;
 
             // Switch the half to the player's species
             if (P1.IsFront)
@@ -657,25 +594,25 @@ public class PlayerManager : MonoBehaviour
             player2Camera.LookAt = P2.Half.transform;
 
             refreshHalves();
+            
+            P1.Half.SetActive(true);
+            P2.Half.SetActive(true);
             alignHalves();
-            updatePlayerIcons();
+            // updatePlayerIcons();
 
             if (getJoint() == null)
             {
                 setJoint();
             }
             
-            catFront.GetComponent<Rigidbody>().isKinematic = false;
-            catBack.GetComponent<Rigidbody>().isKinematic = false;
-            dogFront.GetComponent<Rigidbody>().isKinematic = false;
-            dogBack.GetComponent<Rigidbody>().isKinematic = false;
+            // catFront.GetComponent<Rigidbody>().isKinematic = false;
+            // catBack.GetComponent<Rigidbody>().isKinematic = false;
+            // dogFront.GetComponent<Rigidbody>().isKinematic = false;
+            // dogBack.GetComponent<Rigidbody>().isKinematic = false;
 
-            // Reset the rotation according to the new halves (maybe don't need this though because new halves should be in same rotation as old ones?)
-            initialRelativeRotation = Quaternion.Inverse(frontHalf.transform.rotation) * backHalf.transform.rotation;
-
-            P1.Half.SetActive(true);
-            P2.Half.SetActive(true);
             
+            
+            updatePlayerIcons();
             UnityEngine.Debug.Log("Switched!");
         }
     }
