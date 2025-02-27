@@ -15,6 +15,25 @@ public class MoveRugTask : MonoBehaviour
     {
         TaskManager.RegisterTask(task);
         rug.constraints = RigidbodyConstraints.FreezeAll;
+        foreach (Transform child in rug.transform)
+        {
+            child.gameObject.tag = "Untagged";
+        }
+    }
+
+    void Update()
+    {
+        if (ArePriorTasksComplete())
+        {
+            if (rug != null)
+                {
+                    rug.constraints = RigidbodyConstraints.None;
+                    foreach (Transform child in rug.transform)
+                    {
+                        child.gameObject.tag = "Draggable";
+                    }
+                }
+        }
     }
 
     // void OnCollisionExit(Collision collision)
@@ -33,11 +52,6 @@ public class MoveRugTask : MonoBehaviour
         {
             if (ArePriorTasksComplete())
             {
-                if (rug != null)
-                {
-                    rug.constraints = RigidbodyConstraints.None;
-                }
-               
                 FinishTask();
             }
         }
@@ -61,7 +75,7 @@ public class MoveRugTask : MonoBehaviour
         task.IsComplete = true;
     }
 
-    private bool ArePriorTasksComplete()
+    public static bool ArePriorTasksComplete()
     {
         Task shatterVaseTask = TaskManager.FindTaskByName("Shatter Vase");
         Task scatterBoxesTask = TaskManager.FindTaskByName("Scatter Boxes");
