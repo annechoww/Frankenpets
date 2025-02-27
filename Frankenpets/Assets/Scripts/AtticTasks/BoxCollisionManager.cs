@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class BoxCollisionManager : MonoBehaviour
 {
     public static BoxCollisionManager Instance { get; private set; }
-
+    public Task task = new Task("Scatter Boxes", 0);
     public Image taskItem;
     public Color completedColor;
 
@@ -33,6 +33,7 @@ public class BoxCollisionManager : MonoBehaviour
         }
 
         tutorialText = GameObject.Find("TutorialTextManager").GetComponent<TutorialText>();
+        TaskManager.RegisterTask(task);
     }
     
     // register collision
@@ -68,6 +69,7 @@ public class BoxCollisionManager : MonoBehaviour
 
     private void FinishTask(){
         taskItem.color = completedColor;
+        task.IsComplete = true;
         if (isFirstCollision && (tutorialText.getCurrTutorialStage() == TutorialText.tutScatterBoxes))
         {
             tutorialText.advanceTutorialStage();
