@@ -14,6 +14,10 @@ This Class handles all player actions. The actions are mapped as follows:
 
 public class PlayerActions : MonoBehaviour
 {
+    [Header("Input References")]
+    public InputHandler player1Input;
+    public InputHandler player2Input;
+
     [Header("Jumping Variables")]
     public float jumpForce = 15f;
     public float jumpCooldown = 0.5f;
@@ -168,14 +172,22 @@ public class PlayerActions : MonoBehaviour
 ////////////////////////////////////// Jump Logic /////////////////////////////////////
     private void runJumpLogic()
     {
+
+        // Get input from handlers instead of direct Input.GetKey
+        bool player1Jump = player1Input.GetJumpPressed();
+        bool player2Jump = player2Input.GetJumpPressed();
+        bool player1Special = player1Input.GetSpecialActionPressed();
+        bool player2Special = player2Input.GetSpecialActionPressed(); 
+
         // Basic Jump
-        if ((Input.GetKey(KeyCode.Z) && !P1.IsFront) || ((Input.GetKey(KeyCode.Comma)) && !P2.IsFront))
+        if ((player1Jump && !P1.IsFront) || (player2Jump && !P2.IsFront))
         {
             tryStartJump(jumpForce, jumpCooldown);
         }
+
         // Charged Jump - TODO: Update with valid species 
-        else if ((Input.GetKey(KeyCode.C) && !P1.IsFront && P1.Species == "cat") || 
-                (Input.GetKey(KeyCode.Slash) && !P2.IsFront && P2.Species == "cat"))
+        else if ((player1Special && !P1.IsFront && P1.Species == "cat") || 
+                (player2Special && !P2.IsFront && P2.Species == "cat"))
         {
             tryStartJump(chargedJumpForce, chargedJumpCooldown);
         }
@@ -213,15 +225,29 @@ public class PlayerActions : MonoBehaviour
 ////////////////////////////////////////// Climb Action ///////////////////////////////////////////////
     private void runClimbLogic()
     {
-        // TODO: ADD CHECK FOR CAT
+
+
+        // Get special action input for climbing (cat front special)
+        bool player1Special = player1Input.GetSpecialActionPressed();
+        bool player2Special = player2Input.GetSpecialActionPressed();
+        
+        // Check for cat species in front position
+        string frontSpecies = P1.IsFront ? P1.Species : P2.Species;
+        bool isSpecialReleased = (P1.IsFront && !player1Special) || (P2.IsFront && !player2Special);
+        
+        // Only cats can climb
+        if (frontSpecies != "cat") return;
+        
+        // Start climbing when front cat player presses special near climbable
         if (isNearClimbable && !isClimbing)
         {
-            if ((Input.GetKeyDown(KeyCode.C) && P1.IsFront) || (Input.GetKeyDown(KeyCode.Slash) && P2.IsFront))
+            if ((player1Special && P1.IsFront) || (player2Special && P2.IsFront))
             {
                 StartClimbing();
             }
         }
-        else if (((Input.GetKeyUp(KeyCode.C) && P1.IsFront) || (Input.GetKeyUp(KeyCode.Slash) && P2.IsFront)) && isClimbing)
+        // Stop climbing when button is released
+        else if (isSpecialReleased && isClimbing)
         {
             StopClimbing();
         }
@@ -255,8 +281,15 @@ public class PlayerActions : MonoBehaviour
         // Debug.DrawLine(mouthPosition, Vector3.forward + Vector3.up, Color.red, 2, false);
         // Debug.DrawLine(mouthPosition, mouthDirection, Color.red, 2, false);
 
-        if (((Input.GetKeyDown(KeyCode.C) && P1.IsFront) || (Input.GetKeyDown(KeyCode.Slash) && P2.IsFront)) && isGrabbing)
-        {
+        bool p1IsDogFront = P1.IsFront && P1.Species == "dog";
+        bool p2IsDogFront = P2.IsFront && P2.Species == "dog";
+
+        bool dogFrontSpecialP1 = p1IsDogFront && player1Input.GetSpecialActionPressed();
+        bool dogFrontSpecialP2 = p2IsDogFront && player2Input.GetSpecialActionPressed();
+
+        bool dogFrontSpecial = dogFrontSpecialP1 || dogFrontSpecialP2;
+
+        if (dogFrontSpecial && isGrabbing) {
             Debug.Log("Released item");
 
             Physics.IgnoreLayerCollision(10, 9, false);
@@ -274,7 +307,8 @@ public class PlayerActions : MonoBehaviour
             
             isGrabbing = false;
 
-        } else if (((Input.GetKeyDown(KeyCode.C) && P1.IsFront) || (Input.GetKeyDown(KeyCode.Slash) && P2.IsFront)) && canGrab)
+        }
+        else if (dogFrontSpecial && canGrab)
         {
             Debug.Log("Grabbed item");
             
@@ -299,9 +333,58 @@ public class PlayerActions : MonoBehaviour
 
             isGrabbing = true;
             grabText.SetActive(false);
-        } else if (((Input.GetKeyDown(KeyCode.C) && P1.IsFront) || (Input.GetKeyDown(KeyCode.Slash) && P2.IsFront))){
+        }
+        else if (dogFrontSpecial){
             mouthRiggingScript.openMouth();
         }
+
+        // if (((Input.GetKeyDown(KeyCode.C) && P1.IsFront) || (Input.GetKeyDown(KeyCode.Slash) && P2.IsFront)) && isGrabbing)
+        // {
+        //     Debug.Log("Released item");
+
+        //     Physics.IgnoreLayerCollision(10, 9, false);
+
+        //     if (grabbableObject.CompareTag("Draggable"))
+        //     {
+        //         grabbableObject.transform.parent.SetParent(null);
+        //         grabbableObject.transform.parent.gameObject.GetComponent<Rigidbody>().isKinematic = false;
+        //     }
+        //     else
+        //     {
+        //         grabbableObject.transform.SetParent(null);
+        //         grabbableObject.gameObject.GetComponent<Rigidbody>().isKinematic = false;
+        //     }
+            
+        //     isGrabbing = false;
+
+        // } else if (((Input.GetKeyDown(KeyCode.C) && P1.IsFront) || (Input.GetKeyDown(KeyCode.Slash) && P2.IsFront)) && canGrab)
+        // {
+        //     Debug.Log("Grabbed item");
+            
+        //     mouthPosition = transform.position + transform.TransformDirection(Vector3.forward * 0.23f + Vector3.up * 0.202f);
+        //     Physics.IgnoreLayerCollision(10, 9, true);
+
+        //     if (grabbableObject.CompareTag("Draggable"))
+        //     {                                
+        //         grabbableObject.transform.parent.gameObject.GetComponent<Rigidbody>().isKinematic = true;
+        //         grabbableObject.transform.parent.SetParent(transform);
+        //         grabbableObject.transform.parent.position += transform.TransformDirection(Vector3.up * 0.05f);
+
+        //         // TODO: play bite animation
+
+        //     } 
+        //     else
+        //     {
+        //         grabbableObject.gameObject.GetComponent<Rigidbody>().isKinematic = true;
+        //         grabbableObject.transform.SetParent(transform);
+        //         grabbableObject.transform.position = mouthPosition;
+        //     }
+
+        //     isGrabbing = true;
+        //     grabText.SetActive(false);
+        // } else if (((Input.GetKeyDown(KeyCode.C) && P1.IsFront) || (Input.GetKeyDown(KeyCode.Slash) && P2.IsFront))){
+        //     mouthRiggingScript.openMouth();
+        // }
     }
 
 ////////////////////////////////////////// Hind Legs Action ///////////////////////////////////////////////
