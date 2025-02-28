@@ -28,6 +28,14 @@ public class GrabPoint : MonoBehaviour
     [Tooltip("How much the object resists being moved (0-1)")]
     [Range(0, 1)]
     public float dragResistance = 0.5f;
+
+    [Header("Turning Restrictions")]
+    [Tooltip("How much the object restricts turning (0=No restriction, 1=Cannot turn)")]
+    [Range(0, 1)]
+    public float turnRestriction = 0f;
+
+    [Tooltip("Should this object completely prevent turning when grabbed?")]
+    public bool preventTurning = false;
     
     private void Awake()
     {
