@@ -47,6 +47,8 @@ public class PlayerActions : MonoBehaviour
     private Vector3 mouthDirection;
     private Vector3 grabPoint; // Position where the joint connects
 
+    
+
     private GrabPoint currentGrabPoint;
     private GrabbableObject currentGrabbableObject;
 
@@ -55,6 +57,9 @@ public class PlayerActions : MonoBehaviour
     public float defaultDamperForce = 20f;
     private ConfigurableJoint grabJoint;
     private float originalPlayerSpeed;
+
+    private float originalTurnSpeed;
+    private bool turnRestricted = false;
 
     private PlayerManager playerManager; 
     private Player P1;
@@ -468,6 +473,7 @@ public class PlayerActions : MonoBehaviour
         originalPlayerSpeed = playerManager.walkSpeed;
 
         applyMovementPenalty();
+        applyTurnRestriction();
 
         isGrabbing = true;
         grabText.SetActive(false);
@@ -541,6 +547,33 @@ public class PlayerActions : MonoBehaviour
         playerManager.walkSpeed *= (1f -penalty);
     }
 
+    private void applyTurnRestriction() {
+
+        if (!turnRestricted) {
+            originalTurnSpeed = playerManager.turnSpeed;
+        }
+
+        bool preventTurning = false;
+        float turnRestriction = 0f;
+
+        if (currentGrabPoint != null) {
+            preventTurning = currentGrabPoint.preventTurning;
+            turnRestriction = currentGrabPoint.turnRestriction;
+        }
+        else if (currentGrabbableObject != null) {
+            preventTurning = currentGrabbableObject.preventTurning;
+            turnRestriction = currentGrabbableObject.turnRestriction;
+        }
+
+        if (preventTurning) {
+            playerManager.turnSpeed = 0f;
+        } else {
+            playerManager.turnSpeed = originalTurnSpeed * (1f - turnRestriction);
+        }
+
+        turnRestricted = true;
+    }
+
     private void updateGrabJoint() {
         if (grabJoint == null && isGrabbing) {
             releaseGrabbedObject();
@@ -557,6 +590,10 @@ public class PlayerActions : MonoBehaviour
         }
 
         playerManager.walkSpeed = originalPlayerSpeed;
+        if (turnRestricted) {
+            playerManager.turnSpeed = originalTurnSpeed;
+            turnRestricted = false;
+        }
         isGrabbing = false;
         currentGrabPoint = null;
         currentGrabbableObject = null;

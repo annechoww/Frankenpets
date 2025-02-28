@@ -24,8 +24,7 @@ public class PlayerManager : MonoBehaviour
 
     [Header("Movement Variables")]
     public float walkSpeed = 0.6f;
-    public float frontTurnSpeed = 1.0f;
-    public float backTurnSpeed = 1.0f;
+    public float turnSpeed = 1.0f;
     // private bool isFrozen = false; // whether the half's RigidBody's position is frozen in place 
 
     [Header("Splitting Variables")]
@@ -204,12 +203,12 @@ public class PlayerManager : MonoBehaviour
     {
         // Get player 1's input
         Vector2 player1MoveInput = player1Input.GetMoveInput();
-        float turnInputP1 = player1MoveInput.x * (P1.IsFront ? frontTurnSpeed : backTurnSpeed);
+        float turnInputP1 = player1MoveInput.x * turnSpeed;
         float moveInputP1 = player1MoveInput.y * walkSpeed;
         
         // Get player 2's input
         Vector2 player2MoveInput = player2Input.GetMoveInput();
-        float turnInputP2 = player2MoveInput.x * (P2.IsFront ? frontTurnSpeed : backTurnSpeed);
+        float turnInputP2 = player2MoveInput.x * turnSpeed;
         float moveInputP2 = player2MoveInput.y * walkSpeed;
         
         // Apply the combined rotation to both halves:
@@ -275,12 +274,12 @@ public class PlayerManager : MonoBehaviour
         Vector2 player2MoveInput = player2Input.GetMoveInput();
         
         // Movement for Player 1's half
-        float turnSpeedP1 = P1.IsFront ? frontTurnSpeed : backTurnSpeed;
+        float turnSpeedP1 = turnSpeed;
         P1.Half.transform.Rotate(0.0f, player1MoveInput.x * turnSpeedP1, 0.0f, Space.Self);
         P1.Half.transform.Translate(Vector3.forward * player1MoveInput.y * walkSpeed * Time.deltaTime, Space.Self);
         
         // Movement for Player 2's half
-        float turnSpeedP2 = P2.IsFront ? frontTurnSpeed : backTurnSpeed;
+        float turnSpeedP2 = turnSpeed;
         P2.Half.transform.Rotate(0.0f, player2MoveInput.x * turnSpeedP2, 0.0f, Space.Self);
         P2.Half.transform.Translate(Vector3.forward * player2MoveInput.y * walkSpeed * Time.deltaTime, Space.Self);
     }
