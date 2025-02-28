@@ -365,7 +365,6 @@ GameObject:
   - component: {fileID: 5420053681546339756}
   - component: {fileID: 2133303873589785905}
   - component: {fileID: 809403273594926195}
-  - component: {fileID: 8057997718389785549}
   m_Layer: 10
   m_Name: Pet 1
   m_TagString: Untagged
@@ -449,28 +448,6 @@ MonoBehaviour:
   keyboardScheme: Keyboard
   useKeyboardFallback: 1
   reassignOnConnect: 1
---- !u!114 &8057997718389785549
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9049433547381474192}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a7b625c5b3ce2416ba4c9fa88df6e959, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player1Input: {fileID: 6860197755967978287}
-  player2Input: {fileID: 4183299364677417769}
-  jumpForce: 15
-  jumpCooldown: 0.5
-  chargedJumpForce: 25
-  chargedJumpCooldown: 0.8
-  dogClip: {fileID: 8300000, guid: 418a120e114bd42ab9de1f36b93d9fa4, type: 3}
-  catClip: {fileID: 8300000, guid: eb871ad6bcf624904aee5606d1ae7925, type: 3}
-  climbSpeed: 2
-  climbCheckDistance: 0.5
 --- !u!1001 &299590844125054356
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -769,6 +746,8 @@ MonoBehaviour:
   catClip: {fileID: 8300000, guid: eb871ad6bcf624904aee5606d1ae7925, type: 3}
   climbSpeed: 2
   climbCheckDistance: 0.5
+  defaultSpringForce: 1000
+  defaultDamperForce: 20
 --- !u!1001 &6741198866274691358
 PrefabInstance:
   m_ObjectHideFlags: 0
