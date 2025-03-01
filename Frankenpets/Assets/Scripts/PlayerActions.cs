@@ -217,7 +217,10 @@ public class PlayerActions : MonoBehaviour
     {
         if (Time.time - lastJumpTime > jumpCooldown)
         {
-            frontRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            if (playerManager.getJoint() != null)
+            {
+                frontRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            }
             backRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             lastJumpTime = Time.time;
         }

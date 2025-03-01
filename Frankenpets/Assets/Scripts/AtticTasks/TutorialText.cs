@@ -10,10 +10,15 @@ public class TutorialText : MonoBehaviour
     public GameObject speechBubbleTwoTails;
     public GameObject speechBubbleLeft;
     public GameObject speechBubbleRight;
-    public GameObject catIcon;
-    public GameObject dogIcon;
+    public GameObject catIconP1Left;
+    public GameObject dogIconP1Left;
+    public GameObject catIconP2Right;
+    public GameObject dogIconP2Right;
     public GameObject movementUI;
+    public GameObject jumpUI;
     public GameObject splitUI;
+    public GameObject reconnectUI;
+    public GameObject switchUI;
     public GameObject grabUI;
 
 
@@ -93,8 +98,8 @@ public class TutorialText : MonoBehaviour
     public const int tutSwitch = 8;
     public const int tutDragRug = 9;
     public const int tutComplete = 10;
-    // Living room
-    public const int lrEnter = 11;
+    public const int scaredDog = 11;
+    public const int annoyedCat = 12;
 
     // Update is called once per frame
     private void updateTutorialText()
@@ -103,91 +108,127 @@ public class TutorialText : MonoBehaviour
         {
             case tutMoveToVase:
                 speechBubbleTwoTails.SetActive(true);
-                tutorialText.text = "let's move to the vase";
-                // tutorialSmallText.text = "P1 WASD                     P2 arrows";
-                movementUI.SetActive(true);
+                tutorialText.text = "let's move to the vase"; // speech bubble text
+                movementUI.SetActive(true); // small text
+
+                // todo: vase arrow
+
                 break;
             case tutBreakVase:
                 movementUI.SetActive(false);
+
                 tutorialText.text = "hmm... can we break the vase?";
-                tutorialSmallText.text = "";
+                jumpUI.SetActive(true);
+
                 break;
             case tutSplit:
+                jumpUI.SetActive(false);
+
                 task2Tutorial.enabled = false;
+
                 tutorialText.text = "chaos! now, let's split apart";
-                // tutorialSmallText.text = "P1 hold W                     P2 hold dArrow";
                 splitUI.SetActive(true);
+
                 break;
             case 3:
-                speechBubbleTwoTails.SetActive(false);
-                speechBubbleRight.SetActive(true);
                 splitUI.SetActive(false);
-                tutorialText.text = "creepy...";
-                tutorialSmallText.text = "";
 
-                emote = playerManager.startEmote(playerManager.getFrontHalf(), "sad");
+                speechBubbleTwoTails.SetActive(false);
+                speechBubbleLeft.SetActive(true);
+                
+                tutorialText.text = "creepy...";
+
+                emote = playerManager.startEmote(playerManager.getBackHalf(), "sad");
                 // play sad dog sound
 
-                StartCoroutine(waitForSeconds(4.0f));
+                StartCoroutine(waitForSeconds(3.0f));
                 // StartCoroutine(waitForKeypress(KeyCode.Return));
+                
                 break;
             case 4:
                 playerManager.cancelEmote(emote);
                 tutorialText.text = "sorry, i take that back.";
                 
-                emote = playerManager.startEmote(playerManager.getFrontHalf(), "happy");
+                emote = playerManager.startEmote(playerManager.getBackHalf(), "happy");
                 // play happy dog sound
 
-                StartCoroutine(waitForSeconds(4.0f));
+                StartCoroutine(waitForSeconds(3.0f));
                 // StartCoroutine(waitForKeypress(KeyCode.Return));
                 break;              
             case tutScatterBoxes:
-                speechBubbleRight.SetActive(false);
                 speechBubbleLeft.SetActive(false);
-                playerManager.cancelEmote(emote);   
-                tutorialText.text = "let's scatter the coloured boxes around!";
-                tutorialSmallText.text = ""; // "move the boxes while split apart";
+                speechBubbleRight.SetActive(true);
+                playerManager.cancelEmote(emote); 
+
+                tutorialText.text = "let's scatter the coloured boxes around"; 
+
+                // todo: show arrows
+
                 break;
             case tutReconnect:
-                tutorialText.text = "yay! let's sow ourselves back together";
-                tutorialSmallText.text = "align your halves and press space";
+                tutorialText.text = "yay! let's sow ourselves back together"; // speech bubble text
+                reconnectUI.SetActive(true); // small text
+
                 break;
             case tutMoveToRug:
-                speechBubbleRight.SetActive(true);
-                speechBubbleLeft.SetActive(false);
-                tutorialText.text = "hey, what's under that pink rug?";
-                tutorialSmallText.text = "";
+                reconnectUI.SetActive(false);
+
+                speechBubbleRight.SetActive(false);
+                speechBubbleLeft.SetActive(true);
+
+                tutorialText.text = "hey, what's under that pink rug?"; // speech bubble text
+
                 break;
             case tutSwitch:
                 task3Tutorial.enabled = false;
-                tutorialText.text = "P1 and P2, switch sides with each other";
-                tutorialSmallText.text = "P1 hold LShift                     P2 hold RShift";
+
+                tutorialText.text = "i can't grab this, can you help?";
+                switchUI.SetActive(true);
+                
                 break;
             case tutDragRug:
-                tutorialText.text = "that felt weird...";
-                // tutorialSmallText.text = "P2 press '/' to grab";
-                tutorialSmallText.text = "";
+                switchUI.SetActive(false);
+                speechBubbleLeft.SetActive(false);
+                speechBubbleRight.SetActive(true);
+                // catIconP1Left.SetActive(false);
+                // dogIconP2Right.SetActive(false);
+                // catIconP2Right.SetActive(true);
+                // dogIconP1Left.SetActive(true);
+
+                tutorialText.text = "woah, i'm at the front now!";
                 grabUI.SetActive(true);
+
                 break;
             case tutComplete:
-                speechBubbleLeft.SetActive(false);
-                speechBubbleTwoTails.SetActive(true);
                 grabUI.SetActive(false);
+                speechBubbleRight.SetActive(false);
+                speechBubbleTwoTails.SetActive(true);
+                
                 tutorialText.text = "let's wreck this house!";
                 tutorialSmallText.text = "leave the attic, or take a look around first";
-                messageManager.customMessage("press return to hide the tutorial");
-                if (Input.GetKeyDown(KeyCode.Return)) 
-                {
-                    catIcon.SetActive(false);
-                    dogIcon.SetActive(false);
-                    advanceTutorialStage();
-                }
-                break;
-            // case lrEnter:
+                messageManager.startPressEnterToHideTutorial();
 
-            //     catIcon.SetActive(false);
-            //     dogIcon.SetActive(false);
-            //     break;
+                if (Input.GetKey(KeyCode.Return)) 
+                {
+                    speechBubbleTwoTails.SetActive(false);
+                    tutorialText.text = "";
+                    tutorialSmallText.text = "";
+                    messageManager.cancelPressEnterToHideTutorial();
+                }
+                // go to next stage when touch attic door again during case tut complete
+                break;
+            case scaredDog:
+                speechBubbleLeft.SetActive(true);
+                speechBubbleRight.SetActive(false);
+                tutorialText.text = "the drop's too high, i'm scared!";
+                StartCoroutine(waitForSeconds(4.0f));
+                break;
+            case annoyedCat:
+                speechBubbleLeft.SetActive(false);
+                speechBubbleRight.SetActive(true);
+                tutorialText.text = "fine, i'll jump. switch with me.";
+                StartCoroutine(waitForSeconds(4.0f));
+                break;
         }
     }
 
