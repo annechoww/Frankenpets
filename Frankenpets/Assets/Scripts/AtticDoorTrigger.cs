@@ -6,7 +6,7 @@ public class AtticDoorTrigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("dog front"))
+        if (other.CompareTag("dog front") || other.CompareTag("cat front"))
         {
             if (levelLoader != null) 
             {

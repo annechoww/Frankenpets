@@ -6,12 +6,34 @@ public class MoveRugTask : MonoBehaviour
     public Image taskItem;
     public Color completedColor;
     public GameObject openedAtticDoor;
+    public Rigidbody rug;
 
     private TutorialText tutorialText;
+    private Task task = new Task("Move Rug", 0);
 
     void Awake()
     {
-        tutorialText = GameObject.Find("TutorialTextManager").GetComponent<TutorialText>();
+        TaskManager.RegisterTask(task);
+        rug.constraints = RigidbodyConstraints.FreezeAll;
+        foreach (Transform child in rug.transform)
+        {
+            child.gameObject.tag = "Untagged";
+        }
+    }
+
+    void Update()
+    {
+        if (ArePriorTasksComplete())
+        {
+            if (rug != null)
+                {
+                    rug.constraints = RigidbodyConstraints.None;
+                    foreach (Transform child in rug.transform)
+                    {
+                        child.gameObject.tag = "Draggable";
+                    }
+                }
+        }
     }
 
     // void OnCollisionExit(Collision collision)
@@ -28,12 +50,17 @@ public class MoveRugTask : MonoBehaviour
     {
         if (other.transform.name == "Rug")
         {
-            FinishTask();
+            if (ArePriorTasksComplete())
+            {
+                FinishTask();
+            }
         }
     }
 
     private void FinishTask()
     {
+        tutorialText = GameObject.Find("TutorialTextManager").GetComponent<TutorialText>();
+
         // Destroy the intact vase after shattering
         Destroy(gameObject);
 
@@ -45,5 +72,15 @@ public class MoveRugTask : MonoBehaviour
 
         openedAtticDoor.SetActive(true);
         gameObject.SetActive(false);
+        task.IsComplete = true;
     }
+
+    public static bool ArePriorTasksComplete()
+    {
+        Task shatterVaseTask = TaskManager.FindTaskByName("Shatter Vase");
+        Task scatterBoxesTask = TaskManager.FindTaskByName("Scatter Boxes");
+
+        return shatterVaseTask != null && scatterBoxesTask != null && shatterVaseTask.IsComplete && scatterBoxesTask.IsComplete;
+    }
+
 }
