@@ -1,3 +1,5 @@
+// TUTORIAL STAGE: MOVE TO RUG
+
 using UnityEngine;
 
 public class Task3Tutorial : MonoBehaviour
@@ -13,7 +15,7 @@ public class Task3Tutorial : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {            
 
-        if (other.CompareTag("dog front") && isFirstTrigger && (tutorialText.getCurrTutorialStage() == TutorialText.tutMoveToRug))
+        if (other.CompareTag("cat front") && isFirstTrigger && (tutorialText.getCurrTutorialStage() == TutorialText.tutMoveToRug))
         {
             isFirstTrigger = false;
             tutorialText.advanceTutorialStage();
