@@ -12,13 +12,14 @@ public class VaseShatter : MonoBehaviour
     public Image taskItem;
     public Color completedColor;
 
+    public Task task = new Task("Shatter Vase", 0);
     private bool isShattered = false;
-
     private TutorialText tutorialText;
 
     void Awake()
     {
         tutorialText = GameObject.Find("TutorialTextManager").GetComponent<TutorialText>();
+        TaskManager.RegisterTask(task);
     }
 
     void OnCollisionEnter(Collision collision)
@@ -52,5 +53,6 @@ public class VaseShatter : MonoBehaviour
     private void FinishTask(){
         taskItem.color = completedColor;
         tutorialText.advanceTutorialStage();
+        task.IsComplete = true;
     }
 }

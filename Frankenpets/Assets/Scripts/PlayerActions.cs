@@ -173,7 +173,7 @@ public class PlayerActions : MonoBehaviour
         {
             tryStartJump(jumpForce, jumpCooldown);
         }
-        // Charged Jump - TODO: Update with valid species 
+        // Charged Jump
         else if ((Input.GetKey(KeyCode.C) && !P1.IsFront && P1.Species == "cat") || 
                 (Input.GetKey(KeyCode.Slash) && !P2.IsFront && P2.Species == "cat"))
         {
@@ -185,7 +185,10 @@ public class PlayerActions : MonoBehaviour
     {
         if (Time.time - lastJumpTime > jumpCooldown)
         {
-            frontRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            if (playerManager.getJoint() != null)
+            {
+                frontRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            }
             backRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             lastJumpTime = Time.time;
         }
@@ -213,15 +216,16 @@ public class PlayerActions : MonoBehaviour
 ////////////////////////////////////////// Climb Action ///////////////////////////////////////////////
     private void runClimbLogic()
     {
-        // TODO: ADD CHECK FOR CAT
         if (isNearClimbable && !isClimbing)
         {
-            if ((Input.GetKeyDown(KeyCode.C) && P1.IsFront) || (Input.GetKeyDown(KeyCode.Slash) && P2.IsFront))
+            if ((Input.GetKeyDown(KeyCode.C) && P1.IsFront && P1.Species == "cat") || 
+                (Input.GetKeyDown(KeyCode.Slash) && P2.IsFront && P2.Species == "cat"))
             {
                 StartClimbing();
             }
         }
-        else if (((Input.GetKeyUp(KeyCode.C) && P1.IsFront) || (Input.GetKeyUp(KeyCode.Slash) && P2.IsFront)) && isClimbing)
+        else if (((Input.GetKeyUp(KeyCode.C) && P1.IsFront && P1.Species == "cat") || 
+                (Input.GetKeyUp(KeyCode.Slash) && P2.IsFront && P2.Species == "cat")) && isClimbing)
         {
             StopClimbing();
         }
@@ -247,7 +251,7 @@ public class PlayerActions : MonoBehaviour
     }
 
 ////////////////////////////////////////// Grab Action ///////////////////////////////////////////////
-    private void runGrablogic() // TODO: Add dog species check
+    private void runGrablogic()
     {
         // FOR DEBUGGING: Make sure mouthPosition and mouthDirection match the one at line 54, and comment out the variables on lines 54 & 55
         // Vector3 mouthPosition = transform.position + transform.TransformDirection(Vector3.forward * 0.23f + Vector3.up * 0.202f);
@@ -255,7 +259,8 @@ public class PlayerActions : MonoBehaviour
         // Debug.DrawLine(mouthPosition, Vector3.forward + Vector3.up, Color.red, 2, false);
         // Debug.DrawLine(mouthPosition, mouthDirection, Color.red, 2, false);
 
-        if (((Input.GetKeyDown(KeyCode.C) && P1.IsFront) || (Input.GetKeyDown(KeyCode.Slash) && P2.IsFront)) && isGrabbing)
+        if (((Input.GetKeyDown(KeyCode.C) && P1.IsFront && P1.Species == "dog") || 
+            (Input.GetKeyDown(KeyCode.Slash) && P2.IsFront && P2.Species == "dog")) && isGrabbing)
         {
             Debug.Log("Released item");
 
@@ -274,7 +279,8 @@ public class PlayerActions : MonoBehaviour
             
             isGrabbing = false;
 
-        } else if (((Input.GetKeyDown(KeyCode.C) && P1.IsFront) || (Input.GetKeyDown(KeyCode.Slash) && P2.IsFront)) && canGrab)
+        } else if (((Input.GetKeyDown(KeyCode.C) && P1.IsFront && P1.Species == "dog") || 
+                    (Input.GetKeyDown(KeyCode.Slash) && P2.IsFront && P2.Species == "dog")) && canGrab)
         {
             Debug.Log("Grabbed item");
             
