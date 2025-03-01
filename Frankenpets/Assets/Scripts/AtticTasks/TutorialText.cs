@@ -15,7 +15,10 @@ public class TutorialText : MonoBehaviour
     public GameObject catIconP2Right;
     public GameObject dogIconP2Right;
     public GameObject movementUI;
+    public GameObject jumpUI;
     public GameObject splitUI;
+    public GameObject reconnectUI;
+    public GameObject switchUI;
     public GameObject grabUI;
 
 
@@ -105,40 +108,48 @@ public class TutorialText : MonoBehaviour
         {
             case tutMoveToVase:
                 speechBubbleTwoTails.SetActive(true);
-                tutorialText.text = "let's move to the vase"; 
-                // todo: how arrow
-                // tutorialSmallText.text = "P1 WASD                     P2 arrows";
-                movementUI.SetActive(true);
+                tutorialText.text = "let's move to the vase"; // speech bubble text
+                movementUI.SetActive(true); // small text
+
+                // todo: vase arrow
+
                 break;
             case tutBreakVase:
                 movementUI.SetActive(false);
+
                 tutorialText.text = "hmm... can we break the vase?";
-                tutorialSmallText.text = "Hint: P2 press . to jump";//activate ui instead
+                jumpUI.SetActive(true);
+
                 break;
             case tutSplit:
+                jumpUI.SetActive(false);
+
                 task2Tutorial.enabled = false;
+
                 tutorialText.text = "chaos! now, let's split apart";
-                // tutorialSmallText.text = "P1 hold W                     P2 hold dArrow";
                 splitUI.SetActive(true);
+
                 break;
             case 3:
+                splitUI.SetActive(false);
+
                 speechBubbleTwoTails.SetActive(false);
                 speechBubbleLeft.SetActive(true);
-                splitUI.SetActive(false);
+                
                 tutorialText.text = "creepy...";
-                tutorialSmallText.text = "";
 
-                emote = playerManager.startEmote(playerManager.getFrontHalf(), "sad");
+                emote = playerManager.startEmote(playerManager.getBackHalf(), "sad");
                 // play sad dog sound
 
                 StartCoroutine(waitForSeconds(3.0f));
                 // StartCoroutine(waitForKeypress(KeyCode.Return));
+                
                 break;
             case 4:
                 playerManager.cancelEmote(emote);
                 tutorialText.text = "sorry, i take that back.";
                 
-                emote = playerManager.startEmote(playerManager.getFrontHalf(), "happy");
+                emote = playerManager.startEmote(playerManager.getBackHalf(), "happy");
                 // play happy dog sound
 
                 StartCoroutine(waitForSeconds(3.0f));
@@ -147,52 +158,62 @@ public class TutorialText : MonoBehaviour
             case tutScatterBoxes:
                 speechBubbleLeft.SetActive(false);
                 speechBubbleRight.SetActive(true);
-                playerManager.cancelEmote(emote);   
+                playerManager.cancelEmote(emote); 
+
                 tutorialText.text = "let's scatter the coloured boxes around"; 
+
                 // todo: show arrows
-                tutorialSmallText.text = ""; // "move the boxes while split apart";
+
                 break;
             case tutReconnect:
-                tutorialText.text = "yay! let's sow ourselves back together";
-                tutorialSmallText.text = "align your halves and press space";
-                //activate ui instead
+                tutorialText.text = "yay! let's sow ourselves back together"; // speech bubble text
+                reconnectUI.SetActive(true); // small text
+
                 break;
             case tutMoveToRug:
+                reconnectUI.SetActive(false);
+
                 speechBubbleRight.SetActive(false);
                 speechBubbleLeft.SetActive(true);
-                tutorialText.text = "hey, what's under that pink rug?";
-                tutorialSmallText.text = "";
+
+                tutorialText.text = "hey, what's under that pink rug?"; // speech bubble text
+
                 break;
             case tutSwitch:
                 task3Tutorial.enabled = false;
+
                 tutorialText.text = "i can't grab this, can you help?";
-                tutorialSmallText.text = "P1 hold LShift                     P2 hold RShift";
+                switchUI.SetActive(true);
+                
                 break;
             case tutDragRug:
-                catIconP1Left.SetActive(false);
-                dogIconP2Right.SetActive(false);
-                catIconP2Right.SetActive(true);
-                dogIconP1Left.SetActive(true);
-                tutorialText.text = "woah, i'm at the front now!";
+                switchUI.SetActive(false);
+                speechBubbleLeft.SetActive(false);
+                speechBubbleRight.SetActive(true);
+                // catIconP1Left.SetActive(false);
+                // dogIconP2Right.SetActive(false);
+                // catIconP2Right.SetActive(true);
+                // dogIconP1Left.SetActive(true);
 
-                // tutorialSmallText.text = "P2 press '/' to grab";
-                tutorialSmallText.text = "";
+                tutorialText.text = "woah, i'm at the front now!";
                 grabUI.SetActive(true);
+
                 break;
             case tutComplete:
-                speechBubbleLeft.SetActive(false);
-                speechBubbleTwoTails.SetActive(true);
                 grabUI.SetActive(false);
+                speechBubbleRight.SetActive(false);
+                speechBubbleTwoTails.SetActive(true);
+                
                 tutorialText.text = "let's wreck this house!";
                 tutorialSmallText.text = "leave the attic, or take a look around first";
-                messageManager.startCustomMessage("press return to hide the tutorial");
+                messageManager.startPressEnterToHideTutorial();
 
-                if (Input.GetKeyDown(KeyCode.Return)) 
+                if (Input.GetKey(KeyCode.Return)) 
                 {
                     speechBubbleTwoTails.SetActive(false);
                     tutorialText.text = "";
                     tutorialSmallText.text = "";
-                    messageManager.cancelCustomMessage("");
+                    messageManager.cancelPressEnterToHideTutorial();
                 }
                 // go to next stage when touch attic door again during case tut complete
                 break;

@@ -11,6 +11,8 @@ public class MessageManager : MonoBehaviour
     public GameObject switchSuccess;
     public GameObject fellOver;
     public GameObject buttonHoldFail;
+    public GameObject pressEnterToHideTutorial;
+
     public GameObject custom;
 
     public void reconnectFailMessage()
@@ -43,7 +45,17 @@ public class MessageManager : MonoBehaviour
         StartCoroutine(disableAfterSeconds(buttonHoldFail, 3.0f));
     }
 
-    public void autoCustomMessage(string message, float seconds = 3.0)
+    public void startPressEnterToHideTutorial()
+    {
+        pressEnterToHideTutorial.SetActive(true);
+    }
+
+    public void cancelPressEnterToHideTutorial()
+    {
+        pressEnterToHideTutorial.SetActive(false);
+    }
+
+    public void autoCustomMessage(string message, float seconds = 3.0f)
     {
         custom.GetComponent<TextMeshProUGUI>().text = message;
         StartCoroutine(disableAfterSeconds(custom, seconds));

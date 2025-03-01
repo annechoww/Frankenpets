@@ -1,3 +1,5 @@
+// TUTORIAL STAGE: MOVE TO RUG
+
 using UnityEngine;
 
 public class Task3Tutorial : MonoBehaviour

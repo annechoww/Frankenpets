@@ -27,12 +27,15 @@ public class PlayerManager : MonoBehaviour
     public float reconnectionDistance = 0.3f;
     public float splitTime = 1.0f;
     public KeyCode reconnectToggleKey = KeyCode.Space;
+    public AudioClip splitSound;
+    public AudioClip reconnectSound;
     private Stopwatch splitStopwatch = new Stopwatch();
     private Quaternion initialRelativeRotation;
     private GameObject frontHalf;
     private GameObject backHalf;
     private GameObject frontMagnet;
     private GameObject backMagnet;
+    private bool splitCondition = false; // stretching rig listens for this
 
 
     [Header("Switching Variables")]
@@ -70,13 +73,13 @@ public class PlayerManager : MonoBehaviour
         // Initialize the players
         P1.PlayerNumber = 1;
         P1.IsFront = true;
-        P1.Species = "dog";
+        P1.Species = "cat";
         P1.Half = P1Half;
         P1.Magnet = P1Magnet;
 
         P2.PlayerNumber = 2;   
         P2.IsFront = false;
-        P2.Species = "cat";
+        P2.Species = "dog";
         P2.Half = P2Half;
         P2.Magnet = P2Magnet;
 
@@ -90,10 +93,6 @@ public class PlayerManager : MonoBehaviour
         alignHalves();
         setJoint();
 
-        // Other variables
-        // sadEmote = GameObject.FindGameObjectWithTag("SadEmote");
-        // happyEmote = GameObject.FindGameObjectWithTag("HappyEmote");
-
         GameObject messageObject = GameObject.Find("Messages");
         if (messageObject != null)
         {
@@ -106,7 +105,6 @@ public class PlayerManager : MonoBehaviour
         {
             UnityEngine.Debug.LogError("GameObject 'Messages' not found in the scene.");
         }
-
     }
 
     // Update is called once per frame
@@ -316,7 +314,8 @@ public class PlayerManager : MonoBehaviour
             frontForward = Input.GetKey(KeyCode.UpArrow);
             backBackward = Input.GetKey(KeyCode.S);
         }
-        bool splitCondition = frontForward && backBackward;
+
+        splitCondition = frontForward && backBackward;
 
         // Start or reset the split timer based on the condition.
         if (splitCondition)
@@ -337,11 +336,21 @@ public class PlayerManager : MonoBehaviour
             Destroy(fixedJoint); // Split the halves
             fixedJoint = null;
 
+            // finishStretch();
+
             // Add rotation constraints when split
             frontHalf.GetComponent<Rigidbody>().constraints |= RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
             backHalf.GetComponent<Rigidbody>().constraints |= RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
             messageManager.cameraIndicatorMessage(); // Will have split camera, so temporarily display the "P1" / "P2" labels
+            
+            // Play audio
+            if (splitSound != null)
+            {
+                AudioSource.PlayClipAtPoint(splitSound, transform.position);
+            }
+            
+
             UnityEngine.Debug.Log("Halves disconnected due to opposing pull.");
         }
 
@@ -363,6 +372,12 @@ public class PlayerManager : MonoBehaviour
             setJoint();
 
             // TODO: Apply animation
+
+            // Play audio
+            if (reconnectSound != null)
+            {
+                AudioSource.PlayClipAtPoint(reconnectSound, transform.position); 
+            }
 
             UnityEngine.Debug.Log("Halves reconnected.");
         
@@ -389,6 +404,11 @@ public class PlayerManager : MonoBehaviour
 
         // Re-enable physics
         bottomRb.isKinematic = originalKinematic;
+    }
+
+    public bool shouldStretch()
+    {
+        return splitCondition;
     }
     // SPLITTING METHODS ////////////////////////////////////////////
 
@@ -422,14 +442,11 @@ public class PlayerManager : MonoBehaviour
         switchStopwatch.Reset();
     }
 
-    private void tryFinishSwitch() //TODO: CLEAN UP WHEN ROTATION BUG IS FIXED
+    private void tryFinishSwitch()
     {
         if ((switchStopwatch.Elapsed.TotalSeconds > switchTime) && (fixedJoint != null))
         {
             switchStopwatch.Reset();
-
-            // Update the rotation according to the new halves (maybe don't need this though because new halves should be in same rotation as old ones?)
-            // initialRelativeRotation = Quaternion.Inverse(frontHalf.transform.rotation) * backHalf.transform.rotation;
 
             // Switch which half the players are controlling
             P1.IsFront = !P1.IsFront;
@@ -441,11 +458,6 @@ public class PlayerManager : MonoBehaviour
             catBack.SetActive(false);
             dogFront.SetActive(false);
             dogBack.SetActive(false);
-
-            // catFront.GetComponent<Rigidbody>().isKinematic = true;
-            // catBack.GetComponent<Rigidbody>().isKinematic = true;
-            // dogFront.GetComponent<Rigidbody>().isKinematic = true;
-            // dogBack.GetComponent<Rigidbody>().isKinematic = true;
 
             // Switch the half to the player's species
             if (P1.IsFront)
@@ -469,19 +481,11 @@ public class PlayerManager : MonoBehaviour
                     // dogFront.transform.SetParent(null);
                     dogBack.transform.SetParent(transform.GetChild(1));
 
-                    // hide/unhide the halves
-                    // catFront.SetActive(true);
-                    // catBack.SetActive(false);
-                    // dogFront.SetActive(false);
-                    // dogBack.SetActive(true);
-
                     // update players and variables
                     P1.Half = catFront;
                     P2.Half = dogBack;
                     P1.Magnet = catFront.transform.GetChild(2).gameObject;
                     P2.Magnet = dogBack.transform.GetChild(2).gameObject;
-                    // frontHalf = catFront;
-                    // backHalf = dogBack;
                 }
                 else
                 {
@@ -499,25 +503,12 @@ public class PlayerManager : MonoBehaviour
                     catBack.transform.SetParent(transform.GetChild(1));
                     dogFront.transform.SetParent(transform.GetChild(0));
                     // dogBack.transform.SetParent(null);
-
-                    // catFront.SetActive(false);
-                    // catBack.SetActive(true);
-                    // dogFront.SetActive(true);
-                    // dogBack.SetActive(false);
                     
                     P1.Half = dogFront;
                     P2.Half = catBack;
                     P1.Magnet = dogFront.transform.GetChild(2).gameObject;
                     P2.Magnet = catBack.transform.GetChild(2).gameObject;
-                    // frontHalf = dogFront;
-                    // backHalf = catBack;
                 }
-
-                // P1.Magnet = frontHalf.transform.GetChild(2).gameObject;
-                // P2.Magnet = backHalf.transform.GetChild(2).gameObject;
-                // frontMagnet = P1.Magnet;
-                // backMagnet = P2.Magnet;
-
             }
             else // if P2.IsFront
             {
@@ -539,17 +530,10 @@ public class PlayerManager : MonoBehaviour
                     // dogFront.transform.SetParent(null);
                     dogBack.transform.SetParent(transform.GetChild(0));
 
-                    // catFront.SetActive(true);
-                    // catBack.SetActive(false);
-                    // dogFront.SetActive(false);
-                    // dogBack.SetActive(true);
-
                     P2.Half = catFront;
                     P1.Half = dogBack;
                     P2.Magnet = catFront.transform.GetChild(2).gameObject;
                     P1.Magnet = dogBack.transform.GetChild(2).gameObject;
-                    // frontHalf = catFront;
-                    // backHalf = dogBack;
                 }
                 else
                 {
@@ -562,30 +546,17 @@ public class PlayerManager : MonoBehaviour
                     catBack.transform.rotation = backHalf.transform.rotation;
                     dogFront.transform.position = frontHalf.transform.position + transform.TransformDirection(Vector3.up * 0.215f);
                     dogFront.transform.rotation = frontHalf.transform.rotation;
-
                     
                     // catFront.transform.SetParent(null);
                     catBack.transform.SetParent(transform.GetChild(0));
                     dogFront.transform.SetParent(transform.GetChild(1));
                     // dogBack.transform.SetParent(null);
 
-                    // catFront.SetActive(false);
-                    // catBack.SetActive(true);
-                    // dogFront.SetActive(true);
-                    // dogBack.SetActive(false);
-
-
                     P2.Half = dogFront;
                     P1.Half = catBack;
                     P2.Magnet = dogFront.transform.GetChild(2).gameObject;
                     P1.Magnet = catBack.transform.GetChild(2).gameObject;
-                    // frontHalf = dogFront;
-                    // backHalf = catBack;
                 }
-                    // P2.Magnet = frontHalf.transform.GetChild(2).gameObject;
-                    // P1.Magnet = backHalf.transform.GetChild(2).gameObject;
-                    // frontMagnet = P2.Magnet;
-                    // backMagnet = P1.Magnet;
             }
            
             player1Camera.Follow = P1.Half.transform;
@@ -597,22 +568,22 @@ public class PlayerManager : MonoBehaviour
             
             P1.Half.SetActive(true);
             P2.Half.SetActive(true);
+
             alignHalves();
-            // updatePlayerIcons();
 
             if (getJoint() == null)
             {
                 setJoint();
             }
             
-            // catFront.GetComponent<Rigidbody>().isKinematic = false;
-            // catBack.GetComponent<Rigidbody>().isKinematic = false;
-            // dogFront.GetComponent<Rigidbody>().isKinematic = false;
-            // dogBack.GetComponent<Rigidbody>().isKinematic = false;
-
-            
-            
             updatePlayerIcons();
+
+            // Play audio (TODO: NEW AUDIO)
+            if (splitSound != null)
+            {
+                AudioSource.PlayClipAtPoint(splitSound, transform.position);
+            }
+
             UnityEngine.Debug.Log("Switched!");
         }
     }
