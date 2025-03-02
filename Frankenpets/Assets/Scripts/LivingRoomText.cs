@@ -3,7 +3,7 @@ using System.Diagnostics;
 using TMPro;
 using UnityEngine;
 
-public class LivingRoomTextManager : MonoBehaviour
+public class LivingRoomText : MonoBehaviour
 {
     public TextMeshProUGUI tutorialText;
     public TextMeshProUGUI tutorialSmallText;

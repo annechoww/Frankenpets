@@ -176,7 +176,7 @@ public class TutorialText : MonoBehaviour
                 speechBubbleRight.SetActive(false);
                 speechBubbleLeft.SetActive(true);
 
-                tutorialText.text = "hey, what's under that pink rug?"; // speech bubble text
+                tutorialText.text = "hey, what's under that purple rug?"; // speech bubble text
 
                 break;
             case tutSwitch:
