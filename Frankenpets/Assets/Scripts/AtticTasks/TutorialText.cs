@@ -252,7 +252,7 @@ public class TutorialText : MonoBehaviour
         advanceTutorialStage();
     }
 
-    private IEnumerator waitForKey(Keycode key)
+    private IEnumerator waitForKey(KeyCode key)
     {
         while (!Input.GetKeyDown(key)) 
         {
