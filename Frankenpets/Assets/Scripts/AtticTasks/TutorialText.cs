@@ -214,6 +214,7 @@ public class TutorialText : MonoBehaviour
                     tutorialText.text = "";
                     tutorialSmallText.text = "";
                     messageManager.cancelPressEnterToHideTutorial();
+                    // show the player icons
                 }
                 // go to next stage when touch attic door again during case tut complete
                 break;
