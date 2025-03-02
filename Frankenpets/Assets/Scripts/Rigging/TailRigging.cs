@@ -25,7 +25,7 @@ public class TailRigging : MonoBehaviour
 
     public void naturalTailMovement()
     {
-        Debug.Log("natural movement");
+        // Debug.Log("natural movement");
         if (!isMoving && !isMovingNaturally){
             //transform.position += new Vector3(0, 0, Mathf.Sin(Time.time*3) * 0.001f);
             isMovingNaturally = true;

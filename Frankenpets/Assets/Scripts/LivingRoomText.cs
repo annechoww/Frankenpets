@@ -24,7 +24,7 @@ public class LivingRoomText : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+    
     }
 
     public const int start = 0;
