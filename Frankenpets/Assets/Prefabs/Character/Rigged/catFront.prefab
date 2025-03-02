@@ -440,6 +440,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mouthTarget: {fileID: 747400874314180072}
   moveDistance: 0.05
+  horizontalOffset: 0
+  verticalOffset: 0
   moveSpeed: 1
 --- !u!1 &3838262745044309774
 GameObject:
@@ -1123,9 +1125,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5879117073093705848}
   - component: {fileID: 5621999223544513318}
-  - component: {fileID: 3538686225021131396}
   - component: {fileID: 1244779009066736468}
-  - component: {fileID: 954365556934462131}
   - component: {fileID: 4983427169298448593}
   - component: {fileID: 1685690688004923698}
   - component: {fileID: 7177464260336249629}
@@ -1183,20 +1183,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &3538686225021131396
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6639889057943378382}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e5655fcdcc2343aa85624b9cd8523bb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  climbSpeed: 2
-  climbCheckDistance: 0.5
 --- !u!65 &1244779009066736468
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1218,18 +1204,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.15641373, y: 0.3152955, z: 0.22443978}
   m_Center: {x: -0.005674392, y: 0.15320738, z: 0.11342212}
---- !u!114 &954365556934462131
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6639889057943378382}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 200d97a14812d4f2795e28eac327b886, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &4983427169298448593
 MonoBehaviour:
   m_ObjectHideFlags: 0

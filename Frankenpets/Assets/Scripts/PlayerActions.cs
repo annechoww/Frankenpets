@@ -14,6 +14,10 @@ This Class handles all player actions. The actions are mapped as follows:
 
 public class PlayerActions : MonoBehaviour
 {
+    [Header("Input References")]
+    public InputHandler player1Input;
+    public InputHandler player2Input;
+
     [Header("Jumping Variables")]
     public float jumpForce = 15f;
     public float jumpCooldown = 0.5f;
@@ -41,6 +45,21 @@ public class PlayerActions : MonoBehaviour
     private GameObject grabText;
     private Vector3 mouthPosition;
     private Vector3 mouthDirection;
+    private Vector3 grabPoint; // Position where the joint connects
+
+    
+
+    private GrabPoint currentGrabPoint;
+    private GrabbableObject currentGrabbableObject;
+
+    [Header("Grab Joint Settings")]
+    public float defaultSpringForce = 1000f;
+    public float defaultDamperForce = 20f;
+    private ConfigurableJoint grabJoint;
+    private float originalPlayerSpeed;
+
+    private float originalTurnSpeed;
+    private bool turnRestricted = false;
 
     private PlayerManager playerManager; 
     private Player P1;
@@ -131,6 +150,11 @@ public class PlayerActions : MonoBehaviour
             // Hide UI Popover
             grabText.SetActive(false);
             canGrab = false;
+
+            if (!isGrabbing)
+            {
+                grabbableObject = null;
+            }
         }
     }
 
@@ -168,14 +192,22 @@ public class PlayerActions : MonoBehaviour
 ////////////////////////////////////// Jump Logic /////////////////////////////////////
     private void runJumpLogic()
     {
+
+        // Get input from handlers instead of direct Input.GetKey
+        bool player1Jump = player1Input.GetJumpPressed();
+        bool player2Jump = player2Input.GetJumpPressed();
+        bool player1Special = player1Input.GetSpecialActionPressed();
+        bool player2Special = player2Input.GetSpecialActionPressed(); 
+
         // Basic Jump
-        if ((Input.GetKey(KeyCode.Z) && !P1.IsFront) || ((Input.GetKey(KeyCode.Comma)) && !P2.IsFront))
+        if ((player1Jump && !P1.IsFront) || (player2Jump && !P2.IsFront))
         {
             tryStartJump(jumpForce, jumpCooldown);
         }
-        // Charged Jump
-        else if ((Input.GetKey(KeyCode.C) && !P1.IsFront && P1.Species == "cat") || 
-                (Input.GetKey(KeyCode.Slash) && !P2.IsFront && P2.Species == "cat"))
+
+        // Charged Jump - TODO: Update with valid species 
+        else if ((player1Special && !P1.IsFront && P1.Species == "cat") || 
+                (player2Special && !P2.IsFront && P2.Species == "cat"))
         {
             tryStartJump(chargedJumpForce, chargedJumpCooldown);
         }
@@ -216,16 +248,29 @@ public class PlayerActions : MonoBehaviour
 ////////////////////////////////////////// Climb Action ///////////////////////////////////////////////
     private void runClimbLogic()
     {
+
+
+        // Get special action input for climbing (cat front special)
+        bool player1Special = player1Input.GetSpecialActionPressed();
+        bool player2Special = player2Input.GetSpecialActionPressed();
+        
+        // Check for cat species in front position
+        string frontSpecies = P1.IsFront ? P1.Species : P2.Species;
+        bool isSpecialReleased = (P1.IsFront && !player1Special) || (P2.IsFront && !player2Special);
+        
+        // Only cats can climb
+        if (frontSpecies != "cat") return;
+        
+        // Start climbing when front cat player presses special near climbable
         if (isNearClimbable && !isClimbing)
         {
-            if ((Input.GetKeyDown(KeyCode.C) && P1.IsFront && P1.Species == "cat") || 
-                (Input.GetKeyDown(KeyCode.Slash) && P2.IsFront && P2.Species == "cat"))
+            if ((player1Special && P1.IsFront) || (player2Special && P2.IsFront))
             {
                 StartClimbing();
             }
         }
-        else if (((Input.GetKeyUp(KeyCode.C) && P1.IsFront && P1.Species == "cat") || 
-                (Input.GetKeyUp(KeyCode.Slash) && P2.IsFront && P2.Species == "cat")) && isClimbing)
+        // Stop climbing when button is released
+        else if (isSpecialReleased && isClimbing)
         {
             StopClimbing();
         }
@@ -251,7 +296,102 @@ public class PlayerActions : MonoBehaviour
     }
 
 ////////////////////////////////////////// Grab Action ///////////////////////////////////////////////
-    private void runGrablogic()
+    
+    private void determineGrabType() 
+    {
+        if (grabbableObject == null)
+        {
+            Debug.LogWarning("Attempted to determine grab type with no grabbable object");
+            return;
+        }
+        
+        // Calculate the dog's mouth position (for grab point calculation)
+        mouthPosition = transform.position + transform.TransformDirection(Vector3.forward * 0.23f + Vector3.up * 0.202f);
+        
+        // Reset all references to ensure clean state
+        currentGrabPoint = null;
+        currentGrabbableObject = null;
+        grabPoint = Vector3.zero;
+        
+        // CASE 1: Check if this is a specific grab point (like a rug corner)
+        currentGrabPoint = grabbableObject.GetComponent<GrabPoint>();
+        
+        if (currentGrabPoint != null)
+        {
+            // This is a grab point (like a rug corner)
+            
+            // Make sure it has a valid parent to grab
+            if (currentGrabPoint.parentRigidbody == null)
+            {
+                Debug.LogWarning($"Grab point {grabbableObject.name} has no parent rigidbody assigned");
+                return;
+            }
+            
+            // Use the grab point's position as the connection point
+            grabPoint = grabbableObject.transform.position;
+            
+            // Log for debugging
+            Debug.Log($"Grabbing {grabbableObject.name} as a grab point. Parent: {currentGrabPoint.parentRigidbody.name}");
+            
+            return;
+        }
+        
+        // CASE 2: Check if it's a directly grabbable object with custom properties
+        currentGrabbableObject = grabbableObject.GetComponent<GrabbableObject>();
+        
+        if (currentGrabbableObject != null)
+        {
+            // This is a grabbable object with custom properties
+            
+            // Use closest point on the collider as the grab point
+            grabPoint = grabbableObject.ClosestPoint(mouthPosition);
+            
+            // If closest point is at the center (inside the collider), use a point on the surface
+            if (Vector3.Distance(grabPoint, grabbableObject.transform.position) < 0.01f)
+            {
+                // Cast a ray from mouth to object to find surface point
+                Vector3 direction = (grabbableObject.transform.position - mouthPosition).normalized;
+                Ray ray = new Ray(mouthPosition, direction);
+                
+                if (grabbableObject.Raycast(ray, out RaycastHit hitInfo, 10f))
+                {
+                    grabPoint = hitInfo.point;
+                }
+                else
+                {
+                    // Fallback: use a point slightly offset from center toward mouth
+                    grabPoint = grabbableObject.transform.position - direction * 0.1f;
+                }
+            }
+            
+            Debug.Log($"Grabbing {grabbableObject.name} as a grabbable object with custom properties at point {grabPoint}");
+            
+            return;
+        }
+        
+        // CASE 3: Basic grabbable object with no special components
+        // Use closest point on the collider as the grab point
+        grabPoint = grabbableObject.ClosestPoint(mouthPosition);
+        
+        // Same surface point detection as above
+        if (Vector3.Distance(grabPoint, grabbableObject.transform.position) < 0.01f)
+        {
+            Vector3 direction = (grabbableObject.transform.position - mouthPosition).normalized;
+            Ray ray = new Ray(mouthPosition, direction);
+            
+            if (grabbableObject.Raycast(ray, out RaycastHit hitInfo, 10f))
+            {
+                grabPoint = hitInfo.point;
+            }
+            else
+            {
+                grabPoint = grabbableObject.transform.position - direction * 0.1f;
+            }
+        }
+        
+        Debug.Log($"Grabbing {grabbableObject.name} as a basic grabbable object at point {grabPoint}");
+    }
+    private void runGrablogic() // TODO: Add dog species check
     {
         // FOR DEBUGGING: Make sure mouthPosition and mouthDirection match the one at line 54, and comment out the variables on lines 54 & 55
         // Vector3 mouthPosition = transform.position + transform.TransformDirection(Vector3.forward * 0.23f + Vector3.up * 0.202f);
@@ -259,82 +399,245 @@ public class PlayerActions : MonoBehaviour
         // Debug.DrawLine(mouthPosition, Vector3.forward + Vector3.up, Color.red, 2, false);
         // Debug.DrawLine(mouthPosition, mouthDirection, Color.red, 2, false);
 
-        if (((Input.GetKeyDown(KeyCode.C) && P1.IsFront && P1.Species == "dog") || 
-            (Input.GetKeyDown(KeyCode.Slash) && P2.IsFront && P2.Species == "dog")) && isGrabbing)
-        {
-            Debug.Log("Released item");
+        bool p1IsDogFront = P1.IsFront && P1.Species == "dog";
+        bool p2IsDogFront = P2.IsFront && P2.Species == "dog";
 
-            Physics.IgnoreLayerCollision(10, 9, false);
+        bool dogFrontSpecialP1 = p1IsDogFront && player1Input.GetSpecialActionPressed();
+        bool dogFrontSpecialP2 = p2IsDogFront && player2Input.GetSpecialActionPressed();
 
-            if (grabbableObject.CompareTag("Draggable"))
-            {
-                grabbableObject.transform.parent.SetParent(null);
-                grabbableObject.transform.parent.gameObject.GetComponent<Rigidbody>().isKinematic = false;
-            }
-            else
-            {
-                grabbableObject.transform.SetParent(null);
-                grabbableObject.gameObject.GetComponent<Rigidbody>().isKinematic = false;
-            }
-            
-            isGrabbing = false;
+        bool dogFrontSpecial = dogFrontSpecialP1 || dogFrontSpecialP2;
 
-        } else if (((Input.GetKeyDown(KeyCode.C) && P1.IsFront && P1.Species == "dog") || 
-                    (Input.GetKeyDown(KeyCode.Slash) && P2.IsFront && P2.Species == "dog")) && canGrab)
+        if (dogFrontSpecial && isGrabbing) {
+
+            releaseGrabbedObject();
+
+        }
+        else if (dogFrontSpecial && canGrab)
         {
             Debug.Log("Grabbed item");
             
-            mouthPosition = transform.position + transform.TransformDirection(Vector3.forward * 0.23f + Vector3.up * 0.202f);
-            Physics.IgnoreLayerCollision(10, 9, true);
-
-            if (grabbableObject.CompareTag("Draggable"))
-            {                                
-                grabbableObject.transform.parent.gameObject.GetComponent<Rigidbody>().isKinematic = true;
-                grabbableObject.transform.parent.SetParent(transform);
-                grabbableObject.transform.parent.position += transform.TransformDirection(Vector3.up * 0.05f);
-
-                // TODO: play bite animation
-
-            } 
-            else
-            {
-                grabbableObject.gameObject.GetComponent<Rigidbody>().isKinematic = true;
-                grabbableObject.transform.SetParent(transform);
-                grabbableObject.transform.position = mouthPosition;
-            }
-
-            isGrabbing = true;
-            grabText.SetActive(false);
-        } else if (((Input.GetKeyDown(KeyCode.C) && P1.IsFront) || (Input.GetKeyDown(KeyCode.Slash) && P2.IsFront))){
+            grabObject();
+        }
+        else if (dogFrontSpecial){
             mouthRiggingScript.openMouth();
+        }
+
+        if (isGrabbing & grabJoint != null) {
+            updateGrabJoint();
         }
     }
 
-////////////////////////////////////////// Hind Legs Action ///////////////////////////////////////////////
-// TODO: Fix hind legs prior to adding to script here.
-
-
-////////////////////////////////////////// Front Paws Action //////////////////////////////////////////////
-private void runPawLogic()
-{
-    if (((Input.GetKeyDown(KeyCode.Z) && P1.IsFront) || (Input.GetKeyDown(KeyCode.Comma) && P2.IsFront)))
+    private void grabObject() 
     {
-        pawRiggingScript.liftPaw();
+        determineGrabType();
+        if (grabPoint == Vector3.zero) {
+            Debug.LogWarning("No grab point found");
+            return;
+        }
+
+        Rigidbody targetRigidbody = getTargetRigidBody();
+
+        if (targetRigidbody == null) {
+            Debug.LogWarning("No target rigidbody found");
+            return;
+        }
+
+        mouthPosition = transform.position + transform.TransformDirection(Vector3.forward * 0.23f + Vector3.up * 0.202f);
+
+        grabJoint = gameObject.AddComponent<ConfigurableJoint>();
+        grabJoint.connectedBody = targetRigidbody;
+
+        configureJoint(grabJoint);
+
+        // Set the anchor point at the dog's mouth
+        grabJoint.anchor = transform.InverseTransformPoint(mouthPosition);
+        
+        // Determine if this is a portable or draggable object
+        bool isPortable = false;
+        
+        if (currentGrabPoint != null) {
+            isPortable = currentGrabPoint.grabBehavior == GrabPoint.GrabBehavior.Portable;
+        } else if (currentGrabbableObject != null) {
+            isPortable = currentGrabbableObject.grabBehavior == GrabbableObject.GrabBehavior.Portable;
+        }
+        
+        if (isPortable) {
+            // For portable objects, make them move to the dog's mouth
+            grabJoint.connectedAnchor = targetRigidbody.transform.InverseTransformPoint(targetRigidbody.transform.position);
+            
+            // Optional: adjust rotation to orient properly in mouth
+            Quaternion targetRotation = Quaternion.LookRotation(-transform.forward, transform.up);
+            targetRigidbody.transform.rotation = targetRotation;
+        } else {
+            // For draggable objects, keep the connection at the grab point
+            grabJoint.connectedAnchor = targetRigidbody.transform.InverseTransformPoint(grabPoint);
+        }
+
+        originalPlayerSpeed = playerManager.walkSpeed;
+
+        applyMovementPenalty();
+        applyTurnRestriction();
+
+        isGrabbing = true;
+        grabText.SetActive(false);
+
+        mouthRiggingScript.openMouth();
     }
-    
-}
+
+    private Rigidbody getTargetRigidBody() {
+        if (currentGrabPoint != null && currentGrabPoint.parentRigidbody != null) {
+            return currentGrabPoint.parentRigidbody;
+        }
+
+        Rigidbody directRigidbody = grabbableObject.GetComponent<Rigidbody>();
+        if (directRigidbody != null) {
+            return directRigidbody;
+        }  
+
+        if (grabbableObject.transform.parent != null) {
+            return grabbableObject.transform.parent.GetComponent<Rigidbody>();
+        }
+
+        return null;
+    }
+
+    private void configureJoint(ConfigurableJoint joint) {
+        if (currentGrabPoint != null) {
+            currentGrabPoint.ConfigureJoint(joint);
+            return;
+        }
+
+        if (currentGrabbableObject != null) {
+            currentGrabbableObject.ConfigureJoint(joint);
+            return;
+        }
+
+        joint.xMotion = ConfigurableJointMotion.Limited;
+        joint.yMotion = ConfigurableJointMotion.Limited;   
+        joint.zMotion = ConfigurableJointMotion.Limited;
+
+        joint.angularXMotion = ConfigurableJointMotion.Limited;
+        joint.angularYMotion = ConfigurableJointMotion.Limited;
+        joint.angularZMotion = ConfigurableJointMotion.Limited;
+
+        JointDrive posDrive = new JointDrive
+        {
+            positionSpring = defaultSpringForce,
+            positionDamper = defaultDamperForce,
+            maximumForce = float.MaxValue
+        };
+
+        joint.xDrive = posDrive;   
+        joint.yDrive = posDrive;
+        joint.zDrive = posDrive;
+
+    }
+
+    private void applyMovementPenalty() {
+
+        float penalty = 0f;
+
+        if (currentGrabPoint != null) {
+            penalty = currentGrabPoint.movementPenalty;
+        }
+        else if (currentGrabbableObject != null) {
+            penalty = currentGrabbableObject.movementPenalty;
+        }
+        else {
+            penalty = 0.5f;
+        }
+
+        playerManager.walkSpeed *= (1f -penalty);
+    }
+
+    private void applyTurnRestriction() {
+
+        if (!turnRestricted) {
+            originalTurnSpeed = playerManager.turnSpeed;
+        }
+
+        bool preventTurning = false;
+        float turnRestriction = 0f;
+
+        if (currentGrabPoint != null) {
+            preventTurning = currentGrabPoint.preventTurning;
+            turnRestriction = currentGrabPoint.turnRestriction;
+        }
+        else if (currentGrabbableObject != null) {
+            preventTurning = currentGrabbableObject.preventTurning;
+            turnRestriction = currentGrabbableObject.turnRestriction;
+        }
+
+        if (preventTurning) {
+            playerManager.turnSpeed = 0f;
+        } else {
+            playerManager.turnSpeed = originalTurnSpeed * (1f - turnRestriction);
+        }
+
+        turnRestricted = true;
+    }
+
+    private void updateGrabJoint() {
+        if (grabJoint == null && isGrabbing) {
+            releaseGrabbedObject();
+            return;
+        }
+    }
+
+    private void releaseGrabbedObject() {
+        Debug.Log("Released item");
+
+        if (grabJoint != null) {
+            Destroy(grabJoint);
+            grabJoint = null;
+        }
+
+        playerManager.walkSpeed = originalPlayerSpeed;
+        if (turnRestricted) {
+            playerManager.turnSpeed = originalTurnSpeed;
+            turnRestricted = false;
+        }
+        isGrabbing = false;
+        currentGrabPoint = null;
+        currentGrabbableObject = null;
+
+        // mouthRiggingScript.closeMouth();
+    }
+
+    // Handle joint breaking automatically
+    private void OnJointBreak(float breakForce)
+    {
+        if (isGrabbing)
+        {
+            releaseGrabbedObject();
+        }
+    }
+
+    ////////////////////////////////////////// Hind Legs Action ///////////////////////////////////////////////
+    // TODO: Fix hind legs prior to adding to script here.
+
+
+    ////////////////////////////////////////// Front Paws Action //////////////////////////////////////////////
+    private void runPawLogic()
+    {
+        if (((Input.GetKeyDown(KeyCode.Z) && P1.IsFront) || (Input.GetKeyDown(KeyCode.Comma) && P2.IsFront)))
+        {
+            pawRiggingScript.liftPaw();
+        }
+        
+    }
 
 ////////////////////////////////////////// Tail Action ////////////////////////////////////////////////////
-private void runTailLogic()
-{
-    if (((Input.GetKeyDown(KeyCode.Z) && !P1.IsFront) || (Input.GetKeyDown(KeyCode.Period) && !P2.IsFront)))
+    private void runTailLogic()
     {
-        tailRiggingScript.useTail();
-    }
-    else{
-        tailRiggingScript.naturalTailMovement();
+        if (((Input.GetKeyDown(KeyCode.Z) && !P1.IsFront) || (Input.GetKeyDown(KeyCode.Period) && !P2.IsFront)))
+        {
+            tailRiggingScript.useTail();
+        }
+        else{
+            tailRiggingScript.naturalTailMovement();
+        }
+
     }
 
-}
-
-}
+    }

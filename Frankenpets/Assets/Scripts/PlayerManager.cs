@@ -8,6 +8,11 @@ using System.Collections;
 
 public class PlayerManager : MonoBehaviour
 {
+
+    [Header("Player Input References")]
+    public InputHandler player1Input;
+    public InputHandler player2Input;
+
     [Header("Pet Info")]
     public GameObject P1Half; // Only use for initializing
     public GameObject P2Half; // Only use for initializing
@@ -19,8 +24,7 @@ public class PlayerManager : MonoBehaviour
 
     [Header("Movement Variables")]
     public float walkSpeed = 0.6f;
-    public float frontTurnSpeed = 1.0f;
-    public float backTurnSpeed = 1.0f;
+    public float turnSpeed = 1.0f;
     // private bool isFrozen = false; // whether the half's RigidBody's position is frozen in place 
 
     [Header("Splitting Variables")]
@@ -44,6 +48,8 @@ public class PlayerManager : MonoBehaviour
     public GameObject dogFront;
     public GameObject catBack;
     public GameObject dogBack;
+    private bool player1SwitchPressed = false;
+    private bool player2SwitchPressed = false;
 
     public PetStationManager stationManager;
 
@@ -117,6 +123,9 @@ public class PlayerManager : MonoBehaviour
         else {
             runSeparatedMovementLogic();
         }
+
+        CheckSwitchInput();
+        CheckReconnectInput();
         
         runSplitLogic();
         runSwitchLogic();
@@ -175,43 +184,43 @@ public class PlayerManager : MonoBehaviour
     }
     // ADVANCED GETTERS/SETTERS ////////////////////////////////////////////
 
+    private void CheckSwitchInput() {
+        player1SwitchPressed = player1Input.GetSwitchPressed();
+        player2SwitchPressed = player2Input.GetSwitchPressed();
+    }
+
+    private void CheckReconnectInput() {
+        if ((player1Input.GetReconnectPressed() || player2Input.GetReconnectPressed()) && fixedJoint == null)
+        {
+            tryReconnect();
+        }
+    }
 
     // MOVEMENT METHODS ////////////////////////////////////////////
     private void runMovementLogic()
     {
-        // Get turning input from player1 (WASD keys) for turning:
-        float turnInputP1 = 0.0f;
-        if (Input.GetKey(KeyCode.A)) turnInputP1 -= frontTurnSpeed;
-        if (Input.GetKey(KeyCode.D)) turnInputP1 += frontTurnSpeed;
+        // Get player 1's input
+        Vector2 player1MoveInput = player1Input.GetMoveInput();
+        float turnInputP1 = player1MoveInput.x * turnSpeed;
+        float moveInputP1 = player1MoveInput.y * walkSpeed;
         
-        // Get turning input from player2 (arrow keys) for turning:
-        float turnInputP2 = 0.0f;
-        if (Input.GetKey(KeyCode.LeftArrow)) turnInputP2 -= backTurnSpeed;
-        if (Input.GetKey(KeyCode.RightArrow)) turnInputP2 += backTurnSpeed;
-        
-        // Average the turn inputs
-        float combinedTurn = turnInputP1 + turnInputP2;
-        
-        // Get movement (forward/back) input from player1:
-        float moveInputP1 = 0.0f;
-        if (Input.GetKey(KeyCode.W)) moveInputP1 += walkSpeed;
-        if (Input.GetKey(KeyCode.S)) moveInputP1 -= walkSpeed;
-        
-        // Get movement input from player2:
-        float moveInputP2 = 0.0f;
-        if (Input.GetKey(KeyCode.UpArrow)) moveInputP2 += walkSpeed;
-        if (Input.GetKey(KeyCode.DownArrow)) moveInputP2 -= walkSpeed;
-        
-        // Average the movement inputs
-        float combinedMove = moveInputP1 + moveInputP2;
+        // Get player 2's input
+        Vector2 player2MoveInput = player2Input.GetMoveInput();
+        float turnInputP2 = player2MoveInput.x * turnSpeed;
+        float moveInputP2 = player2MoveInput.y * walkSpeed;
         
         // Apply the combined rotation to both halves:
+        float combinedTurn = turnInputP1 + turnInputP2;
         frontHalf.transform.Rotate(0.0f, combinedTurn, 0.0f, Space.Self);
         backHalf.transform.Rotate(0.0f, combinedTurn, 0.0f, Space.Self);
         
         // Apply the combined translation (forward/back) to both halves:
+        float combinedMove = moveInputP1 + moveInputP2;
         frontHalf.transform.Translate(Vector3.forward * combinedMove * Time.deltaTime, Space.Self);
         backHalf.transform.Translate(Vector3.forward * combinedMove * Time.deltaTime, Space.Self);
+
+        // Update split condition checking for pulling opposite directions
+        CheckSplitConditions(player1MoveInput.y, player2MoveInput.y);
 
         // Update rig movement directionality
         RiggingMovement[] frontRigs = frontHalf.GetComponentsInChildren<RiggingMovement>();
@@ -226,99 +235,25 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    private void setPlayer1Movement()
+    private void CheckSplitConditions(float player1YInput, float player2YInput)
     {
-        float turnSpeed = P1.IsFront ? frontTurnSpeed : backTurnSpeed;
+        // Determine if players are pulling in opposite directions based on their positions
+        bool frontPullingForward = false;
+        bool backPullingBackward = false;
         
-        if (Input.GetKey(KeyCode.A)) P1.Half.transform.Rotate(0.0f, -turnSpeed, 0.0f, Space.Self);
-        if (Input.GetKey(KeyCode.D)) P1.Half.transform.Rotate(0.0f, turnSpeed, 0.0f, Space.Self);
-        if (Input.GetKey(KeyCode.W)) P1.Half.transform.Translate(Vector3.forward * walkSpeed * Time.deltaTime, Space.Self);
-        if (Input.GetKey(KeyCode.S)) P1.Half.transform.Translate(Vector3.back * walkSpeed * Time.deltaTime, Space.Self);
-    }
-
-    private void setPlayer2Movement()
-    {
-        float turnSpeed = P2.IsFront ? frontTurnSpeed : backTurnSpeed;
-        
-        if (Input.GetKey(KeyCode.LeftArrow)) P2.Half.transform.Rotate(0.0f, -turnSpeed, 0.0f, Space.Self);
-        if (Input.GetKey(KeyCode.RightArrow)) P2.Half.transform.Rotate(0.0f, turnSpeed, 0.0f, Space.Self);
-        if (Input.GetKey(KeyCode.UpArrow)) P2.Half.transform.Translate(Vector3.forward * walkSpeed * Time.deltaTime, Space.Self);
-        if (Input.GetKey(KeyCode.DownArrow)) P2.Half.transform.Translate(Vector3.back * walkSpeed * Time.deltaTime, Space.Self);
-    }
-
-    private bool bothHalvesTurningOpposite()
-    {
-        if (fixedJoint != null && Input.GetKey(KeyCode.LeftArrow) && Input.GetKey(KeyCode.D)) return true;
-
-        if (fixedJoint != null && Input.GetKey(KeyCode.RightArrow) && Input.GetKey(KeyCode.A)) return true;
-
-        return false;
-    }
-
-    private void runSeparatedMovementLogic()
-    {
-        // Movement for Player 1’s half (using WASD)
-        float turnSpeedP1 = P1.IsFront ? frontTurnSpeed : backTurnSpeed;
-        if (Input.GetKey(KeyCode.A))
+        if (P1.IsFront)
         {
-            P1.Half.transform.Rotate(0.0f, -turnSpeedP1, 0.0f, Space.Self);
+            frontPullingForward = player1YInput > 0;
+            backPullingBackward = player2YInput < 0;
         }
-        if (Input.GetKey(KeyCode.D))
+        else // P2 is front
         {
-            P1.Half.transform.Rotate(0.0f, turnSpeedP1, 0.0f, Space.Self);
-        }
-        if (Input.GetKey(KeyCode.W))
-        {
-            P1.Half.transform.Translate(Vector3.forward * walkSpeed * Time.deltaTime, Space.Self);
-        }
-        if (Input.GetKey(KeyCode.S))
-        {
-            P1.Half.transform.Translate(Vector3.back * walkSpeed * Time.deltaTime, Space.Self);
+            frontPullingForward = player2YInput > 0;
+            backPullingBackward = player1YInput < 0;
         }
         
-        // Movement for Player 2’s half (using Arrow keys)
-        float turnSpeedP2 = P2.IsFront ? frontTurnSpeed : backTurnSpeed;
-        if (Input.GetKey(KeyCode.LeftArrow))
-        {
-            P2.Half.transform.Rotate(0.0f, -turnSpeedP2, 0.0f, Space.Self);
-        }
-        if (Input.GetKey(KeyCode.RightArrow))
-        {
-            P2.Half.transform.Rotate(0.0f, turnSpeedP2, 0.0f, Space.Self);
-        }
-        if (Input.GetKey(KeyCode.UpArrow))
-        {
-            P2.Half.transform.Translate(Vector3.forward * walkSpeed * Time.deltaTime, Space.Self);
-        }
-        if (Input.GetKey(KeyCode.DownArrow))
-        {
-            P2.Half.transform.Translate(Vector3.back * walkSpeed * Time.deltaTime, Space.Self);
-        }
-    }
-    // MOVEMENT METHODS ////////////////////////////////////////////
-    
-
-    // SPLITTING METHODS ////////////////////////////////////////////
-    private void runSplitLogic() 
-    {
-        // Determine the input for splitting based on which player is controlling the front half.
-        bool frontForward = false;
-        bool backBackward = false;
-        if (P1.IsFront) // P1 controls the front half, P2 the back half
-        {
-            frontForward = Input.GetKey(KeyCode.W);
-            backBackward = Input.GetKey(KeyCode.DownArrow);
-        }
-        else // P2 controls the front half, P1 the back half
-        {
-            frontForward = Input.GetKey(KeyCode.UpArrow);
-            backBackward = Input.GetKey(KeyCode.S);
-        }
-
-        splitCondition = frontForward && backBackward;
-
-        // Start or reset the split timer based on the condition.
-        if (splitCondition)
+        // Start or reset split timer based on pull direction
+        if (frontPullingForward && backPullingBackward)
         {
             if (!splitStopwatch.IsRunning)
                 splitStopwatch.Start();
@@ -328,7 +263,30 @@ public class PlayerManager : MonoBehaviour
             if (splitStopwatch.IsRunning)
                 splitStopwatch.Reset();
         }
+    }
 
+    private void runSeparatedMovementLogic()
+    {
+        // Get player inputs
+        Vector2 player1MoveInput = player1Input.GetMoveInput();
+        Vector2 player2MoveInput = player2Input.GetMoveInput();
+        
+        // Movement for Player 1's half
+        float turnSpeedP1 = turnSpeed;
+        P1.Half.transform.Rotate(0.0f, player1MoveInput.x * turnSpeedP1, 0.0f, Space.Self);
+        P1.Half.transform.Translate(Vector3.forward * player1MoveInput.y * walkSpeed * Time.deltaTime, Space.Self);
+        
+        // Movement for Player 2's half
+        float turnSpeedP2 = turnSpeed;
+        P2.Half.transform.Rotate(0.0f, player2MoveInput.x * turnSpeedP2, 0.0f, Space.Self);
+        P2.Half.transform.Translate(Vector3.forward * player2MoveInput.y * walkSpeed * Time.deltaTime, Space.Self);
+    }
+    // MOVEMENT METHODS ////////////////////////////////////////////
+    
+
+    // SPLITTING METHODS ////////////////////////////////////////////
+    private void runSplitLogic() 
+    {
         // If the split timer exceeds the threshold and the halves are still connected, split them.
         if (splitStopwatch.IsRunning && splitStopwatch.Elapsed.TotalSeconds > splitTime && fixedJoint != null)
         {
@@ -352,12 +310,6 @@ public class PlayerManager : MonoBehaviour
             
 
             UnityEngine.Debug.Log("Halves disconnected due to opposing pull.");
-        }
-
-        // Reconnection: if there's no fixed joint and the reconnect key is pressed, try to reconnect.
-        if (fixedJoint == null && Input.GetKeyDown(reconnectToggleKey)) 
-        {
-            tryReconnect();
         }
     }
 
@@ -417,11 +369,12 @@ public class PlayerManager : MonoBehaviour
     // runSwitchLogic(), tryStartSwitch(), cancelSwitch(), tryFinishSwitch() correspond to front <-> back switching (NOT SWITCHING SPECIES!)
     private void runSwitchLogic()
     {
-        if (Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.RightShift)) tryStartSwitch();
-        if (Input.GetKeyUp(KeyCode.LeftShift) || Input.GetKeyUp(KeyCode.RightShift)) cancelSwitch();
+        if (player1SwitchPressed && player2SwitchPressed) 
+            tryStartSwitch();
+        else
+            cancelSwitch();
 
-        tryFinishSwitch(); // P1 and P2 switch halves but not species 
-        // tryFinishSwitchV2(); // P1 and P2 switch halves and species
+        tryFinishSwitchV2();
     }
 
     private void tryStartSwitch()
