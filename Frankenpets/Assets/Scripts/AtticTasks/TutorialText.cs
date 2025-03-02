@@ -14,6 +14,7 @@ public class TutorialText : MonoBehaviour
     public GameObject dogIconP1Left;
     public GameObject catIconP2Right;
     public GameObject dogIconP2Right;
+    public GameObject playerIcons;
     public GameObject movementUI;
     public GameObject jumpUI;
     public GameObject splitUI;
@@ -176,7 +177,7 @@ public class TutorialText : MonoBehaviour
                 speechBubbleRight.SetActive(false);
                 speechBubbleLeft.SetActive(true);
 
-                tutorialText.text = "hey, what's under that pink rug?"; // speech bubble text
+                tutorialText.text = "hey, what's under that purple rug?"; // speech bubble text
 
                 break;
             case tutSwitch:
@@ -190,10 +191,6 @@ public class TutorialText : MonoBehaviour
                 switchUI.SetActive(false);
                 speechBubbleLeft.SetActive(false);
                 speechBubbleRight.SetActive(true);
-                // catIconP1Left.SetActive(false);
-                // dogIconP2Right.SetActive(false);
-                // catIconP2Right.SetActive(true);
-                // dogIconP1Left.SetActive(true);
 
                 tutorialText.text = "woah, i'm at the front now!";
                 grabUI.SetActive(true);
@@ -205,17 +202,13 @@ public class TutorialText : MonoBehaviour
                 speechBubbleTwoTails.SetActive(true);
                 
                 tutorialText.text = "let's wreck this house!";
-                tutorialSmallText.text = "leave the attic, or take a look around first";
+                tutorialSmallText.text = "leave the attic, or take a look around";
                 messageManager.startPressEnterToHideTutorial();
 
-                if (Input.GetKey(KeyCode.Return)) 
-                {
-                    speechBubbleTwoTails.SetActive(false);
-                    tutorialText.text = "";
-                    tutorialSmallText.text = "";
-                    messageManager.cancelPressEnterToHideTutorial();
-                }
+                StartCoroutine(waitToLeaveTutorial());
+
                 // go to next stage when touch attic door again during case tut complete
+
                 break;
             case scaredDog:
                 speechBubbleLeft.SetActive(true);
@@ -259,14 +252,32 @@ public class TutorialText : MonoBehaviour
         advanceTutorialStage();
     }
 
-    private IEnumerator waitForKeypress(KeyCode key)
+    privaite IEnumerator waitForKey(Keycode key)
     {
         while (!Input.GetKeyDown(key)) 
         {
             yield return null;
         }
+    }
 
-        advanceTutorialStage();
+    private IEnumerator waitToLeaveTutorial()
+    {
+        while (!Input.GetKeyDown(KeyCode.Return)) 
+        {
+            yield return null;
+        }
+
+        // hide speech bubble stuff 
+        speechBubbleTwoTails.SetActive(false);
+        tutorialText.text = "";
+        tutorialSmallText.text = "";
+        messageManager.cancelPressEnterToHideTutorial();
+        catIconP1Left.SetActive(false);
+        dogIconP2Right.SetActive(false);
+
+        // show the player icons
+        playerIcons.transform.GetChild(0).gameObject.SetActive(true); 
+        playerIcons.transform.GetChild(1).gameObject.SetActive(true);
     }
     
 }

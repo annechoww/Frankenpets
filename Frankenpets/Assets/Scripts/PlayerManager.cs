@@ -184,6 +184,8 @@ public class PlayerManager : MonoBehaviour
     }
     // ADVANCED GETTERS/SETTERS ////////////////////////////////////////////
 
+
+    // PLAYER INPUT CHECKERS ////////////////////////////////////////////
     private void CheckSwitchInput() {
         player1SwitchPressed = player1Input.GetSwitchPressed();
         player2SwitchPressed = player2Input.GetSwitchPressed();
@@ -195,6 +197,44 @@ public class PlayerManager : MonoBehaviour
             tryReconnect();
         }
     }
+
+    private void CheckSplitConditions(float player1YInput, float player2YInput)
+    {
+        // Determine if players are pulling in opposite directions based on their positions
+        bool frontPullingForward = false;
+        bool backPullingBackward = false;
+        
+        if (P1.IsFront)
+        {
+            frontPullingForward = player1YInput > 0;
+            backPullingBackward = player2YInput < 0;
+        }
+        else // P2 is front
+        {
+            frontPullingForward = player2YInput > 0;
+            backPullingBackward = player1YInput < 0;
+        }
+
+        splitCondition = frontPullingForward && backPullingBackward;
+        
+        // Start or reset split timer based on pull direction
+        if (splitCondition)
+        {
+            if (!splitStopwatch.IsRunning)
+            {
+                splitStopwatch.Start();
+            }
+        }
+        else
+        {
+            if (splitStopwatch.IsRunning)
+            {
+                splitStopwatch.Reset();
+            }
+        }
+    }
+    // PLAYER INPUT CHECKERS ////////////////////////////////////////////
+
 
     // MOVEMENT METHODS ////////////////////////////////////////////
     private void runMovementLogic()
@@ -235,36 +275,6 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    private void CheckSplitConditions(float player1YInput, float player2YInput)
-    {
-        // Determine if players are pulling in opposite directions based on their positions
-        bool frontPullingForward = false;
-        bool backPullingBackward = false;
-        
-        if (P1.IsFront)
-        {
-            frontPullingForward = player1YInput > 0;
-            backPullingBackward = player2YInput < 0;
-        }
-        else // P2 is front
-        {
-            frontPullingForward = player2YInput > 0;
-            backPullingBackward = player1YInput < 0;
-        }
-        
-        // Start or reset split timer based on pull direction
-        if (frontPullingForward && backPullingBackward)
-        {
-            if (!splitStopwatch.IsRunning)
-                splitStopwatch.Start();
-        }
-        else
-        {
-            if (splitStopwatch.IsRunning)
-                splitStopwatch.Reset();
-        }
-    }
-
     private void runSeparatedMovementLogic()
     {
         // Get player inputs
@@ -294,8 +304,6 @@ public class PlayerManager : MonoBehaviour
             Destroy(fixedJoint); // Split the halves
             fixedJoint = null;
 
-            // finishStretch();
-
             // Add rotation constraints when split
             frontHalf.GetComponent<Rigidbody>().constraints |= RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
             backHalf.GetComponent<Rigidbody>().constraints |= RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
@@ -315,7 +323,6 @@ public class PlayerManager : MonoBehaviour
 
     private void tryReconnect()
     {
-
         float distance = Vector3.Distance(frontMagnet.transform.position, backMagnet.transform.position);
         if (distance < reconnectionDistance)
         {
@@ -374,7 +381,7 @@ public class PlayerManager : MonoBehaviour
         else
             cancelSwitch();
 
-        tryFinishSwitchV2();
+        tryFinishSwitch();
     }
 
     private void tryStartSwitch()

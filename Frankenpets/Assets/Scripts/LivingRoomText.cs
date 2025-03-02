@@ -3,7 +3,7 @@ using System.Diagnostics;
 using TMPro;
 using UnityEngine;
 
-public class LivingRoomTextManager : MonoBehaviour
+public class LivingRoomText : MonoBehaviour
 {
     public TextMeshProUGUI tutorialText;
     public TextMeshProUGUI tutorialSmallText;
@@ -24,7 +24,7 @@ public class LivingRoomTextManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+    
     }
 
     public const int start = 0;
