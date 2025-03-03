@@ -72,8 +72,9 @@ public class PlayerActions : MonoBehaviour
     [Header("Rigging Variables")]
     private MouthRigging mouthRiggingScript;
     private TailRigging tailRiggingScript;
-    private HindLegsRigging hindLegsRiggingScript;
+    private HindLegsRigging2 hindRiggingScript;
     private PawRigging pawRiggingScript;
+    private ClimbRigging climbRiggingScript;
 
     private void Start()
     {
@@ -91,6 +92,7 @@ public class PlayerActions : MonoBehaviour
         runGrablogic();
         runTailLogic();
         runPawLogic();
+        runHindLegsLogic();
     }
 
     private void FixedUpdate()
@@ -181,7 +183,8 @@ public class PlayerActions : MonoBehaviour
             mouthRiggingScript = frontHalf.GetComponentInChildren<MouthRigging>();
             tailRiggingScript = backHalf.GetComponentInChildren<TailRigging>();
             pawRiggingScript = frontHalf.GetComponentInChildren<PawRigging>();
-            //hindLegsRiggingScript = backHalf.GetComponentInChildren<HindLegsRigging>();
+            hindRiggingScript = backHalf.GetComponentInChildren<HindLegsRigging2>();
+            climbRiggingScript = frontHalf.GetComponentInChildren<ClimbRigging>();
         }
         else
         {
@@ -248,11 +251,12 @@ public class PlayerActions : MonoBehaviour
 ////////////////////////////////////////// Climb Action ///////////////////////////////////////////////
     private void runClimbLogic()
     {
-
-
         // Get special action input for climbing (cat front special)
         bool player1Special = player1Input.GetSpecialActionPressed();
         bool player2Special = player2Input.GetSpecialActionPressed();
+        if (player1Special){
+            Debug.Log("detected action pressed");
+        }
         
         // Check for cat species in front position
         string frontSpecies = P1.IsFront ? P1.Species : P2.Species;
@@ -279,6 +283,8 @@ public class PlayerActions : MonoBehaviour
     private void StartClimbing()
     {
         
+        climbRiggingScript.climb();
+
         isClimbing = true;
         frontRb.useGravity = false;
         // Zero out current velocities
@@ -290,6 +296,7 @@ public class PlayerActions : MonoBehaviour
 
     private void StopClimbing()
     {
+        climbRiggingScript.release();
         isClimbing = false;
         frontRb.useGravity = true;
         frontRb.constraints = RigidbodyConstraints.None;
@@ -614,7 +621,14 @@ public class PlayerActions : MonoBehaviour
     }
 
     ////////////////////////////////////////// Hind Legs Action ///////////////////////////////////////////////
-    // TODO: Fix hind legs prior to adding to script here.
+    private void runHindLegsLogic()
+    {
+        if (((Input.GetKeyDown(KeyCode.C) && !P1.IsFront && P1.Species=="dog") || (Input.GetKeyDown(KeyCode.Slash) && !P2.IsFront && P2.Species=="dog")))
+        {
+            hindRiggingScript.stand();
+        }
+        
+    }
 
 
     ////////////////////////////////////////// Front Paws Action //////////////////////////////////////////////
