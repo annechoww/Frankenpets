@@ -1,5 +1,6 @@
+using System.Collections;
+using System.Diagnostics;
 using UnityEngine;
-
 
 /**
 This Class handles all player actions. The actions are mapped as follows:
@@ -17,11 +18,12 @@ public class PlayerActions : MonoBehaviour
     [Header("Input References")]
     public InputHandler player1Input;
     public InputHandler player2Input;
+    private ControllerAssignment controllerAssignment;
 
     [Header("Jumping Variables")]
-    public float jumpForce = 15f;
+    private float jumpForce = 15f;
     public float jumpCooldown = 0.5f;
-    public float chargedJumpForce = 25f;
+    private float chargedJumpForce = 25f;
     public float chargedJumpCooldown = 0.8f;
     private float lastJumpTime = -10f;
 
@@ -35,14 +37,14 @@ public class PlayerActions : MonoBehaviour
     private bool isNearClimbable = false;
     private bool isClimbing = false;
     private Vector3 climbDirection;
-    private GameObject climbText;
+    // private GameObject climbText;
 
     // Grabbing Variables
     private RaycastHit hit;
     private Collider grabbableObject;
     private bool canGrab = false;
     private bool isGrabbing = false;
-    private GameObject grabText;
+    // private GameObject grabText;
     private Vector3 mouthPosition;
     private Vector3 mouthDirection;
     private Vector3 grabPoint; // Position where the joint connects
@@ -75,12 +77,48 @@ public class PlayerActions : MonoBehaviour
     private HindLegsRigging hindLegsRiggingScript;
     private PawRigging pawRiggingScript;
 
+    [Header("Glowing Objects Variables")]
+    public Color dogGlowColor = Color.yellow;
+    public Color catGlowColor = Color.red;
+    private float glowIntensity = 2.0f;
+    private float glowDuration = 1.5f;
+    private Renderer[] dogObjects;
+    private Renderer[] catObjects;
+
+    [Header("UI Variables")]
+    public GameObject grabText;
+    public GameObject climbText;
+
     private void Start()
-    {
-        climbText = GameObject.FindGameObjectWithTag("ClimbText");
-        grabText = GameObject.FindGameObjectWithTag("GrabText");
-        
+    {   
+        // climbText = GameObject.FindGameObjectWithTag("ClimbText");
+        // grabText = GameObject.FindGameObjectWithTag("GrabText");
+        controllerAssignment = GameObject.Find("Pet").GetComponent<ControllerAssignment>();
         Invoke("getPlayerManager", 0f);
+
+        // Find all grabbable objects
+        GameObject[] grabbableObjects = GameObject.FindGameObjectsWithTag("Grabbable");
+        GameObject[] draggableObjects = GameObject.FindGameObjectsWithTag("Draggable");
+        dogObjects = new Renderer[grabbableObjects.Length + draggableObjects.Length];
+
+        for (int i = 0; i < grabbableObjects.Length; i++)
+        {
+            dogObjects[i] = grabbableObjects[i].GetComponent<Renderer>();
+        }
+
+        for (int i = 0; i < draggableObjects.Length; i++)
+        {
+            dogObjects[grabbableObjects.Length + i - 1] = draggableObjects[i].GetComponent<Renderer>();
+        }
+
+        // Find all climbable objects
+        GameObject[] climbableObjects = GameObject.FindGameObjectsWithTag("Climbable");
+        catObjects = new Renderer[climbableObjects.Length];
+
+        for (int i = 0; i < climbableObjects.Length; i++)
+        {
+            catObjects[i] = climbableObjects[i].GetComponent<Renderer>();
+        }
     }
 
     private void Update()
@@ -91,6 +129,7 @@ public class PlayerActions : MonoBehaviour
         runGrablogic();
         runTailLogic();
         runPawLogic();
+        runGlowLogic();
     }
 
     private void FixedUpdate()
@@ -104,11 +143,13 @@ public class PlayerActions : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Climbable"))
+        string frontSpecies = P1.IsFront ? P1.Species : P2.Species;
+
+        if (other.CompareTag("Climbable") && frontSpecies == "cat")
         {
             // Show UI Popover
-            climbText.SetActive(true);
             climbText.transform.position = other.transform.position + (Vector3.forward * 0.05f);
+            showClimbText();
 
             isNearClimbable = true;
             // Get the surface normal to determine climb direction
@@ -121,13 +162,13 @@ public class PlayerActions : MonoBehaviour
             {
                 climbDirection = Vector3.up;
             }
-        } else if ((other.CompareTag("Grabbable") || other.CompareTag("Draggable")) && !isGrabbing)
+        } else if ((other.CompareTag("Grabbable") || other.CompareTag("Draggable")) && !isGrabbing && frontSpecies == "dog")
         {
             grabbableObject = other;
             
             // Show UI Popover
             grabText.transform.position = grabbableObject.transform.position + (Vector3.up * 0.30f);
-            grabText.SetActive(true);
+            showGrabText();
             
             canGrab = true;
         }
@@ -138,9 +179,10 @@ public class PlayerActions : MonoBehaviour
         if (other.CompareTag("Climbable"))
         {
             // Hide UI popover
-            climbText.SetActive(false);
+            hideClimbText();
 
             isNearClimbable = false;
+
             if (isClimbing)
             {
                 StopClimbing();
@@ -148,7 +190,8 @@ public class PlayerActions : MonoBehaviour
         } else if (other.CompareTag("Grabbable") || other.CompareTag("Draggable"))
         {
             // Hide UI Popover
-            grabText.SetActive(false);
+            hideGrabText();
+
             canGrab = false;
 
             if (!isGrabbing)
@@ -166,8 +209,8 @@ public class PlayerActions : MonoBehaviour
         // Now you can access Player details like P1.Species
         if (playerManager != null)
         {
-            Debug.Log("P1 Species: " + playerManager.P1.Species);
-            Debug.Log("P2 Species: " + playerManager.P2.Species);
+            UnityEngine.Debug.Log("P1 Species: " + playerManager.P1.Species);
+            UnityEngine.Debug.Log("P2 Species: " + playerManager.P2.Species);
 
             P1 = playerManager.P1;
             P2 = playerManager.P2;
@@ -185,7 +228,7 @@ public class PlayerActions : MonoBehaviour
         }
         else
         {
-            Debug.Log("Error in fetching playerManager");
+            UnityEngine.Debug.Log("Error in fetching playerManager");
         }
     }
 
@@ -301,7 +344,7 @@ public class PlayerActions : MonoBehaviour
     {
         if (grabbableObject == null)
         {
-            Debug.LogWarning("Attempted to determine grab type with no grabbable object");
+            UnityEngine.Debug.LogWarning("Attempted to determine grab type with no grabbable object");
             return;
         }
         
@@ -323,7 +366,7 @@ public class PlayerActions : MonoBehaviour
             // Make sure it has a valid parent to grab
             if (currentGrabPoint.parentRigidbody == null)
             {
-                Debug.LogWarning($"Grab point {grabbableObject.name} has no parent rigidbody assigned");
+                UnityEngine.Debug.LogWarning($"Grab point {grabbableObject.name} has no parent rigidbody assigned");
                 return;
             }
             
@@ -331,7 +374,7 @@ public class PlayerActions : MonoBehaviour
             grabPoint = grabbableObject.transform.position;
             
             // Log for debugging
-            Debug.Log($"Grabbing {grabbableObject.name} as a grab point. Parent: {currentGrabPoint.parentRigidbody.name}");
+            UnityEngine.Debug.Log($"Grabbing {grabbableObject.name} as a grab point. Parent: {currentGrabPoint.parentRigidbody.name}");
             
             return;
         }
@@ -364,7 +407,7 @@ public class PlayerActions : MonoBehaviour
                 }
             }
             
-            Debug.Log($"Grabbing {grabbableObject.name} as a grabbable object with custom properties at point {grabPoint}");
+            UnityEngine.Debug.Log($"Grabbing {grabbableObject.name} as a grabbable object with custom properties at point {grabPoint}");
             
             return;
         }
@@ -389,7 +432,7 @@ public class PlayerActions : MonoBehaviour
             }
         }
         
-        Debug.Log($"Grabbing {grabbableObject.name} as a basic grabbable object at point {grabPoint}");
+        UnityEngine.Debug.Log($"Grabbing {grabbableObject.name} as a basic grabbable object at point {grabPoint}");
     }
     private void runGrablogic() // TODO: Add dog species check
     {
@@ -414,7 +457,7 @@ public class PlayerActions : MonoBehaviour
         }
         else if (dogFrontSpecial && canGrab)
         {
-            Debug.Log("Grabbed item");
+            UnityEngine.Debug.Log("Grabbed item");
             
             grabObject();
         }
@@ -431,14 +474,14 @@ public class PlayerActions : MonoBehaviour
     {
         determineGrabType();
         if (grabPoint == Vector3.zero) {
-            Debug.LogWarning("No grab point found");
+            UnityEngine.Debug.LogWarning("No grab point found");
             return;
         }
 
         Rigidbody targetRigidbody = getTargetRigidBody();
 
         if (targetRigidbody == null) {
-            Debug.LogWarning("No target rigidbody found");
+            UnityEngine.Debug.LogWarning("No target rigidbody found");
             return;
         }
 
@@ -585,7 +628,7 @@ public class PlayerActions : MonoBehaviour
     }
 
     private void releaseGrabbedObject() {
-        Debug.Log("Released item");
+        UnityEngine.Debug.Log("Released item");
 
         if (grabJoint != null) {
             Destroy(grabJoint);
@@ -640,4 +683,121 @@ public class PlayerActions : MonoBehaviour
 
     }
 
+////////////////////////////////////////// Glow Action ///////////////////////////////////////////////
+    private void runGlowLogic()
+    {
+        if (Input.GetKeyDown(KeyCode.V) || Input.GetKeyDown(KeyCode.M))
+        {
+            StartCoroutine(GlowEffect());
+        }
     }
+
+    private IEnumerator GlowEffect()
+    {
+        foreach (Renderer objRender in dogObjects)
+        {
+            if (objRender != null)
+            {
+                objRender.material.EnableKeyword("_EMISSION");
+                objRender.material.SetColor("_EmissionColor", dogGlowColor * glowIntensity);
+            }
+        }
+
+        foreach (Renderer objRender in catObjects)
+        {
+            if (objRender != null)
+            {
+                objRender.material.EnableKeyword("_EMISSION");
+                objRender.material.SetColor("_EmissionColor", catGlowColor * glowIntensity);
+            }
+        }
+
+        yield return new WaitForSeconds(glowDuration);
+
+        foreach (Renderer objRender in dogObjects)
+        {
+            if (objRender != null)
+            {
+                objRender.material.SetColor("_EmissionColor", Color.black);
+            }
+        }
+
+        foreach (Renderer objRender in catObjects)
+        {
+            if (objRender != null)
+            {
+                objRender.material.SetColor("_EmissionColor", Color.black);
+            }
+        }
+    }
+
+////////////////////////////////////////// Actions UI ///////////////////////////////////////////////
+    private void showClimbText()
+    {
+        if (controllerAssignment.IsKeyboard())
+        {
+            climbText.SetActive(true);
+
+            if (P1.IsFront) climbText.transform.GetChild(0).gameObject.SetActive(true);
+            else climbText.transform.GetChild(1).gameObject.SetActive(true);
+        }
+        else
+        {
+            climbText.SetActive(true);
+
+            climbText.transform.GetChild(2).gameObject.SetActive(true);
+        }
+    }
+
+    private void hideClimbText()
+    {
+        if (controllerAssignment.IsKeyboard())
+        {
+            if (P1.IsFront) climbText.transform.GetChild(0).gameObject.SetActive(false);
+            else climbText.transform.GetChild(1).gameObject.SetActive(false);
+
+            climbText.SetActive(false);
+        }
+        else
+        {
+            climbText.transform.GetChild(2).gameObject.SetActive(false);
+
+            climbText.SetActive(false);
+        }
+    }
+
+    private void showGrabText()
+    {
+        if (controllerAssignment.IsKeyboard())
+        {
+            grabText.SetActive(true);
+
+            // if (P1.IsFront) grabText.transform.GetChild(0).gameObject.SetActive(true);
+            // else grabText.transform.GetChild(1).gameObject.SetActive(true);
+        }
+        else
+        {
+            grabText.SetActive(true);
+            
+            // grabText.transform.GetChild(2).gameObject.SetActive(true);
+        }
+    }
+
+    private void hideGrabText()
+    {
+        if (controllerAssignment.IsKeyboard())
+        {
+            // if (P1.IsFront) grabText.transform.GetChild(0).gameObject.SetActive(false);
+            // else grabText.transform.GetChild(1).gameObject.SetActive(false);
+
+            grabText.SetActive(false);
+        }
+        else
+        {
+            // grabText.transform.GetChild(2).gameObject.SetActive(false);
+
+            grabText.SetActive(false);
+        }
+    }   
+
+}

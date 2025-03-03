@@ -8,7 +8,7 @@ public class PlayAudioOnCollision : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("collision force: " + collision.relativeVelocity.magnitude);
+        // Debug.Log("collision force: " + collision.relativeVelocity.magnitude);
         // Check the force in which pet hits object
         if (!collision.transform.CompareTag("Floor") && (collision.relativeVelocity.magnitude > force))
         {
