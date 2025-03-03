@@ -5,22 +5,25 @@ using UnityEngine;
 
 public class TutorialText : MonoBehaviour
 {
+    [Header("Text/Instruction Variables")]
     public TextMeshProUGUI tutorialText;
     public TextMeshProUGUI tutorialSmallText;
     public GameObject speechBubbleTwoTails;
     public GameObject speechBubbleLeft;
     public GameObject speechBubbleRight;
-    public GameObject catIconP1Left;
-    public GameObject dogIconP1Left;
-    public GameObject catIconP2Right;
-    public GameObject dogIconP2Right;
-    public GameObject playerIcons;
     public GameObject movementUI;
     public GameObject jumpUI;
     public GameObject splitUI;
     public GameObject reconnectUI;
     public GameObject switchUI;
     public GameObject grabUI;
+    public GameObject pressEnterToContinueUI;
+
+    [Header("Icons")]
+    public GameObject P1IconLarge;
+    public GameObject P2IconLarge;
+    public GameObject playerIcons;
+    
 
 
     private int currTutorialStage = 0;
@@ -93,14 +96,14 @@ public class TutorialText : MonoBehaviour
     public const int tutMoveToVase = 0;
     public const int tutBreakVase = 1;
     public const int tutSplit = 2;
-    public const int tutScatterBoxes = 5;
-    public const int tutReconnect = 6;
-    public const int tutMoveToRug = 7;
-    public const int tutSwitch = 8;
-    public const int tutDragRug = 9;
-    public const int tutComplete = 10;
-    public const int scaredDog = 11;
-    public const int annoyedCat = 12;
+    public const int tutScatterBoxes = 4;
+    public const int tutReconnect = 5;
+    public const int tutMoveToRug = 6;
+    public const int tutSwitch = 7;
+    public const int tutDragRug = 8;
+    public const int tutComplete = 9;
+    public const int scaredDog = 10;
+    public const int annoyedCat = 11;
 
     // Update is called once per frame
     private void updateTutorialText()
@@ -138,25 +141,28 @@ public class TutorialText : MonoBehaviour
                 speechBubbleLeft.SetActive(true);
                 
                 tutorialText.text = "creepy...";
+                pressEnterToContinueUI.SetActive(true);
 
-                emote = playerManager.startEmote(playerManager.getBackHalf(), "sad");
+                // emote = playerManager.startEmote(playerManager.getBackHalf(), "sad");
                 // play sad dog sound
 
-                StartCoroutine(waitForSeconds(3.0f));
-                // StartCoroutine(waitForKeypress(KeyCode.Return));
+                // StartCoroutine(waitForSeconds(3.0f));
+                StartCoroutine(waitForKey(KeyCode.Return));
                 
                 break;
-            case 4:
-                playerManager.cancelEmote(emote);
-                tutorialText.text = "sorry, i take that back.";
+            // case 4:
+            //     UnityEngine.Debug.Log("case 4");
+            //     playerManager.cancelEmote(emote);
+            //     tutorialText.text = "sorry, i take that back.";
                 
-                emote = playerManager.startEmote(playerManager.getBackHalf(), "happy");
-                // play happy dog sound
+            //     emote = playerManager.startEmote(playerManager.getBackHalf(), "happy");
+            //     // play happy dog sound
 
-                StartCoroutine(waitForSeconds(3.0f));
-                // StartCoroutine(waitForKeypress(KeyCode.Return));
-                break;              
+            //     // StartCoroutine(waitForSeconds(3.0f));
+            //     StartCoroutine(waitForKey(KeyCode.Return));
+            //     break;              
             case tutScatterBoxes:
+                pressEnterToContinueUI.SetActive(false);
                 speechBubbleLeft.SetActive(false);
                 speechBubbleRight.SetActive(true);
                 playerManager.cancelEmote(emote); 
@@ -205,7 +211,7 @@ public class TutorialText : MonoBehaviour
                 tutorialSmallText.text = "leave the attic, or take a look around";
                 messageManager.startPressEnterToHideTutorial();
 
-                StartCoroutine(waitToLeaveTutorial());
+                StartCoroutine(leaveTutorial());
 
                 // go to next stage when touch attic door again during case tut complete
 
@@ -252,15 +258,29 @@ public class TutorialText : MonoBehaviour
         advanceTutorialStage();
     }
 
-    privaite IEnumerator waitForKey(Keycode key)
+    private IEnumerator waitForSecondsWOAdvance(float seconds)
+    {
+        stopwatch.Start();
+
+        while (stopwatch.Elapsed.TotalSeconds < seconds) 
+        {
+            yield return null;
+        }
+
+        stopwatch.Reset();
+    }
+
+    private IEnumerator waitForKey(KeyCode key)
     {
         while (!Input.GetKeyDown(key)) 
         {
             yield return null;
         }
+
+        advanceTutorialStage();
     }
 
-    private IEnumerator waitToLeaveTutorial()
+    private IEnumerator leaveTutorial()
     {
         while (!Input.GetKeyDown(KeyCode.Return)) 
         {
@@ -272,8 +292,8 @@ public class TutorialText : MonoBehaviour
         tutorialText.text = "";
         tutorialSmallText.text = "";
         messageManager.cancelPressEnterToHideTutorial();
-        catIconP1Left.SetActive(false);
-        dogIconP2Right.SetActive(false);
+        P2IconLarge.SetActive(false);
+        P1IconLarge.SetActive(false);
 
         // show the player icons
         playerIcons.transform.GetChild(0).gameObject.SetActive(true); 

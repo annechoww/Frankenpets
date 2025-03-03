@@ -12,6 +12,7 @@ public class MessageManager : MonoBehaviour
     public GameObject fellOver;
     public GameObject buttonHoldFail;
     public GameObject pressEnterToHideTutorial;
+    public GameObject pressEnterToContinue;
 
     public GameObject custom;
 
@@ -53,6 +54,16 @@ public class MessageManager : MonoBehaviour
     public void cancelPressEnterToHideTutorial()
     {
         pressEnterToHideTutorial.SetActive(false);
+    }
+
+    public void startPressEnterToContinue()
+    {
+        pressEnterToContinue.SetActive(true);
+    }
+
+    public void cancelPressEnterToContinue()
+    {
+        pressEnterToContinue.SetActive(false);
     }
 
     public void autoCustomMessage(string message, float seconds = 3.0f)

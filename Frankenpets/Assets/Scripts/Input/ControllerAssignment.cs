@@ -72,4 +72,10 @@ public class ControllerAssignment: MonoBehaviour
         // Unregister from device changes
         InputSystem.onDeviceChange -= HandleDeviceChange;
     }
+
+    // UI uses this to determine gamepad vs. keycaps display
+    public bool IsKeyboard()
+    {
+        return useKeyboardFallback;
+    }
 }
