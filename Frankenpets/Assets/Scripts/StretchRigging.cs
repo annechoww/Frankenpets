@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class BoneStretchOnHold : MonoBehaviour
+public class StretchRigging : MonoBehaviour
 {
     [Header("Dog Front Bones")]
     public Transform dfFrontTorso;

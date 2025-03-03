@@ -14,11 +14,11 @@ public class PetStationManager : MonoBehaviour
 
     private Dictionary<string, DockingPoint> dockedHalves = new Dictionary<string, DockingPoint>();
 
-    private LivingRoomTextManager livingRoomText;
+    private LivingRoomText livingRoomText;
 
     void Awake()
     {
-        livingRoomText = GameObject.Find("TextManager").GetComponent<LivingRoomTextManager>();
+        livingRoomText = GameObject.Find("TextManager").GetComponent<LivingRoomText>();
     }
 
     void Start()
