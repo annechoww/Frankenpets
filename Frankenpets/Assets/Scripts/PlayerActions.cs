@@ -74,8 +74,12 @@ public class PlayerActions : MonoBehaviour
     [Header("Rigging Variables")]
     private MouthRigging mouthRiggingScript;
     private TailRigging tailRiggingScript;
-    private HindLegsRigging hindLegsRiggingScript;
+    private HindLegsRigging2 hindRiggingScript;
     private PawRigging pawRiggingScript;
+    private ClimbRigging climbRiggingScript;
+    private GrabRigging grabRiggingScript;
+    public Transform grabMouthPosition;
+    private bool isStanding = false;
 
     [Header("Glowing Objects Variables")]
     public Color dogGlowColor = Color.yellow;
@@ -143,6 +147,7 @@ public class PlayerActions : MonoBehaviour
         runGrablogic();
         runTailLogic();
         runPawLogic();
+        runHindLegsLogic();
         runGlowLogic();
         runControlsMenuLogic();
 
@@ -243,7 +248,9 @@ public class PlayerActions : MonoBehaviour
             mouthRiggingScript = frontHalf.GetComponentInChildren<MouthRigging>();
             tailRiggingScript = backHalf.GetComponentInChildren<TailRigging>();
             pawRiggingScript = frontHalf.GetComponentInChildren<PawRigging>();
-            //hindLegsRiggingScript = backHalf.GetComponentInChildren<HindLegsRigging>();
+            hindRiggingScript = backHalf.GetComponentInChildren<HindLegsRigging2>();
+            climbRiggingScript = frontHalf.GetComponentInChildren<ClimbRigging>();
+            grabRiggingScript = frontHalf.GetComponentInChildren<GrabRigging>();
         }
         else
         {
@@ -346,12 +353,9 @@ public class PlayerActions : MonoBehaviour
 ////////////////////////////////////////// Climb Action ///////////////////////////////////////////////
     private void runClimbLogic()
     {
-
-
         // Get special action input for climbing (cat front special)
         bool player1Special = player1Input.GetSpecialActionPressed();
         bool player2Special = player2Input.GetSpecialActionPressed();
-        
         // Check for cat species in front position
         string frontSpecies = P1.IsFront ? P1.Species : P2.Species;
         bool isSpecialReleased = (P1.IsFront && !player1Special) || (P2.IsFront && !player2Special);
@@ -377,6 +381,8 @@ public class PlayerActions : MonoBehaviour
     private void StartClimbing()
     {
         
+        climbRiggingScript.climb();
+
         isClimbing = true;
         frontRb.useGravity = false;
         // Zero out current velocities
@@ -388,6 +394,7 @@ public class PlayerActions : MonoBehaviour
 
     private void StopClimbing()
     {
+        climbRiggingScript.release();
         isClimbing = false;
         frontRb.useGravity = true;
         frontRb.constraints = RigidbodyConstraints.None;
@@ -497,33 +504,44 @@ public class PlayerActions : MonoBehaviour
         // Debug.DrawLine(mouthPosition, Vector3.forward + Vector3.up, Color.red, 2, false);
         // Debug.DrawLine(mouthPosition, mouthDirection, Color.red, 2, false);
 
-        bool p1IsDogFront = P1.IsFront && P1.Species == "dog";
-        bool p2IsDogFront = P2.IsFront && P2.Species == "dog";
+        // bool p1IsDogFront = P1.IsFront && P1.Species == "dog";
+        // bool p2IsDogFront = P2.IsFront && P2.Species == "dog";
 
-        bool dogFrontSpecialP1 = p1IsDogFront && player1Input.GetSpecialActionPressed();
-        bool dogFrontSpecialP2 = p2IsDogFront && player2Input.GetSpecialActionPressed();
+        // bool dogFrontSpecialP1 = p1IsDogFront && player1Input.GetSpecialActionPressed();
+        // bool dogFrontSpecialP2 = p2IsDogFront && player2Input.GetSpecialActionPressed();
 
-        bool dogFrontSpecial = dogFrontSpecialP1 || dogFrontSpecialP2;
+        // bool dogFrontSpecial = dogFrontSpecialP1 || dogFrontSpecialP2;
 
-        if (dogFrontSpecial && isGrabbing) {
+        bool player1Special = player1Input.GetSpecialActionPressed();
+        bool player2Special = player2Input.GetSpecialActionPressed();
 
-            releaseGrabbedObject();
+        string frontSpecies = P1.IsFront? P1.Species: P2.Species;
+        bool isSpecialReleased = (P1.IsFront && !player1Special) || (P2.IsFront && !player2Special);
 
-        }
-        else if (dogFrontSpecial && canGrab)
-        {
-            UnityEngine.Debug.Log("Grabbed item");
+        if (frontSpecies != "dog") return;
+
+        if (!isGrabbing) {
+            if ((player1Special && P1.IsFront) || (player2Special && P2.IsFront))
+            {
+                UnityEngine.Debug.Log("Grabbed item");
+                isGrabbing = true;
+                grabRiggingScript.drag();
+                grabObject();
+            }
             
-            grabObject();
-        }
-        else if (dogFrontSpecial){
-            mouthRiggingScript.openMouth();
+
+        } else if (isSpecialReleased && isGrabbing){
+            grabRiggingScript.release();
+            releaseGrabbedObject();
+            isGrabbing = false;
+
         }
 
         if (isGrabbing & grabJoint != null) {
             updateGrabJoint();
         }
     }
+
 
     private void grabObject() 
     {
@@ -548,7 +566,7 @@ public class PlayerActions : MonoBehaviour
         configureJoint(grabJoint);
 
         // Set the anchor point at the dog's mouth
-        grabJoint.anchor = transform.InverseTransformPoint(mouthPosition);
+        //grabJoint.anchor = transform.InverseTransformPoint(mouthPosition);
         
         // Determine if this is a portable or draggable object
         bool isPortable = false;
@@ -560,13 +578,18 @@ public class PlayerActions : MonoBehaviour
         }
         
         if (isPortable) {
+            // Set the anchor point at the dog's mouth
+            //grabJoint.anchor = transform.InverseTransformPoint(mouthPosition);
+            grabJoint.anchor = transform.InverseTransformPoint(grabMouthPosition.localPosition);
             // For portable objects, make them move to the dog's mouth
             grabJoint.connectedAnchor = targetRigidbody.transform.InverseTransformPoint(targetRigidbody.transform.position);
             
             // Optional: adjust rotation to orient properly in mouth
-            Quaternion targetRotation = Quaternion.LookRotation(-transform.forward, transform.up);
-            targetRigidbody.transform.rotation = targetRotation;
+            // Quaternion targetRotation = Quaternion.LookRotation(-transform.forward, transform.up);
+            // targetRigidbody.transform.rotation = targetRotation;
         } else {
+            // Set the anchor point at the dog's mouth
+            grabJoint.anchor = transform.InverseTransformPoint(grabMouthPosition.localPosition);
             // For draggable objects, keep the connection at the grab point
             grabJoint.connectedAnchor = targetRigidbody.transform.InverseTransformPoint(grabPoint);
         }
@@ -576,10 +599,9 @@ public class PlayerActions : MonoBehaviour
         applyMovementPenalty();
         applyTurnRestriction();
 
-        isGrabbing = true;
         grabText.SetActive(false);
 
-        mouthRiggingScript.openMouth();
+        //mouthRiggingScript.openMouth();
     }
 
     private Rigidbody getTargetRigidBody() {
@@ -712,7 +734,39 @@ public class PlayerActions : MonoBehaviour
     }
 
     ////////////////////////////////////////// Hind Legs Action ///////////////////////////////////////////////
-    // TODO: Fix hind legs prior to adding to script here.
+    private void runHindLegsLogic()
+    {
+        // Get special action input for hind legs (dog back special)
+        bool player1Special = player1Input.GetSpecialActionPressed();
+        bool player2Special = player2Input.GetSpecialActionPressed();
+        // Check for dog species in back position
+        string backSpecies = P1.IsFront ? P2.Species : P1.Species;
+        bool isSpecialReleased = (!P1.IsFront && !player1Special) || (!P2.IsFront && !player2Special);
+        
+        // Only cats can climb
+        if (backSpecies != "dog") return;
+        
+        if (!isStanding){
+            UnityEngine.Debug.Log("not standing");
+        } else{
+            UnityEngine.Debug.Log("is standing");
+        }
+        // Start climbing when front cat player presses special near climbable
+        if (!isStanding)
+        {
+            if ((player1Special && !P1.IsFront) || (player2Special && !P2.IsFront))
+            {
+                isStanding = true;
+                hindRiggingScript.stand(); 
+            }
+        
+        } else if (isSpecialReleased && isStanding)
+        {
+            isStanding = false;
+           hindRiggingScript.release();
+        }
+        
+    }
 
 
     ////////////////////////////////////////// Front Paws Action //////////////////////////////////////////////
