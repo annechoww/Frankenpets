@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MirrorShatter : MonoBehaviour
 {
@@ -7,9 +8,9 @@ public class MirrorShatter : MonoBehaviour
     public float shatterForce = 1f;
     public AudioClip shatterSound;
 
-    // [Header("Task Manager")]
-    // public Image taskItem;
-    // public Color completedColor;
+    [Header("Task Manager")]
+    public Image taskItem;
+    public Color completedColor;
 
     public Task task = new Task("Shatter Mirror", 1);
     private bool isShattered = false;
@@ -53,7 +54,7 @@ public class MirrorShatter : MonoBehaviour
     }
 
     private void FinishTask(){
-        // taskItem.color = completedColor;
+        taskItem.color = completedColor;
         // tutorialText.advanceTutorialStage();
         task.IsComplete = true;
     }

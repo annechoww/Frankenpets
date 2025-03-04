@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class JugShatter : MonoBehaviour
 {
@@ -7,9 +8,9 @@ public class JugShatter : MonoBehaviour
     public float shatterForce = 1f;
     public AudioClip shatterSound;
 
-    // [Header("Task Manager")]
-    // public Image taskItem;
-    // public Color completedColor;
+    [Header("Task Manager")]
+    public Image taskItem;
+    public Color completedColor;
 
     public Task task = new Task("Shatter Jug", 1);
     private bool isShattered = false;
@@ -53,7 +54,7 @@ public class JugShatter : MonoBehaviour
     }
 
     private void FinishTask(){
-        // taskItem.color = completedColor;
+        taskItem.color = completedColor;
         // tutorialText.advanceTutorialStage();
         task.IsComplete = true;
     }
