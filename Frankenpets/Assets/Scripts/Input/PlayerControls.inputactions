@@ -49,6 +49,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Menu",
+                    "type": "Button",
+                    "id": "77aef403-cf7e-4443-ab09-abff90fc362b",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Glow",
+                    "type": "Button",
+                    "id": "81397a7e-5e4d-46f9-9af4-d8b0970271b4",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -120,7 +138,7 @@
                 },
                 {
                     "name": "",
-                    "id": "49866bfe-6503-401c-b5bd-b67a7e7d4cbb",
+                    "id": "23c44c13-f485-41e1-8ed8-207273744b49",
                     "path": "<Keyboard>/x",
                     "interactions": "",
                     "processors": "",
@@ -153,7 +171,7 @@
                 },
                 {
                     "name": "",
-                    "id": "49866bfe-6503-401c-b5bd-b67a7e7d4cbb",
+                    "id": "907b4691-b489-40ee-ac1f-05df690f21c2",
                     "path": "<Keyboard>/c",
                     "interactions": "",
                     "processors": "",
@@ -205,6 +223,61 @@
                     "action": "Switch",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a90f31f8-77c1-4cff-9c76-4f286d76bffb",
+                    "path": "<Gamepad>/{Menu}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Menu",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4e9152da-244f-4906-ace0-39e24997307c",
+                    "path": "<Keyboard>/i",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Menu",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5caf44da-4f27-4173-82b9-c79245a6b472",
+                    "path": "<Keyboard>/v",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Glow",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2baed773-43ab-4c09-a8fd-ea04b7a85371",
+                    "path": "<Keyboard>/m",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Glow",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "513a4676-1e64-49f8-87ff-46f9557aba43",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Glow",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -252,6 +325,15 @@
                     "name": "Switch",
                     "type": "Button",
                     "id": "56ad98e8-cf92-49c7-ae49-8cf3b5007b24",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Menu",
+                    "type": "Button",
+                    "id": "0ecf05fb-3e45-4e44-bcdb-2be7141a27f1",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -410,6 +492,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Switch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3916ea28-fe3a-4bd2-b9fb-891c78546fe6",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Menu",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

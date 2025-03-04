@@ -18,27 +18,35 @@ public class TutorialText : MonoBehaviour
     public GameObject switchUI;
     public GameObject grabUI;
     public GameObject pressEnterToContinueUI;
+    public GameObject controlsMenu;
 
     [Header("Icons")]
     public GameObject P1IconLarge;
     public GameObject P2IconLarge;
     public GameObject playerIcons;
+
+    [Header("Player Inputs")]
+    public InputHandler player1Input;
+    public InputHandler player2Input;
     
-
-
+    // State tracking variables
     private int currTutorialStage = 0;
     private bool hasSplit = false;
     private bool hasReconnected = false;
-
     private bool hasSwitched = false;
-
-    private Task2Tutorial task2Tutorial;
-    private Task3Tutorial task3Tutorial;
     private FixedJoint fixedJoint;
-    private PlayerManager playerManager;
-    private MessageManager messageManager;
+
+    // Other variables 
     private Stopwatch stopwatch = new Stopwatch();
     private GameObject emote;
+
+    // Script references
+    private Task2Tutorial task2Tutorial;
+    private Task3Tutorial task3Tutorial;
+    private PlayerManager playerManager;
+    private MessageManager messageManager;
+    private ControllerAssignment controllerAssignment;
+    
 
     void Awake()
     {
@@ -46,7 +54,7 @@ public class TutorialText : MonoBehaviour
         task3Tutorial = GameObject.Find("Task 3").GetComponent<Task3Tutorial>();
         playerManager = GameObject.Find("Pet").GetComponent<PlayerManager>();
         messageManager = GameObject.Find("Messages").GetComponent<MessageManager>();
-
+        controllerAssignment = GameObject.Find("Pet").GetComponent<ControllerAssignment>();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -54,6 +62,44 @@ public class TutorialText : MonoBehaviour
     {
         updateTutorialText();
         fixedJoint = playerManager.getJoint();
+
+        // Set the instructions UI according to keycaps or gamepad
+        if (controllerAssignment.IsKeyboard())
+        {
+            movementUI.transform.GetChild(0).gameObject.SetActive(true);
+            jumpUI.transform.GetChild(0).gameObject.SetActive(true);
+            splitUI.transform.GetChild(0).gameObject.SetActive(true);
+            reconnectUI.transform.GetChild(0).gameObject.SetActive(true);
+            switchUI.transform.GetChild(0).gameObject.SetActive(true);
+            grabUI.transform.GetChild(0).gameObject.SetActive(true);
+            pressEnterToContinueUI.transform.GetChild(0).gameObject.SetActive(true);
+
+            movementUI.transform.GetChild(1).gameObject.SetActive(false);
+            jumpUI.transform.GetChild(1).gameObject.SetActive(false);
+            splitUI.transform.GetChild(1).gameObject.SetActive(false);
+            reconnectUI.transform.GetChild(1).gameObject.SetActive(false);
+            switchUI.transform.GetChild(1).gameObject.SetActive(false);
+            grabUI.transform.GetChild(1).gameObject.SetActive(false);
+            pressEnterToContinueUI.transform.GetChild(1).gameObject.SetActive(false);
+        }
+        else
+        {
+            movementUI.transform.GetChild(0).gameObject.SetActive(false);
+            jumpUI.transform.GetChild(0).gameObject.SetActive(false);
+            splitUI.transform.GetChild(0).gameObject.SetActive(false);
+            reconnectUI.transform.GetChild(0).gameObject.SetActive(false);
+            switchUI.transform.GetChild(0).gameObject.SetActive(false);
+            grabUI.transform.GetChild(0).gameObject.SetActive(false);
+            pressEnterToContinueUI.transform.GetChild(0).gameObject.SetActive(false);
+
+            movementUI.transform.GetChild(1).gameObject.SetActive(true);
+            jumpUI.transform.GetChild(1).gameObject.SetActive(true);
+            splitUI.transform.GetChild(1).gameObject.SetActive(true);
+            reconnectUI.transform.GetChild(1).gameObject.SetActive(true);
+            switchUI.transform.GetChild(1).gameObject.SetActive(true);
+            grabUI.transform.GetChild(1).gameObject.SetActive(true);
+            pressEnterToContinueUI.transform.GetChild(1).gameObject.SetActive(true);
+        }
     }
 
     void Update()
@@ -147,7 +193,8 @@ public class TutorialText : MonoBehaviour
                 // play sad dog sound
 
                 // StartCoroutine(waitForSeconds(3.0f));
-                StartCoroutine(waitForKey(KeyCode.Return));
+                // StartCoroutine(waitForKey(KeyCode.Return));
+                StartCoroutine(waitForSkip());
                 
                 break;
             // case 4:
@@ -165,7 +212,7 @@ public class TutorialText : MonoBehaviour
                 pressEnterToContinueUI.SetActive(false);
                 speechBubbleLeft.SetActive(false);
                 speechBubbleRight.SetActive(true);
-                playerManager.cancelEmote(emote); 
+                // playerManager.cancelEmote(emote); 
 
                 tutorialText.text = "let's scatter the coloured boxes around"; 
 
@@ -273,6 +320,18 @@ public class TutorialText : MonoBehaviour
     private IEnumerator waitForKey(KeyCode key)
     {
         while (!Input.GetKeyDown(key)) 
+        {
+            yield return null;
+        }
+
+        advanceTutorialStage();
+    }
+
+    private IEnumerator waitForSkip()
+    {
+        while (!Input.GetKeyDown(KeyCode.Return) && 
+                !player1Input.GetSwitchPressed() && !player1Input.GetReconnectPressed() &&
+                !player2Input.GetSwitchPressed() && !player1Input.GetReconnectPressed()) 
         {
             yield return null;
         }

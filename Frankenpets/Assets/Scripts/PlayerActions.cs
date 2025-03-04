@@ -88,6 +88,8 @@ public class PlayerActions : MonoBehaviour
     [Header("UI Variables")]
     public GameObject grabText;
     public GameObject climbText;
+    public GameObject controlsMenu;
+    private bool isViewingControlsMenu = false;
 
     private void Start()
     {   
@@ -119,6 +121,18 @@ public class PlayerActions : MonoBehaviour
         {
             catObjects[i] = climbableObjects[i].GetComponent<Renderer>();
         }
+
+        // Set the Controls Menu to keycaps or gamepad
+        if (controllerAssignment.IsKeyboard())
+        {
+            controlsMenu.transform.GetChild(0).gameObject.SetActive(true);
+            controlsMenu.transform.GetChild(1).gameObject.SetActive(false);
+        }
+        else
+        {
+            controlsMenu.transform.GetChild(0).gameObject.SetActive(false);
+            controlsMenu.transform.GetChild(1).gameObject.SetActive(true);
+        }
     }
 
     private void Update()
@@ -130,6 +144,11 @@ public class PlayerActions : MonoBehaviour
         runTailLogic();
         runPawLogic();
         runGlowLogic();
+        runControlsMenuLogic();
+
+        // This makes the grabText and climbText float :3
+        grabText.transform.position += new Vector3(0, Mathf.Sin(Time.time * 2) * 0.001f, 0);
+        climbText.transform.position += new Vector3(0, Mathf.Sin(Time.time * 2) * 0.001f, 0);
     }
 
     private void FixedUpdate()
@@ -148,7 +167,7 @@ public class PlayerActions : MonoBehaviour
         if (other.CompareTag("Climbable") && frontSpecies == "cat")
         {
             // Show UI Popover
-            climbText.transform.position = other.transform.position + (Vector3.forward * 0.05f);
+            climbText.transform.position = other.transform.position + (Vector3.forward * 0.05f) - (Vector3.up * 0.10f);
             showClimbText();
 
             isNearClimbable = true;
@@ -774,6 +793,12 @@ public class PlayerActions : MonoBehaviour
         {
             climbText.SetActive(true);
 
+            // Make text always face frontHalf
+            climbText.transform.LookAt(frontHalf.transform);
+
+            // Flip the text to unmirror it
+            // climbText.transform.rotation = Quaternion.Euler(0, climbText.transform.rotation.eulerAngles.y + 180, 0);
+
             if (P1.IsFront) climbText.transform.GetChild(0).gameObject.SetActive(true);
             else climbText.transform.GetChild(1).gameObject.SetActive(true);
         }
@@ -808,14 +833,20 @@ public class PlayerActions : MonoBehaviour
         {
             grabText.SetActive(true);
 
-            // if (P1.IsFront) grabText.transform.GetChild(0).gameObject.SetActive(true);
-            // else grabText.transform.GetChild(1).gameObject.SetActive(true);
+            // Make text always face frontHalf
+            grabText.transform.LookAt(frontHalf.transform); 
+            
+            // Flip the text to unmirror it
+            // grabText.transform.rotation = Quaternion.Euler(0, grabText.transform.rotation.eulerAngles.y + 180, 0);
+
+            if (P1.IsFront) grabText.transform.GetChild(0).gameObject.SetActive(true);
+            else grabText.transform.GetChild(1).gameObject.SetActive(true);
         }
         else
         {
             grabText.SetActive(true);
             
-            // grabText.transform.GetChild(2).gameObject.SetActive(true);
+            grabText.transform.GetChild(2).gameObject.SetActive(true);
         }
     }
 
@@ -823,17 +854,30 @@ public class PlayerActions : MonoBehaviour
     {
         if (controllerAssignment.IsKeyboard())
         {
-            // if (P1.IsFront) grabText.transform.GetChild(0).gameObject.SetActive(false);
-            // else grabText.transform.GetChild(1).gameObject.SetActive(false);
+            if (P1.IsFront) grabText.transform.GetChild(0).gameObject.SetActive(false);
+            else grabText.transform.GetChild(1).gameObject.SetActive(false);
 
             grabText.SetActive(false);
         }
         else
         {
-            // grabText.transform.GetChild(2).gameObject.SetActive(false);
+            grabText.transform.GetChild(2).gameObject.SetActive(false);
 
             grabText.SetActive(false);
         }
     }   
 
+    private void runControlsMenuLogic()
+    {
+        if ((player1Input.GetControlsMenuPressed() || player2Input.GetControlsMenuPressed() || Input.GetKeyDown(KeyCode.I)) && !isViewingControlsMenu)
+        {
+            controlsMenu.SetActive(true);
+            isViewingControlsMenu = true;
+        }
+        else if ((player1Input.GetControlsMenuPressed() || player2Input.GetControlsMenuPressed() || Input.GetKeyDown(KeyCode.I)) && isViewingControlsMenu)
+        {
+            controlsMenu.SetActive(false);
+            isViewingControlsMenu = false;
+        }
+    }
 }
