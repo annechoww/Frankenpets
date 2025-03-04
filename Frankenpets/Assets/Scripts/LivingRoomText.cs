@@ -77,41 +77,41 @@ public class LivingRoomText : MonoBehaviour
             case 0:
                 speechBubbleTwoTails.SetActive(true);
                 tutorialText.text = "we made it level 2: the living room!";
-                StartCoroutine(waitForSkip());
+                StartCoroutine(waitForSeconds(3.0f));
                 pressEnterToContinueUI.SetActive(true);
                 break;
             case 1:
                 tutorialText.text = "explore the house and...";
-                StartCoroutine(waitForSkip());
+                StartCoroutine(waitForSeconds(2.0f));
                 break;
             case 2:
                 tutorialText.text = "complete the to-do list to advance to the next level";
-                StartCoroutine(waitForSkip());
+                StartCoroutine(waitForSeconds(3.0f));
                 break;
             case 3:
-                tutorialText.text = "don't know how to do something?";
-               StartCoroutine(waitForSkip());
-                pressEnterToContinueUI.SetActive(true);
+                tutorialText.text = "if you don't know how to do something...";
+                StartCoroutine(waitForSeconds(3.0f));
+                // pressEnterToContinueUI.SetActive(true);
                 break;
             case 4:
                 pressEnterToContinueUI.SetActive(false);
-                tutorialText.text = "you can make interactable objects glow";
+                tutorialText.text = "...you can make interactable objects glow";
                 glowUI.SetActive(true);
                 StartCoroutine(waitForGlow());
                 
                 break;
             case 5:
                 glowUI.SetActive(false);
-                pressEnterToContinueUI.SetActive(true);
                 tutorialText.text = "take a look at the controls menu, too";
                 accessControlsUI.SetActive(true);
                 StartCoroutine(waitForMenu());
                 break;
             case 6:
                 accessControlsUI.SetActive(false);
-                pressEnterToContinueUI.SetActive(true);
+                // pressEnterToContinueUI.SetActive(true);
                 tutorialText.text = "we're all set!"; // what's that near the stairs?
                 messageManager.startPressEnterToHideTutorial();
+                StartCoroutine(waitForSkip());
                 break;
             // case dockingStation:
             //     tutorialText.text = "are these... other halves?!";
@@ -159,6 +159,37 @@ public class LivingRoomText : MonoBehaviour
     }
 
     private IEnumerator waitForSkip()
+    {
+        while (!Input.GetKeyUp(KeyCode.Return) && 
+                !player1Input.GetSwitchPressed() && !player1Input.GetReconnectPressed() &&
+                !player2Input.GetSwitchPressed() && !player2Input.GetReconnectPressed()) 
+        {
+            yield return null;
+        }
+
+        advanceLivingRoomStage();
+    }
+    private IEnumerator waitForSkip2()
+    {
+        while (!Input.GetKeyDown(KeyCode.Return) && 
+                !player1Input.GetSwitchPressed() && !player1Input.GetReconnectPressed() &&
+                !player2Input.GetSwitchPressed() && !player2Input.GetReconnectPressed()) 
+        {
+            yield return null;
+        }
+
+        advanceLivingRoomStage();
+    }private IEnumerator waitForSkip3()
+    {
+        while (!Input.GetKeyDown(KeyCode.Return) && 
+                !player1Input.GetSwitchPressed() && !player1Input.GetReconnectPressed() &&
+                !player2Input.GetSwitchPressed() && !player2Input.GetReconnectPressed()) 
+        {
+            yield return null;
+        }
+
+        advanceLivingRoomStage();
+    }private IEnumerator waitForSkip4()
     {
         while (!Input.GetKeyDown(KeyCode.Return) && 
                 !player1Input.GetSwitchPressed() && !player1Input.GetReconnectPressed() &&
