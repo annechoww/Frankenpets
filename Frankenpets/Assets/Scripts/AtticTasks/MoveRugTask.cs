@@ -69,8 +69,7 @@ public class MoveRugTask : MonoBehaviour
         {
             tutorialText.advanceTutorialStage();
         }
-
-        openedAtticDoor.SetActive(true);
+        Invoke("OpenAtticDoor", 2f);
         gameObject.SetActive(false);
         task.IsComplete = true;
     }
@@ -81,6 +80,11 @@ public class MoveRugTask : MonoBehaviour
         Task scatterBoxesTask = TaskManager.FindTaskByName("Scatter Boxes");
 
         return shatterVaseTask != null && scatterBoxesTask != null && shatterVaseTask.IsComplete && scatterBoxesTask.IsComplete;
+    }
+
+    void OpenAtticDoor()
+    {
+        openedAtticDoor.SetActive(true);
     }
 
 }
