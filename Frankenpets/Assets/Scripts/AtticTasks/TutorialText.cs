@@ -137,6 +137,18 @@ public class TutorialText : MonoBehaviour
                 advanceTutorialStage();
             }
         }
+
+        // check for keypress / gamepad press on "creepy..."
+        if (getCurrTutorialStage() == 3 && checkForReturn())
+        {
+            advanceTutorialStage();
+        }
+
+        // check for keypress / gamepad press to close the tutorial
+        if (getCurrTutorialStage() == tutComplete && checkForReturn())
+        {
+            leaveTutorial();
+        }
     }
 
     public const int tutMoveToVase = 0;
@@ -191,11 +203,6 @@ public class TutorialText : MonoBehaviour
 
                 // emote = playerManager.startEmote(playerManager.getBackHalf(), "sad");
                 // play sad dog sound
-
-                // StartCoroutine(waitForSeconds(3.0f));
-                // StartCoroutine(waitForKey(KeyCode.Return));
-                StartCoroutine(waitForSkip());
-                
                 break;
             // case 4:
             //     UnityEngine.Debug.Log("case 4");
@@ -204,9 +211,6 @@ public class TutorialText : MonoBehaviour
                 
             //     emote = playerManager.startEmote(playerManager.getBackHalf(), "happy");
             //     // play happy dog sound
-
-            //     // StartCoroutine(waitForSeconds(3.0f));
-            //     StartCoroutine(waitForKey(KeyCode.Return));
             //     break;              
             case tutScatterBoxes:
                 pressEnterToContinueUI.SetActive(false);
@@ -258,22 +262,22 @@ public class TutorialText : MonoBehaviour
                 tutorialSmallText.text = "leave the attic, or take a look around";
                 messageManager.startPressEnterToHideTutorial();
 
-                StartCoroutine(leaveTutorial());
-
                 // go to next stage when touch attic door again during case tut complete
 
                 break;
+
+            // not used yet
             case scaredDog:
                 speechBubbleLeft.SetActive(true);
                 speechBubbleRight.SetActive(false);
                 tutorialText.text = "the drop's too high, i'm scared!";
-                StartCoroutine(waitForSeconds(4.0f));
+                // StartCoroutine(waitForSkip(scaredDog));
                 break;
             case annoyedCat:
                 speechBubbleLeft.SetActive(false);
                 speechBubbleRight.SetActive(true);
                 tutorialText.text = "fine, i'll jump. switch with me.";
-                StartCoroutine(waitForSeconds(4.0f));
+                // StartCoroutine(waitForSkip(annoyedCat));
                 break;
         }
     }
@@ -288,6 +292,13 @@ public class TutorialText : MonoBehaviour
     public int getCurrTutorialStage()
     {
         return currTutorialStage;
+    }
+
+    public bool checkForReturn()
+    {
+        return Input.GetKeyDown(KeyCode.Return) || 
+               player1Input.GetSwitchPressed() || player1Input.GetReconnectPressed() ||
+               player2Input.GetSwitchPressed() || player2Input.GetReconnectPressed();
     }
 
 
@@ -305,18 +316,6 @@ public class TutorialText : MonoBehaviour
         advanceTutorialStage();
     }
 
-    private IEnumerator waitForSecondsWOAdvance(float seconds)
-    {
-        stopwatch.Start();
-
-        while (stopwatch.Elapsed.TotalSeconds < seconds) 
-        {
-            yield return null;
-        }
-
-        stopwatch.Reset();
-    }
-
     private IEnumerator waitForKey(KeyCode key)
     {
         while (!Input.GetKeyDown(key)) 
@@ -327,25 +326,8 @@ public class TutorialText : MonoBehaviour
         advanceTutorialStage();
     }
 
-    private IEnumerator waitForSkip()
+    private void leaveTutorial()
     {
-        while (!Input.GetKeyDown(KeyCode.Return) && 
-                !player1Input.GetSwitchPressed() && !player1Input.GetReconnectPressed() &&
-                !player2Input.GetSwitchPressed() && !player1Input.GetReconnectPressed()) 
-        {
-            yield return null;
-        }
-
-        advanceTutorialStage();
-    }
-
-    private IEnumerator leaveTutorial()
-    {
-        while (!Input.GetKeyDown(KeyCode.Return)) 
-        {
-            yield return null;
-        }
-
         // hide speech bubble stuff 
         speechBubbleTwoTails.SetActive(false);
         tutorialText.text = "";

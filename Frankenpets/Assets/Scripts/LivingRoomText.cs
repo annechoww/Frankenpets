@@ -62,12 +62,11 @@ public class LivingRoomText : MonoBehaviour
         yield return ShowMessage("if you don't know how to do something...");
 
         pressEnterToContinueUI.SetActive(false);
-
         yield return ShowMessage("...you can make interactable objects glow", "glow");
         yield return ShowMessage("take a look at the controls menu, too", "menu");
-        yield return ShowMessage("we're all set!");
+
         messageManager.startPressEnterToHideTutorial();
-        yield return WaitForKey();
+        yield return ShowMessage("we're all set!");
 
         EndTutorial();
     }
