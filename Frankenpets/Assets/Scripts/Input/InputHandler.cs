@@ -9,6 +9,8 @@ public class InputHandler : MonoBehaviour
     private bool specialActionPressed;
     private bool reconnectPressed;
     private bool switchPressed;
+    private bool controlsMenuPressed;
+    private bool glowPressed;
 
     // Event methods called by PlayerInput component
     public void OnMove(InputAction.CallbackContext context)
@@ -42,6 +44,18 @@ public class InputHandler : MonoBehaviour
         Debug.Log($"Switch pressed: {switchPressed}");
     }
 
+    public void OnControlsMenu(InputAction.CallbackContext context)
+    {
+        switchPressed = context.ReadValueAsButton();
+        Debug.Log($"Controls menu pressed: {controlsMenuPressed}");
+    }
+
+    public void OnGlowPressed(InputAction.CallbackContext context)
+    {
+        switchPressed = context.ReadValueAsButton();
+        Debug.Log($"Glow button pressed: {glowPressed}");
+    }
+
     // Accessor methods for PlayerManager to get input values
     public Vector2 GetMoveInput()
     {
@@ -66,5 +80,15 @@ public class InputHandler : MonoBehaviour
     public bool GetSwitchPressed()
     {
         return switchPressed;
+    }
+
+    public bool GetGlowPressed()
+    {
+        return glowPressed;
+    }
+
+    public bool GetControlsMenuPressed()
+    {
+        return controlsMenuPressed;
     }
 }

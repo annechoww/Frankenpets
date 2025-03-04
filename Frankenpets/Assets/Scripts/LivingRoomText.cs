@@ -11,7 +11,7 @@ public class LivingRoomText : MonoBehaviour
     public GameObject speechBubbleTwoTails;
     public GameObject speechBubbleLeft;
     public GameObject speechBubbleRight;
-    public GameObject pressEnterUI;
+    public GameObject pressEnterToContinueUI;
     public GameObject glowUI;
     public GameObject accessControlsUI;
 
@@ -19,19 +19,48 @@ public class LivingRoomText : MonoBehaviour
     public GameObject catIcon;
     public GameObject dogIcon;
     public GameObject playerIcons;
+
+    [Header("Player Inputs")]
+    public InputHandler player1Input;
+    public InputHandler player2Input;
     
     private int currStage = 0;
     private Stopwatch stopwatch = new Stopwatch(); // might need to make new stopwatch every time coroutine is called
     private MessageManager messageManager;
+    private ControllerAssignment controllerAssignment;
+
 
     void Awake()
     {
         messageManager = GameObject.Find("Messages").GetComponent<MessageManager>();
+        controllerAssignment = GameObject.Find("Pet").GetComponent<ControllerAssignment>();
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         updateLivingRoomText();
+
+        // Set the instructions UI according to keycaps or gamepad
+        if (controllerAssignment.IsKeyboard())
+        {
+            glowUI.transform.GetChild(0).gameObject.SetActive(true);
+            accessControlsUI.transform.GetChild(0).gameObject.SetActive(true);
+            pressEnterToContinueUI.transform.GetChild(0).gameObject.SetActive(true);
+
+            glowUI.transform.GetChild(1).gameObject.SetActive(false);
+            accessControlsUI.transform.GetChild(1).gameObject.SetActive(false);
+            pressEnterToContinueUI.transform.GetChild(1).gameObject.SetActive(false);
+        }
+        else
+        {
+            glowUI.transform.GetChild(0).gameObject.SetActive(false);
+            accessControlsUI.transform.GetChild(0).gameObject.SetActive(false);
+            pressEnterToContinueUI.transform.GetChild(0).gameObject.SetActive(false);
+
+            glowUI.transform.GetChild(1).gameObject.SetActive(true);
+            accessControlsUI.transform.GetChild(1).gameObject.SetActive(true);
+            pressEnterToContinueUI.transform.GetChild(1).gameObject.SetActive(true);
+        }
     }
 
     // Update is called once per frame
@@ -48,51 +77,47 @@ public class LivingRoomText : MonoBehaviour
             case 0:
                 speechBubbleTwoTails.SetActive(true);
                 tutorialText.text = "we made it level 2: the living room!";
-                StartCoroutine(waitForKey(KeyCode.Return)); // or controller
-                pressEnterUI.SetActive(true);
+                StartCoroutine(waitForSkip());
+                pressEnterToContinueUI.SetActive(true);
                 break;
             case 1:
                 tutorialText.text = "explore the house and...";
-                StartCoroutine(waitForKey(KeyCode.Return)); // or controller
-
+                StartCoroutine(waitForSkip());
                 break;
-
             case 2:
                 tutorialText.text = "complete the to-do list to advance to the next level";
-                StartCoroutine(waitForKey(KeyCode.Return)); // or controller
-
+                StartCoroutine(waitForSkip());
                 break;
             case 3:
                 tutorialText.text = "don't know how to do something?";
-                StartCoroutine(waitForKey(KeyCode.Return)); // or controller
-                pressEnterUI.SetActive(true);
+               StartCoroutine(waitForSkip());
+                pressEnterToContinueUI.SetActive(true);
                 break;
             case 4:
-                pressEnterUI.SetActive(false);
+                pressEnterToContinueUI.SetActive(false);
                 tutorialText.text = "you can make interactable objects glow";
                 glowUI.SetActive(true);
-                StartCoroutine(waitForKey(KeyCode.Return)); // or controller // CHANGE THE CODE
+                StartCoroutine(waitForGlow());
                 
                 break;
             case 5:
                 glowUI.SetActive(false);
-                pressEnterUI.SetActive(true);
+                pressEnterToContinueUI.SetActive(true);
                 tutorialText.text = "take a look at the controls menu, too";
                 accessControlsUI.SetActive(true);
-                StartCoroutine(waitForKey(KeyCode.Return));
-                StartCoroutine(waitForKey(KeyCode.Return));
+                StartCoroutine(waitForMenu());
                 break;
             case 6:
                 accessControlsUI.SetActive(false);
-                pressEnterUI.SetActive(true);
-                tutorialText.text = "we're all set! what's that near the stairs?";
+                pressEnterToContinueUI.SetActive(true);
+                tutorialText.text = "we're all set!"; // what's that near the stairs?
                 messageManager.startPressEnterToHideTutorial();
                 break;
-            case dockingStation:
-                tutorialText.text = "are these... other halves?!";
-                StartCoroutine(waitForSeconds(4.0f));
-                break;
-            case 8:
+            // case dockingStation:
+            //     tutorialText.text = "are these... other halves?!";
+            //     StartCoroutine(waitForSeconds(4.0f));
+            //     break;
+            case 7:
                 leaveTutorial();
                 break;
         }
@@ -133,9 +158,45 @@ public class LivingRoomText : MonoBehaviour
         advanceLivingRoomStage();
     }
 
+    private IEnumerator waitForSkip()
+    {
+        while (!Input.GetKeyDown(KeyCode.Return) && 
+                !player1Input.GetSwitchPressed() && !player1Input.GetReconnectPressed() &&
+                !player2Input.GetSwitchPressed() && !player2Input.GetReconnectPressed()) 
+        {
+            yield return null;
+        }
+
+        advanceLivingRoomStage();
+    }
+
+    private IEnumerator waitForGlow()
+    {
+        while (!Input.GetKeyDown(KeyCode.V) && !Input.GetKeyDown(KeyCode.M) && 
+                !player1Input.GetGlowPressed() && !player2Input.GetGlowPressed()) 
+        {
+            yield return null;
+        }
+
+        advanceLivingRoomStage();
+    }
+
+    private IEnumerator waitForMenu()
+    {
+        while (!Input.GetKeyDown(KeyCode.I) && 
+                !player1Input.GetControlsMenuPressed() && !player2Input.GetControlsMenuPressed())
+        {
+            yield return null;
+        }
+
+        advanceLivingRoomStage();
+    }
+
     private IEnumerator leaveTutorial()
     {
-        while (!Input.GetKeyDown(KeyCode.Return)) // or controller 
+        while (!Input.GetKeyDown(KeyCode.Return) && 
+                !player1Input.GetSwitchPressed() && !player1Input.GetReconnectPressed() &&
+                !player2Input.GetSwitchPressed() && !player2Input.GetReconnectPressed())
         {
             yield return null;
         }

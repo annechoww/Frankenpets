@@ -88,6 +88,8 @@ public class PlayerActions : MonoBehaviour
     [Header("UI Variables")]
     public GameObject grabText;
     public GameObject climbText;
+    public GameObject controlsMenu;
+    private bool isViewingControlsMenu = false;
 
     private void Start()
     {   
@@ -119,6 +121,18 @@ public class PlayerActions : MonoBehaviour
         {
             catObjects[i] = climbableObjects[i].GetComponent<Renderer>();
         }
+
+        // Set the Controls Menu to keycaps or gamepad
+        if (controllerAssignment.IsKeyboard())
+        {
+            controlsMenu.transform.GetChild(0).gameObject.SetActive(true);
+            controlsMenu.transform.GetChild(1).gameObject.SetActive(false);
+        }
+        else
+        {
+            controlsMenu.transform.GetChild(0).gameObject.SetActive(false);
+            controlsMenu.transform.GetChild(1).gameObject.SetActive(true);
+        }
     }
 
     private void Update()
@@ -130,6 +144,7 @@ public class PlayerActions : MonoBehaviour
         runTailLogic();
         runPawLogic();
         runGlowLogic();
+        runControlsMenuLogic();
 
         // This makes the grabText and climbText float :3
         grabText.transform.position += new Vector3(0, Mathf.Sin(Time.time * 2) * 0.001f, 0);
@@ -816,4 +831,17 @@ public class PlayerActions : MonoBehaviour
         }
     }   
 
+    private void runControlsMenuLogic()
+    {
+        if ((player1Input.GetControlsMenuPressed() || player2Input.GetControlsMenuPressed() || Input.GetKeyDown(KeyCode.I)) && !isViewingControlsMenu)
+        {
+            controlsMenu.SetActive(true);
+            isViewingControlsMenu = true;
+        }
+        else if ((player1Input.GetControlsMenuPressed() || player2Input.GetControlsMenuPressed() || Input.GetKeyDown(KeyCode.I)) && isViewingControlsMenu)
+        {
+            controlsMenu.SetActive(false);
+            isViewingControlsMenu = false;
+        }
+    }
 }
