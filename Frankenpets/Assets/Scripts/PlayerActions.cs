@@ -23,7 +23,7 @@ public class PlayerActions : MonoBehaviour
     [Header("Jumping Variables")]
     private float jumpForce = 15f;
     public float jumpCooldown = 0.5f;
-    private float chargedJumpForce = 25f;
+    private float chargedJumpForce = 35f;
     public float chargedJumpCooldown = 0.8f;
     private float lastJumpTime = -10f;
 

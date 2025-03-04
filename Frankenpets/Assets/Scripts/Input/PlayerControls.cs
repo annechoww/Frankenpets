@@ -160,7 +160,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""94c8d3ea-3580-441e-91b6-01039770f3ce"",
+                    ""id"": ""6635b63f-d402-45f1-848e-dae9cdca684c"",
                     ""path"": ""<Keyboard>/x"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -193,7 +193,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""d8d19902-fc2c-4b09-a706-dfff6eb0e361"",
+                    ""id"": ""b9076728-c64d-4656-8157-690b79a6087a"",
                     ""path"": ""<Keyboard>/c"",
                     ""interactions"": """",
                     ""processors"": """",
