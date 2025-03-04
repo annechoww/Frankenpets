@@ -49,6 +49,7 @@ GameObject:
   - component: {fileID: 9138259234798434537}
   - component: {fileID: 876784860752026862}
   - component: {fileID: 4288470178836348440}
+  - component: {fileID: 6441790205373348872}
   m_Layer: 10
   m_Name: dogBack
   m_TagString: dog back
@@ -211,6 +212,32 @@ MonoBehaviour:
   - m_Rig: {fileID: 3437729721935912402}
     m_Active: 1
   m_Effectors: []
+--- !u!114 &6441790205373348872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1328370316140235410}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fdb92ee2ae334ee89f514c94fd75f7d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dogFrontTorso: {fileID: 8286188167790262103}
+  dogBackTorso: {fileID: 4675202469967046883}
+  dogLeg1: {fileID: 4717724238955934880}
+  dogLeg2: {fileID: 2046626547952963861}
+  catFrontTorso: {fileID: 0}
+  catLeg1: {fileID: 0}
+  catLeg2: {fileID: 0}
+  catFrontRig: {fileID: 0}
+  rotateSpeed: 1
+  FrontTorsoRotation: 80
+  BackTorsoRotation: 190
+  BackLegRotation: 10
+  catTorsoRotation: 30
+  FrontLegRotation: 120
 --- !u!1 &1439955205356882904
 GameObject:
   m_ObjectHideFlags: 0
@@ -799,8 +826,8 @@ MonoBehaviour:
   range: 1
   naturalSpeed: 2.2
   naturalRange: 0.05
-  horizontalOffset: 0
-  verticalOffset: 0
+  horizontalOffset: -0.1
+  verticalOffset: 0.05
 --- !u!1 &3997915806440847701
 GameObject:
   m_ObjectHideFlags: 0

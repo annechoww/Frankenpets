@@ -32,6 +32,7 @@ public class HindLegsRigging2: MonoBehaviour
     private Quaternion catL2TargetRotation;
 
     [Header("Hind Legs Variables")]
+    public Rig catFrontRig;
     public float rotateSpeed;
     public float FrontTorsoRotation;
     public float BackTorsoRotation;
@@ -67,13 +68,10 @@ public class HindLegsRigging2: MonoBehaviour
         catL2OGRotation = catLeg2.localRotation;
     }
 
-    void Update()
-    {
-
-    }
-
     public void stand()
     {
+        catFrontRig.weight = 0f;
+        Debug.Log("standing script");
         // dog
         Vector3 dogFrontTorsoEuler = dogFrontTorso.localRotation.eulerAngles;
         dogFrontTorsoTargetRotation = Quaternion.Euler(FrontTorsoRotation, dogFrontTorsoEuler.y, dogFrontTorsoEuler.z);
@@ -108,10 +106,11 @@ public class HindLegsRigging2: MonoBehaviour
 
     }
 
-    private IEnumerator release()
+    public void release()
     {
         // }else if (Input.GetKeyDown(KeyCode.C))
         // {
+        catFrontRig.weight = 1.0f;
         dogFrontTorso.localRotation = Quaternion.Lerp(dogFrontTorso.localRotation,dogFrontTorsoOrigRotation, rotateSpeed);
         dogBackTorso.localRotation = Quaternion.Lerp(dogBackTorso.localRotation,dogBackTorsoOrigRotation, rotateSpeed);
         dogLeg1.localRotation = Quaternion.Lerp(dogLeg1.localRotation,dogL1OGRotation, rotateSpeed);
@@ -120,7 +119,6 @@ public class HindLegsRigging2: MonoBehaviour
         catFrontTorso.localRotation = Quaternion.Lerp(catFrontTorso.localRotation, catFrontTorsoOrigRotation, rotateSpeed);
         catLeg1.localRotation = Quaternion.Lerp(catLeg1.localRotation, catL1OGRotation, rotateSpeed);
         catLeg2.localRotation = Quaternion.Lerp(catLeg2.localRotation, catL2OGRotation, rotateSpeed);
-        yield return null;
         
     }
 
