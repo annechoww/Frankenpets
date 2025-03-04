@@ -712,7 +712,8 @@ public class PlayerActions : MonoBehaviour
             grabJoint = null;
         }
 
-        playerManager.walkSpeed = originalPlayerSpeed;
+        // playerManager.walkSpeed = originalPlayerSpeed;
+        playerManager.walkSpeed = 0.3f;
         if (turnRestricted) {
             playerManager.turnSpeed = originalTurnSpeed;
             turnRestricted = false;
