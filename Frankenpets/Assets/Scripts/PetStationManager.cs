@@ -158,7 +158,7 @@ public class PetStationManager : MonoBehaviour
     {
         if (other.CompareTag("cat front") || other.CompareTag("cat back") || other.CompareTag("dog front") || other.CompareTag("dog back"))
         {
-            livingRoomText.advanceLivingRoomStage();
+            // livingRoomText.advanceLivingRoomStage();
         }
     }
 }

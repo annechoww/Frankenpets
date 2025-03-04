@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Diagnostics;
 using TMPro;
 using UnityEngine;
 
@@ -25,214 +24,103 @@ public class LivingRoomText : MonoBehaviour
     public InputHandler player2Input;
     
     private int currStage = 0;
-    private Stopwatch stopwatch = new Stopwatch(); // might need to make new stopwatch every time coroutine is called
     private MessageManager messageManager;
     private ControllerAssignment controllerAssignment;
-
 
     void Awake()
     {
         messageManager = GameObject.Find("Messages").GetComponent<MessageManager>();
         controllerAssignment = GameObject.Find("Pet").GetComponent<ControllerAssignment>();
     }
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+
     void Start()
     {
-        updateLivingRoomText();
+        SetupControlsUI(); // Configure UI based on input method
+        StartCoroutine(TutorialSequence()); // Start tutorial progression
+    }
 
-        // Set the instructions UI according to keycaps or gamepad
-        if (controllerAssignment.IsKeyboard())
+    private void SetupControlsUI()
+    {
+        bool isKeyboard = controllerAssignment.IsKeyboard();
+        glowUI.transform.GetChild(0).gameObject.SetActive(isKeyboard);
+        accessControlsUI.transform.GetChild(0).gameObject.SetActive(isKeyboard);
+        pressEnterToContinueUI.transform.GetChild(0).gameObject.SetActive(isKeyboard);
+
+        glowUI.transform.GetChild(1).gameObject.SetActive(!isKeyboard);
+        accessControlsUI.transform.GetChild(1).gameObject.SetActive(!isKeyboard);
+        pressEnterToContinueUI.transform.GetChild(1).gameObject.SetActive(!isKeyboard);
+    }
+
+    private IEnumerator TutorialSequence()
+    {
+        speechBubbleTwoTails.SetActive(true);
+        pressEnterToContinueUI.SetActive(true);
+
+        yield return ShowMessage("we made it level 2: the living room!");
+        yield return ShowMessage("explore the house and...");
+        yield return ShowMessage("complete the to-do list to advance to the next level");
+        yield return ShowMessage("if you don't know how to do something...");
+
+        pressEnterToContinueUI.SetActive(false);
+
+        yield return ShowMessage("...you can make interactable objects glow", "glow");
+        yield return ShowMessage("take a look at the controls menu, too", "menu");
+        yield return ShowMessage("we're all set!");
+        messageManager.startPressEnterToHideTutorial();
+        yield return WaitForKey();
+
+        EndTutorial();
+    }
+
+    private IEnumerator ShowMessage(string message, string special = "")
+    {
+        tutorialText.text = message;
+
+        if (special == "glow") 
         {
-            glowUI.transform.GetChild(0).gameObject.SetActive(true);
-            accessControlsUI.transform.GetChild(0).gameObject.SetActive(true);
-            pressEnterToContinueUI.transform.GetChild(0).gameObject.SetActive(true);
-
-            glowUI.transform.GetChild(1).gameObject.SetActive(false);
-            accessControlsUI.transform.GetChild(1).gameObject.SetActive(false);
-            pressEnterToContinueUI.transform.GetChild(1).gameObject.SetActive(false);
+            glowUI.SetActive(true);
+            yield return WaitForGlow();
+            glowUI.SetActive(false);
         }
-        else
+        else if (special == "menu") 
         {
-            glowUI.transform.GetChild(0).gameObject.SetActive(false);
-            accessControlsUI.transform.GetChild(0).gameObject.SetActive(false);
-            pressEnterToContinueUI.transform.GetChild(0).gameObject.SetActive(false);
-
-            glowUI.transform.GetChild(1).gameObject.SetActive(true);
-            accessControlsUI.transform.GetChild(1).gameObject.SetActive(true);
-            pressEnterToContinueUI.transform.GetChild(1).gameObject.SetActive(true);
+            accessControlsUI.SetActive(true);
+            yield return WaitForMenu();
+            accessControlsUI.SetActive(false);
         }
+        else yield return WaitForKey();
     }
 
-    // Update is called once per frame
-    void Update()
+    private IEnumerator WaitForKey()
     {
-    
-    }
-
-    public const int dockingStation = 7;
-    public void updateLivingRoomText()
-    {
-        switch (currStage)
-        {
-            case 0:
-                speechBubbleTwoTails.SetActive(true);
-                tutorialText.text = "we made it level 2: the living room!";
-                StartCoroutine(waitForSeconds(3.0f));
-                pressEnterToContinueUI.SetActive(true);
-                break;
-            case 1:
-                tutorialText.text = "explore the house and...";
-                StartCoroutine(waitForSeconds(2.0f));
-                break;
-            case 2:
-                tutorialText.text = "complete the to-do list to advance to the next level";
-                StartCoroutine(waitForSeconds(3.0f));
-                break;
-            case 3:
-                tutorialText.text = "if you don't know how to do something...";
-                StartCoroutine(waitForSeconds(3.0f));
-                // pressEnterToContinueUI.SetActive(true);
-                break;
-            case 4:
-                pressEnterToContinueUI.SetActive(false);
-                tutorialText.text = "...you can make interactable objects glow";
-                glowUI.SetActive(true);
-                StartCoroutine(waitForGlow());
-                
-                break;
-            case 5:
-                glowUI.SetActive(false);
-                tutorialText.text = "take a look at the controls menu, too";
-                accessControlsUI.SetActive(true);
-                StartCoroutine(waitForMenu());
-                break;
-            case 6:
-                accessControlsUI.SetActive(false);
-                // pressEnterToContinueUI.SetActive(true);
-                tutorialText.text = "we're all set!"; // what's that near the stairs?
-                messageManager.startPressEnterToHideTutorial();
-                StartCoroutine(waitForSkip());
-                break;
-            // case dockingStation:
-            //     tutorialText.text = "are these... other halves?!";
-            //     StartCoroutine(waitForSeconds(4.0f));
-            //     break;
-            case 7:
-                leaveTutorial();
-                break;
-        }
-    }
-
-    public void advanceLivingRoomStage()
-    {
-        currStage++;
-        updateLivingRoomText();
-    }
-
-    public int getCurrLivingRoomStage()
-    {
-        return currStage;
-    }
-
-    // Coroutines   
-    private IEnumerator waitForSeconds(float seconds)
-    {
-        stopwatch.Start();
-
-        while (stopwatch.Elapsed.TotalSeconds < seconds) 
+        while (!Input.GetKeyDown(KeyCode.Return) &&
+               !player1Input.GetSwitchPressed() && !player1Input.GetReconnectPressed() &&
+               !player2Input.GetSwitchPressed() && !player2Input.GetReconnectPressed())
         {
             yield return null;
         }
-
-        stopwatch.Reset();
-        advanceLivingRoomStage();
     }
 
-    private IEnumerator waitForKey(KeyCode key)
+    private IEnumerator WaitForGlow()
     {
-        while (!Input.GetKeyDown(key)) 
+        while (!Input.GetKeyDown(KeyCode.V) && !Input.GetKeyDown(KeyCode.M) &&
+               !player1Input.GetGlowPressed() && !player2Input.GetGlowPressed())
         {
             yield return null;
         }
-
-        advanceLivingRoomStage();
     }
 
-    private IEnumerator waitForSkip()
+    private IEnumerator WaitForMenu()
     {
-        while (!Input.GetKeyUp(KeyCode.Return) && 
-                !player1Input.GetSwitchPressed() && !player1Input.GetReconnectPressed() &&
-                !player2Input.GetSwitchPressed() && !player2Input.GetReconnectPressed()) 
+        while (!Input.GetKeyDown(KeyCode.I) &&
+               !player1Input.GetControlsMenuPressed() && !player2Input.GetControlsMenuPressed())
         {
             yield return null;
         }
-
-        advanceLivingRoomStage();
-    }
-    private IEnumerator waitForSkip2()
-    {
-        while (!Input.GetKeyDown(KeyCode.Return) && 
-                !player1Input.GetSwitchPressed() && !player1Input.GetReconnectPressed() &&
-                !player2Input.GetSwitchPressed() && !player2Input.GetReconnectPressed()) 
-        {
-            yield return null;
-        }
-
-        advanceLivingRoomStage();
-    }private IEnumerator waitForSkip3()
-    {
-        while (!Input.GetKeyDown(KeyCode.Return) && 
-                !player1Input.GetSwitchPressed() && !player1Input.GetReconnectPressed() &&
-                !player2Input.GetSwitchPressed() && !player2Input.GetReconnectPressed()) 
-        {
-            yield return null;
-        }
-
-        advanceLivingRoomStage();
-    }private IEnumerator waitForSkip4()
-    {
-        while (!Input.GetKeyDown(KeyCode.Return) && 
-                !player1Input.GetSwitchPressed() && !player1Input.GetReconnectPressed() &&
-                !player2Input.GetSwitchPressed() && !player2Input.GetReconnectPressed()) 
-        {
-            yield return null;
-        }
-
-        advanceLivingRoomStage();
     }
 
-    private IEnumerator waitForGlow()
+    private void EndTutorial()
     {
-        while (!Input.GetKeyDown(KeyCode.V) && !Input.GetKeyDown(KeyCode.M) && 
-                !player1Input.GetGlowPressed() && !player2Input.GetGlowPressed()) 
-        {
-            yield return null;
-        }
-
-        advanceLivingRoomStage();
-    }
-
-    private IEnumerator waitForMenu()
-    {
-        while (!Input.GetKeyDown(KeyCode.I) && 
-                !player1Input.GetControlsMenuPressed() && !player2Input.GetControlsMenuPressed())
-        {
-            yield return null;
-        }
-
-        advanceLivingRoomStage();
-    }
-
-    private IEnumerator leaveTutorial()
-    {
-        while (!Input.GetKeyDown(KeyCode.Return) && 
-                !player1Input.GetSwitchPressed() && !player1Input.GetReconnectPressed() &&
-                !player2Input.GetSwitchPressed() && !player2Input.GetReconnectPressed())
-        {
-            yield return null;
-        }
-
-        // hide speech bubble stuff 
         speechBubbleTwoTails.SetActive(false);
         tutorialText.text = "";
         tutorialSmallText.text = "";
@@ -240,8 +128,8 @@ public class LivingRoomText : MonoBehaviour
         catIcon.SetActive(false);
         dogIcon.SetActive(false);
 
-        // show the player icons
-        playerIcons.transform.GetChild(0).gameObject.SetActive(true); 
+        // Show player icons
+        playerIcons.transform.GetChild(0).gameObject.SetActive(true);
         playerIcons.transform.GetChild(1).gameObject.SetActive(true);
     }
 }
