@@ -21,7 +21,7 @@ public class PlayerActions : MonoBehaviour
     private ControllerAssignment controllerAssignment;
 
     [Header("Jumping Variables")]
-    private float jumpForce = 15f;
+    private float jumpForce = 20f;
     public float jumpCooldown = 0.5f;
     private float chargedJumpForce = 35f;
     public float chargedJumpCooldown = 0.8f;
@@ -712,7 +712,8 @@ public class PlayerActions : MonoBehaviour
             grabJoint = null;
         }
 
-        playerManager.walkSpeed = originalPlayerSpeed;
+        // playerManager.walkSpeed = originalPlayerSpeed;
+        playerManager.walkSpeed = 0.3f;
         if (turnRestricted) {
             playerManager.turnSpeed = originalTurnSpeed;
             turnRestricted = false;
@@ -746,11 +747,11 @@ public class PlayerActions : MonoBehaviour
         // Only cats can climb
         if (backSpecies != "dog") return;
         
-        if (!isStanding){
-            UnityEngine.Debug.Log("not standing");
-        } else{
-            UnityEngine.Debug.Log("is standing");
-        }
+        // if (!isStanding){
+        //     UnityEngine.Debug.Log("not standing");
+        // } else{
+        //     UnityEngine.Debug.Log("is standing");
+        // }
         // Start climbing when front cat player presses special near climbable
         if (!isStanding)
         {
