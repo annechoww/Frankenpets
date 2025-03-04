@@ -255,11 +255,11 @@ public class PlayerActions : MonoBehaviour
             tryStartJump(jumpForce, jumpCooldown);
         }
 
-        // Charged Jump - TODO: Update with valid species 
+        // Charged Jump
         else if ((player1Special && !P1.IsFront && P1.Species == "cat") || 
                 (player2Special && !P2.IsFront && P2.Species == "cat"))
         {
-            tryStartJump(chargedJumpForce, chargedJumpCooldown);
+            tryChargedJump(chargedJumpForce, chargedJumpCooldown);
         }
     }
 
@@ -273,6 +273,42 @@ public class PlayerActions : MonoBehaviour
             }
             backRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             lastJumpTime = Time.time;
+        }
+    }
+
+    private void tryChargedJump(float jumpForce, float jumpCooldown)
+    {
+        if (Time.time - lastJumpTime > jumpCooldown)
+        {
+            if (playerManager.getJoint() != null)
+            {
+                frontRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            }
+            backRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            lastJumpTime = Time.time;
+
+            StartCoroutine(FloatyJumpEffect());
+        }
+    }
+
+    private IEnumerator FloatyJumpEffect()
+    {
+        float floatyDuration = 1f; // Duration of floaty effect
+        float elapsed = 0f;
+        
+        // Apply small upward forces while in early part of jump
+        while (elapsed < floatyDuration && backRb.linearVelocity.y > 0)
+        {
+            // Apply a small upward force
+            float floatyForce = 2.0f; // Adjust this value
+            backRb.AddForce(Vector3.up * floatyForce, ForceMode.Force);
+            if (playerManager.getJoint() != null)
+            {
+                frontRb.AddForce(Vector3.up * floatyForce, ForceMode.Force);
+            }
+            
+            elapsed += Time.deltaTime;
+            yield return null;
         }
     }
 

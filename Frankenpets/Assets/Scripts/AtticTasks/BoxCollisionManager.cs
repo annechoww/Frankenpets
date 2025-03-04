@@ -47,7 +47,7 @@ public class BoxCollisionManager : MonoBehaviour
             // }
             frontBoxes = true;
 
-            if (frontBoxes && backBoxes)
+            if (frontBoxes && backBoxes && ArePriorTasksComplete())
             {
                 Instance.FinishTask();
             }
@@ -60,7 +60,7 @@ public class BoxCollisionManager : MonoBehaviour
             // }
             backBoxes = true;
             //if (frontBoxes.Count + backBoxes.Count == totalBoxes)
-            if (frontBoxes && backBoxes)
+            if (frontBoxes && backBoxes && ArePriorTasksComplete())
             {
                 Instance.FinishTask();
             }
@@ -75,5 +75,12 @@ public class BoxCollisionManager : MonoBehaviour
             tutorialText.advanceTutorialStage();
             isFirstCollision = false;
         }
+    }
+
+    public static bool ArePriorTasksComplete()
+    {
+        Task shatterVaseTask = TaskManager.FindTaskByName("Shatter Vase");
+
+        return shatterVaseTask != null && shatterVaseTask.IsComplete;
     }
 }
