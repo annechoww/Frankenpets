@@ -92,6 +92,17 @@ public class LivingRoomText : MonoBehaviour
 
     private IEnumerator WaitForKey()
     {
+        // delay to prevent instant skipping if key was already down
+        yield return new WaitForSeconds(0.1f);
+
+        // wait for the key to be released first to prevent skipping the message
+        while (Input.GetKey(KeyCode.Return) || 
+            player1Input.GetSwitchPressed() || player1Input.GetReconnectPressed() ||
+            player2Input.GetSwitchPressed() || player2Input.GetReconnectPressed())
+        {
+            yield return null;
+        }
+        
         while (!Input.GetKeyDown(KeyCode.Return) &&
                !player1Input.GetSwitchPressed() && !player1Input.GetReconnectPressed() &&
                !player2Input.GetSwitchPressed() && !player2Input.GetReconnectPressed())
