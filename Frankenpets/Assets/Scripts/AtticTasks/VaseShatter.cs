@@ -24,13 +24,16 @@ public class VaseShatter : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        collision.gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
-
         // Check if the vase hits the ground with enough force
         if (!isShattered && collision.relativeVelocity.magnitude > shatterForce)
         {
             ShatterVase();
         }
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        other.gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
     }
     
 

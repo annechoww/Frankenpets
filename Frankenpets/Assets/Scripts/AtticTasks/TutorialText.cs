@@ -26,6 +26,8 @@ public class TutorialText : MonoBehaviour
     public GameObject playerIcons;
     public GameObject arrow;
     public GameObject arrow2;
+    public GameObject pathToVase;
+    public GameObject pathToBoxes;
 
     [Header("Player Inputs")]
     public InputHandler player1Input;
@@ -49,17 +51,29 @@ public class TutorialText : MonoBehaviour
     private GameObject emote;
 
     // Script references
+    private GameObject task1;
+    private PawPath task1PawPath;
+    private GameObject task2;
     private Task2Tutorial task2Tutorial;
+    private PawPath task2PawPath;
+    private GameObject task3;
     private Task3Tutorial task3Tutorial;
     private PlayerManager playerManager;
     private MessageManager messageManager;
-    private ControllerAssignment controllerAssignment;
-    
+    private ControllerAssignment controllerAssignment;    
 
     void Awake()
     {
-        task2Tutorial = GameObject.Find("Task 2").GetComponent<Task2Tutorial>();
-        task3Tutorial = GameObject.Find("Task 3").GetComponent<Task3Tutorial>();
+        task1 = GameObject.Find("Task 1");
+        task1PawPath = task1.GetComponent<PawPath>();
+
+        task2 = GameObject.Find("Task 2");
+        task2PawPath = task2.GetComponent<PawPath>();
+        task2Tutorial = task2.GetComponent<Task2Tutorial>();
+
+        task3 = GameObject.Find("Task 3");
+        task3Tutorial = task3.GetComponent<Task3Tutorial>();
+
         playerManager = GameObject.Find("Pet").GetComponent<PlayerManager>();
         messageManager = GameObject.Find("Messages").GetComponent<MessageManager>();
         controllerAssignment = GameObject.Find("Pet").GetComponent<ControllerAssignment>();
@@ -72,42 +86,23 @@ public class TutorialText : MonoBehaviour
         fixedJoint = playerManager.getJoint();
 
         // Set the instructions UI according to keycaps or gamepad
-        if (controllerAssignment.IsKeyboard())
-        {
-            movementUI.transform.GetChild(0).gameObject.SetActive(true);
-            jumpUI.transform.GetChild(0).gameObject.SetActive(true);
-            splitUI.transform.GetChild(0).gameObject.SetActive(true);
-            reconnectUI.transform.GetChild(0).gameObject.SetActive(true);
-            switchUI.transform.GetChild(0).gameObject.SetActive(true);
-            grabUI.transform.GetChild(0).gameObject.SetActive(true);
-            pressEnterToContinueUI.transform.GetChild(0).gameObject.SetActive(true);
+        bool isKeyboard = controllerAssignment.IsKeyboard();
+        
+        movementUI.transform.GetChild(0).gameObject.SetActive(isKeyboard);
+        jumpUI.transform.GetChild(0).gameObject.SetActive(isKeyboard);
+        splitUI.transform.GetChild(0).gameObject.SetActive(isKeyboard);
+        reconnectUI.transform.GetChild(0).gameObject.SetActive(isKeyboard);
+        switchUI.transform.GetChild(0).gameObject.SetActive(isKeyboard);
+        grabUI.transform.GetChild(0).gameObject.SetActive(isKeyboard);
+        pressEnterToContinueUI.transform.GetChild(0).gameObject.SetActive(isKeyboard);
 
-            movementUI.transform.GetChild(1).gameObject.SetActive(false);
-            jumpUI.transform.GetChild(1).gameObject.SetActive(false);
-            splitUI.transform.GetChild(1).gameObject.SetActive(false);
-            reconnectUI.transform.GetChild(1).gameObject.SetActive(false);
-            switchUI.transform.GetChild(1).gameObject.SetActive(false);
-            grabUI.transform.GetChild(1).gameObject.SetActive(false);
-            pressEnterToContinueUI.transform.GetChild(1).gameObject.SetActive(false);
-        }
-        else
-        {
-            movementUI.transform.GetChild(0).gameObject.SetActive(false);
-            jumpUI.transform.GetChild(0).gameObject.SetActive(false);
-            splitUI.transform.GetChild(0).gameObject.SetActive(false);
-            reconnectUI.transform.GetChild(0).gameObject.SetActive(false);
-            switchUI.transform.GetChild(0).gameObject.SetActive(false);
-            grabUI.transform.GetChild(0).gameObject.SetActive(false);
-            pressEnterToContinueUI.transform.GetChild(0).gameObject.SetActive(false);
-
-            movementUI.transform.GetChild(1).gameObject.SetActive(true);
-            jumpUI.transform.GetChild(1).gameObject.SetActive(true);
-            splitUI.transform.GetChild(1).gameObject.SetActive(true);
-            reconnectUI.transform.GetChild(1).gameObject.SetActive(true);
-            switchUI.transform.GetChild(1).gameObject.SetActive(true);
-            grabUI.transform.GetChild(1).gameObject.SetActive(true);
-            pressEnterToContinueUI.transform.GetChild(1).gameObject.SetActive(true);
-        }
+        movementUI.transform.GetChild(1).gameObject.SetActive(!isKeyboard);
+        jumpUI.transform.GetChild(1).gameObject.SetActive(!isKeyboard);
+        splitUI.transform.GetChild(1).gameObject.SetActive(!isKeyboard);
+        reconnectUI.transform.GetChild(1).gameObject.SetActive(!isKeyboard);
+        switchUI.transform.GetChild(1).gameObject.SetActive(!isKeyboard);
+        grabUI.transform.GetChild(1).gameObject.SetActive(!isKeyboard);
+        pressEnterToContinueUI.transform.GetChild(1).gameObject.SetActive(!isKeyboard);
     }
 
     void Update()
@@ -118,6 +113,7 @@ public class TutorialText : MonoBehaviour
             arrow.transform.position = vaseTask.position + (Vector3.up * 0.30f);
             arrow.transform.LookAt(frontHalf);
             arrow.transform.rotation = Quaternion.Euler(180, 0, 0);
+            // make the arrow float
             arrow.transform.position += new Vector3(0, Mathf.Sin(Time.time * 2) * 0.05f, 0);
         }
 
@@ -201,24 +197,30 @@ public class TutorialText : MonoBehaviour
         switch (currTutorialStage)
         {
             case tutMoveToVase:
+                // Speech UI
                 speechBubbleTwoTails.SetActive(true);
-                tutorialText.text = "let's move to the vase"; // speech bubble text
-                movementUI.SetActive(true); // small text
+                tutorialText.text = "let's move to the vase";
+                movementUI.SetActive(true);
 
-                // todo: vase arrow
+                // Arrow logic is in Update()
+
+                // Paw path 
+                task2PawPath.setActive(true); 
 
                 break;
             case tutBreakVase:
+                // Deactivate stuff from prev case 
                 arrow.SetActive(false);
+                task2PawPath.setActive(false);
                 movementUI.SetActive(false);
 
+                // Speech UI
                 tutorialText.text = "hmm... can we break the vase?";
                 jumpUI.SetActive(true);
 
                 break;
             case tutSplit:
                 jumpUI.SetActive(false);
-
                 task2Tutorial.enabled = false;
 
                 tutorialText.text = "chaos! now, let's split apart";
@@ -246,29 +248,35 @@ public class TutorialText : MonoBehaviour
             //     // play happy dog sound
             //     break;              
             case tutScatterBoxes:
+                // Cancel prev case
                 pressEnterToContinueUI.SetActive(false);
                 speechBubbleLeft.SetActive(false);
                 speechBubbleRight.SetActive(true);
                 // playerManager.cancelEmote(emote); 
 
+                // Speech UI
                 tutorialText.text = "let's scatter the coloured boxes around"; 
 
-                // todo: show arrows
+                // Arrow logic in Update()
+                
+                // Paw
+                task1PawPath.setActive(true); 
 
                 break;
             case tutReconnect:
                 arrow.SetActive(false);
                 arrow2.SetActive(false);
+                task1PawPath.setActive(false);
+
                 tutorialText.text = "yay! let's sow ourselves back together"; // speech bubble text
                 reconnectUI.SetActive(true); // small text
 
                 break;
             case tutMoveToRug:
                 reconnectUI.SetActive(false);
-
                 speechBubbleRight.SetActive(false);
-                speechBubbleLeft.SetActive(true);
 
+                speechBubbleLeft.SetActive(true);
                 tutorialText.text = "hey, what's under that purple rug?"; // speech bubble text
 
                 break;
@@ -282,8 +290,8 @@ public class TutorialText : MonoBehaviour
             case tutDragRug:
                 switchUI.SetActive(false);
                 speechBubbleLeft.SetActive(false);
-                speechBubbleRight.SetActive(true);
 
+                speechBubbleRight.SetActive(true);
                 tutorialText.text = "woah, i'm at the front now!";
                 grabUI.SetActive(true);
 
@@ -291,8 +299,8 @@ public class TutorialText : MonoBehaviour
             case tutComplete:
                 grabUI.SetActive(false);
                 speechBubbleRight.SetActive(false);
+
                 speechBubbleTwoTails.SetActive(true);
-                
                 tutorialText.text = "let's wreck this house!";
                 tutorialSmallText.text = "leave the attic, or take a look around";
                 messageManager.startPressEnterToHideTutorial();
