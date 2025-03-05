@@ -83,15 +83,36 @@ public class PlayerManager : MonoBehaviour
         // Initialize the players
         P1.PlayerNumber = 1;
         P1.IsFront = true;
-        P1.Species = "cat";
         P1.Half = P1Half;
         P1.Magnet = P1Magnet;
+
+        if (P1.Half == catFront)
+        {
+            P1.Species = "cat";
+        } else if (P1.Half == dogFront) 
+        {
+            P1.Species = "dog";
+        } else 
+        {
+            UnityEngine.Debug.LogError("Player 1 set to invalid half.");
+        }
 
         P2.PlayerNumber = 2;   
         P2.IsFront = false;
         P2.Species = "dog";
         P2.Half = P2Half;
         P2.Magnet = P2Magnet;
+
+        if (P2.Half == catBack)
+        {
+            P2.Species = "cat";
+        } else if (P2.Half == dogBack) 
+        {
+            P2.Species = "dog";
+        } else 
+        {
+            UnityEngine.Debug.LogError("Player 2 set to invalid half.");
+        }
 
         // Initialize splitting variables 
         frontMagnet = getFrontMagnet();
