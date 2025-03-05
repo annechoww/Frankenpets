@@ -61,7 +61,7 @@ public class MoveRugTask : MonoBehaviour
     {
         tutorialText = GameObject.Find("TutorialTextManager").GetComponent<TutorialText>();
 
-        // Destroy the intact vase after shattering
+        // Destroy the closed attic door after rug is removed 
         Destroy(gameObject);
 
         taskItem.color = completedColor;
@@ -69,7 +69,8 @@ public class MoveRugTask : MonoBehaviour
         {
             tutorialText.advanceTutorialStage();
         }
-        Invoke("OpenAtticDoor", 2f);
+        // Invoke("OpenAtticDoor", 2f);
+        OpenAtticDoor();
         gameObject.SetActive(false);
         task.IsComplete = true;
     }

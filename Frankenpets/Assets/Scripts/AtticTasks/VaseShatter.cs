@@ -30,13 +30,7 @@ public class VaseShatter : MonoBehaviour
             ShatterVase();
         }
     }
-
-    void OnTriggerEnter(Collider other)
-    {
-        other.gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
-    }
     
-
     void ShatterVase()
     {
         isShattered = true;
