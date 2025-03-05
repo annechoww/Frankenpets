@@ -24,10 +24,18 @@ public class TutorialText : MonoBehaviour
     public GameObject P1IconLarge;
     public GameObject P2IconLarge;
     public GameObject playerIcons;
+    public GameObject arrow;
+    public GameObject arrow2;
 
     [Header("Player Inputs")]
     public InputHandler player1Input;
     public InputHandler player2Input;
+    public Transform frontHalf;
+
+    [Header("Task Locations")]
+    public Transform vaseTask;
+    public Transform frontBoxesTask;
+    public Transform backBoxesTask;
     
     // State tracking variables
     private int currTutorialStage = 0;
@@ -104,6 +112,30 @@ public class TutorialText : MonoBehaviour
 
     void Update()
     {
+        if (getCurrTutorialStage() == tutMoveToVase)
+        {
+            arrow.SetActive(true);
+            arrow.transform.position = vaseTask.position + (Vector3.up * 0.30f);
+            arrow.transform.LookAt(frontHalf);
+            arrow.transform.rotation = Quaternion.Euler(180, 0, 0);
+            arrow.transform.position += new Vector3(0, Mathf.Sin(Time.time * 2) * 0.05f, 0);
+        }
+
+        if (getCurrTutorialStage() == tutScatterBoxes)
+        {
+            arrow.SetActive(true);
+            arrow2.SetActive(true);
+            arrow.transform.position = frontBoxesTask.position + (Vector3.up * 0.30f);
+            arrow2.transform.position = backBoxesTask.position + (Vector3.up * 0.30f);
+            arrow.transform.LookAt(frontHalf);
+            arrow2.transform.LookAt(frontHalf);
+            arrow.transform.rotation = Quaternion.Euler(180, 0, 0);
+            arrow2.transform.rotation = Quaternion.Euler(180, 0, 0);
+
+            arrow.transform.position += new Vector3(0, Mathf.Sin(Time.time * 2) * 0.05f, 0);
+            arrow2.transform.position += new Vector3(0, Mathf.Sin(Time.time * 2) * 0.05f, 0);
+        }
+
         // check for first split
         if (getCurrTutorialStage() == tutSplit && !hasSplit)
         {
@@ -177,6 +209,7 @@ public class TutorialText : MonoBehaviour
 
                 break;
             case tutBreakVase:
+                arrow.SetActive(false);
                 movementUI.SetActive(false);
 
                 tutorialText.text = "hmm... can we break the vase?";
@@ -224,6 +257,8 @@ public class TutorialText : MonoBehaviour
 
                 break;
             case tutReconnect:
+                arrow.SetActive(false);
+                arrow2.SetActive(false);
                 tutorialText.text = "yay! let's sow ourselves back together"; // speech bubble text
                 reconnectUI.SetActive(true); // small text
 
@@ -337,8 +372,7 @@ public class TutorialText : MonoBehaviour
         P1IconLarge.SetActive(false);
 
         // show the player icons
-        playerIcons.transform.GetChild(0).gameObject.SetActive(true); 
-        playerIcons.transform.GetChild(1).gameObject.SetActive(true);
+        playerIcons.SetActive(true); 
     }
     
 }

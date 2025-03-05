@@ -15,9 +15,9 @@ public class LivingRoomText : MonoBehaviour
     public GameObject accessControlsUI;
 
     [Header("Icons")]
-    public GameObject catIcon;
-    public GameObject dogIcon;
-    public GameObject playerIcons;
+    public GameObject P1SpeechIcons;
+    public GameObject P2SpeechIcons;
+    public GameObject miniPlayerIcons;
 
     [Header("Player Inputs")]
     public InputHandler player1Input;
@@ -124,11 +124,11 @@ public class LivingRoomText : MonoBehaviour
         tutorialText.text = "";
         tutorialSmallText.text = "";
         messageManager.cancelPressEnterToHideTutorial();
-        catIcon.SetActive(false);
-        dogIcon.SetActive(false);
+        P1SpeechIcons.SetActive(false);
+        P2SpeechIcons.SetActive(false);
 
         // Show player icons
-        playerIcons.transform.GetChild(0).gameObject.SetActive(true);
-        playerIcons.transform.GetChild(1).gameObject.SetActive(true);
+        miniPlayerIcons.transform.GetChild(0).gameObject.SetActive(true);
+        miniPlayerIcons.transform.GetChild(1).gameObject.SetActive(true);
     }
 }

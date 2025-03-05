@@ -70,6 +70,10 @@ public class PlayerManager : MonoBehaviour
     public GameObject P1DogIcon;
     public GameObject P2CatIcon;    
     public GameObject P2DogIcon;
+    public GameObject P1CatSpeechIcon;
+    public GameObject P1DogSpeechIcon;
+    public GameObject P2CatSpeechIcon;
+    public GameObject P2DogSpeechIcon;
 
     // Others
     private MessageManager messageManager;
@@ -98,6 +102,7 @@ public class PlayerManager : MonoBehaviour
 
         alignHalves();
         setJoint();
+        updatePlayerIcons();
 
         GameObject messageObject = GameObject.Find("Messages");
         if (messageObject != null)
@@ -736,6 +741,11 @@ public class PlayerManager : MonoBehaviour
             P1DogIcon.SetActive(false);
             P2CatIcon.SetActive(false);
             P2DogIcon.SetActive(true);
+
+            P1CatSpeechIcon.SetActive(true);
+            P1DogSpeechIcon.SetActive(false);
+            P2CatSpeechIcon.SetActive(false);
+            P2DogSpeechIcon.SetActive(true);
         }
         else
         {
@@ -743,6 +753,11 @@ public class PlayerManager : MonoBehaviour
             P1DogIcon.SetActive(true);
             P2CatIcon.SetActive(true);
             P2DogIcon.SetActive(false);
+
+            P1CatSpeechIcon.SetActive(false);
+            P1DogSpeechIcon.SetActive(true);
+            P2CatSpeechIcon.SetActive(true);
+            P2DogSpeechIcon.SetActive(false);
         }
     }
     // ICONS ////////////////////////////////////////////
