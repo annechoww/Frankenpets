@@ -76,6 +76,7 @@ public class ControllerAssignment: MonoBehaviour
     // UI uses this to determine gamepad vs. keycaps display
     public bool IsKeyboard()
     {
+        var gamepads = Gamepad.all.ToArray();
         return gamepads.Length > 1;
     }
 }
