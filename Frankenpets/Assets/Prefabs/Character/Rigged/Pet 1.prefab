@@ -385,6 +385,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 7026126023273268027}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &6034337406836317757
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6213748360221064123}
+  m_Layer: 10
+  m_Name: dragObjectPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6213748360221064123
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6034337406836317757}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.002, y: -0.108, z: 0.211}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7026126023273268027}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &9049433547381474192
 GameObject:
   m_ObjectHideFlags: 0
@@ -863,6 +894,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3647235718979439812, guid: 316496df3008040ceb0ebdc8b8c42bd9, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6979432438313408638}
+    - targetCorrespondingSourceObject: {fileID: 3647235718979439812, guid: 316496df3008040ceb0ebdc8b8c42bd9, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6213748360221064123}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 4413038053902623088, guid: 316496df3008040ceb0ebdc8b8c42bd9, type: 3}
       insertIndex: -1
@@ -930,7 +964,7 @@ MonoBehaviour:
   defaultSpringForce: 1000
   defaultDamperForce: 20
   objectGrabPoint: {fileID: 6979432438313408638}
-  objectDragPoint: {fileID: 0}
+  objectDragPoint: {fileID: 6213748360221064123}
   dogGlowColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   catGlowColor: {r: 1, g: 0, b: 0, a: 1}
   grabText: {fileID: 0}
@@ -952,7 +986,7 @@ MonoBehaviour:
   dogNeck: {fileID: 5617104805232929447}
   dogHead: {fileID: 8452045387233085763}
   objectGrabPoint: {fileID: 6979432438313408638}
-  objectDragPoint: {fileID: 0}
+  objectDragPoint: {fileID: 6213748360221064123}
   rotateSpeed: 0.5
   headVerticalOffset: -0.01
   dogTorsoRotation: 0

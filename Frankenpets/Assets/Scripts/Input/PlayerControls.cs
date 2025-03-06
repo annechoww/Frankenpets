@@ -160,7 +160,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""6635b63f-d402-45f1-848e-dae9cdca684c"",
+                    ""id"": ""23c44c13-f485-41e1-8ed8-207273744b49"",
                     ""path"": ""<Keyboard>/x"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -193,7 +193,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""b9076728-c64d-4656-8157-690b79a6087a"",
+                    ""id"": ""907b4691-b489-40ee-ac1f-05df690f21c2"",
                     ""path"": ""<Keyboard>/c"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -252,7 +252,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""path"": ""<Gamepad>/{Menu}"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";GamepadPlayer1"",
                     ""action"": ""Menu"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -263,7 +263,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""path"": ""<Keyboard>/i"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Keyboard"",
                     ""action"": ""Menu"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -274,18 +274,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""path"": ""<Keyboard>/v"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Glow"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""2baed773-43ab-4c09-a8fd-ea04b7a85371"",
-                    ""path"": ""<Keyboard>/m"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Keyboard"",
                     ""action"": ""Glow"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -296,7 +285,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""path"": ""<Gamepad>/buttonEast"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";GamepadPlayer1"",
                     ""action"": ""Glow"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -355,7 +344,16 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 {
                     ""name"": ""Menu"",
                     ""type"": ""Button"",
-                    ""id"": ""0ecf05fb-3e45-4e44-bcdb-2be7141a27f1"",
+                    ""id"": ""b6454042-e260-4931-ab5f-a7c7d2085a8e"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Glow"",
+                    ""type"": ""Button"",
+                    ""id"": ""bd42388e-8a70-4456-9f64-d1212f93d735"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -519,12 +517,34 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""3916ea28-fe3a-4bd2-b9fb-891c78546fe6"",
-                    ""path"": """",
+                    ""id"": ""d5cb21ed-aec4-444f-9108-89a3b9eaa609"",
+                    ""path"": ""<Gamepad>/{Menu}"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";GamepadPlayer2"",
                     ""action"": ""Menu"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1499f8e2-262c-461a-aff6-f4b382bf4d8a"",
+                    ""path"": ""<Keyboard>/m"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard"",
+                    ""action"": ""Glow"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cb273b08-eb65-443c-a971-6ce1d1c189d1"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";GamepadPlayer2"",
+                    ""action"": ""Glow"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -584,6 +604,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_Player2_Reconnect = m_Player2.FindAction("Reconnect", throwIfNotFound: true);
         m_Player2_Switch = m_Player2.FindAction("Switch", throwIfNotFound: true);
         m_Player2_Menu = m_Player2.FindAction("Menu", throwIfNotFound: true);
+        m_Player2_Glow = m_Player2.FindAction("Glow", throwIfNotFound: true);
     }
 
     ~@PlayerControls()
@@ -751,6 +772,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player2_Reconnect;
     private readonly InputAction m_Player2_Switch;
     private readonly InputAction m_Player2_Menu;
+    private readonly InputAction m_Player2_Glow;
     public struct Player2Actions
     {
         private @PlayerControls m_Wrapper;
@@ -761,6 +783,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         public InputAction @Reconnect => m_Wrapper.m_Player2_Reconnect;
         public InputAction @Switch => m_Wrapper.m_Player2_Switch;
         public InputAction @Menu => m_Wrapper.m_Player2_Menu;
+        public InputAction @Glow => m_Wrapper.m_Player2_Glow;
         public InputActionMap Get() { return m_Wrapper.m_Player2; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -788,6 +811,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Menu.started += instance.OnMenu;
             @Menu.performed += instance.OnMenu;
             @Menu.canceled += instance.OnMenu;
+            @Glow.started += instance.OnGlow;
+            @Glow.performed += instance.OnGlow;
+            @Glow.canceled += instance.OnGlow;
         }
 
         private void UnregisterCallbacks(IPlayer2Actions instance)
@@ -810,6 +836,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Menu.started -= instance.OnMenu;
             @Menu.performed -= instance.OnMenu;
             @Menu.canceled -= instance.OnMenu;
+            @Glow.started -= instance.OnGlow;
+            @Glow.performed -= instance.OnGlow;
+            @Glow.canceled -= instance.OnGlow;
         }
 
         public void RemoveCallbacks(IPlayer2Actions instance)
@@ -872,5 +901,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         void OnReconnect(InputAction.CallbackContext context);
         void OnSwitch(InputAction.CallbackContext context);
         void OnMenu(InputAction.CallbackContext context);
+        void OnGlow(InputAction.CallbackContext context);
     }
 }

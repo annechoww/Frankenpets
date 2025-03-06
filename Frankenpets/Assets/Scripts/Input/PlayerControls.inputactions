@@ -230,7 +230,7 @@
                     "path": "<Gamepad>/{Menu}",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";GamepadPlayer1",
                     "action": "Menu",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -241,7 +241,7 @@
                     "path": "<Keyboard>/i",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";Keyboard",
                     "action": "Menu",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -252,18 +252,7 @@
                     "path": "<Keyboard>/v",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
-                    "action": "Glow",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "2baed773-43ab-4c09-a8fd-ea04b7a85371",
-                    "path": "<Keyboard>/m",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
+                    "groups": ";Keyboard",
                     "action": "Glow",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -274,7 +263,7 @@
                     "path": "<Gamepad>/buttonEast",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";GamepadPlayer1",
                     "action": "Glow",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -333,7 +322,16 @@
                 {
                     "name": "Menu",
                     "type": "Button",
-                    "id": "0ecf05fb-3e45-4e44-bcdb-2be7141a27f1",
+                    "id": "b6454042-e260-4931-ab5f-a7c7d2085a8e",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Glow",
+                    "type": "Button",
+                    "id": "bd42388e-8a70-4456-9f64-d1212f93d735",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -497,12 +495,34 @@
                 },
                 {
                     "name": "",
-                    "id": "3916ea28-fe3a-4bd2-b9fb-891c78546fe6",
-                    "path": "",
+                    "id": "d5cb21ed-aec4-444f-9108-89a3b9eaa609",
+                    "path": "<Gamepad>/{Menu}",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";GamepadPlayer2",
                     "action": "Menu",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1499f8e2-262c-461a-aff6-f4b382bf4d8a",
+                    "path": "<Keyboard>/m",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard",
+                    "action": "Glow",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "cb273b08-eb65-443c-a971-6ce1d1c189d1",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";GamepadPlayer2",
+                    "action": "Glow",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
