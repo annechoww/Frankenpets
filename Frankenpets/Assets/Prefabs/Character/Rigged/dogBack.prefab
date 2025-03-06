@@ -224,20 +224,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fdb92ee2ae334ee89f514c94fd75f7d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dogFrontTorso: {fileID: 8286188167790262103}
-  dogBackTorso: {fileID: 4675202469967046883}
+  dogFrontTorso: {fileID: 3223887685593432310}
   dogLeg1: {fileID: 4717724238955934880}
   dogLeg2: {fileID: 2046626547952963861}
+  dogTail: {fileID: 4675202469967046883}
   catFrontTorso: {fileID: 0}
   catLeg1: {fileID: 0}
   catLeg2: {fileID: 0}
+  catCalf1: {fileID: 0}
+  catCalf2: {fileID: 0}
   catFrontRig: {fileID: 0}
   rotateSpeed: 1
   FrontTorsoRotation: 80
-  BackTorsoRotation: 190
   BackLegRotation: 10
+  tailRotation: 90
   catTorsoRotation: 30
-  FrontLegRotation: 120
+  FrontLegRotation: 140
+  FrontLegVerticalOffset: 0.05
 --- !u!1 &1439955205356882904
 GameObject:
   m_ObjectHideFlags: 0
@@ -802,7 +805,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3326075547991418372}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.01999448, y: 0.7068241, z: -0.019994488, w: -0.7068239}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -17.595, y: 0.224, z: -24.403543}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
