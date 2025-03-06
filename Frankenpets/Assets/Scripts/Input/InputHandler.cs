@@ -46,13 +46,13 @@ public class InputHandler : MonoBehaviour
 
     public void OnControlsMenu(InputAction.CallbackContext context)
     {
-        switchPressed = context.ReadValueAsButton();
+        controlsMenuPressed = context.ReadValueAsButton();
         Debug.Log($"Controls menu pressed: {controlsMenuPressed}");
     }
 
     public void OnGlowPressed(InputAction.CallbackContext context)
     {
-        switchPressed = context.ReadValueAsButton();
+        glowPressed = context.ReadValueAsButton();
         Debug.Log($"Glow button pressed: {glowPressed}");
     }
 

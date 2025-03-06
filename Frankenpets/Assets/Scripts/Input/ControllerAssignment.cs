@@ -16,6 +16,8 @@ public class ControllerAssignment: MonoBehaviour
     [SerializeField] private bool useKeyboardFallback = true;
     [SerializeField] private bool reassignOnConnect = true;
     
+    private Gamepad[] gamepads => Gamepad.all.ToArray();
+
     private void Awake()
     {
         // Register for device changes
@@ -39,7 +41,6 @@ public class ControllerAssignment: MonoBehaviour
     
     public void AssignControllers()
     {
-        var gamepads = Gamepad.all.ToArray();
         Debug.Log($"Found {gamepads.Length} connected gamepads");
         
         // Assign first gamepad to Player 1
@@ -76,6 +77,6 @@ public class ControllerAssignment: MonoBehaviour
     // UI uses this to determine gamepad vs. keycaps display
     public bool IsKeyboard()
     {
-        return gamepads.Length > 1;
+       return player1Input.currentControlScheme == keyboardScheme || player2Input.currentControlScheme == keyboardScheme;
     }
 }

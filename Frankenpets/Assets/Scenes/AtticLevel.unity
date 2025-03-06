@@ -1886,7 +1886,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   respawnPoint: {fileID: 649579490}
-  respawnValue: -4
+  minBoundary: {x: -21, y: -100, z: -30}
+  maxBoundary: {x: -14, y: 10, z: -20}
+  showBoundaryGizmos: 1
+  boundaryGizmoColor: {r: 1, g: 0, b: 0, a: 0.3}
 --- !u!1001 &345486674
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8808,7 +8811,7 @@ MonoBehaviour:
   climbCheckDistance: 0.5
   defaultSpringForce: 1000
   defaultDamperForce: 20
-  grabMouthPosition: {fileID: 0}
+  objectGrabPoint: {fileID: 0}
   dogGlowColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   catGlowColor: {r: 1, g: 0, b: 0, a: 1}
   grabText: {fileID: 0}
@@ -11309,7 +11312,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1251227436
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21428,7 +21431,7 @@ MonoBehaviour:
   climbCheckDistance: 0.5
   defaultSpringForce: 1000
   defaultDamperForce: 20
-  grabMouthPosition: {fileID: 0}
+  objectGrabPoint: {fileID: 0}
   dogGlowColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   catGlowColor: {r: 1, g: 0, b: 0, a: 1}
   grabText: {fileID: 1179403884}
@@ -21456,7 +21459,7 @@ MonoBehaviour:
   climbCheckDistance: 0.5
   defaultSpringForce: 1000
   defaultDamperForce: 20
-  grabMouthPosition: {fileID: 0}
+  objectGrabPoint: {fileID: 0}
   dogGlowColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   catGlowColor: {r: 1, g: 0, b: 0, a: 1}
   grabText: {fileID: 0}
