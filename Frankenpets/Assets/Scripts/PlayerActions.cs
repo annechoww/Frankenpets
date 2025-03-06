@@ -525,7 +525,7 @@ public class PlayerActions : MonoBehaviour
             {
                 UnityEngine.Debug.Log("Grabbed item");
                 isGrabbing = true;
-                grabRiggingScript.drag();
+                //grabRiggingScript.drag();
                 grabObject();
             }
             
@@ -578,6 +578,7 @@ public class PlayerActions : MonoBehaviour
         }
         
         if (isPortable) {
+            grabRiggingScript.grab(targetRigidbody);
             // Set the anchor point at the dog's mouth
             //grabJoint.anchor = transform.InverseTransformPoint(mouthPosition);
             grabJoint.anchor = transform.InverseTransformPoint(grabMouthPosition.localPosition);
@@ -588,6 +589,7 @@ public class PlayerActions : MonoBehaviour
             // Quaternion targetRotation = Quaternion.LookRotation(-transform.forward, transform.up);
             // targetRigidbody.transform.rotation = targetRotation;
         } else {
+            grabRiggingScript.drag();
             // Set the anchor point at the dog's mouth
             grabJoint.anchor = transform.InverseTransformPoint(grabMouthPosition.localPosition);
             // For draggable objects, keep the connection at the grab point
