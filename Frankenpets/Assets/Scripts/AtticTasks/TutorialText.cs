@@ -286,7 +286,7 @@ public class TutorialText : MonoBehaviour
                 arrow2.SetActive(false);
                 task1PawPath.setActive(false);
 
-                tutorialText.text = "Yay! let's sow ourselves back together."; // speech bubble text
+                tutorialText.text = "Yay! Let's sew ourselves back together."; // speech bubble text
                 reconnectUI.SetActive(true); // small text
 
                 break;
