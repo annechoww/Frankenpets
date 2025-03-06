@@ -76,6 +76,6 @@ public class ControllerAssignment: MonoBehaviour
     // UI uses this to determine gamepad vs. keycaps display
     public bool IsKeyboard()
     {
-        return useKeyboardFallback;
+        return gamepads.Length > 1;
     }
 }
