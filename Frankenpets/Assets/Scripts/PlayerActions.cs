@@ -854,25 +854,20 @@ public class PlayerActions : MonoBehaviour
 ////////////////////////////////////////// Actions UI ///////////////////////////////////////////////
     private void showClimbText()
     {
+        climbText.SetActive(true);
+
         if (controllerAssignment.IsKeyboard())
         {
-            climbText.SetActive(true);
-
-            // Make text always face frontHalf
-            climbText.transform.LookAt(frontHalf.transform);
-
-            // Flip the text to unmirror it
-            // climbText.transform.rotation = Quaternion.Euler(0, climbText.transform.rotation.eulerAngles.y + 180, 0);
-
             if (P1.IsFront) climbText.transform.GetChild(0).gameObject.SetActive(true);
             else climbText.transform.GetChild(1).gameObject.SetActive(true);
         }
-        else
-        {
-            climbText.SetActive(true);
+        else climbText.transform.GetChild(2).gameObject.SetActive(true);
 
-            climbText.transform.GetChild(2).gameObject.SetActive(true);
-        }
+        // Make text always face frontHalf
+        climbText.transform.LookAt(frontHalf.transform); 
+        
+        // Flip the text to unmirror it
+        // climbText.transform.rotation = Quaternion.Euler(0, climbText.transform.rotation.eulerAngles.y + 180, 0);
     }
 
     private void hideClimbText()
@@ -881,38 +876,31 @@ public class PlayerActions : MonoBehaviour
         {
             if (P1.IsFront) climbText.transform.GetChild(0).gameObject.SetActive(false);
             else climbText.transform.GetChild(1).gameObject.SetActive(false);
-
-            climbText.SetActive(false);
         }
         else
         {
-            climbText.transform.GetChild(2).gameObject.SetActive(false);
-
-            climbText.SetActive(false);
+            climbText.transform.GetChild(2).gameObject.SetActive(false); 
         }
+
+        climbText.SetActive(false);
     }
 
     private void showGrabText()
     {
+        grabText.SetActive(true);
+
         if (controllerAssignment.IsKeyboard())
         {
-            grabText.SetActive(true);
-
-            // Make text always face frontHalf
-            grabText.transform.LookAt(frontHalf.transform); 
-            
-            // Flip the text to unmirror it
-            // grabText.transform.rotation = Quaternion.Euler(0, grabText.transform.rotation.eulerAngles.y + 180, 0);
-
             if (P1.IsFront) grabText.transform.GetChild(0).gameObject.SetActive(true);
             else grabText.transform.GetChild(1).gameObject.SetActive(true);
         }
-        else
-        {
-            grabText.SetActive(true);
-            
-            grabText.transform.GetChild(2).gameObject.SetActive(true);
-        }
+        else grabText.transform.GetChild(2).gameObject.SetActive(true);
+
+        // Make text always face frontHalf
+        grabText.transform.LookAt(frontHalf.transform); 
+        
+        // Flip the text to unmirror it
+        // grabText.transform.rotation = Quaternion.Euler(0, grabText.transform.rotation.eulerAngles.y + 180, 0);
     }
 
     private void hideGrabText()
@@ -921,15 +909,13 @@ public class PlayerActions : MonoBehaviour
         {
             if (P1.IsFront) grabText.transform.GetChild(0).gameObject.SetActive(false);
             else grabText.transform.GetChild(1).gameObject.SetActive(false);
-
-            grabText.SetActive(false);
         }
         else
         {
             grabText.transform.GetChild(2).gameObject.SetActive(false);
-
-            grabText.SetActive(false);
         }
+
+        grabText.SetActive(false);
     }   
 
     private void runControlsMenuLogic()
