@@ -8,7 +8,9 @@ public class GrabRigging: MonoBehaviour
     public Transform dogTorso;
     public Transform dogNeck;
     public Transform dogHead;
+    
     public Transform objectGrabPoint;
+    public Transform objectDragPoint;
 
     private Quaternion dogTorsoOrigRotation;
     private Quaternion dogTorsoTargetRotation;
@@ -49,7 +51,7 @@ public class GrabRigging: MonoBehaviour
     public void FixedUpdate()
     {
         if (isGrab){
-            float lerpSpeed = 30f;
+            float lerpSpeed = 40f;
             Vector3 newPosition = Vector3.Lerp(targetRigidbody.position, objectGrabPoint.position, Time.deltaTime * lerpSpeed);
             targetRigidbody.MovePosition(newPosition);
         }

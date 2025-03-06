@@ -1332,8 +1332,6 @@ GameObject:
   - component: {fileID: 4983427169298448593}
   - component: {fileID: 1685690688004923698}
   - component: {fileID: 7177464260336249629}
-  - component: {fileID: 2517033213690173621}
-  - component: {fileID: 5926166170784803626}
   m_Layer: 10
   m_Name: catFront
   m_TagString: cat front
@@ -1495,44 +1493,6 @@ MonoBehaviour:
   - m_Rig: {fileID: 2667701740022929785}
     m_Active: 1
   m_Effectors: []
---- !u!114 &2517033213690173621
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6639889057943378382}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e3a3bee90cba84d0ea9c76f52937958b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  catTorso: {fileID: 1761402922851454184}
-  catNeck: {fileID: 373604924006978035}
-  catHead: {fileID: 7871433080857936942}
-  rotateSpeed: 0.5
-  headVerticalOffset: -0.015
-  catTorsoRotation: 120
-  catNeckRotation: 20
-  catHeadRotation: -180
---- !u!114 &5926166170784803626
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6639889057943378382}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e131d442f481e424cbd963d8a48fda90, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  catTorso: {fileID: 2364777214338558725}
-  dogParentBone: {fileID: 0}
-  rotateSpeed: 2
-  catRotation: 0
-  dogRotation: 30
-  dogVerticalOffset: -0.01
 --- !u!1 &7795189940345508176
 GameObject:
   m_ObjectHideFlags: 0
