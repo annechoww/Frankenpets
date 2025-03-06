@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Diagnostics;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 
 /**
 This Class handles all player actions. The actions are mapped as follows:
@@ -78,7 +79,10 @@ public class PlayerActions : MonoBehaviour
     private PawRigging pawRiggingScript;
     private ClimbRigging climbRiggingScript;
     private GrabRigging grabRiggingScript;
-    public Transform grabMouthPosition;
+    
+    public Transform objectGrabPoint;
+    public Transform objectDragPoint;
+
     private bool isStanding = false;
 
     [Header("Glowing Objects Variables")]
@@ -411,8 +415,9 @@ public class PlayerActions : MonoBehaviour
         }
         
         // Calculate the dog's mouth position (for grab point calculation)
-        mouthPosition = transform.position + transform.TransformDirection(Vector3.forward * 0.23f + Vector3.up * 0.202f);
-        
+        ///mouthPosition = transform.position + transform.TransformDirection(Vector3.forward * 0.23f + Vector3.up * 0.202f);
+        mouthPosition = objectGrabPoint.position;
+
         // Reset all references to ensure clean state
         currentGrabPoint = null;
         currentGrabbableObject = null;
@@ -422,7 +427,8 @@ public class PlayerActions : MonoBehaviour
         currentGrabPoint = grabbableObject.GetComponent<GrabPoint>();
         
         if (currentGrabPoint != null)
-        {
+        {   
+            UnityEngine.Debug.Log("case one");
             // This is a grab point (like a rug corner)
             
             // Make sure it has a valid parent to grab
@@ -446,12 +452,15 @@ public class PlayerActions : MonoBehaviour
         
         if (currentGrabbableObject != null)
         {
+            UnityEngine.Debug.Log("case two");
             // This is a grabbable object with custom properties
             
             // Use closest point on the collider as the grab point
             grabPoint = grabbableObject.ClosestPoint(mouthPosition);
+            Ray ray2 =  new Ray(grabPoint, Vector3.up);
+            UnityEngine.Debug.DrawRay(ray2.origin, ray2.direction * 2f, Color.green, 10f);
             
-            // If closest point is at the center (inside the collider), use a point on the surface
+            //If closest point is at the center (inside the collider), use a point on the surface
             if (Vector3.Distance(grabPoint, grabbableObject.transform.position) < 0.01f)
             {
                 // Cast a ray from mouth to object to find surface point
@@ -477,6 +486,7 @@ public class PlayerActions : MonoBehaviour
         // CASE 3: Basic grabbable object with no special components
         // Use closest point on the collider as the grab point
         grabPoint = grabbableObject.ClosestPoint(mouthPosition);
+        UnityEngine.Debug.Log("case three");
         
         // Same surface point detection as above
         if (Vector3.Distance(grabPoint, grabbableObject.transform.position) < 0.01f)
@@ -496,6 +506,7 @@ public class PlayerActions : MonoBehaviour
         
         UnityEngine.Debug.Log($"Grabbing {grabbableObject.name} as a basic grabbable object at point {grabPoint}");
     }
+
     private void runGrablogic() // TODO: Add dog species check
     {
         // FOR DEBUGGING: Make sure mouthPosition and mouthDirection match the one at line 54, and comment out the variables on lines 54 & 55
@@ -525,16 +536,12 @@ public class PlayerActions : MonoBehaviour
             {
                 UnityEngine.Debug.Log("Grabbed item");
                 isGrabbing = true;
-                grabRiggingScript.drag();
                 grabObject();
             }
-            
-
         } else if (isSpecialReleased && isGrabbing){
             grabRiggingScript.release();
             releaseGrabbedObject();
             isGrabbing = false;
-
         }
 
         if (isGrabbing & grabJoint != null) {
@@ -558,7 +565,7 @@ public class PlayerActions : MonoBehaviour
             return;
         }
 
-        mouthPosition = transform.position + transform.TransformDirection(Vector3.forward * 0.23f + Vector3.up * 0.202f);
+        //mouthPosition = transform.position + transform.TransformDirection(Vector3.forward * 0.23f + Vector3.up * 0.202f);
 
         grabJoint = gameObject.AddComponent<ConfigurableJoint>();
         grabJoint.connectedBody = targetRigidbody;
@@ -578,9 +585,12 @@ public class PlayerActions : MonoBehaviour
         }
         
         if (isPortable) {
+            mouthPosition = objectGrabPoint.position;
+            grabJoint.anchor = transform.InverseTransformPoint(mouthPosition);
+
+            ///grabRiggingScript.grab(targetRigidbody);
             // Set the anchor point at the dog's mouth
-            //grabJoint.anchor = transform.InverseTransformPoint(mouthPosition);
-            grabJoint.anchor = transform.InverseTransformPoint(grabMouthPosition.localPosition);
+            grabJoint.autoConfigureConnectedAnchor = false;
             // For portable objects, make them move to the dog's mouth
             grabJoint.connectedAnchor = targetRigidbody.transform.InverseTransformPoint(targetRigidbody.transform.position);
             
@@ -588,8 +598,10 @@ public class PlayerActions : MonoBehaviour
             // Quaternion targetRotation = Quaternion.LookRotation(-transform.forward, transform.up);
             // targetRigidbody.transform.rotation = targetRotation;
         } else {
+            mouthPosition = objectDragPoint.position;
+            grabRiggingScript.drag();
             // Set the anchor point at the dog's mouth
-            grabJoint.anchor = transform.InverseTransformPoint(grabMouthPosition.localPosition);
+            ///grabJoint.anchor = transform.InverseTransformPoint(grabMouthPosition.localPosition);
             // For draggable objects, keep the connection at the grab point
             grabJoint.connectedAnchor = targetRigidbody.transform.InverseTransformPoint(grabPoint);
         }
@@ -600,8 +612,6 @@ public class PlayerActions : MonoBehaviour
         applyTurnRestriction();
 
         grabText.SetActive(false);
-
-        //mouthRiggingScript.openMouth();
     }
 
     private Rigidbody getTargetRigidBody() {

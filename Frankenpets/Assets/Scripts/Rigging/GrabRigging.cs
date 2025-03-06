@@ -8,6 +8,9 @@ public class GrabRigging: MonoBehaviour
     public Transform dogTorso;
     public Transform dogNeck;
     public Transform dogHead;
+    
+    public Transform objectGrabPoint;
+    public Transform objectDragPoint;
 
     private Quaternion dogTorsoOrigRotation;
     private Quaternion dogTorsoTargetRotation;
@@ -30,6 +33,10 @@ public class GrabRigging: MonoBehaviour
     public float dogTorsoRotation;
     public float dogNeckRotation;
     public float dogHeadRotation;
+
+    // grabbing
+    private bool isGrab = false;
+    private Rigidbody targetRigidbody;
     
     void Start()
     {
@@ -41,26 +48,14 @@ public class GrabRigging: MonoBehaviour
         dogHeadOrigRotation = dogHead.localRotation;
     }
 
-    public void Update()
+    public void FixedUpdate()
     {
-            
-        // Vector3 dogTorsoEuler = dogTorso.localRotation.eulerAngles;
-        // dogTorsoTargetRotation = Quaternion.Euler(dogTorsoRotation, dogTorsoEuler.y, dogTorsoEuler.z);
-        // dogTorso.localRotation = Quaternion.Lerp(dogTorso.localRotation, dogTorsoTargetRotation, rotateSpeed);
-
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            Vector3 dogNeckEuler = dogNeck.localRotation.eulerAngles;
-            dogNeckTargetRotation = Quaternion.Euler(dogNeckRotation, dogNeckEuler.y, dogNeckEuler.z);
-            dogNeck.localRotation = Quaternion.Lerp(dogNeck.localRotation, dogNeckTargetRotation, rotateSpeed);
-
-            Vector3 dogHeadEuler = dogHead.localRotation.eulerAngles;
-            dogHeadTargetRotation = Quaternion.Euler(dogHeadRotation, dogHeadEuler.y, dogHeadEuler.z);
-            dogHead.localRotation = Quaternion.Lerp(dogHead.localRotation, dogHeadTargetRotation, rotateSpeed);
-
-            dogHeadTargetPosition = dogHead.localPosition + Vector3.forward * headVerticalOffset;
-            dogHead.localPosition = Vector3.Lerp(dogHead.localPosition, dogHeadTargetPosition, rotateSpeed);
+        if (isGrab){
+            float lerpSpeed = 40f;
+            Vector3 newPosition = Vector3.Lerp(targetRigidbody.position, objectGrabPoint.position, Time.deltaTime * lerpSpeed);
+            targetRigidbody.MovePosition(newPosition);
         }
+
     }
 
     public void drag()
@@ -83,45 +78,26 @@ public class GrabRigging: MonoBehaviour
         
     }
 
-    // public void grab()
-    // {
-            
-    //     // Vector3 dogTorsoEuler = dogTorso.localRotation.eulerAngles;
-    //     // dogTorsoTargetRotation = Quaternion.Euler(dogTorsoRotation, dogTorsoEuler.y, dogTorsoEuler.z);
-    //     // dogTorso.localRotation = Quaternion.Lerp(dogTorso.localRotation, dogTorsoTargetRotation, rotateSpeed);
-
-    //     // Vector3 dogNeckEuler = dogNeck.localRotation.eulerAngles;
-    //     // dogNeckTargetRotation = Quaternion.Euler(dogNeckRotation, dogNeckEuler.y, dogNeckEuler.z);
-    //     // dogNeck.localRotation = Quaternion.Lerp(dogNeck.localRotation, dogNeckTargetRotation, rotateSpeed);
-
-    //     // Vector3 dogHeadEuler = dogHead.localRotation.eulerAngles;
-    //     // dogHeadTargetRotation = Quaternion.Euler(dogHeadRotation, dogHeadEuler.y, dogHeadEuler.z);
-    //     // dogHead.localRotation = Quaternion.Lerp(dogHead.localRotation, dogHeadTargetRotation, rotateSpeed);
-
-    //     dogHeadTargetPosition = dogHead.localPosition + Vector3.forward * headVerticalOffset;
-    //     dogHead.localPosition = Vector3.Lerp(dogHead.localPosition, dogHeadTargetPosition, rotateSpeed);
-        
-    // }
+    public void grab(Rigidbody target)
+    {
+        isGrab = true;
+        targetRigidbody = target;
+        targetRigidbody.useGravity = false;
+    }
     
     
     public void release()
     {
-
+        if (isGrab){
+            isGrab = false;
+            targetRigidbody.useGravity = true;
+            targetRigidbody = null;
+        }
             
-        //dogTorso.localRotation = Quaternion.Lerp(dogTorso.localRotation, dogTorsoOrigRotation, rotateSpeed);
         dogNeck.localRotation = Quaternion.Lerp(dogNeck.localRotation, dogNeckOrigRotation, rotateSpeed*5);
         dogHead.localRotation = Quaternion.Lerp(dogHead.localRotation, dogHeadOrigRotation, rotateSpeed*5);
         dogHead.localPosition = Vector3.Lerp(dogHead.localPosition, dogHeadOrigPosition, rotateSpeed*5);
 
-        
-
-
     }
-
-    // public void grab()
-
-
-
-
 
 }
