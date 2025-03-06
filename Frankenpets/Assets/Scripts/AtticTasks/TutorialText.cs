@@ -44,6 +44,7 @@ public class TutorialText : MonoBehaviour
     private bool hasSplit = false;
     private bool hasReconnected = false;
     private bool hasSwitched = false;
+    private bool canLeaveAttic = false;
     private FixedJoint fixedJoint;
 
     // Other variables 
@@ -177,6 +178,18 @@ public class TutorialText : MonoBehaviour
         {
             leaveTutorial();
         }
+
+        // check for second switch to exit attic
+        if (getCurrTutorialStage() == scaredDog && checkForReturn())
+        {
+            advanceTutorialStage();
+        }
+        // if (getCurrTutorialStage() == annoyedCat)
+        // {
+        //     yield null WaitFOr
+        //     speechBubbleRight.SetActive(true);
+        //     tutorialText.text == "";
+        // }
     }
 
     public const int tutMoveToVase = 0;
@@ -199,7 +212,7 @@ public class TutorialText : MonoBehaviour
             case tutMoveToVase:
                 // Speech UI
                 speechBubbleTwoTails.SetActive(true);
-                tutorialText.text = "let's move to the vase";
+                tutorialText.text = "Let's move to the vase.";
                 movementUI.SetActive(true);
 
                 // Arrow logic is in Update()
@@ -215,7 +228,7 @@ public class TutorialText : MonoBehaviour
                 movementUI.SetActive(false);
 
                 // Speech UI
-                tutorialText.text = "hmm... can we break the vase?";
+                tutorialText.text = "Hmm... can we break the vase?";
                 jumpUI.SetActive(true);
 
                 break;
@@ -223,7 +236,7 @@ public class TutorialText : MonoBehaviour
                 jumpUI.SetActive(false);
                 task2Tutorial.enabled = false;
 
-                tutorialText.text = "chaos! now, let's split apart";
+                tutorialText.text = "Chaos! Now, let's split apart.";
                 splitUI.SetActive(true);
 
                 break;
@@ -233,7 +246,7 @@ public class TutorialText : MonoBehaviour
                 speechBubbleTwoTails.SetActive(false);
                 speechBubbleLeft.SetActive(true);
                 
-                tutorialText.text = "creepy...";
+                tutorialText.text = "Creepy...";
                 pressEnterToContinueUI.SetActive(true);
 
                 // emote = playerManager.startEmote(playerManager.getBackHalf(), "sad");
@@ -255,7 +268,7 @@ public class TutorialText : MonoBehaviour
                 // playerManager.cancelEmote(emote); 
 
                 // Speech UI
-                tutorialText.text = "let's scatter the coloured boxes around"; 
+                tutorialText.text = "Let's scatter the coloured boxes around."; 
 
                 // Arrow logic in Update()
                 
@@ -268,7 +281,7 @@ public class TutorialText : MonoBehaviour
                 arrow2.SetActive(false);
                 task1PawPath.setActive(false);
 
-                tutorialText.text = "yay! let's sow ourselves back together"; // speech bubble text
+                tutorialText.text = "Yay! let's sow ourselves back together."; // speech bubble text
                 reconnectUI.SetActive(true); // small text
 
                 break;
@@ -277,13 +290,13 @@ public class TutorialText : MonoBehaviour
                 speechBubbleRight.SetActive(false);
 
                 speechBubbleLeft.SetActive(true);
-                tutorialText.text = "hey, what's under that purple rug?"; // speech bubble text
+                tutorialText.text = "Hey, what's under that purple rug?"; // speech bubble text
 
                 break;
             case tutSwitch:
                 task3Tutorial.enabled = false;
 
-                tutorialText.text = "i can't grab this, can you help?";
+                tutorialText.text = "I can't grab this, can you help?";
                 switchUI.SetActive(true);
                 
                 break;
@@ -292,7 +305,7 @@ public class TutorialText : MonoBehaviour
                 speechBubbleLeft.SetActive(false);
 
                 speechBubbleRight.SetActive(true);
-                tutorialText.text = "woah, i'm at the front now!";
+                tutorialText.text = "Woah, I'm at the front now!";
                 grabUI.SetActive(true);
 
                 break;
@@ -301,26 +314,29 @@ public class TutorialText : MonoBehaviour
                 speechBubbleRight.SetActive(false);
 
                 speechBubbleTwoTails.SetActive(true);
-                tutorialText.text = "let's wreck this house!";
-                tutorialSmallText.text = "leave the attic, or take a look around";
+                tutorialText.text = "Let's wreck this house!";
+                tutorialSmallText.text = "Leave the attic, or take a look around";
                 messageManager.startPressEnterToHideTutorial();
 
-                // go to next stage when touch attic door again during case tut complete
-
+                // next case activated in AtticPrevention.cs
                 break;
-
-            // not used yet
+            
             case scaredDog:
-                speechBubbleLeft.SetActive(true);
-                speechBubbleRight.SetActive(false);
-                tutorialText.text = "the drop's too high, i'm scared!";
-                // StartCoroutine(waitForSkip(scaredDog));
+                messageManager.cancelPressEnterToHideTutorial();
+                speechBubbleLeft.SetActive(false);
+                speechBubbleTwoTails.SetActive(false);
+                tutorialSmallText.text = "";
+
+                speechBubbleRight.SetActive(true);
+                tutorialText.text = "The drop's too high... I'm scared!";
+                pressEnterToContinueUI.SetActive(true);
                 break;
             case annoyedCat:
-                speechBubbleLeft.SetActive(false);
-                speechBubbleRight.SetActive(true);
-                tutorialText.text = "fine, i'll jump. switch with me.";
-                // StartCoroutine(waitForSkip(annoyedCat));
+                pressEnterToContinueUI.SetActive(false);
+                speechBubbleRight.SetActive(false);
+
+                speechBubbleLeft.SetActive(true);
+                tutorialText.text = "Fine, I'll jump. Switch with me.";
                 break;
         }
     }
@@ -329,6 +345,12 @@ public class TutorialText : MonoBehaviour
     {
         // Debug.Log("advanced to next tutorial stage");
         currTutorialStage++;
+        updateTutorialText();
+    }
+
+    public void leaveAtticSpeech()
+    {
+        currTutorialStage = scaredDog;
         updateTutorialText();
     }
 
@@ -356,16 +378,6 @@ public class TutorialText : MonoBehaviour
         }
 
         stopwatch.Reset();
-        advanceTutorialStage();
-    }
-
-    private IEnumerator waitForKey(KeyCode key)
-    {
-        while (!Input.GetKeyDown(key)) 
-        {
-            yield return null;
-        }
-
         advanceTutorialStage();
     }
 

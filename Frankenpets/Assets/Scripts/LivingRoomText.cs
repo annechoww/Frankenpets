@@ -56,17 +56,17 @@ public class LivingRoomText : MonoBehaviour
         speechBubbleTwoTails.SetActive(true);
         pressEnterToContinueUI.SetActive(true);
 
-        yield return ShowMessage("we made it level 2: the living room!");
-        yield return ShowMessage("explore the house and...");
-        yield return ShowMessage("complete the to-do list to advance to the next level");
-        yield return ShowMessage("if you don't know how to do something...");
+        yield return ShowMessage("We made it Level 2: The Living Room!");
+        yield return ShowMessage("Explore the house and...");
+        yield return ShowMessage("complete the to-do list to go to the next level.");
+        yield return ShowMessage("If you don't know how to do something...");
 
         pressEnterToContinueUI.SetActive(false);
-        yield return ShowMessage("...you can make interactable objects glow", "glow");
-        yield return ShowMessage("take a look at the controls menu, too", "menu");
+        yield return ShowMessage("...you can make interactable objects glow.", "glow");
+        yield return ShowMessage("Take a look at the controls menu, too.", "menu");
 
         messageManager.startPressEnterToHideTutorial();
-        yield return ShowMessage("we're all set!");
+        yield return ShowMessage("We're all set!");
 
         EndTutorial();
     }
@@ -102,7 +102,7 @@ public class LivingRoomText : MonoBehaviour
         {
             yield return null;
         }
-        
+
         while (!Input.GetKeyDown(KeyCode.Return) &&
                !player1Input.GetSwitchPressed() && !player1Input.GetReconnectPressed() &&
                !player2Input.GetSwitchPressed() && !player2Input.GetReconnectPressed())
