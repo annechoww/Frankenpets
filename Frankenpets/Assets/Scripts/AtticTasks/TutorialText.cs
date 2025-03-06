@@ -212,6 +212,7 @@ public class TutorialText : MonoBehaviour
             case tutMoveToVase:
                 // Speech UI
                 speechBubbleTwoTails.SetActive(true);
+                tutorialText.transform.SetParent(speechBubbleTwoTails.transform, true);
                 tutorialText.text = "Let's move to the vase.";
                 movementUI.SetActive(true);
 
@@ -245,6 +246,8 @@ public class TutorialText : MonoBehaviour
 
                 speechBubbleTwoTails.SetActive(false);
                 speechBubbleLeft.SetActive(true);
+
+                tutorialText.transform.SetParent(speechBubbleLeft.transform, true);
                 
                 tutorialText.text = "Creepy...";
                 pressEnterToContinueUI.SetActive(true);
@@ -265,6 +268,8 @@ public class TutorialText : MonoBehaviour
                 pressEnterToContinueUI.SetActive(false);
                 speechBubbleLeft.SetActive(false);
                 speechBubbleRight.SetActive(true);
+
+                tutorialText.transform.SetParent(speechBubbleRight.transform, true);
                 // playerManager.cancelEmote(emote); 
 
                 // Speech UI
@@ -290,6 +295,9 @@ public class TutorialText : MonoBehaviour
                 speechBubbleRight.SetActive(false);
 
                 speechBubbleLeft.SetActive(true);
+
+                tutorialText.transform.SetParent(speechBubbleLeft.transform, true);
+
                 tutorialText.text = "Hey, what's under that purple rug?"; // speech bubble text
 
                 break;
@@ -305,6 +313,10 @@ public class TutorialText : MonoBehaviour
                 speechBubbleLeft.SetActive(false);
 
                 speechBubbleRight.SetActive(true);
+
+
+                tutorialText.transform.SetParent(speechBubbleRight.transform, true);
+
                 tutorialText.text = "Woah, I'm at the front now!";
                 grabUI.SetActive(true);
 
@@ -314,6 +326,9 @@ public class TutorialText : MonoBehaviour
                 speechBubbleRight.SetActive(false);
 
                 speechBubbleTwoTails.SetActive(true);
+
+                tutorialText.transform.SetParent(speechBubbleTwoTails.transform, true);
+
                 tutorialText.text = "Let's wreck this house!";
                 tutorialSmallText.text = "Leave the attic, or take a look around";
                 messageManager.startPressEnterToHideTutorial();
@@ -325,9 +340,12 @@ public class TutorialText : MonoBehaviour
                 messageManager.cancelPressEnterToHideTutorial();
                 speechBubbleLeft.SetActive(false);
                 speechBubbleTwoTails.SetActive(false);
+
+                
                 tutorialSmallText.text = "";
 
                 speechBubbleRight.SetActive(true);
+                tutorialText.transform.SetParent(speechBubbleRight.transform, true);
                 tutorialText.text = "The drop's too high... I'm scared!";
                 pressEnterToContinueUI.SetActive(true);
                 break;
@@ -336,6 +354,7 @@ public class TutorialText : MonoBehaviour
                 speechBubbleRight.SetActive(false);
 
                 speechBubbleLeft.SetActive(true);
+                tutorialText.transform.SetParent(speechBubbleLeft.transform, true);
                 tutorialText.text = "Fine, I'll jump. Switch with me.";
                 break;
         }
