@@ -81,7 +81,7 @@ public class PlayerActions : MonoBehaviour
     private GrabRigging grabRiggingScript;
     
     public Transform objectGrabPoint;
-    public Transform objectDragPoint;
+    //public Transform objectDragPoint;
 
     private bool isStanding = false;
 
@@ -104,7 +104,7 @@ public class PlayerActions : MonoBehaviour
         // climbText = GameObject.FindGameObjectWithTag("ClimbText");
         // grabText = GameObject.FindGameObjectWithTag("GrabText");
         controllerAssignment = GameObject.Find("Pet").GetComponent<ControllerAssignment>();
-        Invoke("getPlayerManager", 0f);
+        getPlayerManager();
 
         // Find all grabbable objects
         GameObject[] grabbableObjects = GameObject.FindGameObjectsWithTag("Grabbable");
@@ -171,6 +171,8 @@ public class PlayerActions : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        print("P1 Species: " + P1.Species);
+        print("P2 Species: " + P2.Species);
         string frontSpecies = P1.IsFront ? P1.Species : P2.Species;
 
         if (other.CompareTag("Climbable") && frontSpecies == "cat")
@@ -598,7 +600,7 @@ public class PlayerActions : MonoBehaviour
             // Quaternion targetRotation = Quaternion.LookRotation(-transform.forward, transform.up);
             // targetRigidbody.transform.rotation = targetRotation;
         } else {
-            mouthPosition = objectDragPoint.position;
+            mouthPosition = objectGrabPoint.position;
             grabRiggingScript.drag();
             // Set the anchor point at the dog's mouth
             ///grabJoint.anchor = transform.InverseTransformPoint(grabMouthPosition.localPosition);
@@ -806,8 +808,9 @@ public class PlayerActions : MonoBehaviour
 ////////////////////////////////////////// Glow Action ///////////////////////////////////////////////
     private void runGlowLogic()
     {
-        if (Input.GetKeyDown(KeyCode.V) || Input.GetKeyDown(KeyCode.M))
+        if (player1Input.GetGlowPressed() || player2Input.GetGlowPressed())
         {
+            UnityEngine.Debug.Log("Glow button pressed");
             StartCoroutine(GlowEffect());
         }
     }

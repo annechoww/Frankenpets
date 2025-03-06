@@ -24,7 +24,6 @@ public class JugShatter : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        collision.gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
 
         // Check if the jug hits the ground with enough force
         if (!isShattered && collision.relativeVelocity.magnitude > shatterForce)
