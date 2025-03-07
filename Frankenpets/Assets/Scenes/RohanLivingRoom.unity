@@ -172,6 +172,8 @@ MonoBehaviour:
   catClip: {fileID: 8300000, guid: eb871ad6bcf624904aee5606d1ae7925, type: 3}
   climbSpeed: 2
   climbCheckDistance: 0.5
+  useHybridGrabSystem: 1
+  mouthGrabPoint: {fileID: 0}
   defaultSpringForce: 1000
   defaultDamperForce: 20
   objectGrabPoint: {fileID: 0}
@@ -994,6 +996,9 @@ MonoBehaviour:
   dragResistance: 0
   turnRestriction: 0.691
   preventTurning: 0
+  springConstant: 1000
+  dampingConstant: 50
+  maxTetherForce: 2000
 --- !u!1 &156063200
 GameObject:
   m_ObjectHideFlags: 0
@@ -2141,7 +2146,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: c5166837fb80e4eb1b31a2092d7d800c, type: 3}
       propertyPath: m_TagString
-      value: Grabbable
+      value: Draggable
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2565,9 +2570,17 @@ PrefabInstance:
       value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 4020232081103216799, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
+      propertyPath: mouthGrabPoint
+      value: 
+      objectReference: {fileID: 1806445140}
+    - target: {fileID: 4020232081103216799, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
       propertyPath: grabMouthPosition
       value: 
       objectReference: {fileID: 620565788}
+    - target: {fileID: 4020232081103216799, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
+      propertyPath: useHybridGrabSystem
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4101726842884554992, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -6394,8 +6407,11 @@ MonoBehaviour:
   grabWeight: 2
   movementPenalty: 0.2
   dragResistance: 0.3
-  turnRestriction: 0
+  turnRestriction: 0.508
   preventTurning: 0
+  springConstant: 1000
+  dampingConstant: 50
+  maxTetherForce: 2000
 --- !u!1 &1192533556
 GameObject:
   m_ObjectHideFlags: 0
@@ -6670,6 +6686,8 @@ MonoBehaviour:
   catClip: {fileID: 8300000, guid: eb871ad6bcf624904aee5606d1ae7925, type: 3}
   climbSpeed: 2
   climbCheckDistance: 0.5
+  useHybridGrabSystem: 1
+  mouthGrabPoint: {fileID: 0}
   defaultSpringForce: 1000
   defaultDamperForce: 20
   objectGrabPoint: {fileID: 0}
@@ -7969,6 +7987,9 @@ MonoBehaviour:
   dragResistance: 0.3
   turnRestriction: 0
   preventTurning: 0
+  springConstant: 1000
+  dampingConstant: 50
+  maxTetherForce: 2000
 --- !u!54 &1603392322
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -8058,6 +8079,8 @@ MonoBehaviour:
   catClip: {fileID: 8300000, guid: eb871ad6bcf624904aee5606d1ae7925, type: 3}
   climbSpeed: 2
   climbCheckDistance: 0.5
+  useHybridGrabSystem: 1
+  mouthGrabPoint: {fileID: 0}
   defaultSpringForce: 1000
   defaultDamperForce: 20
   objectGrabPoint: {fileID: 0}
@@ -8690,6 +8713,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &1806445140 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 348433361082983509, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
+  m_PrefabInstance: {fileID: 378464672}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1835445258
 GameObject:
   m_ObjectHideFlags: 0
@@ -9102,6 +9130,9 @@ MonoBehaviour:
   dragResistance: 0.099
   turnRestriction: 0
   preventTurning: 0
+  springConstant: 1000
+  dampingConstant: 50
+  maxTetherForce: 2000
 --- !u!64 &1913187749
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -9752,6 +9783,9 @@ MonoBehaviour:
   dragResistance: 0.099
   turnRestriction: 0
   preventTurning: 0
+  springConstant: 1000
+  dampingConstant: 50
+  maxTetherForce: 2000
 --- !u!64 &2030828413
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -27746,6 +27780,9 @@ MonoBehaviour:
   dragResistance: 0
   turnRestriction: 0
   preventTurning: 0
+  springConstant: 1000
+  dampingConstant: 50
+  maxTetherForce: 2000
 --- !u!54 &6816842339901619958
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -32818,6 +32855,7 @@ GameObject:
   - component: {fileID: 8707273952556644589}
   - component: {fileID: 8707273952556644588}
   - component: {fileID: 8707273952556644591}
+  - component: {fileID: 8707273952556644592}
   m_Layer: 9
   m_Name: Cube.001
   m_TagString: Grabbable
@@ -32916,6 +32954,27 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.29531473, y: 0.038166836, z: 0.27719787}
   m_Center: {x: 0, y: -0.0002493988, z: -0.01596979}
+--- !u!114 &8707273952556644592
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8707273952556644587}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83951de92f845ea4b9ead8b26d4aa975, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  grabBehavior: 1
+  grabWeight: 2
+  movementPenalty: 0.2
+  dragResistance: 0.3
+  turnRestriction: 0
+  preventTurning: 0
+  springConstant: 1000
+  dampingConstant: 50
+  maxTetherForce: 2000
 --- !u!4 &8716566642776994852
 Transform:
   m_ObjectHideFlags: 0
@@ -33702,6 +33761,9 @@ MonoBehaviour:
   dragResistance: 0
   turnRestriction: 0
   preventTurning: 0
+  springConstant: 1000
+  dampingConstant: 50
+  maxTetherForce: 2000
 --- !u!54 &8946660040543355635
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -33834,6 +33896,9 @@ MonoBehaviour:
   dragResistance: 0
   turnRestriction: 0
   preventTurning: 0
+  springConstant: 1000
+  dampingConstant: 50
+  maxTetherForce: 2000
 --- !u!54 &8958941174696548454
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -34253,6 +34318,9 @@ MonoBehaviour:
   dragResistance: 0.3
   turnRestriction: 0
   preventTurning: 0
+  springConstant: 1000
+  dampingConstant: 50
+  maxTetherForce: 2000
 --- !u!4 &9134778265795297638
 Transform:
   m_ObjectHideFlags: 0
