@@ -40,6 +40,16 @@ public class PlayerActions : MonoBehaviour
     private Vector3 climbDirection;
     // private GameObject climbText;
 
+    [Header("Dash Variables")]
+    public float dashSpeedMultiplier = 10f;  // Multiplier for player's movement speed during dash
+    public float dashDuration = 0.4f;        // How long the dash lasts
+    public float dashCooldown = 1.2f;        // Cooldown before next dash
+    private bool isDashing = false;          // If player is currently dashing
+    private bool canDash = true;             // If dash ability is available
+    private float lastDashTime = -10f;       // Time since last dash
+    private float dashTimeRemaining;         // Remaining time in current dash
+    private float originalWalkSpeed;         // Store original walk speed to restore after dash 
+
     [Header("Grab System Settings")]
     [Tooltip("Whether to use the hybrid grab system with virtual tether for draggable objects")]
     public bool useHybridGrabSystem = true;
@@ -109,6 +119,13 @@ public class PlayerActions : MonoBehaviour
     public GameObject controlsMenu;
     private bool isViewingControlsMenu = false;
 
+    private void OnValidate() {
+    // If dashSpeedMultiplier is still the old default, update it to the new default
+    if (Mathf.Approximately(dashSpeedMultiplier, 3.5f)) {
+        dashSpeedMultiplier = 10f;
+    }
+}
+
     private void Start()
     {   
         // climbText = GameObject.FindGameObjectWithTag("ClimbText");
@@ -161,7 +178,8 @@ public class PlayerActions : MonoBehaviour
         runGrabLogic();
         runTailLogic();
         runPawLogic();
-        runHindLegsLogic();
+        // runHindLegsLogic();
+        runDashLogic();
         runGlowLogic();
         runControlsMenuLogic();
 
@@ -858,6 +876,108 @@ public class PlayerActions : MonoBehaviour
         }
         
     }
+
+    ////////////////////////////////////////////// Dash Action //////////////////////////////////////////////
+    // Replace the existing runHindLegsLogic() with this implementation
+// New separate function for dash logic
+private void runDashLogic()
+{
+    // Get special action input for dash (dog back special)
+    bool player1Special = player1Input.GetSpecialActionPressed();
+    bool player2Special = player2Input.GetSpecialActionPressed();
+    
+    // Check for dog species in back position
+    string backSpecies = P1.IsFront ? P2.Species : P1.Species;
+    
+    // Only dogs can dash
+    if (backSpecies != "dog") return;
+    
+    // Just track dash time remaining if dashing
+    if (isDashing && dashTimeRemaining > 0)
+    {
+        dashTimeRemaining -= Time.deltaTime;
+        
+        // End dash when time expires
+        if (dashTimeRemaining <= 0)
+        {
+            EndDash();
+        }
+    }
+    
+    // Check cooldown
+    if (Time.time - lastDashTime < dashCooldown)
+    {
+        canDash = false;
+    }
+    else
+    {
+        canDash = true;
+    }
+    
+    // Start dash when back dog player presses special
+    if (canDash && !isDashing && ((player1Special && !P1.IsFront) || (player2Special && !P2.IsFront)))
+    {
+        StartDash();
+    }
+}
+
+private void StartDash()
+{
+    isDashing = true;
+    canDash = false;
+    lastDashTime = Time.time;
+    dashTimeRemaining = dashDuration;
+    
+    // Store the original walk speed to restore later
+    originalWalkSpeed = playerManager.walkSpeed;
+    
+    // Temporarily boost the walk speed with our 
+    UnityEngine.Debug.Log("Dashing by " + dashSpeedMultiplier + "x");
+    playerManager.walkSpeed *= dashSpeedMultiplier;
+    
+    
+    // Optional: Add visual or audio effects
+    PlayDashEffect();
+}
+
+private void EndDash()
+{
+    isDashing = false;
+    
+    // Restore the original walk speed
+    playerManager.walkSpeed = originalWalkSpeed;
+    
+    // Optional: Clean up any dash effects
+    StopDashEffect();
+}
+
+// Add visual/audio feedback for the dash
+private void PlayDashEffect()
+{
+    // Play a sound effect
+    AudioSource audioSource = backHalf.GetComponent<AudioSource>();
+    if (audioSource == null)
+    {
+        audioSource = backHalf.AddComponent<AudioSource>();
+    }
+    
+    // TODO: Add a sound effect for dash
+    // audioSource.PlayOneShot(dashSound);
+    
+    // can add particle effects here
+}
+
+private void StopDashEffect()
+{
+    // Stop any ongoing effects
+    // Example:
+    // if (dashEffectInstance != null)
+    // {
+    //     Destroy(dashEffectInstance);
+    // }
+}
+
+
 
 
     ////////////////////////////////////////// Front Paws Action //////////////////////////////////////////////
