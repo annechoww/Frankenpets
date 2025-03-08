@@ -4,7 +4,9 @@ using Unity.Cinemachine;
 using UnityEditor.VersionControl;
 using UnityEngine.Rendering;
 using Unity.VisualScripting;
+using System;
 using System.Collections;
+using System.Reflection;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -155,6 +157,7 @@ public class PlayerManager : MonoBehaviour
         
         runSplitLogic();
         runSwitchLogic();
+        runCameraLogic();
         EnsureUpright();
 
     }
@@ -707,6 +710,95 @@ public class PlayerManager : MonoBehaviour
         mainCamera.LookAt = frontHalf.transform;
     }
     // SWITCHING METHODS ////////////////////////////////////////////
+
+    // CAMERA MOVEMENT METHODS ////////////////////////////////////////////
+    private void runCameraLogic()
+    {
+
+        if (fixedJoint != null)
+        {
+            UpdateMainCamera();
+        } else
+        {
+            UpdatePlayerCameras();
+        }
+
+    }
+
+    private void UpdateMainCamera()
+    {
+        Vector2 player1CameraInput = player1Input.GetCameraInput();
+        Vector2 player2CameraInput = player2Input.GetCameraInput();
+
+        if (mainCamera != null)
+        {
+            RotateCamera(mainCamera, player1CameraInput + player2CameraInput);
+        }
+    }
+
+    private void UpdatePlayerCameras()
+    {
+        Vector2 player1CameraInput = player1Input.GetCameraInput();
+        Vector2 player2CameraInput = player2Input.GetCameraInput();
+
+        if (player1Camera != null)
+        {
+            RotateCamera(player1Camera, player1CameraInput);
+        }
+        if (player2Camera != null)
+        {
+            RotateCamera(player2Camera, player2CameraInput);
+        }
+    }
+
+    private void RotateCamera(CinemachineCamera camera, Vector2 playerInput)
+    {
+        var composer = camera.GetComponent<CinemachineRotationComposer>();
+
+        if (composer != null)
+        {
+            // PrintMembers(composer.Composition.ScreenPosition);
+            composer.Composition.ScreenPosition += playerInput;
+        }
+        else
+        {
+            UnityEngine.Debug.Log("COMPOSER NULL");
+        }
+    }
+
+    void PrintMembers(object obj)
+    {
+        // Get the type of the object (CinemachineComposer)
+        Type type = obj.GetType();
+
+        // Get all fields (public and non-public) of the type
+        FieldInfo[] fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+        // Get all properties (public and non-public) of the type
+        PropertyInfo[] properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+        // Print fields
+        UnityEngine.Debug.Log("Fields:");
+        foreach (var field in fields)
+        {
+            UnityEngine.Debug.Log($"{field.Name} = {field.GetValue(obj)}");
+        }
+
+        // Print properties
+        UnityEngine.Debug.Log("Properties:");
+        foreach (var property in properties)
+        {
+            try
+            {
+                UnityEngine.Debug.Log($"{property.Name} = {property.GetValue(obj)}");
+            }
+            catch
+            {
+                // Some properties may not be accessible, so we catch any exceptions
+            }
+        }
+    }
+    // CAMERA MOVEMENT METHODS ////////////////////////////////////////////
 
 
     // COLLISION METHODS ////////////////////////////////////////////
