@@ -1248,7 +1248,7 @@ Transform:
   m_GameObject: {fileID: 310304201}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0.13520332, y: -1.63, z: 0.14920028}
+  m_LocalPosition: {x: 0.13520332, y: -1.466, z: 0.14920028}
   m_LocalScale: {x: 0.33861637, y: 100, z: 0.2595776}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -6186,6 +6186,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 67e6981a50cc243049e2cc5b9ed72325, type: 3}
       insertIndex: -1
       addedObject: {fileID: 799820541}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 67e6981a50cc243049e2cc5b9ed72325, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 799820544}
   m_SourcePrefab: {fileID: 100100000, guid: 67e6981a50cc243049e2cc5b9ed72325, type: 3}
 --- !u!4 &799820531 stripped
 Transform:
@@ -6216,8 +6219,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.1947634, y: 1.1710832, z: 2.0000243}
-  m_Center: {x: 0.009188728, y: -0.5078471, z: -0.0000032685323}
+  m_Size: {x: 1.1947634, y: 1.1367505, z: 2.0000243}
+  m_Center: {x: 0.009188728, y: -0.52501345, z: -0.0000032685323}
 --- !u!64 &799820534
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -6235,7 +6238,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 1
   m_CookingOptions: 30
@@ -7023,6 +7026,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   force: 0.05
   audioClip: {fileID: 8300000, guid: 1d9e701f1a3a64e85b35bb0a3d42f881, type: 3}
+--- !u!65 &799820544
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 799820532}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.1947631, y: 0.042795327, z: 1.9760202}
+  m_Center: {x: 0.009188008, y: 0.021302804, z: 0.011998655}
 --- !u!1 &814485824
 GameObject:
   m_ObjectHideFlags: 0
