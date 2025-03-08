@@ -38,6 +38,7 @@ public class PlayerActions : MonoBehaviour
     private bool isNearClimbable = false;
     private bool isClimbing = false;
     private Vector3 climbDirection;
+    private ClimbMovement climbMovementScript;
     // private GameObject climbText;
 
     [Header("Dash Variables")]
@@ -66,8 +67,6 @@ public class PlayerActions : MonoBehaviour
     private Vector3 mouthPosition;
     private Vector3 mouthDirection;
     private Vector3 grabPoint; // Position where the joint connects
-
-    
 
     private GrabPoint currentGrabPoint;
     private GrabbableObject currentGrabbableObject;
@@ -210,6 +209,7 @@ public class PlayerActions : MonoBehaviour
             showClimbText();
 
             isNearClimbable = true;
+
             // Get the surface normal to determine climb direction
             if (Physics.Raycast(transform.position, other.transform.position - transform.position, out RaycastHit hit, climbCheckDistance))
             {
@@ -279,6 +279,7 @@ public class PlayerActions : MonoBehaviour
             frontRb = frontHalf.GetComponent<Rigidbody>();
             backRb = backHalf.GetComponent<Rigidbody>();
 
+            climbMovementScript = frontHalf.GetComponentInChildren<ClimbMovement>();
             mouthRiggingScript = frontHalf.GetComponentInChildren<MouthRigging>();
             tailRiggingScript = backHalf.GetComponentInChildren<TailRigging>();
             pawRiggingScript = frontHalf.GetComponentInChildren<PawRigging>();
@@ -393,16 +394,20 @@ public class PlayerActions : MonoBehaviour
         // Check for cat species in front position
         string frontSpecies = P1.IsFront ? P1.Species : P2.Species;
         bool isSpecialReleased = (P1.IsFront && !player1Special) || (P2.IsFront && !player2Special);
-        
+
         // Only cats can climb
         if (frontSpecies != "cat") return;
-        
-        // Start climbing when front cat player presses special near climbable
+
+        //Start climbing when front cat player presses special near climbable
         if (isNearClimbable && !isClimbing)
         {
             if ((player1Special && P1.IsFront) || (player2Special && P2.IsFront))
             {
-                StartClimbing();
+                
+                if (climbMovementScript.checkClimb()){
+                    StartClimbing();
+                }
+                
             }
         }
         // Stop climbing when button is released
@@ -414,10 +419,10 @@ public class PlayerActions : MonoBehaviour
 
     private void StartClimbing()
     {
-        
+        UnityEngine.Debug.Log("in start climbing function");
         climbRiggingScript.climb();
-
         isClimbing = true;
+
         frontRb.useGravity = false;
         // Zero out current velocities
         frontRb.linearVelocity = Vector3.zero;
@@ -428,6 +433,7 @@ public class PlayerActions : MonoBehaviour
 
     private void StopClimbing()
     {
+        UnityEngine.Debug.Log("in end climbing function");
         climbRiggingScript.release();
         isClimbing = false;
         frontRb.useGravity = true;
