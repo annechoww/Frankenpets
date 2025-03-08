@@ -6,11 +6,7 @@ public class ClimbMovement: MonoBehaviour
 {
     [Header("References")]
     public Transform orientation;
-    public Rigidbody rb;
     public LayerMask ClimbingWall;
-
-    [Header("Climbing")]
-    public float climbSpeed;
 
     private bool climbing;
 
@@ -27,7 +23,6 @@ public class ClimbMovement: MonoBehaviour
     {
         WallCheck();
         StateMachine();
-        //if (climbing) ClimbingMovement();
 
         if (climbing){
             UnityEngine.Debug.Log("climbing is true");
@@ -76,12 +71,6 @@ public class ClimbMovement: MonoBehaviour
 
         
     }
-
-    public void ClimbingMovement()
-    {
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x, climbSpeed, rb.linearVelocity.z);
-    }
-
 
 
 

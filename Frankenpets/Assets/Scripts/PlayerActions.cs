@@ -393,9 +393,6 @@ public class PlayerActions : MonoBehaviour
         climbRiggingScript.climb();
         isClimbing = true;
 
-        //climbMovementScript.ClimbingMovement();
-
-        ////
         frontRb.useGravity = false;
         // Zero out current velocities
         frontRb.linearVelocity = Vector3.zero;
