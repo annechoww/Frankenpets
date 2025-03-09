@@ -72,7 +72,7 @@ public class InputHandler : MonoBehaviour
     public Vector2 GetCameraInput()
     {
         // Dampen the movement due to range of camera
-        return cameraMoveInput * 0.01f;
+        return cameraMoveInput * 0.005f;
     }
 
     public bool GetJumpPressed()

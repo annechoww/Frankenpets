@@ -761,8 +761,8 @@ public class PlayerManager : MonoBehaviour
 
         if (composer != null)
         {
-            composer.Composition.ScreenPosition.x = Mathf.Clamp(composer.Composition.ScreenPosition.x - playerInput.x, -1.5f, 1.5f);
-            composer.Composition.ScreenPosition.y = Mathf.Clamp(composer.Composition.ScreenPosition.y + playerInput.y, -1.5f, 1.5f);
+            composer.Composition.ScreenPosition.x = Mathf.Clamp(composer.Composition.ScreenPosition.x - playerInput.x, -0.3f, 0.3f);
+            composer.Composition.ScreenPosition.y = Mathf.Clamp(composer.Composition.ScreenPosition.y + playerInput.y, 0, 0.5f);
 
         }
         else
