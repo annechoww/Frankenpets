@@ -447,13 +447,14 @@ MonoBehaviour:
     m_Bits: 2048
   otherFoot: {fileID: 4708882021354790809}
   stepDistance: 0.05
-  stepHeight: 0.1
+  stepHeight: 0.05
   stepLength: 0.01
   footSpacing: 0.03
   speed: 3
   defaultTargetBody: {fileID: 8286188167790262103}
   altTargetBody: {fileID: 7927502329546868887}
-  footOffset: {x: 0, y: 0, z: 0}
+  footOffset: {x: 0, y: -0.01, z: 0}
+  walkSound: {fileID: 8300000, guid: e9a3a1f90e9054353922dff2727b0e4f, type: 3}
 --- !u!1 &2748915042307312803
 GameObject:
   m_ObjectHideFlags: 0
@@ -1001,13 +1002,14 @@ MonoBehaviour:
     m_Bits: 2048
   otherFoot: {fileID: 1775104158490456115}
   stepDistance: 0.05
-  stepHeight: 0.1
+  stepHeight: 0.05
   stepLength: 0.01
   footSpacing: -0.03
   speed: 3
   defaultTargetBody: {fileID: 8286188167790262103}
   altTargetBody: {fileID: 7927502329546868887}
-  footOffset: {x: 0, y: 0, z: 0}
+  footOffset: {x: 0, y: -0.01, z: 0}
+  walkSound: {fileID: 8300000, guid: e9a3a1f90e9054353922dff2727b0e4f, type: 3}
 --- !u!1 &5349327996680088051
 GameObject:
   m_ObjectHideFlags: 0

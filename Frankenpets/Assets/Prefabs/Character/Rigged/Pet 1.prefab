@@ -808,6 +808,10 @@ PrefabInstance:
       propertyPath: m_RigLayers.Array.data[0].m_Rig
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 2181967934294713084, guid: 316496df3008040ceb0ebdc8b8c42bd9, type: 3}
+      propertyPath: stepHeight
+      value: 0.05
+      objectReference: {fileID: 0}
     - target: {fileID: 3165723379136262384, guid: 316496df3008040ceb0ebdc8b8c42bd9, type: 3}
       propertyPath: m_LocalRotation.w
       value: 1
@@ -880,6 +884,10 @@ PrefabInstance:
       propertyPath: m_RigLayers.Array.data[0].m_Rig
       value: 
       objectReference: {fileID: 776423044930977145}
+    - target: {fileID: 8909655762063095939, guid: 316496df3008040ceb0ebdc8b8c42bd9, type: 3}
+      propertyPath: stepHeight
+      value: 0.05
+      objectReference: {fileID: 0}
     - target: {fileID: 8909655762063095939, guid: 316496df3008040ceb0ebdc8b8c42bd9, type: 3}
       propertyPath: footSpacing
       value: -0.05
@@ -961,10 +969,11 @@ MonoBehaviour:
   catClip: {fileID: 8300000, guid: eb871ad6bcf624904aee5606d1ae7925, type: 3}
   climbSpeed: 2
   climbCheckDistance: 0.5
+  useHybridGrabSystem: 1
+  mouthGrabPoint: {fileID: 0}
   defaultSpringForce: 1000
   defaultDamperForce: 20
   objectGrabPoint: {fileID: 6979432438313408638}
-  objectDragPoint: {fileID: 6213748360221064123}
   dogGlowColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   catGlowColor: {r: 1, g: 0, b: 0, a: 1}
   grabText: {fileID: 0}
