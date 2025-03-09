@@ -156,8 +156,8 @@ public class PlayerActions : MonoBehaviour
         runControlsMenuLogic();
 
         // This makes the grabText and climbText float :3
-        grabText.transform.position += new Vector3(0, Mathf.Sin(Time.time * 2) * 0.001f, 0);
-        climbText.transform.position += new Vector3(0, Mathf.Sin(Time.time * 2) * 0.001f, 0);
+        grabText.transform.position += new Vector3(0, Mathf.Sin(Time.time * 2) * 0.0005f, 0);
+        climbText.transform.position += new Vector3(0, Mathf.Sin(Time.time * 2) * 0.0005f, 0);
     }
 
     private void FixedUpdate()
@@ -178,8 +178,7 @@ public class PlayerActions : MonoBehaviour
         if (other.CompareTag("Climbable") && frontSpecies == "cat")
         {
             // Show UI Popover
-            climbText.transform.position = other.transform.position + (Vector3.forward * 0.05f) - (Vector3.up * 0.10f);
-            showClimbText();
+            showClimbText(other.gameObject);
 
             isNearClimbable = true;
             // Get the surface normal to determine climb direction
@@ -197,8 +196,7 @@ public class PlayerActions : MonoBehaviour
             grabbableObject = other;
             
             // Show UI Popover
-            grabText.transform.position = grabbableObject.transform.position + (Vector3.up * 0.30f);
-            showGrabText();
+            showGrabText(other.gameObject);
             
             canGrab = true;
         }
@@ -855,9 +853,10 @@ public class PlayerActions : MonoBehaviour
     }
 
 ////////////////////////////////////////// Actions UI ///////////////////////////////////////////////
-    private void showClimbText()
+    private void showClimbText(GameObject other)
     {
         climbText.SetActive(true);
+        climbText.transform.position = other.transform.position + (Vector3.forward * 0.05f) - (Vector3.up * 0.10f);
 
         if (controllerAssignment.IsKeyboard())
         {
@@ -888,9 +887,10 @@ public class PlayerActions : MonoBehaviour
         climbText.SetActive(false);
     }
 
-    private void showGrabText()
+    private void showGrabText(GameObject other)
     {
         grabText.SetActive(true);
+        grabText.transform.position = other.transform.position + (Vector3.forward * 0.05f) - (Vector3.up * 0.10f);
 
         if (controllerAssignment.IsKeyboard())
         {

@@ -78,6 +78,11 @@ public class PlayerManager : MonoBehaviour
     // Others
     private MessageManager messageManager;
 
+    // Mainly used for the tutorial
+    public bool canReconnect = true;
+    public bool canSwitch = true;
+    public bool canSplit = true;
+
     void Awake()
     {
         // Initialize the players
@@ -183,7 +188,6 @@ public class PlayerManager : MonoBehaviour
         if (!P1.IsFront) return P1.Magnet;
         else return P2.Magnet;
     }
-
     public void setJoint(){
 
             frontHalf.GetComponent<Rigidbody>().constraints &= ~RigidbodyConstraints.FreezeRotationX;
@@ -201,7 +205,6 @@ public class PlayerManager : MonoBehaviour
 
             // Apply Rigidbody constraints to prevent tilting
             frontHalf.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
-      
     }
 
     public FixedJoint getJoint()
@@ -211,14 +214,45 @@ public class PlayerManager : MonoBehaviour
     // ADVANCED GETTERS/SETTERS ////////////////////////////////////////////
 
 
+    // GETTERS/SETTERS FOR TUTORIAL PURPOSES /////////////////////////////
+    // Used to determine when a pet can split/switch/reconnect in specific points of the tutorial
+    public void setCanReconnect(bool canReconnect)
+    {
+        this.canReconnect = canReconnect;
+    }
+    public void setCanSplit(bool canSplit)
+    {
+        this.canSplit = canSplit;
+    }
+    public void setCanSwitch(bool canSwitch)
+    {
+        this.canSwitch = canSwitch;
+    }
+    public bool getCanReconnect()
+    {
+        return this.canReconnect;
+    }
+    public bool getCanSplit()
+    {
+        return this.canSplit;
+    }
+    public bool getCanSwitch()
+    {
+        return this.canSwitch;
+    }
+    // GETTERS/SETTERS FOR TUTORIAL PURPOSES /////////////////////////////
+
+
     // PLAYER INPUT CHECKERS ////////////////////////////////////////////
-    private void CheckSwitchInput() {
+    public bool CheckSwitchInput() {
         player1SwitchPressed = player1Input.GetSwitchPressed();
         player2SwitchPressed = player2Input.GetSwitchPressed();
+
+        return player1SwitchPressed && player2SwitchPressed;
     }
 
     private void CheckReconnectInput() {
-        if ((player1Input.GetReconnectPressed() || player2Input.GetReconnectPressed()) && fixedJoint == null)
+        if ((player1Input.GetReconnectPressed() || player2Input.GetReconnectPressed()) && fixedJoint == null && canReconnect)
         {
             tryReconnect();
         }
@@ -249,12 +283,14 @@ public class PlayerManager : MonoBehaviour
             if (!splitStopwatch.IsRunning)
             {
                 splitStopwatch.Start();
+                // TODO: stretch sound
             }
         }
         else
         {
             if (splitStopwatch.IsRunning)
             {
+                // TODO: stop stretch sound
                 splitStopwatch.Reset();
             }
         }
@@ -324,11 +360,12 @@ public class PlayerManager : MonoBehaviour
     private void runSplitLogic() 
     {
         // If the split timer exceeds the threshold and the halves are still connected, split them.
-        if (splitStopwatch.IsRunning && splitStopwatch.Elapsed.TotalSeconds > splitTime && fixedJoint != null)
+        if (splitStopwatch.IsRunning && splitStopwatch.Elapsed.TotalSeconds > splitTime && fixedJoint != null && canSplit)
         {
             splitStopwatch.Reset();
             Destroy(fixedJoint); // Split the halves
             fixedJoint = null;
+            // TODO: stop stretch sound
 
             // Add rotation constraints when split
             frontHalf.GetComponent<Rigidbody>().constraints |= RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
@@ -402,7 +439,7 @@ public class PlayerManager : MonoBehaviour
     // runSwitchLogic(), tryStartSwitch(), cancelSwitch(), tryFinishSwitch() correspond to front <-> back switching (NOT SWITCHING SPECIES!)
     private void runSwitchLogic()
     {
-        if (player1SwitchPressed && player2SwitchPressed) 
+        if (CheckSwitchInput() && canSwitch) 
             tryStartSwitch();
         else
             cancelSwitch();
@@ -756,30 +793,18 @@ public class PlayerManager : MonoBehaviour
     // ICONS ////////////////////////////////////////////
     public void updatePlayerIcons()
     {
-        if (P1.Species == "cat")
-        {
-            P1CatIcon.SetActive(true);
-            P1DogIcon.SetActive(false);
-            P2CatIcon.SetActive(false);
-            P2DogIcon.SetActive(true);
+        bool isP1Cat = P1.Species == "cat";
+        bool isP1Front = P1.IsFront;
 
-            P1CatSpeechIcon.SetActive(true);
-            P1DogSpeechIcon.SetActive(false);
-            P2CatSpeechIcon.SetActive(false);
-            P2DogSpeechIcon.SetActive(true);
-        }
-        else
-        {
-            P1CatIcon.SetActive(false);
-            P1DogIcon.SetActive(true);
-            P2CatIcon.SetActive(true);
-            P2DogIcon.SetActive(false);
+        P1CatIcon.SetActive(isP1Cat);
+        P1DogIcon.SetActive(!isP1Cat);
+        P2CatIcon.SetActive(!isP1Cat);
+        P2DogIcon.SetActive(isP1Cat);
 
-            P1CatSpeechIcon.SetActive(false);
-            P1DogSpeechIcon.SetActive(true);
-            P2CatSpeechIcon.SetActive(true);
-            P2DogSpeechIcon.SetActive(false);
-        }
+        P1CatSpeechIcon.SetActive(isP1Cat);
+        P1DogSpeechIcon.SetActive(!isP1Cat);
+        P2CatSpeechIcon.SetActive(!isP1Cat);
+        P2DogSpeechIcon.SetActive(isP1Cat);
     }
     // ICONS ////////////////////////////////////////////
 

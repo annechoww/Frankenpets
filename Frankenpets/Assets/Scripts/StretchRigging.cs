@@ -99,7 +99,7 @@ public class StretchRigging : MonoBehaviour
 
     void Update()
     {
-        if (playerManager.shouldStretch() && playerManager.getJoint() != null) 
+        if (playerManager.shouldStretch() && playerManager.getJoint() != null && playerManager.getCanSplit()) 
         {
             // Dog Front
             dfFTTargetPosition = dfFTOGPosition + (stretchDirection.normalized * maxStretchDistance);
