@@ -5,6 +5,7 @@ public class InputHandler : MonoBehaviour
 {
     // Store player input values
     private Vector2 moveInput;
+    private Vector2 cameraMoveInput;
     private bool jumpPressed;
     private bool specialActionPressed;
     private bool reconnectPressed;
@@ -17,6 +18,12 @@ public class InputHandler : MonoBehaviour
     {
         // Read Vector2 value from the input and store it
         moveInput = context.ReadValue<Vector2>();
+    }
+
+    public void OnCameraMove(InputAction.CallbackContext context)
+    {
+        // Read Vector2 value from the input and store it
+        cameraMoveInput = context.ReadValue<Vector2>();
     }
 
     public void OnJump(InputAction.CallbackContext context)
@@ -60,6 +67,12 @@ public class InputHandler : MonoBehaviour
     public Vector2 GetMoveInput()
     {
         return moveInput;
+    }
+
+    public Vector2 GetCameraInput()
+    {
+        // Dampen the movement due to range of camera
+        return cameraMoveInput * 0.005f;
     }
 
     public bool GetJumpPressed()

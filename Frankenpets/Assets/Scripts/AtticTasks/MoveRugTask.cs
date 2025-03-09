@@ -11,6 +11,10 @@ public class MoveRugTask : MonoBehaviour
     private TutorialText tutorialText;
     private Task task = new Task("Move Rug", 0);
 
+    private float minTime = 3f;
+    private float timeSinceCollision = 0f;
+    private bool isColliding = false;
+
     void Awake()
     {
         TaskManager.RegisterTask(task);
@@ -34,26 +38,32 @@ public class MoveRugTask : MonoBehaviour
                     }
                 }
         }
+
+        if (!isColliding)
+        {
+            timeSinceCollision += Time.deltaTime;
+
+            if (timeSinceCollision >= minTime)
+            {
+                FinishTask();
+            }
+        }
     }
 
-    // void OnCollisionExit(Collision collision)
-    // {
-    //     Debug.Log("Exit " + collision.transform.name);
-
-    //     if (collision.transform.name == "Rug") 
-    //     {
-    //         FinishTask();
-    //     }
-    // }
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.transform.name == "Rug")
+        {
+            isColliding = true;
+            timeSinceCollision = 0f;
+        }
+    }
 
     void OnTriggerExit(Collider other)
     {
         if (other.transform.name == "Rug")
         {
-            if (ArePriorTasksComplete())
-            {
-                FinishTask();
-            }
+            isColliding = false;
         }
     }
 
@@ -69,7 +79,7 @@ public class MoveRugTask : MonoBehaviour
         {
             tutorialText.advanceTutorialStage();
         }
-        // Invoke("OpenAtticDoor", 2f);
+
         OpenAtticDoor();
         gameObject.SetActive(false);
         task.IsComplete = true;

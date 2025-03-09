@@ -39,6 +39,9 @@ public class ClimbRigging: MonoBehaviour
     public float catRotation;
     public float dogRotation;
     public float dogVerticalOffset;
+    public Rig catWalkingRig;
+    public Rig dogWalkingRig;
+    public Animator animator;
 
     void Start()
     {
@@ -53,6 +56,10 @@ public class ClimbRigging: MonoBehaviour
 
     public void climb()
     {   
+        catWalkingRig.weight = 0;
+        dogWalkingRig.weight = 0;
+
+        animator.SetBool("isClimbing", true);
         //cat
         Vector3 catTorsoEuler = catTorso.localRotation.eulerAngles;
         catTorsoTargetRotation = Quaternion.Euler(catRotation, catTorsoEuler.y, catTorsoEuler.z);
@@ -70,6 +77,10 @@ public class ClimbRigging: MonoBehaviour
 
     public void release()
     {
+        catWalkingRig.weight = 1;
+        dogWalkingRig.weight = 1;
+
+        animator.SetBool("isClimbing", false);
         catTorso.localRotation = Quaternion.Lerp(catTorso.localRotation, catTorsoOrigRotation, rotateSpeed);
         dogParentBone.localRotation = Quaternion.Lerp(dogParentBone.localRotation, dogParentBoneOrigRotation, rotateSpeed);
         dogParentBone.localPosition = Vector3.Lerp(dogParentBone.localPosition, dogParentBoneOrigPosition, rotateSpeed);

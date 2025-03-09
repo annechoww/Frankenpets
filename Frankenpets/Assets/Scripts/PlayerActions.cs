@@ -38,7 +38,25 @@ public class PlayerActions : MonoBehaviour
     private bool isNearClimbable = false;
     private bool isClimbing = false;
     private Vector3 climbDirection;
+    private ClimbMovement climbMovementScript;
     // private GameObject climbText;
+
+    [Header("Dash Variables")]
+    public float dashSpeedMultiplier = 10f;  // Multiplier for player's movement speed during dash
+    public float dashDuration = 0.4f;        // How long the dash lasts
+    public float dashCooldown = 1.2f;        // Cooldown before next dash
+    private bool isDashing = false;          // If player is currently dashing
+    private bool canDash = true;             // If dash ability is available
+    private float lastDashTime = -10f;       // Time since last dash
+    private float dashTimeRemaining;         // Remaining time in current dash
+    private float originalWalkSpeed;         // Store original walk speed to restore after dash 
+
+    [Header("Grab System Settings")]
+    [Tooltip("Whether to use the hybrid grab system with virtual tether for draggable objects")]
+    public bool useHybridGrabSystem = true;
+    
+    [Tooltip("Transform that represents the dog's mouth grab point")]
+    public Transform mouthGrabPoint;
 
     // Grabbing Variables
     private RaycastHit hit;
@@ -50,15 +68,16 @@ public class PlayerActions : MonoBehaviour
     private Vector3 mouthDirection;
     private Vector3 grabPoint; // Position where the joint connects
 
-    
-
     private GrabPoint currentGrabPoint;
     private GrabbableObject currentGrabbableObject;
+    private bool isDraggableObject = false;
 
     [Header("Grab Joint Settings")]
     public float defaultSpringForce = 1000f;
     public float defaultDamperForce = 20f;
     private ConfigurableJoint grabJoint;
+
+    private DragController dragController;
     private float originalPlayerSpeed;
 
     private float originalTurnSpeed;
@@ -98,6 +117,13 @@ public class PlayerActions : MonoBehaviour
     public GameObject climbText;
     public GameObject controlsMenu;
     private bool isViewingControlsMenu = false;
+
+    private void OnValidate() {
+    // If dashSpeedMultiplier is still the old default, update it to the new default
+    if (Mathf.Approximately(dashSpeedMultiplier, 3.5f)) {
+        dashSpeedMultiplier = 10f;
+    }
+}
 
     private void Start()
     {   
@@ -149,10 +175,11 @@ public class PlayerActions : MonoBehaviour
         runJumpLogic();
         runNoiseLogic();
         runClimbLogic();
-        runGrablogic();
+        runGrabLogic();
         runTailLogic();
         runPawLogic();
-        runHindLegsLogic();
+        // runHindLegsLogic();
+        runDashLogic();
         runGlowLogic();
         runControlsMenuLogic();
 
@@ -182,6 +209,7 @@ public class PlayerActions : MonoBehaviour
             showClimbText(other.gameObject);
 
             isNearClimbable = true;
+
             // Get the surface normal to determine climb direction
             if (Physics.Raycast(transform.position, other.transform.position - transform.position, out RaycastHit hit, climbCheckDistance))
             {
@@ -250,6 +278,7 @@ public class PlayerActions : MonoBehaviour
             frontRb = frontHalf.GetComponent<Rigidbody>();
             backRb = backHalf.GetComponent<Rigidbody>();
 
+            climbMovementScript = frontHalf.GetComponentInChildren<ClimbMovement>();
             mouthRiggingScript = frontHalf.GetComponentInChildren<MouthRigging>();
             tailRiggingScript = backHalf.GetComponentInChildren<TailRigging>();
             pawRiggingScript = frontHalf.GetComponentInChildren<PawRigging>();
@@ -364,16 +393,20 @@ public class PlayerActions : MonoBehaviour
         // Check for cat species in front position
         string frontSpecies = P1.IsFront ? P1.Species : P2.Species;
         bool isSpecialReleased = (P1.IsFront && !player1Special) || (P2.IsFront && !player2Special);
-        
+
         // Only cats can climb
         if (frontSpecies != "cat") return;
-        
-        // Start climbing when front cat player presses special near climbable
+
+        //Start climbing when front cat player presses special near climbable
         if (isNearClimbable && !isClimbing)
         {
             if ((player1Special && P1.IsFront) || (player2Special && P2.IsFront))
             {
-                StartClimbing();
+                
+                if (climbMovementScript.checkClimb()){
+                    StartClimbing();
+                }
+                
             }
         }
         // Stop climbing when button is released
@@ -385,10 +418,10 @@ public class PlayerActions : MonoBehaviour
 
     private void StartClimbing()
     {
-        
+        UnityEngine.Debug.Log("in start climbing function");
         climbRiggingScript.climb();
-
         isClimbing = true;
+
         frontRb.useGravity = false;
         // Zero out current velocities
         frontRb.linearVelocity = Vector3.zero;
@@ -399,6 +432,7 @@ public class PlayerActions : MonoBehaviour
 
     private void StopClimbing()
     {
+        UnityEngine.Debug.Log("in end climbing function");
         climbRiggingScript.release();
         isClimbing = false;
         frontRb.useGravity = true;
@@ -423,13 +457,13 @@ public class PlayerActions : MonoBehaviour
         currentGrabPoint = null;
         currentGrabbableObject = null;
         grabPoint = Vector3.zero;
+        isDraggableObject = false;
         
         // CASE 1: Check if this is a specific grab point (like a rug corner)
         currentGrabPoint = grabbableObject.GetComponent<GrabPoint>();
         
         if (currentGrabPoint != null)
-        {   
-            UnityEngine.Debug.Log("case one");
+        { 
             // This is a grab point (like a rug corner)
             
             // Make sure it has a valid parent to grab
@@ -441,6 +475,8 @@ public class PlayerActions : MonoBehaviour
             
             // Use the grab point's position as the connection point
             grabPoint = grabbableObject.transform.position;
+
+            isDraggableObject = currentGrabPoint.grabBehavior == GrabPoint.GrabBehavior.Draggable;
             
             // Log for debugging
             UnityEngine.Debug.Log($"Grabbing {grabbableObject.name} as a grab point. Parent: {currentGrabPoint.parentRigidbody.name}");
@@ -453,13 +489,12 @@ public class PlayerActions : MonoBehaviour
         
         if (currentGrabbableObject != null)
         {
-            UnityEngine.Debug.Log("case two");
             // This is a grabbable object with custom properties
+
+            isDraggableObject = currentGrabbableObject.grabBehavior == GrabbableObject.GrabBehavior.Draggable;
             
             // Use closest point on the collider as the grab point
             grabPoint = grabbableObject.ClosestPoint(mouthPosition);
-            Ray ray2 =  new Ray(grabPoint, Vector3.up);
-            UnityEngine.Debug.DrawRay(ray2.origin, ray2.direction * 2f, Color.green, 10f);
             
             //If closest point is at the center (inside the collider), use a point on the surface
             if (Vector3.Distance(grabPoint, grabbableObject.transform.position) < 0.01f)
@@ -487,7 +522,6 @@ public class PlayerActions : MonoBehaviour
         // CASE 3: Basic grabbable object with no special components
         // Use closest point on the collider as the grab point
         grabPoint = grabbableObject.ClosestPoint(mouthPosition);
-        UnityEngine.Debug.Log("case three");
         
         // Same surface point detection as above
         if (Vector3.Distance(grabPoint, grabbableObject.transform.position) < 0.01f)
@@ -508,45 +542,39 @@ public class PlayerActions : MonoBehaviour
         UnityEngine.Debug.Log($"Grabbing {grabbableObject.name} as a basic grabbable object at point {grabPoint}");
     }
 
-    private void runGrablogic() // TODO: Add dog species check
+    private void runGrabLogic() 
     {
-        // FOR DEBUGGING: Make sure mouthPosition and mouthDirection match the one at line 54, and comment out the variables on lines 54 & 55
-        // Vector3 mouthPosition = transform.position + transform.TransformDirection(Vector3.forward * 0.23f + Vector3.up * 0.202f);
-        // Vector3 mouthDirection = mouthPosition + transform.TransformDirection(Vector3.forward); //Vector3.forward * 0.34f + 
-        // Debug.DrawLine(mouthPosition, Vector3.forward + Vector3.up, Color.red, 2, false);
-        // Debug.DrawLine(mouthPosition, mouthDirection, Color.red, 2, false);
-
-        // bool p1IsDogFront = P1.IsFront && P1.Species == "dog";
-        // bool p2IsDogFront = P2.IsFront && P2.Species == "dog";
-
-        // bool dogFrontSpecialP1 = p1IsDogFront && player1Input.GetSpecialActionPressed();
-        // bool dogFrontSpecialP2 = p2IsDogFront && player2Input.GetSpecialActionPressed();
-
-        // bool dogFrontSpecial = dogFrontSpecialP1 || dogFrontSpecialP2;
-
         bool player1Special = player1Input.GetSpecialActionPressed();
         bool player2Special = player2Input.GetSpecialActionPressed();
 
         string frontSpecies = P1.IsFront? P1.Species: P2.Species;
         bool isSpecialReleased = (P1.IsFront && !player1Special) || (P2.IsFront && !player2Special);
 
+        // Only dogs can grab
         if (frontSpecies != "dog") return;
 
         if (!isGrabbing) {
             if ((player1Special && P1.IsFront) || (player2Special && P2.IsFront))
             {
-                UnityEngine.Debug.Log("Grabbed item");
-                isGrabbing = true;
-                grabObject();
+                // Only try to grab if there's a valid grabbable object
+                if (canGrab && grabbableObject != null) {
+                    UnityEngine.Debug.Log("Grabbed item");
+                    isGrabbing = true;
+                    grabObject();
+                }
             }
-        } else if (isSpecialReleased && isGrabbing){
+        } 
+        else if (isSpecialReleased && isGrabbing) {
             grabRiggingScript.release();
             releaseGrabbedObject();
             isGrabbing = false;
         }
-
-        if (isGrabbing & grabJoint != null) {
-            updateGrabJoint();
+        else if (isGrabbing) {
+            // Only update joint for non-draggable objects or if the joint exists
+            if ((!useHybridGrabSystem || !isDraggableObject) && grabJoint != null) {
+                updateGrabJoint();
+            }
+            // DragController handles its own updates in FixedUpdate
         }
     }
 
@@ -566,17 +594,74 @@ public class PlayerActions : MonoBehaviour
             return;
         }
 
-        //mouthPosition = transform.position + transform.TransformDirection(Vector3.forward * 0.23f + Vector3.up * 0.202f);
+        // Apply movement restrictions regardless of grab method
+        originalPlayerSpeed = playerManager.walkSpeed;
+        applyMovementPenalty();
+        applyTurnRestriction();
 
+        // Set up the appropriate grab system based on object type
+        if (useHybridGrabSystem && isDraggableObject) {
+            // Use drag controller for draggable objects
+            setupDragController(targetRigidbody);
+        }
+        else {
+            // Use joints for portable objects
+            setupGrabJoint(targetRigidbody);
+        }
+
+        grabText.SetActive(false);
+    }
+     private void setupDragController(Rigidbody targetRigidbody)
+    {
+        // Get or add a DragController to the target
+        dragController = targetRigidbody.gameObject.GetComponent<DragController>();
+        if (dragController == null)
+        {
+            dragController = targetRigidbody.gameObject.AddComponent<DragController>();
+        }
+        
+        // Calculate local grab point relative to object
+        Vector3 localGrabPoint = targetRigidbody.transform.InverseTransformPoint(grabPoint);
+        
+        // Initialize the drag controller
+        dragController.Initialize(objectGrabPoint, localGrabPoint);
+        
+        // Configure the parameters based on object properties
+        float weight = 5f; // Default medium weight
+        float resistance = 0.5f; // Default medium resistance
+        
+        if (currentGrabPoint != null)
+        {
+            weight = currentGrabPoint.grabWeight;
+            resistance = currentGrabPoint.dragResistance;
+        }
+        else if (currentGrabbableObject != null)
+        {
+            weight = currentGrabbableObject.grabWeight;
+            resistance = currentGrabbableObject.dragResistance;
+        }
+        
+        dragController.ConfigureFromProperties(weight, resistance);
+        
+        // Set visual state for dragging
+        grabRiggingScript.drag();
+        
+        UnityEngine.Debug.Log($"Set up drag controller for {targetRigidbody.gameObject.name} with weight: {weight}, resistance: {resistance}");
+    }
+
+    private void setupGrabJoint(Rigidbody targetRigidbody)
+    {
+        // Create the joint
         grabJoint = gameObject.AddComponent<ConfigurableJoint>();
         grabJoint.connectedBody = targetRigidbody;
 
+        // Configure joint physics
         configureJoint(grabJoint);
 
-        // Set the anchor point at the dog's mouth
-        //grabJoint.anchor = transform.InverseTransformPoint(mouthPosition);
+        // Get mouth position
+        mouthPosition = objectGrabPoint.position;
         
-        // Determine if this is a portable or draggable object
+        // Determine if this is a portable object
         bool isPortable = false;
         
         if (currentGrabPoint != null) {
@@ -586,34 +671,27 @@ public class PlayerActions : MonoBehaviour
         }
         
         if (isPortable) {
-            mouthPosition = objectGrabPoint.position;
+            // Set the anchor point at the dog's mouth
             grabJoint.anchor = transform.InverseTransformPoint(mouthPosition);
-
-            ///grabRiggingScript.grab(targetRigidbody);
-            // Set the anchor point at the dog's mouth
-            grabJoint.autoConfigureConnectedAnchor = false;
-            // For portable objects, make them move to the dog's mouth
-            grabJoint.connectedAnchor = targetRigidbody.transform.InverseTransformPoint(targetRigidbody.transform.position);
             
-            // Optional: adjust rotation to orient properly in mouth
-            // Quaternion targetRotation = Quaternion.LookRotation(-transform.forward, transform.up);
-            // targetRigidbody.transform.rotation = targetRotation;
+            // For portable objects, make them move to the dog's mouth
+            grabJoint.autoConfigureConnectedAnchor = false;
+            grabJoint.connectedAnchor = targetRigidbody.transform.InverseTransformPoint(targetRigidbody.transform.position);
         } else {
-            mouthPosition = objectGrabPoint.position;
+            // For draggable objects using the joint system
             grabRiggingScript.drag();
+            
             // Set the anchor point at the dog's mouth
-            ///grabJoint.anchor = transform.InverseTransformPoint(grabMouthPosition.localPosition);
-            // For draggable objects, keep the connection at the grab point
+            grabJoint.anchor = transform.InverseTransformPoint(mouthPosition);
+            
+            // Keep the connection at the grab point
             grabJoint.connectedAnchor = targetRigidbody.transform.InverseTransformPoint(grabPoint);
         }
-
-        originalPlayerSpeed = playerManager.walkSpeed;
-
-        applyMovementPenalty();
-        applyTurnRestriction();
-
-        grabText.SetActive(false);
+        
+        UnityEngine.Debug.Log($"Set up grab joint for {targetRigidbody.gameObject.name} with isPortable: {isPortable}");
     }
+
+
 
     private Rigidbody getTargetRigidBody() {
         if (currentGrabPoint != null && currentGrabPoint.parentRigidbody != null) {
@@ -709,31 +787,55 @@ public class PlayerActions : MonoBehaviour
     }
 
     private void updateGrabJoint() {
+
+        if (useHybridGrabSystem && isDraggableObject) {
+            // For drag controller, nothing to update here
+            // The drag controller handles the physics in its own FixedUpdate
+            return;
+        }
+
         if (grabJoint == null && isGrabbing) {
             releaseGrabbedObject();
             return;
         }
     }
 
-    private void releaseGrabbedObject() {
+    private void releaseGrabbedObject() 
+    {
         UnityEngine.Debug.Log("Released item");
 
-        if (grabJoint != null) {
-            Destroy(grabJoint);
-            grabJoint = null;
+        if (useHybridGrabSystem && isDraggableObject) {
+            if (dragController != null) {
+                // First stop the dragging behavior
+                dragController.StopDragging();
+                
+                // Important: Destroy the component completely when done
+                Destroy(dragController);
+                dragController = null;
+            }
+        }
+        else {
+            if (grabJoint != null) {
+                Destroy(grabJoint);
+                grabJoint = null;
+            }
         }
 
-        // playerManager.walkSpeed = originalPlayerSpeed;
-        playerManager.walkSpeed = 0.3f;
+        // Restore original movement values
+        playerManager.walkSpeed = originalPlayerSpeed;
         if (turnRestricted) {
             playerManager.turnSpeed = originalTurnSpeed;
             turnRestricted = false;
         }
+        
+        // Reset state variables
         isGrabbing = false;
+        isDraggableObject = false;
         currentGrabPoint = null;
         currentGrabbableObject = null;
-
-        // mouthRiggingScript.closeMouth();
+        
+        // Reset visual state
+        grabRiggingScript.release();
     }
 
     // Handle joint breaking automatically
@@ -779,6 +881,108 @@ public class PlayerActions : MonoBehaviour
         }
         
     }
+
+    ////////////////////////////////////////////// Dash Action //////////////////////////////////////////////
+    // Replace the existing runHindLegsLogic() with this implementation
+// New separate function for dash logic
+private void runDashLogic()
+{
+    // Get special action input for dash (dog back special)
+    bool player1Special = player1Input.GetSpecialActionPressed();
+    bool player2Special = player2Input.GetSpecialActionPressed();
+    
+    // Check for dog species in back position
+    string backSpecies = P1.IsFront ? P2.Species : P1.Species;
+    
+    // Only dogs can dash
+    if (backSpecies != "dog") return;
+    
+    // Just track dash time remaining if dashing
+    if (isDashing && dashTimeRemaining > 0)
+    {
+        dashTimeRemaining -= Time.deltaTime;
+        
+        // End dash when time expires
+        if (dashTimeRemaining <= 0)
+        {
+            EndDash();
+        }
+    }
+    
+    // Check cooldown
+    if (Time.time - lastDashTime < dashCooldown)
+    {
+        canDash = false;
+    }
+    else
+    {
+        canDash = true;
+    }
+    
+    // Start dash when back dog player presses special
+    if (canDash && !isDashing && ((player1Special && !P1.IsFront) || (player2Special && !P2.IsFront)))
+    {
+        StartDash();
+    }
+}
+
+private void StartDash()
+{
+    isDashing = true;
+    canDash = false;
+    lastDashTime = Time.time;
+    dashTimeRemaining = dashDuration;
+    
+    // Store the original walk speed to restore later
+    originalWalkSpeed = playerManager.walkSpeed;
+    
+    // Temporarily boost the walk speed with our 
+    UnityEngine.Debug.Log("Dashing by " + dashSpeedMultiplier + "x");
+    playerManager.walkSpeed *= dashSpeedMultiplier;
+    
+    
+    // Optional: Add visual or audio effects
+    PlayDashEffect();
+}
+
+private void EndDash()
+{
+    isDashing = false;
+    
+    // Restore the original walk speed
+    playerManager.walkSpeed = originalWalkSpeed;
+    
+    // Optional: Clean up any dash effects
+    StopDashEffect();
+}
+
+// Add visual/audio feedback for the dash
+private void PlayDashEffect()
+{
+    // Play a sound effect
+    AudioSource audioSource = backHalf.GetComponent<AudioSource>();
+    if (audioSource == null)
+    {
+        audioSource = backHalf.AddComponent<AudioSource>();
+    }
+    
+    // TODO: Add a sound effect for dash
+    // audioSource.PlayOneShot(dashSound);
+    
+    // can add particle effects here
+}
+
+private void StopDashEffect()
+{
+    // Stop any ongoing effects
+    // Example:
+    // if (dashEffectInstance != null)
+    // {
+    //     Destroy(dashEffectInstance);
+    // }
+}
+
+
 
 
     ////////////////////////////////////////// Front Paws Action //////////////////////////////////////////////
