@@ -29,7 +29,7 @@ public class PlayerManager : MonoBehaviour
 
     [Header("Splitting Variables")]
     public float reconnectionDistance = 0.3f;
-    public float splitTime = 1.0f;
+    public float splitTime = 1.2f;
     public KeyCode reconnectToggleKey = KeyCode.Space;
     public AudioClip splitSound;
     public AudioClip reconnectSound;
@@ -43,7 +43,7 @@ public class PlayerManager : MonoBehaviour
 
 
     [Header("Switching Variables")]
-    public float switchTime = 1.5f;
+    public float switchTime = 1.2f;
     public GameObject catFront;
     public GameObject dogFront;
     public GameObject catBack;
