@@ -24,7 +24,6 @@ public class InputHandler : MonoBehaviour
     {
         // Read Vector2 value from the input and store it
         cameraMoveInput = context.ReadValue<Vector2>();
-
     }
 
     public void OnJump(InputAction.CallbackContext context)
@@ -72,7 +71,8 @@ public class InputHandler : MonoBehaviour
 
     public Vector2 GetCameraInput()
     {
-        return cameraMoveInput;
+        // Dampen the movement due to range of camera
+        return cameraMoveInput * 0.01f;
     }
 
     public bool GetJumpPressed()

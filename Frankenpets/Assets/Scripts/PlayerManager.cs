@@ -332,6 +332,7 @@ public class PlayerManager : MonoBehaviour
             splitStopwatch.Reset();
             Destroy(fixedJoint); // Split the halves
             fixedJoint = null;
+            ResetCamera(mainCamera);
 
             // Add rotation constraints when split
             frontHalf.GetComponent<Rigidbody>().constraints |= RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
@@ -358,6 +359,9 @@ public class PlayerManager : MonoBehaviour
             UnityEngine.Debug.Log("Trying to reconnect.");
             alignHalves();
             setJoint();
+            ResetCamera(player1Camera);
+            ResetCamera(player2Camera);
+
 
             // TODO: Apply animation
 
@@ -757,45 +761,23 @@ public class PlayerManager : MonoBehaviour
 
         if (composer != null)
         {
-            // PrintMembers(composer.Composition.ScreenPosition);
-            composer.Composition.ScreenPosition += playerInput;
+            composer.Composition.ScreenPosition.x = Mathf.Clamp(composer.Composition.ScreenPosition.x - playerInput.x, -1.5f, 1.5f);
+            composer.Composition.ScreenPosition.y = Mathf.Clamp(composer.Composition.ScreenPosition.y + playerInput.y, -1.5f, 1.5f);
+
         }
         else
         {
-            UnityEngine.Debug.Log("COMPOSER NULL");
+            UnityEngine.Debug.LogError("Missing Cinemachine Rotation Composer");
         }
     }
 
-    void PrintMembers(object obj)
+    private void ResetCamera(CinemachineCamera camera)
     {
-        // Get the type of the object (CinemachineComposer)
-        Type type = obj.GetType();
+        var composer = camera.GetComponent<CinemachineRotationComposer>();
 
-        // Get all fields (public and non-public) of the type
-        FieldInfo[] fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-
-        // Get all properties (public and non-public) of the type
-        PropertyInfo[] properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-
-        // Print fields
-        UnityEngine.Debug.Log("Fields:");
-        foreach (var field in fields)
+        if (composer != null)
         {
-            UnityEngine.Debug.Log($"{field.Name} = {field.GetValue(obj)}");
-        }
-
-        // Print properties
-        UnityEngine.Debug.Log("Properties:");
-        foreach (var property in properties)
-        {
-            try
-            {
-                UnityEngine.Debug.Log($"{property.Name} = {property.GetValue(obj)}");
-            }
-            catch
-            {
-                // Some properties may not be accessible, so we catch any exceptions
-            }
+            composer.Composition.ScreenPosition = new Vector2(0, 0);
         }
     }
     // CAMERA MOVEMENT METHODS ////////////////////////////////////////////
