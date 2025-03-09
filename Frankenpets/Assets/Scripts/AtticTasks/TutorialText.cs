@@ -19,25 +19,60 @@ public class TutorialText : MonoBehaviour
     public GameObject grabUI;
     public GameObject pressEnterToContinueUI;
     public GameObject controlsMenu;
+    public GameObject controlsCornerUIParent;
+    private GameObject controlsCornerUIChild;
+    private GameObject P1ControlsCF;
+    private GameObject P1ControlsDF;
+    private GameObject P1ControlsCB;
+    private GameObject P1ControlsDB;
+    private GameObject P2ControlsCF;
+    private GameObject P2ControlsDF;
+    private GameObject P2ControlsCB;
+    private GameObject P2ControlsDB;
 
-    [Header("Icons")]
+    [Header("Icons and Sounds")]
     public GameObject P1IconLarge;
     public GameObject P2IconLarge;
     public GameObject playerIcons;
-    public GameObject arrow;
-    public GameObject arrow2;
-    public GameObject pathToVase;
-    public GameObject pathToBoxes;
+    public AudioClip whineSound;
+    public AudioClip mewSound;
 
     [Header("Player Inputs")]
     public InputHandler player1Input;
     public InputHandler player2Input;
     public Transform frontHalf;
 
-    [Header("Task Locations")]
-    public Transform vaseTask;
-    public Transform frontBoxesTask;
-    public Transform backBoxesTask;
+    [Header("Attic Lighting")]
+    public Light directionalLight;
+    public Light pointLight;
+    public float minDirLightIntensity = 0.0f;
+    public float maxDirLightIntensity = 2.0f;
+    public float minPointLightIntensity = 0.5f;
+    public float maxPointLightIntensity = 1.0f;
+
+    [Header("Vase Task")]
+    public GameObject vaseArrow;
+    public GameObject vasePawPath;
+    public GameObject vaseLightsParent;
+    public GameObject vaseParticle;
+    private Light[] vaseLights;
+    private Task2Tutorial enterVaseAreaTrigger;
+
+
+    [Header("Box Task")]
+    public GameObject frontBoxArrow;
+    public GameObject backBoxArrow;
+    public GameObject boxesPawPath;
+    public GameObject boxParticle;
+    public GameObject boxesLightsParent;
+    private Light[] boxesLights;
+    
+    [Header("Rug Task")]    
+    public GameObject rugLight;
+    public GameObject rugArrow;
+
+    private GameObject task3;
+    private Task3Tutorial enterRugAreaTrigger;
     
     // State tracking variables
     private int currTutorialStage = 0;
@@ -48,46 +83,36 @@ public class TutorialText : MonoBehaviour
     private FixedJoint fixedJoint;
 
     // Other variables 
-    private Stopwatch stopwatch = new Stopwatch();
     private GameObject emote;
 
-    // Script references
-    private GameObject task1;
-    private PawPath task1PawPath;
-    private GameObject task2;
-    private Task2Tutorial task2Tutorial;
-    private PawPath task2PawPath;
-    private GameObject task3;
-    private Task3Tutorial task3Tutorial;
+    // Other script references    
     private PlayerManager playerManager;
     private MessageManager messageManager;
-    private ControllerAssignment controllerAssignment;    
+    private ControllerAssignment controllerAssignment; 
+    private bool isKeyboard;   
 
     void Awake()
     {
-        task1 = GameObject.Find("Task 1");
-        task1PawPath = task1.GetComponent<PawPath>();
+        enterVaseAreaTrigger = GameObject.Find("Task 2").GetComponent<Task2Tutorial>();
+        enterRugAreaTrigger = GameObject.Find("Task 3").GetComponent<Task3Tutorial>();
 
-        task2 = GameObject.Find("Task 2");
-        task2PawPath = task2.GetComponent<PawPath>();
-        task2Tutorial = task2.GetComponent<Task2Tutorial>();
-
-        task3 = GameObject.Find("Task 3");
-        task3Tutorial = task3.GetComponent<Task3Tutorial>();
-
-        playerManager = GameObject.Find("Pet").GetComponent<PlayerManager>();
+        GameObject pet = GameObject.Find("Pet");
+        playerManager = pet.GetComponent<PlayerManager>();
         messageManager = GameObject.Find("Messages").GetComponent<MessageManager>();
-        controllerAssignment = GameObject.Find("Pet").GetComponent<ControllerAssignment>();
+        controllerAssignment = pet.GetComponent<ControllerAssignment>();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         updateTutorialText();
+
         fixedJoint = playerManager.getJoint();
+        vaseLights = vaseLightsParent.GetComponentsInChildren<Light>();
+        boxesLights = boxesLightsParent.GetComponentsInChildren<Light>();
 
         // Set the instructions UI according to keycaps or gamepad
-        bool isKeyboard = controllerAssignment.IsKeyboard();
+        isKeyboard = controllerAssignment.IsKeyboard();
         
         movementUI.transform.GetChild(0).gameObject.SetActive(isKeyboard);
         jumpUI.transform.GetChild(0).gameObject.SetActive(isKeyboard);
@@ -104,33 +129,57 @@ public class TutorialText : MonoBehaviour
         switchUI.transform.GetChild(1).gameObject.SetActive(!isKeyboard);
         grabUI.transform.GetChild(1).gameObject.SetActive(!isKeyboard);
         pressEnterToContinueUI.transform.GetChild(1).gameObject.SetActive(!isKeyboard);
+
+        controlsCornerUIParent.transform.GetChild(0).gameObject.SetActive(isKeyboard);
+        controlsCornerUIParent.transform.GetChild(1).gameObject.SetActive(!isKeyboard);
+
+        if (isKeyboard) controlsCornerUIChild = controlsCornerUIParent.transform.GetChild(0).gameObject; // update variable to be either its keyboard or gamepad child
+        else controlsCornerUIChild = controlsCornerUIParent.transform.GetChild(1).gameObject;
+
+        UnityEngine.Debug.Log(controlsCornerUIChild);
+
+        P1ControlsCF = controlsCornerUIChild.transform.GetChild(0).transform.GetChild(0).gameObject;
+        P1ControlsDF = controlsCornerUIChild.transform.GetChild(0).transform.GetChild(1).gameObject;
+        P1ControlsCB = controlsCornerUIChild.transform.GetChild(0).transform.GetChild(2).gameObject;
+        P1ControlsDB = controlsCornerUIChild.transform.GetChild(0).transform.GetChild(3).gameObject;
+        P2ControlsCF = controlsCornerUIChild.transform.GetChild(1).transform.GetChild(0).gameObject;
+        P2ControlsDF = controlsCornerUIChild.transform.GetChild(1).transform.GetChild(1).gameObject;
+        P2ControlsCB = controlsCornerUIChild.transform.GetChild(1).transform.GetChild(2).gameObject;
+        P2ControlsDB = controlsCornerUIChild.transform.GetChild(1).transform.GetChild(3).gameObject;
     }
 
     void Update()
     {
-        if (getCurrTutorialStage() == tutMoveToVase)
+        updateControlsCornerUI();
+
+        // BLOCK SPLITTING UNTIL tutSplit
+        if (getCurrTutorialStage() < tutSplit)
         {
-            arrow.SetActive(true);
-            arrow.transform.position = vaseTask.position + (Vector3.up * 0.30f);
-            arrow.transform.LookAt(frontHalf);
-            arrow.transform.rotation = Quaternion.Euler(180, 0, 0);
-            // make the arrow float
-            arrow.transform.position += new Vector3(0, Mathf.Sin(Time.time * 2) * 0.05f, 0);
+            playerManager.setCanSplit(false);
+        }
+        else
+        {
+            playerManager.setCanSplit(true);
         }
 
-        if (getCurrTutorialStage() == tutScatterBoxes)
+        // BLOCK SWITCHING UNTIL tutSwitch
+        if (getCurrTutorialStage() < tutSwitch)
         {
-            arrow.SetActive(true);
-            arrow2.SetActive(true);
-            arrow.transform.position = frontBoxesTask.position + (Vector3.up * 0.30f);
-            arrow2.transform.position = backBoxesTask.position + (Vector3.up * 0.30f);
-            arrow.transform.LookAt(frontHalf);
-            arrow2.transform.LookAt(frontHalf);
-            arrow.transform.rotation = Quaternion.Euler(180, 0, 0);
-            arrow2.transform.rotation = Quaternion.Euler(180, 0, 0);
+            playerManager.setCanSwitch(false);
+        }
+        else
+        {
+            playerManager.setCanSwitch(true);
+        }
 
-            arrow.transform.position += new Vector3(0, Mathf.Sin(Time.time * 2) * 0.05f, 0);
-            arrow2.transform.position += new Vector3(0, Mathf.Sin(Time.time * 2) * 0.05f, 0);
+        // BLOCK RECONNECTING UNTIL tutReconnect
+        if (getCurrTutorialStage() < tutReconnect)
+        {
+            playerManager.setCanReconnect(false);
+        }
+        else
+        {
+            playerManager.setCanReconnect(true);
         }
 
         // check for first split
@@ -216,44 +265,64 @@ public class TutorialText : MonoBehaviour
                 tutorialText.text = "Let's move to the vase.";
                 movementUI.SetActive(true);
 
-                // Arrow logic is in Update()
+                // Arrow (already active)
 
-                // Paw path 
-                task2PawPath.setActive(true); 
+                // Paw path (already active)
 
+                // Light path (already active)
                 break;
             case tutBreakVase:
                 // Deactivate stuff from prev case 
-                arrow.SetActive(false);
-                task2PawPath.setActive(false);
+                vaseArrow.SetActive(false);
+                vasePawPath.SetActive(false);
+                vaseParticle.SetActive(false);
                 movementUI.SetActive(false);
+                // Turn on attic light
+                brightenLights();
+
+                // Dim the previous light path
+                foreach (Light light in vaseLights)
+                {
+                    StartCoroutine(lerpLightIntensity(light, 0.0f, 3.0f));
+                }
+                vaseLightsParent.SetActive(false);
 
                 // Speech UI
                 tutorialText.text = "Hmm... can we break the vase?";
-                jumpUI.SetActive(true);
+                // jumpUI.SetActive(true);
 
+                // Turn on controls UI
+                controlsCornerUIParent.SetActive(true);
                 break;
+
             case tutSplit:
-                jumpUI.SetActive(false);
-                task2Tutorial.enabled = false;
+                // jumpUI.SetActive(false);
+                enterVaseAreaTrigger.enabled = false;
+
+                // Move the controls UI to the corner
+                StartCoroutine(MoveControlsCornerUI());
 
                 tutorialText.text = "Chaos! Now, let's split apart.";
                 splitUI.SetActive(true);
 
+                // gif
+
                 break;
             case 3:
                 splitUI.SetActive(false);
-
                 speechBubbleTwoTails.SetActive(false);
-                speechBubbleLeft.SetActive(true);
 
+                speechBubbleLeft.SetActive(true);
                 tutorialText.transform.SetParent(speechBubbleLeft.transform, true);
-                
                 tutorialText.text = "Creepy...";
                 pressEnterToContinueUI.SetActive(true);
 
-                // emote = playerManager.startEmote(playerManager.getBackHalf(), "sad");
-                // play sad dog sound
+                GameObject backHalf = playerManager.getBackHalf();
+                emote = playerManager.startEmote(backHalf, "sad");
+                if (whineSound != null)
+                {
+                    AudioSource.PlayClipAtPoint(whineSound, backHalf.transform.position);
+                }
                 break;
             // case 4:
             //     UnityEngine.Debug.Log("case 4");
@@ -265,28 +334,51 @@ public class TutorialText : MonoBehaviour
             //     break;              
             case tutScatterBoxes:
                 // Cancel prev case
+                playerManager.cancelEmote(emote);
                 pressEnterToContinueUI.SetActive(false);
                 speechBubbleLeft.SetActive(false);
-                speechBubbleRight.SetActive(true);
-
-                tutorialText.transform.SetParent(speechBubbleRight.transform, true);
-                // playerManager.cancelEmote(emote); 
 
                 // Speech UI
-                tutorialText.text = "Let's scatter the coloured boxes around."; 
+                speechBubbleRight.SetActive(true);
+                tutorialText.transform.SetParent(speechBubbleRight.transform, true);
+                tutorialText.text = "Push the boxes while split apart."; 
 
-                // Arrow logic in Update()
+                // Arrow 
+                backBoxArrow.SetActive(true);
+                frontBoxArrow.SetActive(true);
+
+                // Particles 
+                boxParticle.SetActive(true);
                 
-                // Paw
-                task1PawPath.setActive(true); 
+                // Paw path
+                boxesPawPath.SetActive(true); 
+
+                // Dim attic lights
+                dimLights();
+
+                // Light path
+                boxesLightsParent.SetActive(true);
+                foreach (Light light in boxesLights)
+                {
+                    StartCoroutine(lerpLightIntensity(light, 0.1f, 1.5f));
+                }
 
                 break;
             case tutReconnect:
-                arrow.SetActive(false);
-                arrow2.SetActive(false);
-                task1PawPath.setActive(false);
-
-                tutorialText.text = "Yay! Let's sew ourselves back together."; // speech bubble text
+                backBoxArrow.SetActive(false);
+                frontBoxArrow.SetActive(false);
+                boxesPawPath.SetActive(false);
+                boxParticle.SetActive(false);
+                
+                // Lighting
+                foreach (Light light in boxesLights)
+                {
+                    StartCoroutine(lerpLightIntensity(light, 0.0f, 3.0f));
+                }
+                boxesLightsParent.SetActive(false);
+                brightenLights();
+                
+                tutorialText.text = "Let's reconnect."; // speech bubble text
                 reconnectUI.SetActive(true); // small text
 
                 break;
@@ -295,15 +387,27 @@ public class TutorialText : MonoBehaviour
                 speechBubbleRight.SetActive(false);
 
                 speechBubbleLeft.SetActive(true);
-
                 tutorialText.transform.SetParent(speechBubbleLeft.transform, true);
-
                 tutorialText.text = "Hey, what's under that purple rug?"; // speech bubble text
+
+                // Light
+                dimLights();
+                rugLight.SetActive(true);
+                StartCoroutine(lerpLightIntensity(rugLight.GetComponent<Light>(), 10.0f, 1.5f));
+
+                // Arrow
+                rugArrow.SetActive(true);
 
                 break;
             case tutSwitch:
-                task3Tutorial.enabled = false;
+                enterRugAreaTrigger.enabled = false;
+                StartCoroutine(lerpLightIntensity(rugLight.GetComponent<Light>(), 0.0f, 2.0f));
+                rugLight.SetActive(false);
+                rugArrow.SetActive(false);
 
+                // light 
+                brightenLights();
+                
                 tutorialText.text = "I can't grab this, can you help?";
                 switchUI.SetActive(true);
                 
@@ -313,7 +417,6 @@ public class TutorialText : MonoBehaviour
                 speechBubbleLeft.SetActive(false);
 
                 speechBubbleRight.SetActive(true);
-
 
                 tutorialText.transform.SetParent(speechBubbleRight.transform, true);
 
@@ -340,6 +443,7 @@ public class TutorialText : MonoBehaviour
                 messageManager.cancelPressEnterToHideTutorial();
                 speechBubbleLeft.SetActive(false);
                 speechBubbleTwoTails.SetActive(false);
+                switchUI.SetActive(false);
 
                 
                 tutorialSmallText.text = "";
@@ -348,14 +452,26 @@ public class TutorialText : MonoBehaviour
                 tutorialText.transform.SetParent(speechBubbleRight.transform, true);
                 tutorialText.text = "The drop's too high... I'm scared!";
                 pressEnterToContinueUI.SetActive(true);
+
+                if (whineSound != null)
+                {
+                    AudioSource.PlayClipAtPoint(whineSound, playerManager.getFrontHalf().transform.position);
+                }
+
                 break;
             case annoyedCat:
                 pressEnterToContinueUI.SetActive(false);
                 speechBubbleRight.SetActive(false);
 
                 speechBubbleLeft.SetActive(true);
+                switchUI.SetActive(true);
                 tutorialText.transform.SetParent(speechBubbleLeft.transform, true);
                 tutorialText.text = "Fine, I'll jump. Switch with me.";
+
+                if (mewSound != null)
+                {
+                    AudioSource.PlayClipAtPoint(mewSound, playerManager.getBackHalf().transform.position);
+                }
                 break;
         }
     }
@@ -389,6 +505,7 @@ public class TutorialText : MonoBehaviour
     // Coroutines
     private IEnumerator waitForSeconds(float seconds)
     {
+        Stopwatch stopwatch = new Stopwatch();
         stopwatch.Start();
 
         while (stopwatch.Elapsed.TotalSeconds < seconds) 
@@ -413,5 +530,87 @@ public class TutorialText : MonoBehaviour
         // show the player icons
         playerIcons.SetActive(true); 
     }
-    
+
+    private void dimLights()
+    {
+        // directional light
+        StartCoroutine(lerpLightIntensity(directionalLight, minDirLightIntensity, 2.0f));
+
+        // point light 
+        StartCoroutine(lerpLightIntensity(pointLight, minPointLightIntensity, 2.0f));
+    }
+
+    private void brightenLights()
+    {
+        // directional light
+        StartCoroutine(lerpLightIntensity(directionalLight, maxDirLightIntensity, 2.0f));
+
+        // point light 
+        StartCoroutine(lerpLightIntensity(pointLight, maxPointLightIntensity, 2.0f));
+    }
+
+    private IEnumerator lerpLightIntensity(Light light, float targetIntensity, float duration)
+    {
+        float startIntensity = light.intensity;
+        float time = 0.0f;
+
+        while (time < duration)
+        {
+            light.intensity = Mathf.Lerp(startIntensity, targetIntensity, time / duration);
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        light.intensity = targetIntensity;
+    }
+
+    public void updateControlsCornerUI()
+    {
+        bool isP1Cat = playerManager.P1.Species == "cat";
+        bool isP1Front = playerManager.P1.IsFront;
+
+        P1ControlsCF.SetActive(isP1Cat && isP1Front);
+        P1ControlsDF.SetActive(!isP1Cat && isP1Front);
+        P1ControlsCB.SetActive(isP1Cat && !isP1Front);
+        P1ControlsDB.SetActive(!isP1Cat && !isP1Front);
+
+        P2ControlsCF.SetActive(!isP1Cat && !isP1Front);
+        P2ControlsDF.SetActive(isP1Cat && !isP1Front);
+        P2ControlsCB.SetActive(!isP1Cat && isP1Front);
+        P2ControlsDB.SetActive(isP1Cat && isP1Front);
+    }
+
+    private IEnumerator MoveControlsCornerUI()
+    {
+        float moveSpeed = 3.0f;
+
+        RectTransform P1RectTransform = controlsCornerUIChild.transform.GetChild(0).gameObject.GetComponent<RectTransform>();
+        RectTransform P2RectTransform = controlsCornerUIChild.transform.GetChild(1).gameObject.GetComponent<RectTransform>();
+
+        Vector2 P1targetPosition1 = new Vector2(-1260, 36);
+        Vector2 P2targetPosition1 = new Vector2(231, 36);
+
+        while (Vector2.Distance(P1RectTransform.anchoredPosition, P1targetPosition1) > 1f)
+        {
+            P1RectTransform.anchoredPosition = Vector2.Lerp(P1RectTransform.anchoredPosition, P1targetPosition1, Time.deltaTime * moveSpeed);
+            P2RectTransform.anchoredPosition = Vector2.Lerp(P2RectTransform.anchoredPosition, P2targetPosition1, Time.deltaTime * moveSpeed);
+            yield return null;
+        }
+        
+        P1RectTransform.anchoredPosition = P1targetPosition1; // Ensure final position is exact
+        P2RectTransform.anchoredPosition = P2targetPosition1;
+        
+        Vector2 P1targetPosition2 = new Vector2(-1260, -252);
+        Vector2 P2targetPosition2 = new Vector2(231, -252);
+
+        while (Vector2.Distance(P1RectTransform.anchoredPosition, P1targetPosition2) > 1f)
+        {
+            P1RectTransform.anchoredPosition = Vector2.Lerp(P1RectTransform.anchoredPosition, P1targetPosition2, Time.deltaTime * moveSpeed);
+            P2RectTransform.anchoredPosition = Vector2.Lerp(P2RectTransform.anchoredPosition, P2targetPosition2, Time.deltaTime * moveSpeed);
+            yield return null;
+        }
+        
+        P1RectTransform.anchoredPosition = P1targetPosition2; // Ensure final position is exact
+        P2RectTransform.anchoredPosition = P2targetPosition2;
+    }
 }

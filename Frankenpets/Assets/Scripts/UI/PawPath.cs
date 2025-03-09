@@ -6,8 +6,8 @@ public class PawPath : MonoBehaviour
     public GameObject path;
     private SpriteRenderer[] pawPrints; 
     public AnimationCurve glowCurve; // controls fade-in and fade-out
-    public float cycleDuration = 2.0f; 
-    public float delayBetweenPrints = 0.4f; 
+    private float cycleDuration = 1.0f; 
+    private float delayBetweenPrints = 0.2f; 
     private bool isActive = true;
 
     private void Start()
