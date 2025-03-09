@@ -228,17 +228,17 @@ public class TutorialText : MonoBehaviour
             leaveTutorial();
         }
 
-        // check for second switch to exit attic
+        // check for return key press to switch before exit attic
         if (getCurrTutorialStage() == scaredDog && checkForReturn())
         {
             advanceTutorialStage();
         }
-        // if (getCurrTutorialStage() == annoyedCat)
-        // {
-        //     yield null WaitFOr
-        //     speechBubbleRight.SetActive(true);
-        //     tutorialText.text == "";
-        // }
+
+        // check for last switch to exit attic
+        if (getCurrTutorialStage() == annoyedCat && playerManager.P1.IsFront && !playerManager.P2.IsFront)
+        {
+            advanceTutorialStage();
+        }
     }
 
     public const int tutMoveToVase = 0;
@@ -252,6 +252,7 @@ public class TutorialText : MonoBehaviour
     public const int tutComplete = 9;
     public const int scaredDog = 10;
     public const int annoyedCat = 11;
+    public const int leaveAttic = 12;
 
     // Update is called once per frame
     private void updateTutorialText()
@@ -278,14 +279,14 @@ public class TutorialText : MonoBehaviour
                 vaseParticle.SetActive(false);
                 movementUI.SetActive(false);
                 // Turn on attic light
-                brightenLights();
+                brightenWorldLights();
 
                 // Dim the previous light path
                 foreach (Light light in vaseLights)
                 {
-                    StartCoroutine(lerpLightIntensity(light, 0.0f, 3.0f));
+                    StartCoroutine(lerpLightIntensity(light, 0.0f, 2.0f));
                 }
-                vaseLightsParent.SetActive(false);
+                StartCoroutine(DelaySetActive(vaseLightsParent, false, 2.5f));
 
                 // Speech UI
                 tutorialText.text = "Hmm... can we break the vase?";
@@ -370,13 +371,15 @@ public class TutorialText : MonoBehaviour
                 boxesPawPath.SetActive(false);
                 boxParticle.SetActive(false);
                 
-                // Lighting
+                // Dim the previous light path 
                 foreach (Light light in boxesLights)
                 {
-                    StartCoroutine(lerpLightIntensity(light, 0.0f, 3.0f));
+                    StartCoroutine(lerpLightIntensity(light, 0.0f, 2.0f));
                 }
-                boxesLightsParent.SetActive(false);
-                brightenLights();
+                StartCoroutine(DelaySetActive(boxesLightsParent, false, 2.5f));
+
+                // Brighten the attic lights
+                brightenWorldLights();
                 
                 tutorialText.text = "Let's reconnect."; // speech bubble text
                 reconnectUI.SetActive(true); // small text
@@ -402,11 +405,11 @@ public class TutorialText : MonoBehaviour
             case tutSwitch:
                 enterRugAreaTrigger.enabled = false;
                 StartCoroutine(lerpLightIntensity(rugLight.GetComponent<Light>(), 0.0f, 2.0f));
-                rugLight.SetActive(false);
+                StartCoroutine(DelaySetActive(rugLight, false, 2.5f));
                 rugArrow.SetActive(false);
 
                 // light 
-                brightenLights();
+                brightenWorldLights();
                 
                 tutorialText.text = "I can't grab this, can you help?";
                 switchUI.SetActive(true);
@@ -473,6 +476,12 @@ public class TutorialText : MonoBehaviour
                     AudioSource.PlayClipAtPoint(mewSound, playerManager.getBackHalf().transform.position);
                 }
                 break;
+
+            case leaveAttic:
+                speechBubbleLeft.SetActive(false);
+                switchUI.SetActive(false);
+                tutorialText.text = "";
+                break;
         }
     }
 
@@ -501,7 +510,6 @@ public class TutorialText : MonoBehaviour
                player2Input.GetSwitchPressed() || player2Input.GetReconnectPressed();
     }
 
-
     // Coroutines
     private IEnumerator waitForSeconds(float seconds)
     {
@@ -515,6 +523,12 @@ public class TutorialText : MonoBehaviour
 
         stopwatch.Reset();
         advanceTutorialStage();
+    }
+
+    private IEnumerator DelaySetActive(GameObject obj, bool isActive, float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        obj.SetActive(isActive);
     }
 
     private void leaveTutorial()
@@ -540,7 +554,7 @@ public class TutorialText : MonoBehaviour
         StartCoroutine(lerpLightIntensity(pointLight, minPointLightIntensity, 2.0f));
     }
 
-    private void brightenLights()
+    private void brightenWorldLights()
     {
         // directional light
         StartCoroutine(lerpLightIntensity(directionalLight, maxDirLightIntensity, 2.0f));

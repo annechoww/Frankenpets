@@ -106,7 +106,7 @@ public class PlayerActions : MonoBehaviour
         controllerAssignment = GameObject.Find("Pet").GetComponent<ControllerAssignment>();
         getPlayerManager();
 
-        // Find all grabbable objects
+        // Find all task objects
         GameObject[] grabbableObjects = GameObject.FindGameObjectsWithTag("Grabbable");
         GameObject[] draggableObjects = GameObject.FindGameObjectsWithTag("Draggable");
         dogObjects = new Renderer[grabbableObjects.Length + draggableObjects.Length];
@@ -129,6 +129,7 @@ public class PlayerActions : MonoBehaviour
         {
             catObjects[i] = climbableObjects[i].GetComponent<Renderer>();
         }
+        //////////////////
 
         // Set the Controls Menu to keycaps or gamepad
         if (controllerAssignment.IsKeyboard())
@@ -856,7 +857,7 @@ public class PlayerActions : MonoBehaviour
     private void showClimbText(GameObject other)
     {
         climbText.SetActive(true);
-        climbText.transform.position = other.transform.position + (Vector3.forward * 0.05f) - (Vector3.up * 0.10f);
+        climbText.transform.position = other.transform.position + (Vector3.forward * 0.05f);// - (Vector3.up * 0.10f);
 
         if (controllerAssignment.IsKeyboard())
         {
@@ -890,7 +891,7 @@ public class PlayerActions : MonoBehaviour
     private void showGrabText(GameObject other)
     {
         grabText.SetActive(true);
-        grabText.transform.position = other.transform.position + (Vector3.forward * 0.05f) - (Vector3.up * 0.10f);
+        grabText.transform.position = other.transform.position;// + (Vector3.forward * 0.05f) - (Vector3.up * 0.10f);
 
         if (controllerAssignment.IsKeyboard())
         {
