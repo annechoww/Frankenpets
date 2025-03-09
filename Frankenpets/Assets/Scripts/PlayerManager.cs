@@ -24,6 +24,9 @@ public class PlayerManager : MonoBehaviour
 
     [Header("Movement Variables")]
     public float walkSpeed = 0.6f;
+
+    private float immutableWalkSpeed;
+    private float immutableTurnSpeed;
     public float turnSpeed = 1.0f;
     // private bool isFrozen = false; // whether the half's RigidBody's position is frozen in place 
 
@@ -80,6 +83,10 @@ public class PlayerManager : MonoBehaviour
 
     void Awake()
     {
+
+        immutableWalkSpeed = walkSpeed;
+        immutableTurnSpeed = turnSpeed;
+
         // Initialize the players
         P1.PlayerNumber = 1;
         P1.IsFront = true;
@@ -308,14 +315,27 @@ public class PlayerManager : MonoBehaviour
         Vector2 player2MoveInput = player2Input.GetMoveInput();
         
         // Movement for Player 1's half
-        float turnSpeedP1 = turnSpeed;
-        P1.Half.transform.Rotate(0.0f, player1MoveInput.x * turnSpeedP1, 0.0f, Space.Self);
-        P1.Half.transform.Translate(Vector3.forward * player1MoveInput.y * walkSpeed * Time.deltaTime, Space.Self);
+        if (P1.Species == "dog") {
+            P1.Half.transform.Translate(Vector3.forward * player1MoveInput.y * walkSpeed * Time.deltaTime, Space.Self);
+            P2.Half.transform.Rotate(0.0f, player1MoveInput.x * turnSpeed, 0.0f, Space.Self);
+        }
+        else {
+            P1.Half.transform.Translate(Vector3.forward * player1MoveInput.y * immutableWalkSpeed * Time.deltaTime, Space.Self);
+            P1.Half.transform.Rotate(0.0f, player1MoveInput.x * immutableTurnSpeed, 0.0f, Space.Self);   
+        }
+        
         
         // Movement for Player 2's half
-        float turnSpeedP2 = turnSpeed;
-        P2.Half.transform.Rotate(0.0f, player2MoveInput.x * turnSpeedP2, 0.0f, Space.Self);
-        P2.Half.transform.Translate(Vector3.forward * player2MoveInput.y * walkSpeed * Time.deltaTime, Space.Self);
+        
+        if (P2.Species == "dog") {
+            P2.Half.transform.Translate(Vector3.forward * player2MoveInput.y * walkSpeed * Time.deltaTime, Space.Self);
+            P2.Half.transform.Rotate(0.0f, player2MoveInput.x * turnSpeed, 0.0f, Space.Self);
+        }
+        else {
+            P2.Half.transform.Translate(Vector3.forward * player2MoveInput.y * immutableWalkSpeed * Time.deltaTime, Space.Self);
+            P2.Half.transform.Rotate(0.0f, player2MoveInput.x * immutableTurnSpeed, 0.0f, Space.Self);
+        }
+        
     }
     // MOVEMENT METHODS ////////////////////////////////////////////
     
