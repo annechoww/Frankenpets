@@ -770,6 +770,12 @@ public class PlayerManager : MonoBehaviour
         cameraMovement.frontHalf = frontHalf.transform;
         mainCamera.Follow = frontHalf.transform;
         mainCamera.LookAt = frontHalf.transform;
+
+        PlayerActions playerActions = GetComponent<PlayerActions>();
+        if (playerActions != null)
+        {
+            playerActions.RefreshAfterSwitch(this);
+        }
     }
     // SWITCHING METHODS ////////////////////////////////////////////
 
