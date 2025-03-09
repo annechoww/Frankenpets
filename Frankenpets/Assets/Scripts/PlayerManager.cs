@@ -4,7 +4,9 @@ using Unity.Cinemachine;
 using UnityEditor.VersionControl;
 using UnityEngine.Rendering;
 using Unity.VisualScripting;
+using System;
 using System.Collections;
+using System.Reflection;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -162,6 +164,7 @@ public class PlayerManager : MonoBehaviour
         
         runSplitLogic();
         runSwitchLogic();
+        runCameraLogic();
         EnsureUpright();
 
     }
@@ -349,6 +352,7 @@ public class PlayerManager : MonoBehaviour
             splitStopwatch.Reset();
             Destroy(fixedJoint); // Split the halves
             fixedJoint = null;
+            ResetCamera(mainCamera);
 
             // Add rotation constraints when split
             frontHalf.GetComponent<Rigidbody>().constraints |= RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
@@ -375,6 +379,9 @@ public class PlayerManager : MonoBehaviour
             UnityEngine.Debug.Log("Trying to reconnect.");
             alignHalves();
             setJoint();
+            ResetCamera(player1Camera);
+            ResetCamera(player2Camera);
+
 
             // TODO: Apply animation
 
@@ -727,6 +734,73 @@ public class PlayerManager : MonoBehaviour
         mainCamera.LookAt = frontHalf.transform;
     }
     // SWITCHING METHODS ////////////////////////////////////////////
+
+    // CAMERA MOVEMENT METHODS ////////////////////////////////////////////
+    private void runCameraLogic()
+    {
+
+        if (fixedJoint != null)
+        {
+            UpdateMainCamera();
+        } else
+        {
+            UpdatePlayerCameras();
+        }
+
+    }
+
+    private void UpdateMainCamera()
+    {
+        Vector2 player1CameraInput = player1Input.GetCameraInput();
+        Vector2 player2CameraInput = player2Input.GetCameraInput();
+
+        if (mainCamera != null)
+        {
+            RotateCamera(mainCamera, player1CameraInput + player2CameraInput);
+        }
+    }
+
+    private void UpdatePlayerCameras()
+    {
+        Vector2 player1CameraInput = player1Input.GetCameraInput();
+        Vector2 player2CameraInput = player2Input.GetCameraInput();
+
+        if (player1Camera != null)
+        {
+            RotateCamera(player1Camera, player1CameraInput);
+        }
+        if (player2Camera != null)
+        {
+            RotateCamera(player2Camera, player2CameraInput);
+        }
+    }
+
+    private void RotateCamera(CinemachineCamera camera, Vector2 playerInput)
+    {
+        var composer = camera.GetComponent<CinemachineRotationComposer>();
+
+        if (composer != null)
+        {
+            composer.Composition.ScreenPosition.x = Mathf.Clamp(composer.Composition.ScreenPosition.x - playerInput.x, -0.3f, 0.3f);
+            composer.Composition.ScreenPosition.y = Mathf.Clamp(composer.Composition.ScreenPosition.y + playerInput.y, 0, 0.5f);
+
+        }
+        else
+        {
+            UnityEngine.Debug.LogError("Missing Cinemachine Rotation Composer");
+        }
+    }
+
+    private void ResetCamera(CinemachineCamera camera)
+    {
+        var composer = camera.GetComponent<CinemachineRotationComposer>();
+
+        if (composer != null)
+        {
+            composer.Composition.ScreenPosition = new Vector2(0, 0);
+        }
+    }
+    // CAMERA MOVEMENT METHODS ////////////////////////////////////////////
 
 
     // COLLISION METHODS ////////////////////////////////////////////
