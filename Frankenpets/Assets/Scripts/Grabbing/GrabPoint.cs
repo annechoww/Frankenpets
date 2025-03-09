@@ -37,6 +37,16 @@ public class GrabPoint : MonoBehaviour
     [Tooltip("Should this object completely prevent turning when grabbed?")]
     public bool preventTurning = false;
     
+    [Header("Virtual Tether Settings (For Draggable Objects)")]
+    [Tooltip("Spring constant for the virtual tether (higher = stiffer connection)")]
+    public float springConstant = 1000f;
+    
+    [Tooltip("Damping constant for the virtual tether (higher = less oscillation)")]
+    public float dampingConstant = 50f;
+    
+    [Tooltip("Maximum force that can be applied to the object via tether")]
+    public float maxTetherForce = 2000f;
+    
     private void Awake()
     {
         // Auto-find parent rigidbody if not set
@@ -55,10 +65,25 @@ public class GrabPoint : MonoBehaviour
         {
             Debug.LogWarning($"GrabPoint on {gameObject.name} has no Collider. Add a collider for it to be grabbable.");
         }
+        
+        // Auto-tag this object based on behavior
+        if (!CompareTag("Grabbable") && !CompareTag("Draggable"))
+        {
+            if (grabBehavior == GrabBehavior.Draggable)
+            {
+                gameObject.tag = "Draggable";
+            }
+            else
+            {
+                gameObject.tag = "Grabbable";
+            }
+            
+            Debug.LogWarning($"Auto-tagged grab point {gameObject.name} as '{gameObject.tag}'.");
+        }
     }
     
     /// <summary>
-    /// Configures a joint when this grab point is grabbed
+    /// Configures a joint when this grab point is grabbed using the traditional joint system
     /// </summary>
     public void ConfigureJoint(ConfigurableJoint joint)
     {
@@ -138,6 +163,22 @@ public class GrabPoint : MonoBehaviour
         {
             parentRigidbody.linearDamping = dragResistance * 10f; // Scale to useful range
         }
+    }
+    
+    /// <summary>
+    /// Configures a DragController with this grab point's properties
+    /// </summary>
+    public void ConfigureDragController(DragController controller)
+    {
+        if (controller == null) return;
+        
+        // Apply grab point-specific settings to the controller
+        controller.springConstant = springConstant;
+        controller.dampingConstant = dampingConstant;
+        controller.maxForce = maxTetherForce;
+        
+        // Adjust drag parameters based on weight and resistance
+        controller.ConfigureFromProperties(grabWeight, dragResistance);
     }
     
     private void OnDrawGizmos()

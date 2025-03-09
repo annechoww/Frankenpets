@@ -645,6 +645,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2608411191855228747, guid: 5dacd8d8e5def4dedb3c5e0c2bf31f2f, type: 3}
   m_PrefabInstance: {fileID: 299590844125054356}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2372912763661359560 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2649836075531246684, guid: 5dacd8d8e5def4dedb3c5e0c2bf31f2f, type: 3}
+  m_PrefabInstance: {fileID: 299590844125054356}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70b342d8ce5c2fd48b8fa3147d48d1d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &2924472841175106914 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3223887685593432310, guid: 5dacd8d8e5def4dedb3c5e0c2bf31f2f, type: 3}
@@ -765,6 +776,9 @@ MonoBehaviour:
   catRotation: 0
   dogRotation: 30
   dogVerticalOffset: -0.01
+  catWalkingRig: {fileID: 8809436252661109823}
+  dogWalkingRig: {fileID: 2372912763661359560}
+  animator: {fileID: 0}
 --- !u!4 &3274294248112807411 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7946954217834486484, guid: 14c06b414978c412887d11a54fd418de, type: 3}
@@ -961,10 +975,11 @@ MonoBehaviour:
   catClip: {fileID: 8300000, guid: eb871ad6bcf624904aee5606d1ae7925, type: 3}
   climbSpeed: 2
   climbCheckDistance: 0.5
+  useHybridGrabSystem: 1
+  mouthGrabPoint: {fileID: 0}
   defaultSpringForce: 1000
   defaultDamperForce: 20
   objectGrabPoint: {fileID: 6979432438313408638}
-  objectDragPoint: {fileID: 6213748360221064123}
   dogGlowColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   catGlowColor: {r: 1, g: 0, b: 0, a: 1}
   grabText: {fileID: 0}
