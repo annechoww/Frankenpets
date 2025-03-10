@@ -19,8 +19,12 @@ public class TailRigging : MonoBehaviour
 
     void Update(){
         neutralPosition = tailTarget.position + transform.up * verticalOffset + transform.right * horizontalOffset;
-        // Ray ray =  new Ray(neutralPosition, Vector3.down);
-        // Debug.DrawRay(ray.origin, ray.direction * 2f, Color.red);
+    }
+    
+    void OnEnable()
+    {
+        isMoving = false;
+        isMovingNaturally = false;
     }
 
     public void naturalTailMovement()
