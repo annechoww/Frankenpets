@@ -2,10 +2,32 @@ using UnityEngine;
 
 public class Startup : MonoBehaviour
 {
+    [Header("Controller Input")]
     public ControllerAssignment controllerAssignment;
-    public GameObject startText;
+    public InputHandler player1Input;
+    public InputHandler player2Input;
 
-    private void showText()
+    public GameObject startText;
+    public LevelLoader levelLoader;
+
+    void Update()
+    {
+        if (controllerAssignment.IsKeyboard() && Input.GetKey(KeyCode.Space))
+        {
+            if (levelLoader != null) 
+            {
+                levelLoader.LoadNextLevel();
+            }
+        } else if (!controllerAssignment.IsKeyboard() && (player1Input.GetJumpPressed() || player2Input.GetJumpPressed()))
+        {
+            if (levelLoader != null) 
+            {
+                levelLoader.LoadNextLevel();
+            }
+        }
+    }
+
+    void Awake()
     {
         if (controllerAssignment.IsKeyboard())
         {
