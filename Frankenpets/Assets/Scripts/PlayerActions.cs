@@ -106,16 +106,7 @@ public class PlayerActions : MonoBehaviour
     
     public Transform objectGrabPoint;
     //public Transform objectDragPoint;
-
     private bool isStanding = false;
-
-    [Header("Glowing Objects Variables")]
-    public Color dogGlowColor = Color.yellow;
-    public Color catGlowColor = Color.red;
-    private float glowIntensity = 2.0f;
-    private float glowDuration = 1.5f;
-    private Renderer[] dogObjects;
-    private Renderer[] catObjects;
 
     [Header("UI Variables")]
     public GameObject grabText;
@@ -157,31 +148,6 @@ public class PlayerActions : MonoBehaviour
         // grabText = GameObject.FindGameObjectWithTag("GrabText");
         getPlayerManager();
 
-        // Find all task objects
-        GameObject[] grabbableObjects = GameObject.FindGameObjectsWithTag("Grabbable");
-        GameObject[] draggableObjects = GameObject.FindGameObjectsWithTag("Draggable");
-        dogObjects = new Renderer[grabbableObjects.Length + draggableObjects.Length];
-
-        for (int i = 0; i < grabbableObjects.Length; i++)
-        {
-            dogObjects[i] = grabbableObjects[i].GetComponent<Renderer>();
-        }
-
-        for (int i = 0; i < draggableObjects.Length; i++)
-        {
-            dogObjects[grabbableObjects.Length + i - 1] = draggableObjects[i].GetComponent<Renderer>();
-        }
-
-        // Find all climbable objects
-        GameObject[] climbableObjects = GameObject.FindGameObjectsWithTag("Climbable");
-        catObjects = new Renderer[climbableObjects.Length];
-
-        for (int i = 0; i < climbableObjects.Length; i++)
-        {
-            catObjects[i] = climbableObjects[i].GetComponent<Renderer>();
-        }
-        //////////////////
-
         // Set the Controls Menu to keycaps or gamepad
         if (controllerAssignment.IsKeyboard())
         {
@@ -218,7 +184,6 @@ public class PlayerActions : MonoBehaviour
 
         if (isGrabbing) enforceAngleRestriction();
 
-        runGlowLogic();
         runControlsMenuLogic();
 
         // This makes the grabText and climbText float :3
@@ -1174,55 +1139,7 @@ private void StopDashEffect()
         }
 
     }
-
-////////////////////////////////////////// Glow Action ///////////////////////////////////////////////
-    private void runGlowLogic()
-    {
-        if (player1Input.GetGlowPressed() || player2Input.GetGlowPressed())
-        {
-            UnityEngine.Debug.Log("Glow button pressed");
-            StartCoroutine(GlowEffect());
-        }
-    }
-
-    private IEnumerator GlowEffect()
-    {
-        foreach (Renderer objRender in dogObjects)
-        {
-            if (objRender != null)
-            {
-                objRender.material.EnableKeyword("_EMISSION");
-                objRender.material.SetColor("_EmissionColor", dogGlowColor * glowIntensity);
-            }
-        }
-
-        foreach (Renderer objRender in catObjects)
-        {
-            if (objRender != null)
-            {
-                objRender.material.EnableKeyword("_EMISSION");
-                objRender.material.SetColor("_EmissionColor", catGlowColor * glowIntensity);
-            }
-        }
-
-        yield return new WaitForSeconds(glowDuration);
-
-        foreach (Renderer objRender in dogObjects)
-        {
-            if (objRender != null)
-            {
-                objRender.material.SetColor("_EmissionColor", Color.black);
-            }
-        }
-
-        foreach (Renderer objRender in catObjects)
-        {
-            if (objRender != null)
-            {
-                objRender.material.SetColor("_EmissionColor", Color.black);
-            }
-        }
-    }
+     
 
 ////////////////////////////////////////// Actions UI ///////////////////////////////////////////////
 
@@ -1246,7 +1163,7 @@ private void StopDashEffect()
         }
     }
 
-
+ 
 
     private void showClimbText(GameObject other)
     {
