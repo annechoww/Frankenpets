@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class DoorShatter : MonoBehaviour
 {
@@ -56,8 +57,20 @@ public class DoorShatter : MonoBehaviour
     }
 
     private void FinishTask(){
-        taskItem.color = completedColor;
-        // tutorialText.advanceTutorialStage();
         task.IsComplete = true;
+        IsComplete();
+    }
+
+    private void IsComplete()
+    {
+        List<Task> doorTasks = TaskManager.FindTasksByName("Shatter Door");
+        bool taskComplete = TaskManager.CheckTaskCompletion(doorTasks);
+        Debug.Log(taskComplete);
+        if (taskComplete)
+        {
+            taskItem.color = completedColor;
+            // tutorialText.advanceTutorialStage();
+        }
+
     }
 }
