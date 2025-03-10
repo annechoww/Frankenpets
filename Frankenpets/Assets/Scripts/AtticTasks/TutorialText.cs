@@ -6,6 +6,8 @@ using UnityEngine;
 public class TutorialText : MonoBehaviour
 {
     [Header("Text/Instruction Variables")]
+    public GameObject overlay;
+    public GameObject overlayBG;
     public TextMeshProUGUI tutorialText;
     public TextMeshProUGUI tutorialSmallText;
     public GameObject speechBubbleTwoTails;
@@ -75,7 +77,7 @@ public class TutorialText : MonoBehaviour
     private Task3Tutorial enterRugAreaTrigger;
     
     // State tracking variables
-    private int currTutorialStage = 0;
+    private int currTutorialStage = -1;
     private bool hasSplit = false;
     private bool hasReconnected = false;
     private bool hasSwitched = false;
@@ -146,11 +148,29 @@ public class TutorialText : MonoBehaviour
         P2ControlsDF = controlsCornerUIChild.transform.GetChild(1).transform.GetChild(1).gameObject;
         P2ControlsCB = controlsCornerUIChild.transform.GetChild(1).transform.GetChild(2).gameObject;
         P2ControlsDB = controlsCornerUIChild.transform.GetChild(1).transform.GetChild(3).gameObject;
+
+        if (isKeyboard){
+            overlay.transform.GetChild(0).GetChild(0).gameObject.SetActive(true);
+        } else if (!isKeyboard){
+            overlay.transform.GetChild(0).GetChild(1).gameObject.SetActive(true);
+        }
     }
 
     void Update()
     {
         updateControlsCornerUI();
+
+        if (getCurrTutorialStage() == tutStartOverlay)
+        {
+            handleOverlay();
+            if (isKeyboard && Input.GetKeyDown(KeyCode.Space))
+            {
+                tutOverlayOrder++;
+            } else if (!isKeyboard && (player1Input.GetJumpPressed() || player2Input.GetJumpPressed()))
+            {
+                tutOverlayOrder++;
+            }
+        }
 
         // BLOCK SPLITTING UNTIL tutSplit
         if (getCurrTutorialStage() < tutSplit)
@@ -241,6 +261,7 @@ public class TutorialText : MonoBehaviour
         }
     }
 
+    public const int tutStartOverlay = -1;
     public const int tutMoveToVase = 0;
     public const int tutBreakVase = 1;
     public const int tutSplit = 2;
@@ -254,6 +275,43 @@ public class TutorialText : MonoBehaviour
     public const int annoyedCat = 11;
     public const int leaveAttic = 12;
 
+    // tutorial overlay variables
+    private int tutOverlayOrder = 1;
+
+    public bool overlayDone()
+    {
+        return currTutorialStage!=-1;
+    }
+
+    private void handleOverlay()
+    {
+        switch(tutOverlayOrder)
+        {
+            
+            case 2:
+                overlay.transform.GetChild(1).gameObject.SetActive(false);
+                overlay.transform.GetChild(2).gameObject.SetActive(true);
+                break;
+            case 3:
+                overlay.transform.GetChild(2).gameObject.SetActive(false);
+                overlay.transform.GetChild(3).gameObject.SetActive(true);
+                break;
+            case 4:
+                overlay.transform.GetChild(3).gameObject.SetActive(false);
+                overlay.transform.GetChild(4).gameObject.SetActive(true);
+                break;
+            case 5:
+                overlay.transform.GetChild(4).gameObject.SetActive(false);
+                overlayBG.SetActive(false);
+                overlay.SetActive(false);
+                P1IconLarge.SetActive(true);
+                P2IconLarge.SetActive(true);
+                advanceTutorialStage();
+                break;
+        }
+    }
+
+
     // Update is called once per frame
     private void updateTutorialText()
     {
@@ -261,6 +319,8 @@ public class TutorialText : MonoBehaviour
         {
             case tutMoveToVase:
                 // Speech UI
+                P1IconLarge.SetActive(true);
+                P1IconLarge.SetActive(true);
                 speechBubbleTwoTails.SetActive(true);
                 tutorialText.transform.SetParent(speechBubbleTwoTails.transform, true);
                 tutorialText.text = "Let's move to the vase.";

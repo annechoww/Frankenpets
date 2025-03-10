@@ -1,11 +1,13 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 /* This file holds all functions pertaining to managing the tasks.
     Lists of Task Names Implemented
     - "Scatter Boxes" [0]
     - "Shatter Vase" [0]
     - "Move Rug" [0]
+
 */
 
 public class TaskManager : MonoBehaviour
@@ -35,9 +37,20 @@ public class TaskManager : MonoBehaviour
         return allTasks.Find(task => task.Name == name);
     }
 
+    public static List<Task> FindTasksByName(string name)
+    {
+        return allTasks.FindAll(task => task.Name == name);
+    }
+
     // Get all tasks of a specific level
     public static List<Task> GetAllTasksOfLevel(int level)
     {
         return allTasks.FindAll(task => task.Level == level);
+    }
+
+    public static bool CheckTaskCompletion(List<Task> tasks)
+    {
+        return tasks.All(task => task.IsComplete);
+
     }
 }

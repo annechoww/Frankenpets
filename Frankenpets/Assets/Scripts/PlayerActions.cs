@@ -122,13 +122,17 @@ public class PlayerActions : MonoBehaviour
     public GameObject climbText;
     public GameObject controlsMenu;
     private bool isViewingControlsMenu = false;
+    
+    // Tutorial overlay
+    [Header("Tutorial Overlay")]
+    public TutorialText tutorialTextScript;
 
     // Dash force settings:
     [Header("Dash Variables")]
     public float dashForce = 50f;
     public float dashUpwardForce = 2f;
 
-    // // Timing settings:
+    // Timing settings:
     public float dashDuration = 0.4f;
     public float dashCooldown = 1.2f;
     private float lastDashTime = -10f;
@@ -138,6 +142,14 @@ public class PlayerActions : MonoBehaviour
     private bool isDashing = false;
     private bool canDash = true;
     private float originalWalkSpeed;
+
+    private void OnValidate() 
+    {
+      // If dashSpeedMultiplier is still the old default, update it to the new default
+      if (Mathf.Approximately(dashSpeedMultiplier, 3.5f)) {
+          dashSpeedMultiplier = 10f;
+      }
+    }
 
     private void Start()
     {   
@@ -183,8 +195,18 @@ public class PlayerActions : MonoBehaviour
         }
     }
 
+    bool tutOverlayDone()
+    {
+        return tutorialTextScript.overlayDone();
+
+    }
+
     private void Update()
     {
+        if (!tutOverlayDone()){
+            return;
+        }
+
         runJumpLogic();
         runNoiseLogic();
         runClimbLogic();
