@@ -189,6 +189,16 @@ public class PlayerManager : MonoBehaviour
         EnsureUpright();
 
     }
+    void FixedUpdate()
+    {
+        if (fixedJoint != null)
+        {
+            runMovementLogic();
+        }
+        else {
+            runSeparatedMovementLogic();
+        }        
+    }
 
     // ADVANCED GETTERS/SETTERS ////////////////////////////////////////////
     public GameObject getFrontHalf()
@@ -344,8 +354,15 @@ public class PlayerManager : MonoBehaviour
         
         // Apply the combined translation (forward/back) to both halves:
         float combinedMove = moveInputP1 + moveInputP2;
-        frontHalf.transform.Translate(Vector3.forward * combinedMove * Time.deltaTime, Space.Self);
-        backHalf.transform.Translate(Vector3.forward * combinedMove * Time.deltaTime, Space.Self);
+        // frontHalf.transform.Translate(Vector3.forward * combinedMove * Time.deltaTime, Space.Self);
+        // backHalf.transform.Translate(Vector3.forward * combinedMove * Time.deltaTime, Space.Self);
+
+        Rigidbody frontRb = frontHalf.GetComponent<Rigidbody>();
+        Rigidbody backRb = backHalf.GetComponent<Rigidbody>();
+
+        Vector3 moveVector = frontHalf.transform.forward * (combinedMove * Time.deltaTime);
+        frontRb.MovePosition(frontRb.position + moveVector);
+        backRb.MovePosition(backRb.position + moveVector);
 
         // Update split condition checking for pulling opposite directions
         CheckSplitConditions(player1MoveInput.y, player2MoveInput.y);
@@ -368,14 +385,17 @@ public class PlayerManager : MonoBehaviour
         // Get player inputs
         Vector2 player1MoveInput = player1Input.GetMoveInput();
         Vector2 player2MoveInput = player2Input.GetMoveInput();
+
+        Rigidbody rb1 = P1.Half.GetComponent<Rigidbody>();
+        Rigidbody rb2 = P2.Half.GetComponent<Rigidbody>();
         
         // Movement for Player 1's half
         if (P1.Species == "dog") {
-            P1.Half.transform.Translate(Vector3.forward * player1MoveInput.y * walkSpeed * Time.deltaTime, Space.Self);
+            rb1.MovePosition(rb1.position + P1.Half.transform.forward * player1MoveInput.y * walkSpeed * Time.deltaTime);
             P2.Half.transform.Rotate(0.0f, player1MoveInput.x * turnSpeed, 0.0f, Space.Self);
         }
         else {
-            P1.Half.transform.Translate(Vector3.forward * player1MoveInput.y * immutableWalkSpeed * Time.deltaTime, Space.Self);
+            rb1.MovePosition(rb1.position + P1.Half.transform.forward * player1MoveInput.y * immutableWalkSpeed * Time.deltaTime);
             P1.Half.transform.Rotate(0.0f, player1MoveInput.x * immutableTurnSpeed, 0.0f, Space.Self);   
         }
         
@@ -383,11 +403,11 @@ public class PlayerManager : MonoBehaviour
         // Movement for Player 2's half
         
         if (P2.Species == "dog") {
-            P2.Half.transform.Translate(Vector3.forward * player2MoveInput.y * walkSpeed * Time.deltaTime, Space.Self);
+            rb2.MovePosition(rb2.position + P2.Half.transform.forward * player2MoveInput.y * walkSpeed * Time.deltaTime);
             P2.Half.transform.Rotate(0.0f, player2MoveInput.x * turnSpeed, 0.0f, Space.Self);
         }
         else {
-            P2.Half.transform.Translate(Vector3.forward * player2MoveInput.y * immutableWalkSpeed * Time.deltaTime, Space.Self);
+            rb2.MovePosition(rb2.position + P2.Half.transform.forward * player2MoveInput.y * immutableWalkSpeed * Time.deltaTime);
             P2.Half.transform.Rotate(0.0f, player2MoveInput.x * immutableTurnSpeed, 0.0f, Space.Self);
         }
         
@@ -789,6 +809,12 @@ public class PlayerManager : MonoBehaviour
         cameraMovement.frontHalf = frontHalf.transform;
         mainCamera.Follow = frontHalf.transform;
         mainCamera.LookAt = frontHalf.transform;
+
+        PlayerActions playerActions = GetComponent<PlayerActions>();
+        if (playerActions != null)
+        {
+            playerActions.RefreshAfterSwitch(this);
+        }
     }
     // SWITCHING METHODS ////////////////////////////////////////////
 

@@ -19,7 +19,7 @@ public class PlayerActions : MonoBehaviour
     [Header("Input References")]
     public InputHandler player1Input;
     public InputHandler player2Input;
-    private ControllerAssignment controllerAssignment;
+    public ControllerAssignment controllerAssignment;
 
     [Header("Jumping Variables")]
     private float jumpForce = 20f;
@@ -41,15 +41,15 @@ public class PlayerActions : MonoBehaviour
     private ClimbMovement climbMovementScript;
     // private GameObject climbText;
 
-    [Header("Dash Variables")]
-    public float dashSpeedMultiplier = 10f;  // Multiplier for player's movement speed during dash
-    public float dashDuration = 0.4f;        // How long the dash lasts
-    public float dashCooldown = 1.2f;        // Cooldown before next dash
-    private bool isDashing = false;          // If player is currently dashing
-    private bool canDash = true;             // If dash ability is available
-    private float lastDashTime = -10f;       // Time since last dash
-    private float dashTimeRemaining;         // Remaining time in current dash
-    private float originalWalkSpeed;         // Store original walk speed to restore after dash 
+    // [Header("Dash Variables")]
+    // public float dashSpeedMultiplier = 10f;  // Multiplier for player's movement speed during dash
+    // public float dashDuration = 0.4f;        // How long the dash lasts
+    // public float dashCooldown = 1.2f;        // Cooldown before next dash
+    // private bool isDashing = false;          // If player is currently dashing
+    // private bool canDash = true;             // If dash ability is available
+    // private float lastDashTime = -10f;       // Time since last dash
+    // private float dashTimeRemaining;         // Remaining time in current dash
+    // private float originalWalkSpeed;         // Store original walk speed to restore after dash 
 
     [Header("Grab System Settings")]
     [Tooltip("Whether to use the hybrid grab system with virtual tether for draggable objects")]
@@ -71,6 +71,11 @@ public class PlayerActions : MonoBehaviour
     private GrabPoint currentGrabPoint;
     private GrabbableObject currentGrabbableObject;
     private bool isDraggableObject = false;
+
+    [Header("Angle Restriction")]
+    [Tooltip("Maximum angle the pet can turn away from the grab point (in degrees)")]
+    public float maxTurnAngle = 45f;
+    private Vector3 initialGrabDirection;
 
     [Header("Grab Joint Settings")]
     public float defaultSpringForce = 1000f;
@@ -117,23 +122,39 @@ public class PlayerActions : MonoBehaviour
     public GameObject climbText;
     public GameObject controlsMenu;
     private bool isViewingControlsMenu = false;
-
+    
     // Tutorial overlay
     [Header("Tutorial Overlay")]
     public TutorialText tutorialTextScript;
 
-    private void OnValidate() {
-    // If dashSpeedMultiplier is still the old default, update it to the new default
-    if (Mathf.Approximately(dashSpeedMultiplier, 3.5f)) {
-        dashSpeedMultiplier = 10f;
+    // Dash force settings:
+    [Header("Dash Variables")]
+    public float dashForce = 50f;
+    public float dashUpwardForce = 2f;
+
+    // Timing settings:
+    public float dashDuration = 0.4f;
+    public float dashCooldown = 1.2f;
+    private float lastDashTime = -10f;
+    private float dashTimeRemaining;
+
+    // State flags:
+    private bool isDashing = false;
+    private bool canDash = true;
+    private float originalWalkSpeed;
+
+    private void OnValidate() 
+    {
+      // If dashSpeedMultiplier is still the old default, update it to the new default
+      if (Mathf.Approximately(dashSpeedMultiplier, 3.5f)) {
+          dashSpeedMultiplier = 10f;
+      }
     }
-}
 
     private void Start()
     {   
         // climbText = GameObject.FindGameObjectWithTag("ClimbText");
         // grabText = GameObject.FindGameObjectWithTag("GrabText");
-        controllerAssignment = GameObject.Find("Pet").GetComponent<ControllerAssignment>();
         getPlayerManager();
 
         // Find all task objects
@@ -194,6 +215,9 @@ public class PlayerActions : MonoBehaviour
         runPawLogic();
         // runHindLegsLogic();
         runDashLogic();
+
+        if (isGrabbing) enforceAngleRestriction();
+
         runGlowLogic();
         runControlsMenuLogic();
 
@@ -213,8 +237,6 @@ public class PlayerActions : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        print("P1 Species: " + P1.Species);
-        print("P2 Species: " + P2.Species);
         string frontSpecies = P1.IsFront ? P1.Species : P2.Species;
 
         if (other.CompareTag("Climbable") && frontSpecies == "cat")
@@ -304,6 +326,21 @@ public class PlayerActions : MonoBehaviour
         {
             UnityEngine.Debug.Log("Error in fetching playerManager");
         }
+    }
+
+    public void RefreshAfterSwitch(PlayerManager pm)
+    {
+        // 1) Update references to P1 and P2 based on the PlayerManager
+        P1 = pm.P1;
+        P2 = pm.P2;
+
+        // 2) Update references to the new front/back halves
+        frontHalf = pm.getFrontHalf();
+        backHalf = pm.getBackHalf();
+        frontRb = frontHalf.GetComponent<Rigidbody>();
+        backRb = backHalf.GetComponent<Rigidbody>();
+
+        UpdateControllerAssignment();
     }
 
 ////////////////////////////////////// Jump Logic /////////////////////////////////////
@@ -608,6 +645,12 @@ public class PlayerActions : MonoBehaviour
             return;
         }
 
+        // Store the initial direction from pet to grab point
+        // We only care about horizontal direction, so zero out the y component
+        Vector3 petToGrab = grabPoint - frontHalf.transform.position;
+        petToGrab.y = 0;
+        initialGrabDirection = petToGrab.normalized;
+
         // Apply movement restrictions regardless of grab method
         originalPlayerSpeed = playerManager.walkSpeed;
         applyMovementPenalty();
@@ -624,6 +667,89 @@ public class PlayerActions : MonoBehaviour
         }
 
         grabText.SetActive(false);
+    }
+
+    private void enforceAngleRestriction()
+    {
+        if (!isGrabbing || initialGrabDirection == Vector3.zero) return;
+        
+        // Get the current facing direction of the pet (in world space)
+        Vector3 currentFacing = frontHalf.transform.forward;
+        currentFacing.y = 0;
+        currentFacing.Normalize();
+        
+        // Get the current direction to the grab point (in world space)
+        Vector3 currentGrabDirection;
+        
+        if (useHybridGrabSystem && isDraggableObject && dragController != null)
+        {
+            // For drag controller, use the actual object position
+            Vector3 worldGrabPoint = dragController.gameObject.transform.TransformPoint(dragController.forceApplicationPoint);
+            currentGrabDirection = worldGrabPoint - frontHalf.transform.position;
+        }
+        else if (grabJoint != null)
+        {
+            // For joint system, use the connected body position
+            currentGrabDirection = grabJoint.connectedBody.transform.position - frontHalf.transform.position;
+        }
+        else
+        {
+            return; // No valid reference point
+        }
+        
+        // Zero out vertical component and normalize
+        currentGrabDirection.y = 0;
+        currentGrabDirection.Normalize();
+
+        float turnRestriction = 0;
+        if (currentGrabPoint != null) {
+            turnRestriction = currentGrabPoint.turnRestriction;
+        }
+        else if (currentGrabbableObject != null) {
+            turnRestriction = currentGrabbableObject.turnRestriction;
+        }
+        
+        // Calculate the angle between the pet's forward and the direction to the grab point
+        float currentAngle = Vector3.SignedAngle(currentFacing, currentGrabDirection, Vector3.up);
+
+        // Check if we're beyond the maximum angle
+        if (Mathf.Abs(currentAngle) > maxTurnAngle)
+        {
+            // Get turning input from player controls
+            bool player1IsFront = P1.IsFront;
+            Vector2 frontPlayerInput = player1IsFront ? player1Input.GetMoveInput() : player2Input.GetMoveInput();
+            float turnInputRaw = frontPlayerInput.x;
+
+            // Calculate the direction we should face to turn toward the object
+            Vector3 targetDirection = currentGrabDirection;
+            
+            // Calculate what the new forward direction would be after turning
+            // For this, we need to create a rotation based on player input
+            Quaternion turnRotation = Quaternion.Euler(0, turnInputRaw * playerManager.turnSpeed * Time.deltaTime, 0);
+            Vector3 newForward = turnRotation * currentFacing;
+            
+            // Compare current dot product (how much we're facing toward the object)
+            // with new dot product (how much we would face toward the object after turning)
+            float currentDot = Vector3.Dot(currentFacing, targetDirection);
+            float newDot = Vector3.Dot(newForward, targetDirection);
+            
+            // If the new direction faces more toward the object (higher dot product)
+            if (newDot > currentDot)
+            {
+                // Allow turning toward the object
+                playerManager.turnSpeed = originalTurnSpeed;
+            }
+            else
+            {
+                // Block turning away from the object
+                playerManager.turnSpeed = 0;
+            }
+        }
+        else
+        {
+            // Within acceptable angle range, use normal turn restriction
+            playerManager.turnSpeed = originalTurnSpeed * (1 - turnRestriction);
+        }
     }
      private void setupDragController(Rigidbody targetRigidbody)
     {
@@ -791,6 +917,7 @@ public class PlayerActions : MonoBehaviour
             turnRestriction = currentGrabbableObject.turnRestriction;
         }
 
+        // Apply turn restriction - we've simplified this to avoid rotation issues
         if (preventTurning) {
             playerManager.turnSpeed = 0f;
         } else {
@@ -817,6 +944,8 @@ public class PlayerActions : MonoBehaviour
     private void releaseGrabbedObject() 
     {
         UnityEngine.Debug.Log("Released item");
+
+        initialGrabDirection = Vector3.zero;
 
         if (useHybridGrabSystem && isDraggableObject) {
             if (dragController != null) {
@@ -947,26 +1076,50 @@ private void StartDash()
     lastDashTime = Time.time;
     dashTimeRemaining = dashDuration;
     
-    // Store the original walk speed to restore later
-    originalWalkSpeed = playerManager.walkSpeed;
+    // Get the rigidbodies for both halves
+    Rigidbody frontRb = playerManager.getFrontHalf().GetComponent<Rigidbody>();
+    Rigidbody backRb = playerManager.getBackHalf().GetComponent<Rigidbody>();
+
+    // Ensure continuous collision detection is enabled
+    frontRb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+    backRb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
     
-    // Temporarily boost the walk speed with our 
-    UnityEngine.Debug.Log("Dashing by " + dashSpeedMultiplier + "x");
-    playerManager.walkSpeed *= dashSpeedMultiplier;
+    // Determine the dash direction.
+    // For example, if the back half is the dashing side:
+    Vector3 dashDirection = backHalf.transform.forward;  // You can modify this if you want directional input
+    dashDirection.Normalize();
     
+    // Calculate the dash impulse.
+    // You can expose dashForce and dashUpwardForce as public variables in your class.
+    Vector3 dashImpulse = dashDirection * dashForce;  
+    dashImpulse += Vector3.up * dashUpwardForce; // Optional upward component
     
-    // Optional: Add visual or audio effects
+    // Optionally reset velocity so the dash is consistent.
+    frontRb.linearVelocity = Vector3.zero;
+    backRb.linearVelocity = Vector3.zero;
+    
+    // Apply the impulse force to both halves.
+    frontRb.AddForce(dashImpulse, ForceMode.Impulse);
+    backRb.AddForce(dashImpulse, ForceMode.Impulse);
+    
+    // Optional: Play dash effects (sound, particles, etc.)
     PlayDashEffect();
+
+    // Schedule the dash end after the dash duration.
+    Invoke(nameof(EndDash), dashDuration);
 }
 
 private void EndDash()
 {
     isDashing = false;
     
-    // Restore the original walk speed
-    playerManager.walkSpeed = originalWalkSpeed;
+    // Optional: if you disabled gravity during dash, re-enable it
+    Rigidbody frontRb = playerManager.getFrontHalf().GetComponent<Rigidbody>();
+    Rigidbody backRb = playerManager.getBackHalf().GetComponent<Rigidbody>();
+    frontRb.useGravity = true;
+    backRb.useGravity = true;
     
-    // Optional: Clean up any dash effects
+    // Optional: stop dash effects, etc.
     StopDashEffect();
 }
 
@@ -1072,6 +1225,29 @@ private void StopDashEffect()
     }
 
 ////////////////////////////////////////// Actions UI ///////////////////////////////////////////////
+
+    public void UpdateControllerAssignment()
+    {
+        controllerAssignment = GameObject.Find("Pet").GetComponent<ControllerAssignment>();
+        
+        // Update the UI elements based on current controller assignment
+        if (controllerAssignment != null)
+        {
+            if (controllerAssignment.IsKeyboard())
+            {
+                controlsMenu.transform.GetChild(0).gameObject.SetActive(true);
+                controlsMenu.transform.GetChild(1).gameObject.SetActive(false);
+            }
+            else
+            {
+                controlsMenu.transform.GetChild(0).gameObject.SetActive(false);
+                controlsMenu.transform.GetChild(1).gameObject.SetActive(true);
+            }
+        }
+    }
+
+
+
     private void showClimbText(GameObject other)
     {
         climbText.SetActive(true);
@@ -1154,3 +1330,4 @@ private void StopDashEffect()
         }
     }
 }
+
