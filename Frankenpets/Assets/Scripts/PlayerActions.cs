@@ -899,11 +899,14 @@ private void runDashLogic()
     // Just track dash time remaining if dashing
     if (isDashing && dashTimeRemaining > 0)
     {
+        // CHELSEA TODO: ENABLE THESE PARTICLES AFTER ATTACHING THEM TO DOGBACK
+        // playerManager.getBackHalf().transform.GetChild(3).gameObject.SetActive(true);
         dashTimeRemaining -= Time.deltaTime;
         
         // End dash when time expires
         if (dashTimeRemaining <= 0)
         {
+            // playerManager.getBackHalf().transform.GetChild(3).gameObject.SetActive(false);
             EndDash();
         }
     }
