@@ -26,11 +26,6 @@ public class MessageManager : MonoBehaviour
         StartCoroutine(disableAfterSeconds(cameraIndicator, 3.0f));
     }
 
-    public void switchFailMessage()
-    {
-        StartCoroutine(disableAfterSeconds(switchFail, 3.0f));
-    }
-
     public void switchSuccessMessage()
     {
         StartCoroutine(disableAfterSeconds(switchSuccess, 3.0f));
@@ -44,6 +39,16 @@ public class MessageManager : MonoBehaviour
     public void buttonHoldFailMessage()
     {
         StartCoroutine(disableAfterSeconds(buttonHoldFail, 3.0f));
+    }
+
+    public void switchFailMessageActivate()
+    {
+        switchFail.SetActive(true);
+    }
+
+    public void switchFailMessageDeactivate()
+    {
+        switchFail.SetActive(false);
     }
 
     public void startPressEnterToHideTutorial()
