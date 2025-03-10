@@ -118,6 +118,10 @@ public class PlayerActions : MonoBehaviour
     public GameObject controlsMenu;
     private bool isViewingControlsMenu = false;
 
+    // Tutorial overlay
+    [Header("Tutorial Overlay")]
+    public TutorialText tutorialTextScript;
+
     private void OnValidate() {
     // If dashSpeedMultiplier is still the old default, update it to the new default
     if (Mathf.Approximately(dashSpeedMultiplier, 3.5f)) {
@@ -170,8 +174,18 @@ public class PlayerActions : MonoBehaviour
         }
     }
 
+    bool tutOverlayDone()
+    {
+        return tutorialTextScript.overlayDone();
+
+    }
+
     private void Update()
     {
+        if (!tutOverlayDone()){
+            return;
+        }
+
         runJumpLogic();
         runNoiseLogic();
         runClimbLogic();
