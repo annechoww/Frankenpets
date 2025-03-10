@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Diagnostics;
 using UnityEngine;
 
 public class FindTasks : MonoBehaviour
@@ -11,6 +13,10 @@ public class FindTasks : MonoBehaviour
     [Header("Parent object containing all arrows and particles")]
     public GameObject arrowsAndParticlesParent;
 
+    [Header("Other variables")]
+    public InputHandler player1Input;
+    public InputHandler player2Input;
+
     private float glowDuration = 2.5f;
     private Light[] taskLights;
     private float[] roomLightIntensities;
@@ -18,11 +24,15 @@ public class FindTasks : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        taskLights = taskLights.GetComponentsInChildren<Light>();
+        // Get all task lights in the room
+        taskLights = taskLightsParent.GetComponentsInChildren<Light>();
 
-        foreach (Light light in roomLights)
+        // Store the original intensities of the room lights
+        roomLightIntensities = new float[roomLights.Length];
+
+        for (int i = 0; i < roomLights.Length; i++)
         {
-            roomLightIntensities.Add(light.intensity);
+            roomLightIntensities[i] = roomLights[i].intensity;
         }
     }
 
@@ -61,17 +71,17 @@ public class FindTasks : MonoBehaviour
 
     private void dimRoomLights()
     {
-        foreach (int idx in roomLights.Length)
+        for (int i = 0; i < roomLights.Length; i++)
         {
-            StartCoroutine(LerpLightIntensity(roomLights[idx], 0.5f, 1.0f));
+            StartCoroutine(LerpLightIntensity(roomLights[i], 0.5f, 1.0f));
         }
     }
 
     private void brightenRoomLights()
     {
-        foreach (int idx in roomLights.Length)
+        for (int i = 0; i < roomLights.Length; i++)
         {
-            StartCoroutine(LerpLightIntensity(roomLights[idx], roomLightIntensities[idx], 1.0f));
+            StartCoroutine(LerpLightIntensity(roomLights[i], roomLightIntensities[i], 1.0f));
         }
     }
 
@@ -82,7 +92,7 @@ public class FindTasks : MonoBehaviour
 
         while (time < duration)
         {
-            light.intensity = Mathf.lerp(startIntensity, targetIntensity, time / duration);
+            light.intensity = Mathf.Lerp(startIntensity, targetIntensity, time / duration);
             time += Time.deltaTime;
             yield return null;
         }
