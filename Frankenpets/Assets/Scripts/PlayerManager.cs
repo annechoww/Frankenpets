@@ -470,7 +470,10 @@ public class PlayerManager : MonoBehaviour
         if (CheckSwitchInput() && canSwitch) 
             tryStartSwitch();
         else
+        {
+            messageManager.switchFailMessageDeactivate();
             cancelSwitch();
+        }
 
         tryFinishSwitch();
     }
@@ -480,7 +483,7 @@ public class PlayerManager : MonoBehaviour
         if (fixedJoint == null)
         {
             // not allowed; show text to players saying they must be together 
-            messageManager.switchFailMessage();
+            messageManager.switchFailMessageActivate();
         }
         else
         {

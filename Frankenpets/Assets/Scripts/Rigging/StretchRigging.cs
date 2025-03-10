@@ -52,6 +52,8 @@ public class StretchRigging : MonoBehaviour
     private Vector3 stretchDirection = new Vector3(0, 1, 0); // stretch along Y-axis
     
     private PlayerManager playerManager;
+    private Transform[] frontBones;
+    private Transform[] backBones;
 
     void Awake()
     {
@@ -95,6 +97,9 @@ public class StretchRigging : MonoBehaviour
         cbL1TargetPosition = cbL1OGPosition;
         cbL2OGPosition = cbLeg2.localPosition;
         cbL2TargetPosition = cbL2OGPosition;
+
+        frontBones = new Transform[] { dfFrontTorso, cfFrontTorso, cfLeg1, cfLeg2 };
+        backBones = new Transform[] { dbBackTorso, dbLeg1, dbLeg2, cbBackTorso, cbLeg1, cbLeg2 };
     }
 
     void Update()
@@ -119,37 +124,26 @@ public class StretchRigging : MonoBehaviour
             dbL1TargetPosition = dbL1OGPosition + (stretchDirection.normalized * maxStretchDistance);
             dbL2TargetPosition = dbL2OGPosition + (stretchDirection.normalized * maxStretchDistance);
 
+            Vector3[] frontTargetPositions = { dfFTTargetPosition, cfFTTargetPosition, cfL1TargetPosition, cfL2TargetPosition };
+            Vector3[] backTargetPositions = { dbBTTargetPosition, dbL1TargetPosition, dbL2TargetPosition, cbBTTargetPosition, cbL1TargetPosition, cbL2TargetPosition };
+
+            for (int i = 0; i < frontBones.Length; i++)
+            {
+                frontBones[i].localPosition = Vector3.Lerp(frontBones[i].localPosition, frontTargetPositions[i], frontStretchSpeed * Time.deltaTime);
+                backBones[i].localPosition = Vector3.Lerp(backBones[i].localPosition, backTargetPositions[i], backStretchSpeed* Time.deltaTime);
+            }
         }
         else 
         {
             // Return to normal when split is cancelled or pets split
-            dfFTTargetPosition = dfFTOGPosition;
+            Vector3[] frontOriginalPositions = { dfFTOGPosition, cfFTOGPosition, cfL1OGPosition, cfL2OGPosition };
+            Vector3[] backOriginalPositions = { dbBTOGPosition, dbL1OGPosition, dbL2OGPosition, cbBTOGPosition, cbL1OGPosition, cbL2OGPosition };
 
-            dbBTTargetPosition = dbBTOGPosition;
-            dbL1TargetPosition = dbL1OGPosition;
-            dbL2TargetPosition = dbL2OGPosition;
-
-            cfFTTargetPosition = cfFTOGPosition;
-            cfL1TargetPosition = cfL1OGPosition;
-            cfL2TargetPosition = cfL2OGPosition;
-
-            cbBTTargetPosition = cbBTOGPosition;
-            cbL1TargetPosition = cbL1OGPosition;
-            cbL2TargetPosition = cbL2OGPosition;
-        }
-
-        Transform[] frontBones = { dfFrontTorso, cfFrontTorso, cfLeg1, cfLeg2 };
-        Vector3[] frontTargetPositions = { dfFTTargetPosition, cfFTTargetPosition, cfL1TargetPosition, cfL2TargetPosition };
-        Transform[] backBones = { dbBackTorso, dbLeg1, dbLeg2, cbBackTorso, cbLeg1, cbLeg2 };
-        Vector3[] backTargetPositions = { dbBTTargetPosition, dbL1TargetPosition, dbL2TargetPosition, cbBTTargetPosition, cbL1TargetPosition, cbL2TargetPosition };
-
-        float frontSpeed = (playerManager.shouldStretch() ? frontStretchSpeed : destretchSpeed) * Time.deltaTime;
-        float backSpeed = (playerManager.shouldStretch() ? backStretchSpeed : destretchSpeed) * Time.deltaTime;
-        
-        for (int i = 0; i < frontBones.Length; i++)
-        {
-            frontBones[i].localPosition = Vector3.Lerp(frontBones[i].localPosition, frontTargetPositions[i], frontSpeed);
-            backBones[i].localPosition = Vector3.Lerp(backBones[i].localPosition, backTargetPositions[i], backSpeed);
+            for (int i = 0; i < frontBones.Length; i++)
+            {
+                frontBones[i].localPosition = frontOriginalPositions[i];
+                backBones[i].localPosition = backOriginalPositions[i];
+            }
         }
     }
 }
