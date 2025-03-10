@@ -19,7 +19,7 @@ public class PlayerActions : MonoBehaviour
     [Header("Input References")]
     public InputHandler player1Input;
     public InputHandler player2Input;
-    private ControllerAssignment controllerAssignment;
+    public ControllerAssignment controllerAssignment;
 
     [Header("Jumping Variables")]
     private float jumpForce = 20f;
@@ -71,6 +71,11 @@ public class PlayerActions : MonoBehaviour
     private GrabPoint currentGrabPoint;
     private GrabbableObject currentGrabbableObject;
     private bool isDraggableObject = false;
+
+    [Header("Angle Restriction")]
+    [Tooltip("Maximum angle the pet can turn away from the grab point (in degrees)")]
+    public float maxTurnAngle = 45f;
+    private Vector3 initialGrabDirection;
 
     [Header("Grab Joint Settings")]
     public float defaultSpringForce = 1000f;
@@ -129,7 +134,6 @@ public class PlayerActions : MonoBehaviour
     {   
         // climbText = GameObject.FindGameObjectWithTag("ClimbText");
         // grabText = GameObject.FindGameObjectWithTag("GrabText");
-        controllerAssignment = GameObject.Find("Pet").GetComponent<ControllerAssignment>();
         getPlayerManager();
 
         // Find all grabbable objects
@@ -179,6 +183,9 @@ public class PlayerActions : MonoBehaviour
         runPawLogic();
         // runHindLegsLogic();
         runDashLogic();
+
+        if (isGrabbing) enforceAngleRestriction();
+
         runGlowLogic();
         runControlsMenuLogic();
 
@@ -198,8 +205,6 @@ public class PlayerActions : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        print("P1 Species: " + P1.Species);
-        print("P2 Species: " + P2.Species);
         string frontSpecies = P1.IsFront ? P1.Species : P2.Species;
 
         if (other.CompareTag("Climbable") && frontSpecies == "cat")
@@ -289,6 +294,21 @@ public class PlayerActions : MonoBehaviour
         {
             UnityEngine.Debug.Log("Error in fetching playerManager");
         }
+    }
+
+    public void RefreshAfterSwitch(PlayerManager pm)
+    {
+        // 1) Update references to P1 and P2 based on the PlayerManager
+        P1 = pm.P1;
+        P2 = pm.P2;
+
+        // 2) Update references to the new front/back halves
+        frontHalf = pm.getFrontHalf();
+        backHalf = pm.getBackHalf();
+        frontRb = frontHalf.GetComponent<Rigidbody>();
+        backRb = backHalf.GetComponent<Rigidbody>();
+
+        UpdateControllerAssignment();
     }
 
 ////////////////////////////////////// Jump Logic /////////////////////////////////////
@@ -593,6 +613,12 @@ public class PlayerActions : MonoBehaviour
             return;
         }
 
+        // Store the initial direction from pet to grab point
+        // We only care about horizontal direction, so zero out the y component
+        Vector3 petToGrab = grabPoint - frontHalf.transform.position;
+        petToGrab.y = 0;
+        initialGrabDirection = petToGrab.normalized;
+
         // Apply movement restrictions regardless of grab method
         originalPlayerSpeed = playerManager.walkSpeed;
         applyMovementPenalty();
@@ -609,6 +635,89 @@ public class PlayerActions : MonoBehaviour
         }
 
         grabText.SetActive(false);
+    }
+
+    private void enforceAngleRestriction()
+    {
+        if (!isGrabbing || initialGrabDirection == Vector3.zero) return;
+        
+        // Get the current facing direction of the pet (in world space)
+        Vector3 currentFacing = frontHalf.transform.forward;
+        currentFacing.y = 0;
+        currentFacing.Normalize();
+        
+        // Get the current direction to the grab point (in world space)
+        Vector3 currentGrabDirection;
+        
+        if (useHybridGrabSystem && isDraggableObject && dragController != null)
+        {
+            // For drag controller, use the actual object position
+            Vector3 worldGrabPoint = dragController.gameObject.transform.TransformPoint(dragController.forceApplicationPoint);
+            currentGrabDirection = worldGrabPoint - frontHalf.transform.position;
+        }
+        else if (grabJoint != null)
+        {
+            // For joint system, use the connected body position
+            currentGrabDirection = grabJoint.connectedBody.transform.position - frontHalf.transform.position;
+        }
+        else
+        {
+            return; // No valid reference point
+        }
+        
+        // Zero out vertical component and normalize
+        currentGrabDirection.y = 0;
+        currentGrabDirection.Normalize();
+
+        float turnRestriction = 0;
+        if (currentGrabPoint != null) {
+            turnRestriction = currentGrabPoint.turnRestriction;
+        }
+        else if (currentGrabbableObject != null) {
+            turnRestriction = currentGrabbableObject.turnRestriction;
+        }
+        
+        // Calculate the angle between the pet's forward and the direction to the grab point
+        float currentAngle = Vector3.SignedAngle(currentFacing, currentGrabDirection, Vector3.up);
+
+        // Check if we're beyond the maximum angle
+        if (Mathf.Abs(currentAngle) > maxTurnAngle)
+        {
+            // Get turning input from player controls
+            bool player1IsFront = P1.IsFront;
+            Vector2 frontPlayerInput = player1IsFront ? player1Input.GetMoveInput() : player2Input.GetMoveInput();
+            float turnInputRaw = frontPlayerInput.x;
+
+            // Calculate the direction we should face to turn toward the object
+            Vector3 targetDirection = currentGrabDirection;
+            
+            // Calculate what the new forward direction would be after turning
+            // For this, we need to create a rotation based on player input
+            Quaternion turnRotation = Quaternion.Euler(0, turnInputRaw * playerManager.turnSpeed * Time.deltaTime, 0);
+            Vector3 newForward = turnRotation * currentFacing;
+            
+            // Compare current dot product (how much we're facing toward the object)
+            // with new dot product (how much we would face toward the object after turning)
+            float currentDot = Vector3.Dot(currentFacing, targetDirection);
+            float newDot = Vector3.Dot(newForward, targetDirection);
+            
+            // If the new direction faces more toward the object (higher dot product)
+            if (newDot > currentDot)
+            {
+                // Allow turning toward the object
+                playerManager.turnSpeed = originalTurnSpeed;
+            }
+            else
+            {
+                // Block turning away from the object
+                playerManager.turnSpeed = 0;
+            }
+        }
+        else
+        {
+            // Within acceptable angle range, use normal turn restriction
+            playerManager.turnSpeed = originalTurnSpeed * (1 - turnRestriction);
+        }
     }
      private void setupDragController(Rigidbody targetRigidbody)
     {
@@ -776,6 +885,7 @@ public class PlayerActions : MonoBehaviour
             turnRestriction = currentGrabbableObject.turnRestriction;
         }
 
+        // Apply turn restriction - we've simplified this to avoid rotation issues
         if (preventTurning) {
             playerManager.turnSpeed = 0f;
         } else {
@@ -802,6 +912,8 @@ public class PlayerActions : MonoBehaviour
     private void releaseGrabbedObject() 
     {
         UnityEngine.Debug.Log("Released item");
+
+        initialGrabDirection = Vector3.zero;
 
         if (useHybridGrabSystem && isDraggableObject) {
             if (dragController != null) {
@@ -1057,6 +1169,29 @@ private void StopDashEffect()
     }
 
 ////////////////////////////////////////// Actions UI ///////////////////////////////////////////////
+
+    public void UpdateControllerAssignment()
+    {
+        controllerAssignment = GameObject.Find("Pet").GetComponent<ControllerAssignment>();
+        
+        // Update the UI elements based on current controller assignment
+        if (controllerAssignment != null)
+        {
+            if (controllerAssignment.IsKeyboard())
+            {
+                controlsMenu.transform.GetChild(0).gameObject.SetActive(true);
+                controlsMenu.transform.GetChild(1).gameObject.SetActive(false);
+            }
+            else
+            {
+                controlsMenu.transform.GetChild(0).gameObject.SetActive(false);
+                controlsMenu.transform.GetChild(1).gameObject.SetActive(true);
+            }
+        }
+    }
+
+
+
     private void showClimbText(GameObject other)
     {
         climbText.SetActive(true);
@@ -1095,7 +1230,6 @@ private void StopDashEffect()
     {
         grabText.SetActive(true);
         grabText.transform.position = other.transform.position + (Vector3.forward * 0.05f) - (Vector3.up * 0.10f);
-
         if (controllerAssignment.IsKeyboard())
         {
             if (P1.IsFront) grabText.transform.GetChild(0).gameObject.SetActive(true);
@@ -1139,3 +1273,4 @@ private void StopDashEffect()
         }
     }
 }
+

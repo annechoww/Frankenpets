@@ -76,7 +76,7 @@ public class ControllerAssignment: MonoBehaviour
 
     // UI uses this to determine gamepad vs. keycaps display
     public bool IsKeyboard()
-    {
-       return player1Input.currentControlScheme == keyboardScheme || player2Input.currentControlScheme == keyboardScheme;
+    {  
+        return player1Input.currentControlScheme == keyboardScheme || player2Input.currentControlScheme == keyboardScheme;
     }
 }
