@@ -88,6 +88,12 @@ public class PlayerManager : MonoBehaviour
     public bool canSwitch = true;
     public bool canSplit = true;
 
+    // Tutorial overlay
+    [Header("Tutorial Overlay")]
+    public TutorialText tutorialTextScript;
+
+
+
     void Awake()
     {
 
@@ -152,10 +158,20 @@ public class PlayerManager : MonoBehaviour
             UnityEngine.Debug.LogError("GameObject 'Messages' not found in the scene.");
         }
     }
+    
+    bool tutOverlayDone()
+    {
+        return tutorialTextScript.overlayDone();
+
+    }
 
     // Update is called once per frame
     void Update()
     {
+        if (!tutOverlayDone()){
+            return;
+        }
+
         if (fixedJoint != null)
         {
             runMovementLogic();
