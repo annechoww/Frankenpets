@@ -41,15 +41,15 @@ public class PlayerActions : MonoBehaviour
     private ClimbMovement climbMovementScript;
     // private GameObject climbText;
 
-    [Header("Dash Variables")]
-    public float dashSpeedMultiplier = 10f;  // Multiplier for player's movement speed during dash
-    public float dashDuration = 0.4f;        // How long the dash lasts
-    public float dashCooldown = 1.2f;        // Cooldown before next dash
-    private bool isDashing = false;          // If player is currently dashing
-    private bool canDash = true;             // If dash ability is available
-    private float lastDashTime = -10f;       // Time since last dash
-    private float dashTimeRemaining;         // Remaining time in current dash
-    private float originalWalkSpeed;         // Store original walk speed to restore after dash 
+    // [Header("Dash Variables")]
+    // public float dashSpeedMultiplier = 10f;  // Multiplier for player's movement speed during dash
+    // public float dashDuration = 0.4f;        // How long the dash lasts
+    // public float dashCooldown = 1.2f;        // Cooldown before next dash
+    // private bool isDashing = false;          // If player is currently dashing
+    // private bool canDash = true;             // If dash ability is available
+    // private float lastDashTime = -10f;       // Time since last dash
+    // private float dashTimeRemaining;         // Remaining time in current dash
+    // private float originalWalkSpeed;         // Store original walk speed to restore after dash 
 
     [Header("Grab System Settings")]
     [Tooltip("Whether to use the hybrid grab system with virtual tether for draggable objects")]
@@ -123,12 +123,21 @@ public class PlayerActions : MonoBehaviour
     public GameObject controlsMenu;
     private bool isViewingControlsMenu = false;
 
-    private void OnValidate() {
-    // If dashSpeedMultiplier is still the old default, update it to the new default
-    if (Mathf.Approximately(dashSpeedMultiplier, 3.5f)) {
-        dashSpeedMultiplier = 10f;
-    }
-}
+    // Dash force settings:
+    [Header("Dash Variables")]
+    public float dashForce = 50f;
+    public float dashUpwardForce = 2f;
+
+    // // Timing settings:
+    public float dashDuration = 0.4f;
+    public float dashCooldown = 1.2f;
+    private float lastDashTime = -10f;
+    private float dashTimeRemaining;
+
+    // State flags:
+    private bool isDashing = false;
+    private bool canDash = true;
+    private float originalWalkSpeed;
 
     private void Start()
     {   
@@ -1044,26 +1053,50 @@ private void StartDash()
     lastDashTime = Time.time;
     dashTimeRemaining = dashDuration;
     
-    // Store the original walk speed to restore later
-    originalWalkSpeed = playerManager.walkSpeed;
+    // Get the rigidbodies for both halves
+    Rigidbody frontRb = playerManager.getFrontHalf().GetComponent<Rigidbody>();
+    Rigidbody backRb = playerManager.getBackHalf().GetComponent<Rigidbody>();
+
+    // Ensure continuous collision detection is enabled
+    frontRb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+    backRb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
     
-    // Temporarily boost the walk speed with our 
-    UnityEngine.Debug.Log("Dashing by " + dashSpeedMultiplier + "x");
-    playerManager.walkSpeed *= dashSpeedMultiplier;
+    // Determine the dash direction.
+    // For example, if the back half is the dashing side:
+    Vector3 dashDirection = backHalf.transform.forward;  // You can modify this if you want directional input
+    dashDirection.Normalize();
     
+    // Calculate the dash impulse.
+    // You can expose dashForce and dashUpwardForce as public variables in your class.
+    Vector3 dashImpulse = dashDirection * dashForce;  
+    dashImpulse += Vector3.up * dashUpwardForce; // Optional upward component
     
-    // Optional: Add visual or audio effects
+    // Optionally reset velocity so the dash is consistent.
+    frontRb.linearVelocity = Vector3.zero;
+    backRb.linearVelocity = Vector3.zero;
+    
+    // Apply the impulse force to both halves.
+    frontRb.AddForce(dashImpulse, ForceMode.Impulse);
+    backRb.AddForce(dashImpulse, ForceMode.Impulse);
+    
+    // Optional: Play dash effects (sound, particles, etc.)
     PlayDashEffect();
+
+    // Schedule the dash end after the dash duration.
+    Invoke(nameof(EndDash), dashDuration);
 }
 
 private void EndDash()
 {
     isDashing = false;
     
-    // Restore the original walk speed
-    playerManager.walkSpeed = originalWalkSpeed;
+    // Optional: if you disabled gravity during dash, re-enable it
+    Rigidbody frontRb = playerManager.getFrontHalf().GetComponent<Rigidbody>();
+    Rigidbody backRb = playerManager.getBackHalf().GetComponent<Rigidbody>();
+    frontRb.useGravity = true;
+    backRb.useGravity = true;
     
-    // Optional: Clean up any dash effects
+    // Optional: stop dash effects, etc.
     StopDashEffect();
 }
 
