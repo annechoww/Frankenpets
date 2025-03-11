@@ -8,6 +8,11 @@ public class TabletopTask : MonoBehaviour
     public Image taskItem;
     public Color completedColor;
 
+    [Header("Locate Task Variables")]
+    public GameObject taskLight;
+    public GameObject taskParticle;
+    public GameObject arrow;
+
     public Task task = new Task("Empty Tabletop", 1);
     // private TutorialText tutorialText;
     private HashSet<Collider> itemsOnTable = new HashSet<Collider>();
@@ -49,5 +54,6 @@ public class TabletopTask : MonoBehaviour
         taskItem.color = completedColor;
         // tutorialText.advanceTutorialStage();
         task.IsComplete = true;
+        // GetComponent<FindTasks>().DestroyFindTaskMechanic(arrow, taskParticle, taskLight);
     }
 }

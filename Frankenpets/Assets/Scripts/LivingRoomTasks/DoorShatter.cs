@@ -17,6 +17,11 @@ public class DoorShatter : MonoBehaviour
     private bool isShattered = false;
     // private TutorialText tutorialText;
 
+    [Header("Locate Task Variables")]
+    public GameObject taskLight;
+    public GameObject taskParticle;
+    public GameObject arrow;
+
     void Awake()
     {
         // tutorialText = GameObject.Find("TutorialTextManager").GetComponent<TutorialText>();
@@ -59,6 +64,7 @@ public class DoorShatter : MonoBehaviour
     private void FinishTask(){
         task.IsComplete = true;
         IsComplete();
+        // GetComponent<FindTasks>().DestroyFindTaskMechanic(arrow, taskParticle, taskLight);
     }
 
     private void IsComplete()

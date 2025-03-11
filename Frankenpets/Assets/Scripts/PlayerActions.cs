@@ -124,8 +124,6 @@ public class PlayerActions : MonoBehaviour
 
     private void Start()
     {   
-        // climbText = GameObject.FindGameObjectWithTag("ClimbText");
-        // grabText = GameObject.FindGameObjectWithTag("GrabText");
         getPlayerManager();
 
         // Set the Controls Menu to keycaps or gamepad

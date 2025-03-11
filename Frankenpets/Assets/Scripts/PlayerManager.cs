@@ -161,6 +161,8 @@ public class PlayerManager : MonoBehaviour
     
     bool tutOverlayDone()
     {
+        // if (tutorialTextScript == null) return true;
+        
         return tutorialTextScript.overlayDone();
 
     }

@@ -59,10 +59,10 @@ public class LivingRoomText : MonoBehaviour
         yield return ShowMessage("We made it Level 2: The Living Room!");
         yield return ShowMessage("Explore the house and...");
         yield return ShowMessage("complete the to-do list to go to the next level.");
-        yield return ShowMessage("If you don't know how to do something...");
+        // yield return ShowMessage("If you don't know how to do something...");
 
         pressEnterToContinueUI.SetActive(false);
-        yield return ShowMessage("...you can make interactable objects glow.", "glow");
+        yield return ShowMessage("You can make to-do list items glow.", "glow");
         yield return ShowMessage("Take a look at the controls menu, too.", "menu");
 
         messageManager.startPressEnterToHideTutorial();
@@ -90,20 +90,20 @@ public class LivingRoomText : MonoBehaviour
         else yield return WaitForKey();
     }
 
-    private IEnumerator WaitForKey()
+    private IEnumerator WaitForKey() // KEY IS SPACE FOR KEYBOARD
     {
         // delay to prevent instant skipping if key was already down
         yield return new WaitForSeconds(0.1f);
 
         // wait for the key to be released first to prevent skipping the message
-        while (Input.GetKey(KeyCode.Return) || 
+        while (Input.GetKey(KeyCode.Space) || 
             player1Input.GetSwitchPressed() || player1Input.GetReconnectPressed() ||
             player2Input.GetSwitchPressed() || player2Input.GetReconnectPressed())
         {
             yield return null;
         }
 
-        while (!Input.GetKeyDown(KeyCode.Return) &&
+        while (!Input.GetKeyDown(KeyCode.Space) &&
                !player1Input.GetSwitchPressed() && !player1Input.GetReconnectPressed() &&
                !player2Input.GetSwitchPressed() && !player2Input.GetReconnectPressed())
         {

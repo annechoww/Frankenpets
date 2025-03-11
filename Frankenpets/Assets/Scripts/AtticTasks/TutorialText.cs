@@ -237,19 +237,19 @@ public class TutorialText : MonoBehaviour
         }
 
         // check for keypress / gamepad press on "creepy..."
-        if (getCurrTutorialStage() == 3 && checkForReturn())
+        if (getCurrTutorialStage() == 3 && checkForSpace())
         {
             advanceTutorialStage();
         }
 
         // check for keypress / gamepad press to close the tutorial
-        if (getCurrTutorialStage() == tutComplete && checkForReturn())
+        if (getCurrTutorialStage() == tutComplete && checkForSpace())
         {
             leaveTutorial();
         }
 
         // check for return key press to switch before exit attic
-        if (getCurrTutorialStage() == scaredDog && checkForReturn())
+        if (getCurrTutorialStage() == scaredDog && checkForSpace())
         {
             advanceTutorialStage();
         }
@@ -320,7 +320,7 @@ public class TutorialText : MonoBehaviour
             case tutMoveToVase:
                 // Speech UI
                 P1IconLarge.SetActive(true);
-                P1IconLarge.SetActive(true);
+                P2IconLarge.SetActive(true);
                 speechBubbleTwoTails.SetActive(true);
                 tutorialText.transform.SetParent(speechBubbleTwoTails.transform, true);
                 tutorialText.text = "Let's move to the vase.";
@@ -563,9 +563,9 @@ public class TutorialText : MonoBehaviour
         return currTutorialStage;
     }
 
-    public bool checkForReturn()
+    public bool checkForSpace()
     {
-        return Input.GetKeyDown(KeyCode.Return) || 
+        return Input.GetKeyDown(KeyCode.Space) || 
                player1Input.GetSwitchPressed() || player1Input.GetReconnectPressed() ||
                player2Input.GetSwitchPressed() || player2Input.GetReconnectPressed();
     }

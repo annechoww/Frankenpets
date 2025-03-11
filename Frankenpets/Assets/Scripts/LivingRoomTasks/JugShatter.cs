@@ -16,6 +16,11 @@ public class JugShatter : MonoBehaviour
     private bool isShattered = false;
     // private TutorialText tutorialText;
 
+    [Header("Locate Task Variables")]
+    public GameObject taskLight;
+    public GameObject taskParticle;
+    public GameObject arrow;
+
     void Awake()
     {
         // tutorialText = GameObject.Find("TutorialTextManager").GetComponent<TutorialText>();
@@ -56,5 +61,6 @@ public class JugShatter : MonoBehaviour
         taskItem.color = completedColor;
         // tutorialText.advanceTutorialStage();
         task.IsComplete = true;
+        // GetComponent<FindTasks>().DestroyFindTaskMechanic(arrow, taskParticle, taskLight);
     }
 }
