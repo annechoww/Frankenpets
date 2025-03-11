@@ -1233,7 +1233,7 @@ public class PlayerActions : MonoBehaviour
             controlsMenu.SetActive(true);
             isViewingControlsMenu = true;
         }
-        else if ((player1Input.GetGlowPressed() || player2Input.GetGlowPressed() || Input.GetKeyDown(KeyCode.I)) && isViewingControlsMenu)
+        else if ((player1Input.GetGlowPressed() || player2Input.GetGlowPressed() || Input.GetKeyUp(KeyCode.I)) && isViewingControlsMenu)
         {
             controlsMenu.SetActive(false);
             isViewingControlsMenu = false;

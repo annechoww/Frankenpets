@@ -19,6 +19,7 @@ public class MessageManager : MonoBehaviour
     void Awake()
     {
         controllerAssignment = FindObjectOfType<ControllerAssignment>();
+        UnityEngine.Debug.Log(controllerAssignment);
     }
 
     void Start()
