@@ -60259,6 +60259,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2014675728}
   m_CullTransparentMesh: 1
+--- !u!4 &2015224376 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 348433361082983509, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
+  m_PrefabInstance: {fileID: 4927122028046557369}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2018722454
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -67204,6 +67209,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1464558049}
     - target: {fileID: 4020232081103216799, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
+      propertyPath: dashForce
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 4020232081103216799, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
@@ -67212,8 +67221,28 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 395584572652875018}
     - target: {fileID: 4020232081103216799, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
+      propertyPath: dashCooldown
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4020232081103216799, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
+      propertyPath: dashDuration
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4020232081103216799, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
       propertyPath: glowDuration
       value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4020232081103216799, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
+      propertyPath: mouthGrabPoint
+      value: 
+      objectReference: {fileID: 2015224376}
+    - target: {fileID: 4020232081103216799, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
+      propertyPath: dashUpwardForce
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4020232081103216799, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
+      propertyPath: useHybridGrabSystem
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4020232081103216799, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
       propertyPath: controllerAssignment
@@ -67517,10 +67546,10 @@ MonoBehaviour:
   climbText: {fileID: 1464558049}
   controlsMenu: {fileID: 395584572652875018}
   tutorialTextScript: {fileID: 8001219944169260391}
-  dashForce: 50
-  dashUpwardForce: 2
-  dashDuration: 0.4
-  dashCooldown: 1.2
+  dashForce: 40
+  dashUpwardForce: 10
+  dashDuration: 1
+  dashCooldown: 1
 --- !u!64 &4927122028046557391
 MeshCollider:
   m_ObjectHideFlags: 0
