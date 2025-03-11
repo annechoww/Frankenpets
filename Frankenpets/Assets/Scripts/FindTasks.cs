@@ -209,7 +209,7 @@ public class FindTasks : MonoBehaviour
     {
         isGlowing = true;
 
-        dimRoomLights();
+        StartCoroutine(DimRoomLights());
 
         arrowsAndParticlesParent.SetActive(true);
 
@@ -246,24 +246,32 @@ public class FindTasks : MonoBehaviour
         yield return null;
     }
 
-    private void dimRoomLights()
+    private IEnumerator DimRoomLights()
     {
-        // StopAllLightCoroutines();
-        StopCoroutine("LerpLightIntensity");
+        StopCoroutine("StartFindTasksEffect");
+        StopAllLightCoroutines();
+        StopCoroutine("BrightenRoomLights");
+
+        // StartCoroutine(StopAllLightCoroutines());
         for (int i = 0; i < roomLights.Length; i++)
         {
             StartCoroutine(LerpLightIntensity(roomLights[i], 0.0f, fadeDuration));
+            yield return null;
         }
     }
 
     private IEnumerator BrightenRoomLights()
     {
-        // StopAllLightCoroutines();
+        StopCoroutine("EndFindTasksEffect");
+        StopAllLightCoroutines();
+        StopCoroutine("DimRoomLights");
+
         for (int i = 0; i < roomLights.Length; i++)
         {
             StartCoroutine(LerpLightIntensity(roomLights[i], roomLightIntensities[i], fadeDuration));
+            yield return null;
         }
-        yield return null;
+        
     }
 
     private IEnumerator LerpLightIntensity(Light light, float targetIntensity, float duration)

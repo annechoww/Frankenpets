@@ -734,7 +734,6 @@ public class PlayerManager : MonoBehaviour
                 setJoint();
             }
 
-            messageManager.switchSuccessMessage();
             UnityEngine.Debug.Log("Switched!");
         }
     }
