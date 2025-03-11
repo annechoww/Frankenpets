@@ -165,7 +165,7 @@ public class PlayerActions : MonoBehaviour
         // runHindLegsLogic();
         runDashLogic();
 
-        if (isGrabbing) enforceAngleRestriction();
+        if (isGrabbing && isDraggableObject) enforceAngleRestriction();
 
         runControlsMenuLogic();
 
