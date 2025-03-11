@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Diagnostics;
 using Unity.Cinemachine;
-using UnityEditor.VersionControl;
+// using UnityEditor.VersionControl;
 using UnityEngine.Rendering;
 using Unity.VisualScripting;
 using System;
@@ -734,7 +734,6 @@ public class PlayerManager : MonoBehaviour
                 setJoint();
             }
 
-            messageManager.switchSuccessMessage();
             UnityEngine.Debug.Log("Switched!");
         }
     }

@@ -150,7 +150,7 @@ public class LivingRoomText : MonoBehaviour
         P2SpeechIcons.SetActive(false);
 
         // Show player icons
-        miniPlayerIcons.transform.GetChild(0).gameObject.SetActive(true);
-        miniPlayerIcons.transform.GetChild(1).gameObject.SetActive(true);
+        // miniPlayerIcons.transform.GetChild(0).gameObject.SetActive(true);
+        // miniPlayerIcons.transform.GetChild(1).gameObject.SetActive(true);
     }
 }

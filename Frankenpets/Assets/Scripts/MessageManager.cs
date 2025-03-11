@@ -8,13 +8,25 @@ public class MessageManager : MonoBehaviour
     public GameObject reconnectFail;
     public GameObject cameraIndicator;
     public GameObject switchFail;
-    public GameObject switchSuccess;
     public GameObject fellOver;
     public GameObject buttonHoldFail;
     public GameObject pressEnterToHideTutorial;
     public GameObject pressEnterToContinue;
-
     public GameObject custom;
+
+    private ControllerAssignment controllerAssignment;
+
+    void Awake()
+    {
+        controllerAssignment = FindObjectOfType<ControllerAssignment>();
+    }
+
+    void Start()
+    {
+        bool isKeyboard = controllerAssignment.IsKeyboard();
+        pressEnterToHideTutorial.transform.GetChild(0).gameObject.SetActive(isKeyboard);
+        pressEnterToHideTutorial.transform.GetChild(1).gameObject.SetActive(!isKeyboard);
+    }
 
     public void reconnectFailMessage()
     {
@@ -24,11 +36,6 @@ public class MessageManager : MonoBehaviour
     public void cameraIndicatorMessage()
     {
         StartCoroutine(disableAfterSeconds(cameraIndicator, 3.0f));
-    }
-
-    public void switchSuccessMessage()
-    {
-        StartCoroutine(disableAfterSeconds(switchSuccess, 3.0f));
     }
 
     public void fellOverMessage()
