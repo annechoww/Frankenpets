@@ -1038,8 +1038,7 @@ public class PlayerActions : MonoBehaviour
         lastDashTime = Time.time;
         dashTimeRemaining = dashDuration;
         
-        // Get the rigidbodies for both halves
-        Rigidbody frontRb = playerManager.getFrontHalf().GetComponent<Rigidbody>();
+        // Get the rigidbody
         Rigidbody backRb = playerManager.getBackHalf().GetComponent<Rigidbody>();
 
         // Ensure continuous collision detection is enabled
@@ -1053,15 +1052,17 @@ public class PlayerActions : MonoBehaviour
         
         // Calculate the dash impulse.
         // You can expose dashForce and dashUpwardForce as public variables in your class.
-        Vector3 dashImpulse = dashDirection * dashForce;  
+        Vector3 dashImpulse = dashDirection * dashForce;
+        if (playerManager.getJoint() == null) {
+            dashImpulse *= 0.5f; // Reduce the force if not attached to front half
+        }  
         dashImpulse += Vector3.up * dashUpwardForce; // Optional upward component
         
         // Optionally reset velocity so the dash is consistent.
         // frontRb.linearVelocity = Vector3.zero;
         backRb.linearVelocity = Vector3.zero;
         
-        // Apply the impulse force to both halves.
-        // frontRb.AddForce(dashImpulse, ForceMode.Impulse);
+        // Apply the impulse force
         backRb.AddForce(dashImpulse, ForceMode.Impulse);
         
         // Optional: Play dash effects (sound, particles, etc.)
