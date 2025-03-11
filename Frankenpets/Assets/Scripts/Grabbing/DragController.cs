@@ -17,7 +17,7 @@ public class DragController : MonoBehaviour
     public float maxForce = 2000f;
     
     [Tooltip("Minimum distance before forces are applied (prevents jitter)")]
-    public float minDistance = 0.01f;
+    public float minDistance = 0.0001f;
     
     [Header("References")]
     [Tooltip("The transform that the object is being pulled toward (usually the mouth)")]
@@ -119,19 +119,11 @@ public class DragController : MonoBehaviour
     /// </summary>
     /// <param name="weight">Object weight value (0-10 scale)</param>
     /// <param name="resistance">Object resistance value (0-1 scale)</param>
-    public void ConfigureFromProperties(float weight, float resistance)
+    public void ConfigureFromProperties(float springConstant, float dampingConstant, float maxForce)
     {
-        // Adjust spring constant based on weight
-        // Heavier objects need stronger springs to be moved
-        springConstant = Mathf.Lerp(800f, 1500f, weight / 10f);
-        
-        // Adjust damping based on weight and resistance
-        // Heavier and more resistant objects need more damping
-        dampingConstant = Mathf.Lerp(20f, 100f, (weight / 10f + resistance) / 2f);
-        
-        // Adjust max force based on weight
-        // Heavier objects can experience more force before capping
-        maxForce = Mathf.Lerp(1500f, 3000f, weight / 10f);
+        this.springConstant = springConstant;
+        this.dampingConstant = dampingConstant;
+        this.maxForce = maxForce;
     }
     
     /// <summary>

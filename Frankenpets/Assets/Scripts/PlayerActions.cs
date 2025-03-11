@@ -165,7 +165,7 @@ public class PlayerActions : MonoBehaviour
         // runHindLegsLogic();
         runDashLogic();
 
-        if (isGrabbing && isDraggableObject) enforceAngleRestriction();
+        //if (isGrabbing && isDraggableObject) enforceAngleRestriction();
 
         runControlsMenuLogic();
 
@@ -714,27 +714,37 @@ public class PlayerActions : MonoBehaviour
         // Initialize the drag controller
         dragController.Initialize(objectGrabPoint, localGrabPoint);
         
-        // Configure the parameters based on object properties
-        float weight = 5f; // Default medium weight
-        float resistance = 0.5f; // Default medium resistance
+        // Get tether settings from the appropriate component
+        float springConstant = 1000f; // Default values
+        float dampingConstant = 50f;
+        float maxTetherForce = 2000f;
+        float weight = 5f;
+        float resistance = 0.5f;
         
         if (currentGrabPoint != null)
         {
             weight = currentGrabPoint.grabWeight;
             resistance = currentGrabPoint.dragResistance;
+            springConstant = currentGrabPoint.springConstant;
+            dampingConstant = currentGrabPoint.dampingConstant;
+            maxTetherForce = currentGrabPoint.maxTetherForce;
         }
         else if (currentGrabbableObject != null)
         {
             weight = currentGrabbableObject.grabWeight;
             resistance = currentGrabbableObject.dragResistance;
+            springConstant = currentGrabbableObject.springConstant;
+            dampingConstant = currentGrabbableObject.dampingConstant;
+            maxTetherForce = currentGrabbableObject.maxTetherForce;
         }
         
-        dragController.ConfigureFromProperties(weight, resistance);
+        // Configure the drag controller with the correct settings
+        dragController.ConfigureFromProperties(springConstant, dampingConstant, maxTetherForce);
         
         // Set visual state for dragging
         grabRiggingScript.drag();
         
-        UnityEngine.Debug.Log($"Set up drag controller for {targetRigidbody.gameObject.name} with weight: {weight}, resistance: {resistance}");
+        UnityEngine.Debug.Log($"Set up drag controller for {targetRigidbody.gameObject.name} with weight: {weight}, resistance: {resistance}, spring: {springConstant}, damping: {dampingConstant}, maxForce: {maxTetherForce}");
     }
 
     private void setupGrabJoint(Rigidbody targetRigidbody)
@@ -765,6 +775,11 @@ public class PlayerActions : MonoBehaviour
             // For portable objects, make them move to the dog's mouth
             grabJoint.autoConfigureConnectedAnchor = false;
             grabJoint.connectedAnchor = targetRigidbody.transform.InverseTransformPoint(targetRigidbody.transform.position);
+
+            // grabJoint.xMotion = ConfigurableJointMotion.Limited;
+            // grabJoint.yMotion = ConfigurableJointMotion.Limited;
+            // grabJoint.zMotion = ConfigurableJointMotion.Limited;
+
         } else {
             // For draggable objects using the joint system
             grabRiggingScript.drag();
@@ -1023,13 +1038,12 @@ public class PlayerActions : MonoBehaviour
         lastDashTime = Time.time;
         dashTimeRemaining = dashDuration;
         
-        // Get the rigidbodies for both halves
-        Rigidbody frontRb = playerManager.getFrontHalf().GetComponent<Rigidbody>();
+        // Get the rigidbody
         Rigidbody backRb = playerManager.getBackHalf().GetComponent<Rigidbody>();
 
         // Ensure continuous collision detection is enabled
-        frontRb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
-        backRb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+        // frontRb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+        // backRb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
         
         // Determine the dash direction.
         // For example, if the back half is the dashing side:
@@ -1038,15 +1052,17 @@ public class PlayerActions : MonoBehaviour
         
         // Calculate the dash impulse.
         // You can expose dashForce and dashUpwardForce as public variables in your class.
-        Vector3 dashImpulse = dashDirection * dashForce;  
+        Vector3 dashImpulse = dashDirection * dashForce;
+        if (playerManager.getJoint() == null) {
+            dashImpulse *= 0.5f; // Reduce the force if not attached to front half
+        }  
         dashImpulse += Vector3.up * dashUpwardForce; // Optional upward component
         
         // Optionally reset velocity so the dash is consistent.
-        frontRb.linearVelocity = Vector3.zero;
+        // frontRb.linearVelocity = Vector3.zero;
         backRb.linearVelocity = Vector3.zero;
         
-        // Apply the impulse force to both halves.
-        frontRb.AddForce(dashImpulse, ForceMode.Impulse);
+        // Apply the impulse force
         backRb.AddForce(dashImpulse, ForceMode.Impulse);
         
         // Optional: Play dash effects (sound, particles, etc.)

@@ -3350,6 +3350,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 212562157}
     - target: {fileID: 4020232081103216799, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
+      propertyPath: dashForce
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 4020232081103216799, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
@@ -3358,6 +3362,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 306708971}
     - target: {fileID: 4020232081103216799, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
+      propertyPath: dashCooldown
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4020232081103216799, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
+      propertyPath: dashDuration
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4020232081103216799, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
       propertyPath: glowDuration
       value: 1.5
       objectReference: {fileID: 0}
@@ -3365,6 +3377,10 @@ PrefabInstance:
       propertyPath: mouthGrabPoint
       value: 
       objectReference: {fileID: 1806445140}
+    - target: {fileID: 4020232081103216799, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
+      propertyPath: dashUpwardForce
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 4020232081103216799, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
       propertyPath: grabMouthPosition
       value: 
@@ -6741,8 +6757,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b805ee44a524ea6adb6c5d83f4dc16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelCompleteSound: {fileID: 0}
-  taskCompleteSound: {fileID: 0}
 --- !u!1001 &947054521
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -14624,7 +14638,7 @@ MonoBehaviour:
   catClip: {fileID: 8300000, guid: eb871ad6bcf624904aee5606d1ae7925, type: 3}
   climbSpeed: 1
   climbCheckDistance: 0.5
-  useHybridGrabSystem: 1
+  useHybridGrabSystem: 0
   mouthGrabPoint: {fileID: 0}
   maxTurnAngle: 45
   defaultSpringForce: 1000
@@ -14634,10 +14648,10 @@ MonoBehaviour:
   climbText: {fileID: 212562157}
   controlsMenu: {fileID: 306708971}
   tutorialTextScript: {fileID: 0}
-  dashForce: 50
-  dashUpwardForce: 2
-  dashDuration: 0.4
-  dashCooldown: 1.2
+  dashForce: 40
+  dashUpwardForce: 10
+  dashDuration: 1
+  dashCooldown: 1
 --- !u!1001 &1643360391
 PrefabInstance:
   m_ObjectHideFlags: 0
