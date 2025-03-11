@@ -31490,41 +31490,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 4101726842884554992, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
   m_PrefabInstance: {fileID: 4927122028046557369}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &968219723
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 968219716}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a7b625c5b3ce2416ba4c9fa88df6e959, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player1Input: {fileID: 4927122028046557372}
-  player2Input: {fileID: 4927122028046557370}
-  controllerAssignment: {fileID: 0}
-  jumpCooldown: 0.5
-  chargedJumpCooldown: 0.8
-  dogClip: {fileID: 8300000, guid: 418a120e114bd42ab9de1f36b93d9fa4, type: 3}
-  catClip: {fileID: 8300000, guid: eb871ad6bcf624904aee5606d1ae7925, type: 3}
-  climbSpeed: 2
-  climbCheckDistance: 0.5
-  useHybridGrabSystem: 1
-  mouthGrabPoint: {fileID: 0}
-  maxTurnAngle: 45
-  defaultSpringForce: 1000
-  defaultDamperForce: 20
-  objectGrabPoint: {fileID: 0}
-  grabText: {fileID: 0}
-  climbText: {fileID: 0}
-  controlsMenu: {fileID: 0}
-  tutorialTextScript: {fileID: 0}
-  dashForce: 50
-  dashUpwardForce: 2
-  dashDuration: 0.4
-  dashCooldown: 1.2
 --- !u!4 &968219724 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4694916103449667998, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
@@ -66721,13 +66686,7 @@ PrefabInstance:
       addedObject: {fileID: 1590321882}
     - targetCorrespondingSourceObject: {fileID: 4101726842884554992, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 968219723}
-    - targetCorrespondingSourceObject: {fileID: 4101726842884554992, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 968219730}
-    - targetCorrespondingSourceObject: {fileID: 1605266681318264582, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 4927122028046557381}
     - targetCorrespondingSourceObject: {fileID: 1605266681318264582, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4927122028046557391}
@@ -66800,41 +66759,6 @@ MonoBehaviour:
   climbText: {fileID: 1464558049}
   controlsMenu: {fileID: 3923455299687761692}
   tutorialTextScript: {fileID: 8001219944169260391}
-  dashForce: 50
-  dashUpwardForce: 2
-  dashDuration: 0.4
-  dashCooldown: 1.2
---- !u!114 &4927122028046557381
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 788605627}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a7b625c5b3ce2416ba4c9fa88df6e959, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player1Input: {fileID: 4927122028046557372}
-  player2Input: {fileID: 4927122028046557370}
-  controllerAssignment: {fileID: 0}
-  jumpCooldown: 0.5
-  chargedJumpCooldown: 0.8
-  dogClip: {fileID: 8300000, guid: 418a120e114bd42ab9de1f36b93d9fa4, type: 3}
-  catClip: {fileID: 8300000, guid: eb871ad6bcf624904aee5606d1ae7925, type: 3}
-  climbSpeed: 2
-  climbCheckDistance: 0.5
-  useHybridGrabSystem: 1
-  mouthGrabPoint: {fileID: 0}
-  maxTurnAngle: 45
-  defaultSpringForce: 1000
-  defaultDamperForce: 20
-  objectGrabPoint: {fileID: 0}
-  grabText: {fileID: 0}
-  climbText: {fileID: 0}
-  controlsMenu: {fileID: 0}
-  tutorialTextScript: {fileID: 0}
   dashForce: 50
   dashUpwardForce: 2
   dashDuration: 0.4

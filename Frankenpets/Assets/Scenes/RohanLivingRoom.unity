@@ -152,41 +152,6 @@ Transform:
   - {fileID: 1007462031}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6465554
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 378464681}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a7b625c5b3ce2416ba4c9fa88df6e959, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player1Input: {fileID: 378464678}
-  player2Input: {fileID: 378464677}
-  controllerAssignment: {fileID: 0}
-  jumpCooldown: 0.5
-  chargedJumpCooldown: 0.8
-  dogClip: {fileID: 8300000, guid: 418a120e114bd42ab9de1f36b93d9fa4, type: 3}
-  catClip: {fileID: 8300000, guid: eb871ad6bcf624904aee5606d1ae7925, type: 3}
-  climbSpeed: 2
-  climbCheckDistance: 0.5
-  useHybridGrabSystem: 1
-  mouthGrabPoint: {fileID: 0}
-  maxTurnAngle: 45
-  defaultSpringForce: 1000
-  defaultDamperForce: 20
-  objectGrabPoint: {fileID: 0}
-  grabText: {fileID: 0}
-  climbText: {fileID: 0}
-  controlsMenu: {fileID: 0}
-  tutorialTextScript: {fileID: 0}
-  dashForce: 50
-  dashUpwardForce: 2
-  dashDuration: 0.4
-  dashCooldown: 1.2
 --- !u!1 &19959245
 GameObject:
   m_ObjectHideFlags: 0
@@ -3208,12 +3173,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2241805733122842345, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1640013411}
-    - targetCorrespondingSourceObject: {fileID: 4101726842884554992, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 6465554}
-    - targetCorrespondingSourceObject: {fileID: 1605266681318264582, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1294040836}
   m_SourcePrefab: {fileID: 100100000, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
 --- !u!1 &378464673 stripped
 GameObject:
@@ -3265,11 +3224,6 @@ GameObject:
 --- !u!1 &378464680 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2241805733122842345, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
-  m_PrefabInstance: {fileID: 378464672}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &378464681 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4101726842884554992, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
   m_PrefabInstance: {fileID: 378464672}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &378464682 stripped
@@ -6176,8 +6130,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b805ee44a524ea6adb6c5d83f4dc16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelCompleteSound: {fileID: 0}
-  taskCompleteSound: {fileID: 0}
 --- !u!1001 &947054521
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7932,41 +7884,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 2681146375478943376, guid: 8537babd6d5004eebb8b00ae7a4dde12, type: 3}
   m_PrefabInstance: {fileID: 142181382}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1294040836
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 378464676}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a7b625c5b3ce2416ba4c9fa88df6e959, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player1Input: {fileID: 378464678}
-  player2Input: {fileID: 378464677}
-  controllerAssignment: {fileID: 0}
-  jumpCooldown: 0.5
-  chargedJumpCooldown: 0.8
-  dogClip: {fileID: 8300000, guid: 418a120e114bd42ab9de1f36b93d9fa4, type: 3}
-  catClip: {fileID: 8300000, guid: eb871ad6bcf624904aee5606d1ae7925, type: 3}
-  climbSpeed: 2
-  climbCheckDistance: 0.5
-  useHybridGrabSystem: 1
-  mouthGrabPoint: {fileID: 0}
-  maxTurnAngle: 45
-  defaultSpringForce: 1000
-  defaultDamperForce: 20
-  objectGrabPoint: {fileID: 0}
-  grabText: {fileID: 0}
-  climbText: {fileID: 0}
-  controlsMenu: {fileID: 0}
-  tutorialTextScript: {fileID: 0}
-  dashForce: 50
-  dashUpwardForce: 2
-  dashDuration: 0.4
-  dashCooldown: 1.2
 --- !u!1 &1312950533
 GameObject:
   m_ObjectHideFlags: 0
