@@ -265,15 +265,15 @@ public class TutorialText : MonoBehaviour
     public const int tutMoveToVase = 0;
     public const int tutBreakVase = 1;
     public const int tutSplit = 2;
-    public const int tutScatterBoxes = 4;
-    public const int tutReconnect = 5;
-    public const int tutMoveToRug = 6;
-    public const int tutSwitch = 7;
-    public const int tutDragRug = 8;
-    public const int tutComplete = 9;
-    public const int scaredDog = 10;
-    public const int annoyedCat = 11;
-    public const int leaveAttic = 12;
+    public const int tutScatterBoxes = 3;
+    public const int tutReconnect = 4;
+    public const int tutMoveToRug = 5;
+    public const int tutSwitch = 6;
+    public const int tutDragRug = 7;
+    public const int tutComplete = 8;
+    public const int scaredDog = 9;
+    public const int annoyedCat = 10;
+    public const int leaveAttic = 11;
 
     // tutorial overlay variables
     private int tutOverlayOrder = 1;
@@ -369,22 +369,22 @@ public class TutorialText : MonoBehaviour
                 // gif
 
                 break;
-            case 3:
-                splitUI.SetActive(false);
-                speechBubbleTwoTails.SetActive(false);
+            // case 3:
+            //     splitUI.SetActive(false);
+            //     speechBubbleTwoTails.SetActive(false);
 
-                speechBubbleLeft.SetActive(true);
-                tutorialText.transform.SetParent(speechBubbleLeft.transform, true);
-                tutorialText.text = "Creepy...";
-                pressEnterToContinueUI.SetActive(true);
+            //     speechBubbleLeft.SetActive(true);
+            //     tutorialText.transform.SetParent(speechBubbleLeft.transform, true);
+            //     tutorialText.text = "Creepy...";
+            //     pressEnterToContinueUI.SetActive(true);
 
-                GameObject backHalf = playerManager.getBackHalf();
-                // emote = playerManager.startEmote(backHalf, "sad");
-                if (whineSound != null)
-                {
-                    AudioSource.PlayClipAtPoint(whineSound, backHalf.transform.position);
-                }
-                break;
+            //     GameObject backHalf = playerManager.getBackHalf();
+            //     // emote = playerManager.startEmote(backHalf, "sad");
+            //     if (whineSound != null)
+            //     {
+            //         AudioSource.PlayClipAtPoint(whineSound, backHalf.transform.position);
+            //     }
+            //     break;
             // case 4:
             //     UnityEngine.Debug.Log("case 4");
             //     playerManager.cancelEmote(emote);
@@ -395,9 +395,11 @@ public class TutorialText : MonoBehaviour
             //     break;              
             case tutScatterBoxes:
                 // Cancel prev case
+                splitUI.SetActive(false);
+                speechBubbleTwoTails.SetActive(false);
                 // playerManager.cancelEmote(emote);
-                pressEnterToContinueUI.SetActive(false);
-                speechBubbleLeft.SetActive(false);
+                // pressEnterToContinueUI.SetActive(false);
+                // speechBubbleLeft.SetActive(false);
 
                 // Speech UI
                 speechBubbleRight.SetActive(true);
