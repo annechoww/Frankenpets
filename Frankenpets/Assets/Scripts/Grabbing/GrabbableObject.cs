@@ -165,20 +165,4 @@ public class GrabbableObject : MonoBehaviour
             objectRigidbody.linearDamping = dragResistance * 10f; // Scale to useful range
         }
     }
-    
-    /// <summary>
-    /// Configures a DragController with this object's properties
-    /// </summary>
-    public void ConfigureDragController(DragController controller)
-    {
-        if (controller == null) return;
-        
-        // Apply object-specific settings to the controller
-        controller.springConstant = springConstant;
-        controller.dampingConstant = dampingConstant;
-        controller.maxForce = maxTetherForce;
-        
-        // Adjust drag parameters based on weight and resistance
-        controller.ConfigureFromProperties(grabWeight, dragResistance);
-    }
 }

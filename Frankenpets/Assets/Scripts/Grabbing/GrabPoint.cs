@@ -165,22 +165,6 @@ public class GrabPoint : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// Configures a DragController with this grab point's properties
-    /// </summary>
-    public void ConfigureDragController(DragController controller)
-    {
-        if (controller == null) return;
-        
-        // Apply grab point-specific settings to the controller
-        controller.springConstant = springConstant;
-        controller.dampingConstant = dampingConstant;
-        controller.maxForce = maxTetherForce;
-        
-        // Adjust drag parameters based on weight and resistance
-        controller.ConfigureFromProperties(grabWeight, dragResistance);
-    }
-    
     private void OnDrawGizmos()
     {
         // Visualize grab points in the editor - different colors based on behavior
