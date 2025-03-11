@@ -2987,6 +2987,10 @@ PrefabInstance:
       propertyPath: useHybridGrabSystem
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4020232081103216799, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
+      propertyPath: controllerAssignment
+      value: 
+      objectReference: {fileID: 1048964975}
     - target: {fileID: 4101726842884554992, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -6634,6 +6638,17 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &1048964975 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 809403273594926195, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
+  m_PrefabInstance: {fileID: 378464672}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 378464673}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ce7d21167c7c8f4a950b0b318392cfb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1052529182
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7805,7 +7820,6 @@ MonoBehaviour:
   arrowsAndParticlesParent: {fileID: 5733479664845725220}
   player1Input: {fileID: 378464678}
   player2Input: {fileID: 378464677}
-  fadeDuration: 1
 --- !u!64 &1253450845
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -14396,7 +14410,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player1Input: {fileID: 378464678}
   player2Input: {fileID: 378464677}
-  controllerAssignment: {fileID: 0}
+  controllerAssignment: {fileID: 1048964975}
   jumpCooldown: 0.5
   chargedJumpCooldown: 0.8
   dogClip: {fileID: 8300000, guid: 418a120e114bd42ab9de1f36b93d9fa4, type: 3}
