@@ -22,6 +22,9 @@ public class LivingRoomText : MonoBehaviour
     [Header("Player Inputs")]
     public InputHandler player1Input;
     public InputHandler player2Input;
+
+    [Header("Sound")]
+    public AudioSource levelCompleteSound;
     
     private int currStage = 0;
     private MessageManager messageManager;
@@ -53,6 +56,8 @@ public class LivingRoomText : MonoBehaviour
 
     private IEnumerator TutorialSequence()
     {
+        levelCompleteSound.PlayDelayed(1);
+
         speechBubbleTwoTails.SetActive(true);
         pressEnterToContinueUI.SetActive(true);
 
@@ -128,6 +133,12 @@ public class LivingRoomText : MonoBehaviour
             yield return null;
         }
     }
+
+    // private IEnumerator PlayLevelCompleteSound()
+    // {
+    //     yield return new WaitForSeconds(0.5f);
+    //     levelCompleteSound.Play(0.5);
+    // }
 
     private void EndTutorial()
     {
