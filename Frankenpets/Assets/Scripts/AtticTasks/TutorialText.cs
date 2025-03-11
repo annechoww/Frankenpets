@@ -166,7 +166,7 @@ public class TutorialText : MonoBehaviour
             if (isKeyboard && Input.GetKeyDown(KeyCode.Space))
             {
                 tutOverlayOrder++;
-            } else if (!isKeyboard && (player1Input.GetJumpPressed() || player2Input.GetJumpPressed()))
+            } else if (!isKeyboard && (player1Input.GetGlowPressed() || player2Input.GetGlowPressed()))
             {
                 tutOverlayOrder++;
             }
@@ -568,8 +568,7 @@ public class TutorialText : MonoBehaviour
     public bool checkForSpace()
     {
         return Input.GetKeyDown(KeyCode.Space) || 
-               player1Input.GetSwitchPressed() || player1Input.GetReconnectPressed() ||
-               player2Input.GetSwitchPressed() || player2Input.GetReconnectPressed();
+               player1Input.GetGlowPressed() || player2Input.GetGlowPressed();
     }
 
     // Coroutines
