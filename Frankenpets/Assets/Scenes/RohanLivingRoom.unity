@@ -6057,8 +6057,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b805ee44a524ea6adb6c5d83f4dc16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelCompleteSound: {fileID: 0}
-  taskCompleteSound: {fileID: 0}
 --- !u!1001 &947054521
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8280,67 +8278,6 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 7860663910981750377, guid: 55c0aadf6693b417a80dd5c59deff6bd, type: 3}
---- !u!1001 &1421222441
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 714691934546842639, guid: 1299bd95ad1164df0b70f2d9d29fedb3, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -18.788342
-      objectReference: {fileID: 0}
-    - target: {fileID: 714691934546842639, guid: 1299bd95ad1164df0b70f2d9d29fedb3, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.94843006
-      objectReference: {fileID: 0}
-    - target: {fileID: 714691934546842639, guid: 1299bd95ad1164df0b70f2d9d29fedb3, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -24.431944
-      objectReference: {fileID: 0}
-    - target: {fileID: 714691934546842639, guid: 1299bd95ad1164df0b70f2d9d29fedb3, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: -0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 714691934546842639, guid: 1299bd95ad1164df0b70f2d9d29fedb3, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0.49999997
-      objectReference: {fileID: 0}
-    - target: {fileID: 714691934546842639, guid: 1299bd95ad1164df0b70f2d9d29fedb3, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 714691934546842639, guid: 1299bd95ad1164df0b70f2d9d29fedb3, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 714691934546842639, guid: 1299bd95ad1164df0b70f2d9d29fedb3, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 714691934546842639, guid: 1299bd95ad1164df0b70f2d9d29fedb3, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 714691934546842639, guid: 1299bd95ad1164df0b70f2d9d29fedb3, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3283310597390763522, guid: 1299bd95ad1164df0b70f2d9d29fedb3, type: 3}
-      propertyPath: m_Name
-      value: RightGlassDoorBroken
-      objectReference: {fileID: 0}
-    - target: {fileID: 3283310597390763522, guid: 1299bd95ad1164df0b70f2d9d29fedb3, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 1299bd95ad1164df0b70f2d9d29fedb3, type: 3}
 --- !u!1 &1439662636
 GameObject:
   m_ObjectHideFlags: 0
@@ -13745,6 +13682,7 @@ MonoBehaviour:
   brokenJug: {fileID: 5309689826864358989, guid: 64bebbe7c6a3e428da4488ab1b0a133a, type: 3}
   shatterForce: 3
   shatterSound: {fileID: 8300000, guid: d69e6f3b789f1429a87810cf2392e7f1, type: 3}
+  taskCompleteSound: {fileID: 8300000, guid: 7ede2ff7994054bccabde62d31c54d49, type: 3}
   taskItem: {fileID: 1343048895}
   completedColor: {r: 0, g: 0, b: 0, a: 0}
   taskLight: {fileID: 0}
@@ -13808,67 +13746,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &1563936032
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 3762766852400369385, guid: 64bebbe7c6a3e428da4488ab1b0a133a, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -16.113
-      objectReference: {fileID: 0}
-    - target: {fileID: 3762766852400369385, guid: 64bebbe7c6a3e428da4488ab1b0a133a, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.891
-      objectReference: {fileID: 0}
-    - target: {fileID: 3762766852400369385, guid: 64bebbe7c6a3e428da4488ab1b0a133a, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -23.5408
-      objectReference: {fileID: 0}
-    - target: {fileID: 3762766852400369385, guid: 64bebbe7c6a3e428da4488ab1b0a133a, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3762766852400369385, guid: 64bebbe7c6a3e428da4488ab1b0a133a, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3762766852400369385, guid: 64bebbe7c6a3e428da4488ab1b0a133a, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3762766852400369385, guid: 64bebbe7c6a3e428da4488ab1b0a133a, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3762766852400369385, guid: 64bebbe7c6a3e428da4488ab1b0a133a, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3762766852400369385, guid: 64bebbe7c6a3e428da4488ab1b0a133a, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3762766852400369385, guid: 64bebbe7c6a3e428da4488ab1b0a133a, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5309689826864358989, guid: 64bebbe7c6a3e428da4488ab1b0a133a, type: 3}
-      propertyPath: m_Name
-      value: BrokenJug
-      objectReference: {fileID: 0}
-    - target: {fileID: 5309689826864358989, guid: 64bebbe7c6a3e428da4488ab1b0a133a, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 64bebbe7c6a3e428da4488ab1b0a133a, type: 3}
 --- !u!1 &1565767124
 GameObject:
   m_ObjectHideFlags: 0
@@ -30251,6 +30128,7 @@ MonoBehaviour:
   brokenGlass: {fileID: 4461997106517542138, guid: 72b49d25d28064956a19b2af8bc9fcc3, type: 3}
   shatterForce: 1
   shatterSound: {fileID: 8300000, guid: d69e6f3b789f1429a87810cf2392e7f1, type: 3}
+  taskCompleteSound: {fileID: 8300000, guid: 7ede2ff7994054bccabde62d31c54d49, type: 3}
   taskItem: {fileID: 1100847930}
   completedColor: {r: 0, g: 0, b: 0, a: 0}
   taskLight: {fileID: 0}
@@ -33798,6 +33676,7 @@ MonoBehaviour:
   brokenGlass: {fileID: 3283310597390763522, guid: 1299bd95ad1164df0b70f2d9d29fedb3, type: 3}
   shatterForce: 1
   shatterSound: {fileID: 8300000, guid: d69e6f3b789f1429a87810cf2392e7f1, type: 3}
+  taskCompleteSound: {fileID: 8300000, guid: 7ede2ff7994054bccabde62d31c54d49, type: 3}
   taskItem: {fileID: 1100847930}
   completedColor: {r: 0, g: 0, b: 0, a: 0}
   taskLight: {fileID: 0}
@@ -35112,6 +34991,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   taskItem: {fileID: 142409995}
   completedColor: {r: 0, g: 0, b: 0, a: 0}
+  taskCompleteSound: {fileID: 8300000, guid: 7ede2ff7994054bccabde62d31c54d49, type: 3}
   taskLight: {fileID: 0}
   taskParticle: {fileID: 0}
   arrow: {fileID: 0}
@@ -41906,8 +41786,6 @@ SceneRoots:
   - {fileID: 1612502}
   - {fileID: 1502811286}
   - {fileID: 986084554}
-  - {fileID: 1563936032}
-  - {fileID: 1421222441}
   - {fileID: 2078175510}
   - {fileID: 1236479063}
   - {fileID: 1532170740}

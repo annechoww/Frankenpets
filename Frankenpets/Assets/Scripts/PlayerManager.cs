@@ -170,9 +170,9 @@ public class PlayerManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!tutOverlayDone()){
-            return;
-        }
+        // if (!tutOverlayDone()){
+        //     return;
+        // }
 
         if (fixedJoint != null)
         {

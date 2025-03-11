@@ -8,6 +8,7 @@ public class DoorShatter : MonoBehaviour
     public GameObject brokenGlass;
     public float shatterForce = 1f;
     public AudioClip shatterSound;
+    public AudioClip taskCompleteSound;
 
     [Header("Task Manager")]
     public Image taskItem;
@@ -15,6 +16,7 @@ public class DoorShatter : MonoBehaviour
 
     public Task task = new Task("Shatter Door", 1);
     private bool isShattered = false;
+    private AudioSource audioSource;
     // private TutorialText tutorialText;
 
     [Header("Locate Task Variables")]
@@ -25,6 +27,7 @@ public class DoorShatter : MonoBehaviour
     void Awake()
     {
         // tutorialText = GameObject.Find("TutorialTextManager").GetComponent<TutorialText>();
+        audioSource = GameObject.Find("Background Music").GetComponent<AudioSource>(); 
         TaskManager.RegisterTask(task);
     }
 
@@ -76,6 +79,10 @@ public class DoorShatter : MonoBehaviour
         {
             taskItem.color = completedColor;
             // tutorialText.advanceTutorialStage();
+            if (taskCompleteSound != null)
+            {
+                audioSource.PlayOneShot(taskCompleteSound);
+            }
         }
 
     }
