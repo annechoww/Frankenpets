@@ -1243,7 +1243,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 0c9dc1c5a95b14ce080da9c0e1ccaa71, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 737c06ca77f534d2da9f733da0796f77, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 0.87058824}
   m_FlipX: 0
   m_FlipY: 0
@@ -1400,8 +1400,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1631928661}
-  - component: {fileID: 1631928662}
   - component: {fileID: 1631928663}
+  - component: {fileID: 1631928662}
   m_Layer: 0
   m_Name: Player 2
   m_TagString: Untagged
@@ -1490,7 +1490,19 @@ MonoBehaviour:
     m_ActionId: 9d6b0527-4c70-4cc1-9a12-60724c05ec0f
     m_ActionName: 'Player2/CameraMove[/Keyboard/p,/Keyboard/semicolon,/Keyboard/l,/Keyboard/quote]'
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1631928663}
+        m_TargetAssemblyTypeName: InputHandler, Assembly-CSharp
+        m_MethodName: OnJump
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: 71d36ec8-9dfc-432c-99a0-c1b980eebd2f
     m_ActionName: 'Player2/Jump[/Keyboard/comma]'
   - m_PersistentCalls:
@@ -1684,7 +1696,19 @@ MonoBehaviour:
     m_ActionId: ec4b99f2-46b3-47ce-833c-722c203267ac
     m_ActionName: 'Player1/CameraMove[/Keyboard/t,/Keyboard/g,/Keyboard/f,/Keyboard/h]'
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2130024954}
+        m_TargetAssemblyTypeName: InputHandler, Assembly-CSharp
+        m_MethodName: OnJump
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: 4bdd50e5-2b0e-4c67-8d32-e5e0af868cec
     m_ActionName: 'Player1/Jump[/Keyboard/x]'
   - m_PersistentCalls:
