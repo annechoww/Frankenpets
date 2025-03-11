@@ -80,6 +80,10 @@ public class PlayerManager : MonoBehaviour
     public GameObject P2CatSpeechIcon;
     public GameObject P2DogSpeechIcon;
 
+    [Header("Sound")]
+    public AudioSource stretchAudioSource;
+    // public AudioSource switchAudioSource;
+
     // Others
     private MessageManager messageManager;
 
@@ -161,6 +165,8 @@ public class PlayerManager : MonoBehaviour
     
     bool tutOverlayDone()
     {
+        // if (tutorialTextScript == null) return true;
+        
         return tutorialTextScript.overlayDone();
 
     }
@@ -168,9 +174,9 @@ public class PlayerManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!tutOverlayDone()){
-            return;
-        }
+        // if (!tutOverlayDone()){
+        //     return;
+        // }
 
         if (fixedJoint != null)
         {
@@ -319,7 +325,11 @@ public class PlayerManager : MonoBehaviour
             if (!splitStopwatch.IsRunning)
             {
                 splitStopwatch.Start();
-                // TODO: stretch sound
+
+                if (!stretchAudioSource.isPlaying)
+                {
+                    stretchAudioSource.Play();
+                }
             }
         }
         else
@@ -327,6 +337,10 @@ public class PlayerManager : MonoBehaviour
             if (splitStopwatch.IsRunning)
             {
                 // TODO: stop stretch sound
+                if (stretchAudioSource.isPlaying)
+                {
+                    stretchAudioSource.Stop();
+                }
                 splitStopwatch.Reset();
             }
         }

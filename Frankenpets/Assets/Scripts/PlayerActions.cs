@@ -2,6 +2,7 @@ using System.Collections;
 using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
+using UnityEngine.SceneManagement;
 
 /**
 This Class handles all player actions. The actions are mapped as follows:
@@ -39,17 +40,6 @@ public class PlayerActions : MonoBehaviour
     private bool isClimbing = false;
     private Vector3 climbDirection;
     private ClimbMovement climbMovementScript;
-    // private GameObject climbText;
-
-    // [Header("Dash Variables")]
-    // public float dashSpeedMultiplier = 10f;  // Multiplier for player's movement speed during dash
-    // public float dashDuration = 0.4f;        // How long the dash lasts
-    // public float dashCooldown = 1.2f;        // Cooldown before next dash
-    // private bool isDashing = false;          // If player is currently dashing
-    // private bool canDash = true;             // If dash ability is available
-    // private float lastDashTime = -10f;       // Time since last dash
-    // private float dashTimeRemaining;         // Remaining time in current dash
-    // private float originalWalkSpeed;         // Store original walk speed to restore after dash 
 
     [Header("Grab System Settings")]
     [Tooltip("Whether to use the hybrid grab system with virtual tether for draggable objects")]
@@ -63,7 +53,6 @@ public class PlayerActions : MonoBehaviour
     private Collider grabbableObject;
     private bool canGrab = false;
     private bool isGrabbing = false;
-    // private GameObject grabText;
     private Vector3 mouthPosition;
     private Vector3 mouthDirection;
     private Vector3 grabPoint; // Position where the joint connects
@@ -106,16 +95,7 @@ public class PlayerActions : MonoBehaviour
     
     public Transform objectGrabPoint;
     //public Transform objectDragPoint;
-
     private bool isStanding = false;
-
-    [Header("Glowing Objects Variables")]
-    public Color dogGlowColor = Color.yellow;
-    public Color catGlowColor = Color.red;
-    private float glowIntensity = 2.0f;
-    private float glowDuration = 1.5f;
-    private Renderer[] dogObjects;
-    private Renderer[] catObjects;
 
     [Header("UI Variables")]
     public GameObject grabText;
@@ -143,44 +123,13 @@ public class PlayerActions : MonoBehaviour
     private bool canDash = true;
     private float originalWalkSpeed;
 
-    private void OnValidate() 
-    {
-      // If dashSpeedMultiplier is still the old default, update it to the new default
-      if (Mathf.Approximately(dashSpeedMultiplier, 3.5f)) {
-          dashSpeedMultiplier = 10f;
-      }
-    }
+    private string currentSceneName;
 
     private void Start()
     {   
-        // climbText = GameObject.FindGameObjectWithTag("ClimbText");
-        // grabText = GameObject.FindGameObjectWithTag("GrabText");
         getPlayerManager();
-
-        // Find all task objects
-        GameObject[] grabbableObjects = GameObject.FindGameObjectsWithTag("Grabbable");
-        GameObject[] draggableObjects = GameObject.FindGameObjectsWithTag("Draggable");
-        dogObjects = new Renderer[grabbableObjects.Length + draggableObjects.Length];
-
-        for (int i = 0; i < grabbableObjects.Length; i++)
-        {
-            dogObjects[i] = grabbableObjects[i].GetComponent<Renderer>();
-        }
-
-        for (int i = 0; i < draggableObjects.Length; i++)
-        {
-            dogObjects[grabbableObjects.Length + i - 1] = draggableObjects[i].GetComponent<Renderer>();
-        }
-
-        // Find all climbable objects
-        GameObject[] climbableObjects = GameObject.FindGameObjectsWithTag("Climbable");
-        catObjects = new Renderer[climbableObjects.Length];
-
-        for (int i = 0; i < climbableObjects.Length; i++)
-        {
-            catObjects[i] = climbableObjects[i].GetComponent<Renderer>();
-        }
-        //////////////////
+        Scene currentScene = SceneManager.GetActiveScene();
+        currentSceneName = currentScene.name;
 
         // Set the Controls Menu to keycaps or gamepad
         if (controllerAssignment.IsKeyboard())
@@ -203,9 +152,9 @@ public class PlayerActions : MonoBehaviour
 
     private void Update()
     {
-        if (!tutOverlayDone()){
-            return;
-        }
+        // if ((currentSceneName == "AtticLevel") && !tutOverlayDone() ){
+        //     return;
+        // }
 
         runJumpLogic();
         runNoiseLogic();
@@ -218,7 +167,6 @@ public class PlayerActions : MonoBehaviour
 
         if (isGrabbing) enforceAngleRestriction();
 
-        runGlowLogic();
         runControlsMenuLogic();
 
         // This makes the grabText and climbText float :3
@@ -940,7 +888,6 @@ public class PlayerActions : MonoBehaviour
             return;
         }
     }
-
     private void releaseGrabbedObject() 
     {
         UnityEngine.Debug.Log("Released item");
@@ -1027,130 +974,127 @@ public class PlayerActions : MonoBehaviour
 
     ////////////////////////////////////////////// Dash Action //////////////////////////////////////////////
     // Replace the existing runHindLegsLogic() with this implementation
-// New separate function for dash logic
-private void runDashLogic()
-{
-    // Get special action input for dash (dog back special)
-    bool player1Special = player1Input.GetSpecialActionPressed();
-    bool player2Special = player2Input.GetSpecialActionPressed();
-    
-    // Check for dog species in back position
-    string backSpecies = P1.IsFront ? P2.Species : P1.Species;
-    
-    // Only dogs can dash
-    if (backSpecies != "dog") return;
-    
-    // Just track dash time remaining if dashing
-    if (isDashing && dashTimeRemaining > 0)
+    // New separate function for dash logic
+    private void runDashLogic()
     {
-        dashTimeRemaining -= Time.deltaTime;
+        // Get special action input for dash (dog back special)
+        bool player1Special = player1Input.GetSpecialActionPressed();
+        bool player2Special = player2Input.GetSpecialActionPressed();
         
-        // End dash when time expires
-        if (dashTimeRemaining <= 0)
+        // Check for dog species in back position
+        string backSpecies = P1.IsFront ? P2.Species : P1.Species;
+        
+        // Only dogs can dash
+        if (backSpecies != "dog") return;
+        
+        // Just track dash time remaining if dashing
+        if (isDashing && dashTimeRemaining > 0)
         {
-            EndDash();
+            dashTimeRemaining -= Time.deltaTime;
+            
+            // End dash when time expires
+            if (dashTimeRemaining <= 0)
+            {
+                EndDash();
+            }
+        }
+        
+        // Check cooldown
+        if (Time.time - lastDashTime < dashCooldown)
+        {
+            canDash = false;
+        }
+        else
+        {
+            canDash = true;
+        }
+        
+        // Start dash when back dog player presses special
+        if (canDash && !isDashing && ((player1Special && !P1.IsFront) || (player2Special && !P2.IsFront)))
+        {
+            StartDash();
         }
     }
-    
-    // Check cooldown
-    if (Time.time - lastDashTime < dashCooldown)
+
+    private void StartDash()
     {
+        isDashing = true;
         canDash = false;
+        lastDashTime = Time.time;
+        dashTimeRemaining = dashDuration;
+        
+        // Get the rigidbodies for both halves
+        Rigidbody frontRb = playerManager.getFrontHalf().GetComponent<Rigidbody>();
+        Rigidbody backRb = playerManager.getBackHalf().GetComponent<Rigidbody>();
+
+        // Ensure continuous collision detection is enabled
+        frontRb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+        backRb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+        
+        // Determine the dash direction.
+        // For example, if the back half is the dashing side:
+        Vector3 dashDirection = backHalf.transform.forward;  // You can modify this if you want directional input
+        dashDirection.Normalize();
+        
+        // Calculate the dash impulse.
+        // You can expose dashForce and dashUpwardForce as public variables in your class.
+        Vector3 dashImpulse = dashDirection * dashForce;  
+        dashImpulse += Vector3.up * dashUpwardForce; // Optional upward component
+        
+        // Optionally reset velocity so the dash is consistent.
+        frontRb.linearVelocity = Vector3.zero;
+        backRb.linearVelocity = Vector3.zero;
+        
+        // Apply the impulse force to both halves.
+        frontRb.AddForce(dashImpulse, ForceMode.Impulse);
+        backRb.AddForce(dashImpulse, ForceMode.Impulse);
+        
+        // Optional: Play dash effects (sound, particles, etc.)
+        PlayDashEffect();
+
+        // Schedule the dash end after the dash duration.
+        Invoke(nameof(EndDash), dashDuration);
     }
-    else
+
+    private void EndDash()
     {
-        canDash = true;
+        isDashing = false;
+        
+        // Optional: if you disabled gravity during dash, re-enable it
+        Rigidbody frontRb = playerManager.getFrontHalf().GetComponent<Rigidbody>();
+        Rigidbody backRb = playerManager.getBackHalf().GetComponent<Rigidbody>();
+        frontRb.useGravity = true;
+        backRb.useGravity = true;
+        
+        // Optional: stop dash effects, etc.
+        StopDashEffect();
     }
-    
-    // Start dash when back dog player presses special
-    if (canDash && !isDashing && ((player1Special && !P1.IsFront) || (player2Special && !P2.IsFront)))
+
+    // Add visual/audio feedback for the dash
+    private void PlayDashEffect()
     {
-        StartDash();
+        // Play a sound effect
+        AudioSource audioSource = backHalf.GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = backHalf.AddComponent<AudioSource>();
+        }
+        
+        // TODO: Add a sound effect for dash
+        // audioSource.PlayOneShot(dashSound);
+        
+        // can add particle effects here
     }
-}
 
-private void StartDash()
-{
-    isDashing = true;
-    canDash = false;
-    lastDashTime = Time.time;
-    dashTimeRemaining = dashDuration;
-    
-    // Get the rigidbodies for both halves
-    Rigidbody frontRb = playerManager.getFrontHalf().GetComponent<Rigidbody>();
-    Rigidbody backRb = playerManager.getBackHalf().GetComponent<Rigidbody>();
-
-    // Ensure continuous collision detection is enabled
-    frontRb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
-    backRb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
-    
-    // Determine the dash direction.
-    // For example, if the back half is the dashing side:
-    Vector3 dashDirection = backHalf.transform.forward;  // You can modify this if you want directional input
-    dashDirection.Normalize();
-    
-    // Calculate the dash impulse.
-    // You can expose dashForce and dashUpwardForce as public variables in your class.
-    Vector3 dashImpulse = dashDirection * dashForce;  
-    dashImpulse += Vector3.up * dashUpwardForce; // Optional upward component
-    
-    // Optionally reset velocity so the dash is consistent.
-    frontRb.linearVelocity = Vector3.zero;
-    backRb.linearVelocity = Vector3.zero;
-    
-    // Apply the impulse force to both halves.
-    frontRb.AddForce(dashImpulse, ForceMode.Impulse);
-    backRb.AddForce(dashImpulse, ForceMode.Impulse);
-    
-    // Optional: Play dash effects (sound, particles, etc.)
-    PlayDashEffect();
-
-    // Schedule the dash end after the dash duration.
-    Invoke(nameof(EndDash), dashDuration);
-}
-
-private void EndDash()
-{
-    isDashing = false;
-    
-    // Optional: if you disabled gravity during dash, re-enable it
-    Rigidbody frontRb = playerManager.getFrontHalf().GetComponent<Rigidbody>();
-    Rigidbody backRb = playerManager.getBackHalf().GetComponent<Rigidbody>();
-    frontRb.useGravity = true;
-    backRb.useGravity = true;
-    
-    // Optional: stop dash effects, etc.
-    StopDashEffect();
-}
-
-// Add visual/audio feedback for the dash
-private void PlayDashEffect()
-{
-    // Play a sound effect
-    AudioSource audioSource = backHalf.GetComponent<AudioSource>();
-    if (audioSource == null)
+    private void StopDashEffect()
     {
-        audioSource = backHalf.AddComponent<AudioSource>();
+        // Stop any ongoing effects
+        // Example:
+        // if (dashEffectInstance != null)
+        // {
+        //     Destroy(dashEffectInstance);
+        // }
     }
-    
-    // TODO: Add a sound effect for dash
-    // audioSource.PlayOneShot(dashSound);
-    
-    // can add particle effects here
-}
-
-private void StopDashEffect()
-{
-    // Stop any ongoing effects
-    // Example:
-    // if (dashEffectInstance != null)
-    // {
-    //     Destroy(dashEffectInstance);
-    // }
-}
-
-
-
 
     ////////////////////////////////////////// Front Paws Action //////////////////////////////////////////////
     private void runPawLogic()
@@ -1174,55 +1118,7 @@ private void StopDashEffect()
         }
 
     }
-
-////////////////////////////////////////// Glow Action ///////////////////////////////////////////////
-    private void runGlowLogic()
-    {
-        if (player1Input.GetGlowPressed() || player2Input.GetGlowPressed())
-        {
-            UnityEngine.Debug.Log("Glow button pressed");
-            StartCoroutine(GlowEffect());
-        }
-    }
-
-    private IEnumerator GlowEffect()
-    {
-        foreach (Renderer objRender in dogObjects)
-        {
-            if (objRender != null)
-            {
-                objRender.material.EnableKeyword("_EMISSION");
-                objRender.material.SetColor("_EmissionColor", dogGlowColor * glowIntensity);
-            }
-        }
-
-        foreach (Renderer objRender in catObjects)
-        {
-            if (objRender != null)
-            {
-                objRender.material.EnableKeyword("_EMISSION");
-                objRender.material.SetColor("_EmissionColor", catGlowColor * glowIntensity);
-            }
-        }
-
-        yield return new WaitForSeconds(glowDuration);
-
-        foreach (Renderer objRender in dogObjects)
-        {
-            if (objRender != null)
-            {
-                objRender.material.SetColor("_EmissionColor", Color.black);
-            }
-        }
-
-        foreach (Renderer objRender in catObjects)
-        {
-            if (objRender != null)
-            {
-                objRender.material.SetColor("_EmissionColor", Color.black);
-            }
-        }
-    }
+     
 
 ////////////////////////////////////////// Actions UI ///////////////////////////////////////////////
 
@@ -1245,8 +1141,6 @@ private void StopDashEffect()
             }
         }
     }
-
-
 
     private void showClimbText(GameObject other)
     {

@@ -7,6 +7,7 @@ public class JugShatter : MonoBehaviour
     public GameObject brokenJug;
     public float shatterForce = 1f;
     public AudioClip shatterSound;
+    public AudioClip taskCompleteSound;
 
     [Header("Task Manager")]
     public Image taskItem;
@@ -14,11 +15,18 @@ public class JugShatter : MonoBehaviour
 
     public Task task = new Task("Shatter Jug", 1);
     private bool isShattered = false;
+    private AudioSource audioSource;
     // private TutorialText tutorialText;
+
+    [Header("Locate Task Variables")]
+    public GameObject taskLight;
+    public GameObject taskParticle;
+    public GameObject arrow;
 
     void Awake()
     {
         // tutorialText = GameObject.Find("TutorialTextManager").GetComponent<TutorialText>();
+        audioSource = GameObject.Find("Background Music").GetComponent<AudioSource>(); 
         TaskManager.RegisterTask(task);
     }
 
@@ -56,5 +64,10 @@ public class JugShatter : MonoBehaviour
         taskItem.color = completedColor;
         // tutorialText.advanceTutorialStage();
         task.IsComplete = true;
+        // GetComponent<FindTasks>().DestroyFindTaskMechanic(arrow, taskParticle, taskLight);
+        if (taskCompleteSound != null)
+        {
+            audioSource.PlayOneShot(taskCompleteSound);
+        }
     }
 }
