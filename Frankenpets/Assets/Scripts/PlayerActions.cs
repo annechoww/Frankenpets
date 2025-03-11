@@ -2,6 +2,7 @@ using System.Collections;
 using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
+using UnityEngine.SceneManagement;
 
 /**
 This Class handles all player actions. The actions are mapped as follows:
@@ -122,9 +123,13 @@ public class PlayerActions : MonoBehaviour
     private bool canDash = true;
     private float originalWalkSpeed;
 
+    private string currentSceneName;
+
     private void Start()
     {   
         getPlayerManager();
+        Scene currentScene = SceneManager.GetActiveScene();
+        currentSceneName = currentScene.name;
 
         // Set the Controls Menu to keycaps or gamepad
         if (controllerAssignment.IsKeyboard())
@@ -147,7 +152,7 @@ public class PlayerActions : MonoBehaviour
 
     private void Update()
     {
-        if (!tutOverlayDone()){
+        if ((currentSceneName == "AtticLevel") && !tutOverlayDone() ){
             return;
         }
 
