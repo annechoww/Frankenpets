@@ -9,6 +9,7 @@ public class BoxCollisionManager : MonoBehaviour
     public Task task = new Task("Scatter Boxes", 0);
     public Image taskItem;
     public Color completedColor;
+    public AudioClip taskCompleteSound;
 
     public static int collidedBoxes = 0;
     //public static HashSet<GameObject> frontBoxes = new HashSet<GameObject>(); 
@@ -17,6 +18,7 @@ public class BoxCollisionManager : MonoBehaviour
     private static bool backBoxes = false;
 
     private TutorialText tutorialText;
+    private AudioSource audioSource;
     private bool isFirstCollision = true;
 
 
@@ -33,6 +35,7 @@ public class BoxCollisionManager : MonoBehaviour
         }
 
         tutorialText = GameObject.Find("TutorialTextManager").GetComponent<TutorialText>();
+        audioSource = GameObject.Find("Background Music").GetComponent<AudioSource>(); 
         TaskManager.RegisterTask(task);
     }
     
@@ -70,10 +73,16 @@ public class BoxCollisionManager : MonoBehaviour
     private void FinishTask(){
         taskItem.color = completedColor;
         task.IsComplete = true;
+
         if (isFirstCollision && (tutorialText.getCurrTutorialStage() == TutorialText.tutScatterBoxes))
         {
             tutorialText.advanceTutorialStage();
             isFirstCollision = false;
+
+            if (taskCompleteSound != null)
+            {
+                audioSource.PlayOneShot(taskCompleteSound);
+            }
         }
     }
 

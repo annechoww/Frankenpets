@@ -7,9 +7,11 @@ public class MoveRugTask : MonoBehaviour
     public Color completedColor;
     public GameObject openedAtticDoor;
     public Rigidbody rug;
+    public AudioClip taskCompleteSound;
 
     private TutorialText tutorialText;
     private Task task = new Task("Move Rug", 0);
+    private AudioSource audioSource;
 
     private float minTime = 3f;
     private float timeSinceCollision = 0f;
@@ -18,6 +20,7 @@ public class MoveRugTask : MonoBehaviour
     void Awake()
     {
         TaskManager.RegisterTask(task);
+        audioSource = GameObject.Find("Background Music").GetComponent<AudioSource>(); 
         rug.constraints = RigidbodyConstraints.FreezeAll;
         foreach (Transform child in rug.transform)
         {
@@ -83,6 +86,10 @@ public class MoveRugTask : MonoBehaviour
         OpenAtticDoor();
         gameObject.SetActive(false);
         task.IsComplete = true;
+        if (taskCompleteSound != null)
+        {
+            audioSource.PlayOneShot(taskCompleteSound);
+        }
     }
 
     public static bool ArePriorTasksComplete()

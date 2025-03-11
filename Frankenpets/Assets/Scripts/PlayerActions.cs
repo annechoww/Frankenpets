@@ -152,9 +152,9 @@ public class PlayerActions : MonoBehaviour
 
     private void Update()
     {
-        if ((currentSceneName == "AtticLevel") && !tutOverlayDone() ){
-            return;
-        }
+        // if ((currentSceneName == "AtticLevel") && !tutOverlayDone() ){
+        //     return;
+        // }
 
         runJumpLogic();
         runNoiseLogic();

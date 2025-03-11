@@ -17057,6 +17057,7 @@ MonoBehaviour:
   completedColor: {r: 0.36862746, g: 0.36862746, b: 0.36862746, a: 1}
   openedAtticDoor: {fileID: 1152593092}
   rug: {fileID: 799820535}
+  taskCompleteSound: {fileID: 8300000, guid: 7ede2ff7994054bccabde62d31c54d49, type: 3}
 --- !u!64 &575251432
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -33071,6 +33072,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2687008451295491790}
     - target: {fileID: 2370152793520678020, guid: e09975c19278a4d7ea15e6bc89e1280e, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1528965909}
+    - target: {fileID: 2370152793520678020, guid: e09975c19278a4d7ea15e6bc89e1280e, type: 3}
       propertyPath: completedColor.a
       value: 1
       objectReference: {fileID: 0}
@@ -33086,6 +33091,10 @@ PrefabInstance:
       propertyPath: completedColor.r
       value: 0.36862746
       objectReference: {fileID: 0}
+    - target: {fileID: 2370152793520678020, guid: e09975c19278a4d7ea15e6bc89e1280e, type: 3}
+      propertyPath: taskCompleteSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 7ede2ff7994054bccabde62d31c54d49, type: 3}
     - target: {fileID: 4965741891866324775, guid: e09975c19278a4d7ea15e6bc89e1280e, type: 3}
       propertyPath: m_Mass
       value: 10
@@ -59670,6 +59679,10 @@ PrefabInstance:
       propertyPath: taskItem
       value: 
       objectReference: {fileID: 4899070713667966009}
+    - target: {fileID: 1176935409274789653, guid: 5ae954b2afb784c1cb9c1b811296ed69, type: 3}
+      propertyPath: taskCompleteSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 7ede2ff7994054bccabde62d31c54d49, type: 3}
     - target: {fileID: 2559958541931393534, guid: 5ae954b2afb784c1cb9c1b811296ed69, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.32
