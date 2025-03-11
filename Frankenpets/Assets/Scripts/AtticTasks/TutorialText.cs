@@ -379,7 +379,7 @@ public class TutorialText : MonoBehaviour
                 pressEnterToContinueUI.SetActive(true);
 
                 GameObject backHalf = playerManager.getBackHalf();
-                emote = playerManager.startEmote(backHalf, "sad");
+                // emote = playerManager.startEmote(backHalf, "sad");
                 if (whineSound != null)
                 {
                     AudioSource.PlayClipAtPoint(whineSound, backHalf.transform.position);
@@ -395,7 +395,7 @@ public class TutorialText : MonoBehaviour
             //     break;              
             case tutScatterBoxes:
                 // Cancel prev case
-                playerManager.cancelEmote(emote);
+                // playerManager.cancelEmote(emote);
                 pressEnterToContinueUI.SetActive(false);
                 speechBubbleLeft.SetActive(false);
 
@@ -602,7 +602,7 @@ public class TutorialText : MonoBehaviour
         P1IconLarge.SetActive(false);
 
         // show the player icons
-        playerIcons.SetActive(true); 
+        // playerIcons.SetActive(true); 
     }
 
     private void dimLights()
