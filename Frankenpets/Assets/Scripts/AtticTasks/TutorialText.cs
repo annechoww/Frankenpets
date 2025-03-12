@@ -154,6 +154,10 @@ public class TutorialText : MonoBehaviour
         } else if (!isKeyboard){
             overlay.transform.GetChild(0).GetChild(1).gameObject.SetActive(true);
         }
+
+        playerManager.setCanSwitch(false);
+        playerManager.setCanReconnect(false);
+        playerManager.setCanSplit(false);
     }
 
     void Update()
@@ -173,31 +177,19 @@ public class TutorialText : MonoBehaviour
         }
 
         // BLOCK SPLITTING UNTIL tutSplit
-        if (getCurrTutorialStage() < tutSplit)
-        {
-            playerManager.setCanSplit(false);
-        }
-        else
+        if (getCurrTutorialStage() >= tutSplit)
         {
             playerManager.setCanSplit(true);
         }
 
         // BLOCK SWITCHING UNTIL tutSwitch
-        if (getCurrTutorialStage() < tutSwitch)
-        {
-            playerManager.setCanSwitch(false);
-        }
-        else
+        if (getCurrTutorialStage() >= tutSwitch)
         {
             playerManager.setCanSwitch(true);
         }
 
         // BLOCK RECONNECTING UNTIL tutReconnect
-        if (getCurrTutorialStage() < tutReconnect)
-        {
-            playerManager.setCanReconnect(false);
-        }
-        else
+        if (getCurrTutorialStage() >= tutReconnect)
         {
             playerManager.setCanReconnect(true);
         }
