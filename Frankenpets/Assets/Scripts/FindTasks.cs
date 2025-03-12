@@ -167,10 +167,10 @@ public class FindTasks : MonoBehaviour
         taskLights = GameObject.FindGameObjectsWithTag("TaskLight");
         UnityEngine.Debug.Log("Found " + taskLights.Length + " task lights");
 
-        // foreach (GameObject taskLight in taskLights)
-        // {
-        //     taskLight.SetActive(false);
-        // }
+        foreach (GameObject taskLight in taskLights)
+        {
+            taskLight.SetActive(false);
+        }
 
         // Store the original intensities of the room lights
         roomLightIntensities = new float[roomLights.Length];
@@ -188,20 +188,19 @@ public class FindTasks : MonoBehaviour
         {
             if (!isGlowing)
             {
+                StopAllCoroutines();
                 glowCoroutine = StartCoroutine(StartFindTasksEffect());
             }
 
-            // UnityEngine.Debug.Log("Locating tasks");
-            // startFindTasksEffect();
         } else if (!player1Input.GetGlowPressed() && !player2Input.GetGlowPressed())
         {
             if (glowCoroutine != null)
             {
-                StopCoroutine(glowCoroutine);
+                StopAllCoroutines();
+                glowCoroutine = null;
+            
                 StartCoroutine(EndFindTasksEffect());
             }
-            // UnityEngine.Debug.Log("Stop locating tasks");
-            // endFindTasksEffect();
         }
     }
 
@@ -215,11 +214,11 @@ public class FindTasks : MonoBehaviour
 
         foreach (GameObject taskLight in taskLights)
         {
-            // if (taskLight != null)
-            // {
-                // taskLight.SetActive(true);
+            if (taskLight != null)
+            {
+                taskLight.SetActive(true);
                 StartCoroutine(LerpLightIntensity(taskLight.GetComponent<Light>(), 15.0f, fadeDuration));
-            // }
+            }
         }
         
         yield return null;
@@ -231,12 +230,12 @@ public class FindTasks : MonoBehaviour
 
         foreach (GameObject taskLight in taskLights)
         {
-            // if (taskLight != null)
-            // {
+            if (taskLight != null)
+            {
                 StartCoroutine(LerpLightIntensity(taskLight.GetComponent<Light>(), 0.0f, fadeDuration));
-                // StartCoroutine(DelaySetActive(taskLight, false, 2.5f));
-                // taskLight.SetActive(false);
-            // }
+                StartCoroutine(DelaySetActive(taskLight, false, 2.5f));
+                taskLight.SetActive(false);
+            }
         }
 
         arrowsAndParticlesParent.SetActive(false);
@@ -248,11 +247,6 @@ public class FindTasks : MonoBehaviour
 
     private IEnumerator DimRoomLights()
     {
-        StopCoroutine("StartFindTasksEffect");
-        StopAllLightCoroutines();
-        StopCoroutine("BrightenRoomLights");
-
-        // StartCoroutine(StopAllLightCoroutines());
         for (int i = 0; i < roomLights.Length; i++)
         {
             StartCoroutine(LerpLightIntensity(roomLights[i], 0.0f, fadeDuration));
@@ -262,10 +256,6 @@ public class FindTasks : MonoBehaviour
 
     private IEnumerator BrightenRoomLights()
     {
-        StopCoroutine("EndFindTasksEffect");
-        StopAllLightCoroutines();
-        StopCoroutine("DimRoomLights");
-
         for (int i = 0; i < roomLights.Length; i++)
         {
             StartCoroutine(LerpLightIntensity(roomLights[i], roomLightIntensities[i], fadeDuration));
@@ -294,17 +284,6 @@ public class FindTasks : MonoBehaviour
         yield return new WaitForSeconds(seconds);
         obj.SetActive(isActive);
     }
-
-    private void StopAllLightCoroutines()
-{
-    // StopAllCoroutines();  // This stops all coroutines on this script
-
-    // Alternatively, if you want finer control, stop only specific coroutines:
-    foreach (Light light in roomLights)
-    {
-        StopCoroutine("LerpLightIntensity");
-    }
-}
 
     public void DestroyFindTaskMechanic(GameObject arrow, GameObject particle, GameObject light)
     {
