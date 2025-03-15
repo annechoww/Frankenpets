@@ -1123,7 +1123,7 @@ public class PlayerActions : MonoBehaviour
         } else if (Input.GetKeyUp(KeyCode.Z) || Input.GetKeyUp(KeyCode.Comma))
         {
             isPaw = false;
-            UnityEngine.Debug.Log(isPaw)
+            UnityEngine.Debug.Log(isPaw);
         }
         
     }
