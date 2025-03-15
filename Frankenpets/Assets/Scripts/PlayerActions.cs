@@ -94,6 +94,7 @@ public class PlayerActions : MonoBehaviour
     private GrabRigging grabRiggingScript;
     
     public Transform objectGrabPoint;
+    public bool isPaw;
     //public Transform objectDragPoint;
     private bool isStanding = false;
 
@@ -1118,6 +1119,11 @@ public class PlayerActions : MonoBehaviour
         if (((Input.GetKeyDown(KeyCode.Z) && P1.IsFront) || (Input.GetKeyDown(KeyCode.Comma) && P2.IsFront)))
         {
             pawRiggingScript.liftPaw();
+            isPaw = true;
+        } else if (Input.GetKeyUp(KeyCode.Z) || Input.GetKeyUp(KeyCode.Comma))
+        {
+            isPaw = false;
+            UnityEngine.Debug.Log(isPaw)
         }
         
     }

@@ -10,9 +10,11 @@ public class PedalLidController : MonoBehaviour
     private Quaternion closedRotation; 
     private Quaternion openRotation; 
     private Coroutine moveCoroutine;
+    private PlayerActions pet;
 
     void Start()
     {
+        // Store initial and open rotations
         closedRotation = lidHinge.rotation;
         openRotation = Quaternion.Euler(lidHinge.rotation.eulerAngles.x, lidHinge.rotation.eulerAngles.y, lidHinge.rotation.eulerAngles.z - openAngle);
     }
@@ -21,15 +23,40 @@ public class PedalLidController : MonoBehaviour
     {
         if (other.gameObject.layer == LayerMask.NameToLayer("Pet"))
         {
-            if (moveCoroutine != null) StopCoroutine(moveCoroutine);
-            moveCoroutine = StartCoroutine(MoveLid(openRotation));
+            pet = other.GetComponent<PlayerActions>();
+
+            if (pet != null && pet.isPaw)
+            {
+                if (moveCoroutine != null) StopCoroutine(moveCoroutine);
+                moveCoroutine = StartCoroutine(MoveLid(openRotation));
+            }
         }
+    }
+
+    void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.layer == LayerMask.NameToLayer("Pet"))
+        {
+            pet = other.GetComponent<PlayerActions>();
+            if (pet != null && pet.isPaw)
+            {
+                if (moveCoroutine != null) StopCoroutine(moveCoroutine);
+                moveCoroutine = StartCoroutine(MoveLid(openRotation));
+            }
+            else if (pet != null && !pet.isPaw)
+            {
+                if (moveCoroutine != null) StopCoroutine(moveCoroutine);
+                moveCoroutine = StartCoroutine(MoveLid(closedRotation));
+            }
+        }
+        
     }
 
     void OnTriggerExit(Collider other)
     {
         if (other.gameObject.layer == LayerMask.NameToLayer("Pet"))
         {
+            pet = other.GetComponent<PlayerActions>();
             if (moveCoroutine != null) StopCoroutine(moveCoroutine);
             moveCoroutine = StartCoroutine(MoveLid(closedRotation));
         }
