@@ -371,6 +371,12 @@ public class PlayerManager : MonoBehaviour
         // frontHalf.transform.Translate(Vector3.forward * combinedMove * Time.deltaTime, Space.Self);
         // backHalf.transform.Translate(Vector3.forward * combinedMove * Time.deltaTime, Space.Self);
 
+        // Reset Camera when movement is detected 
+        if (Math.Abs(combinedMove) > 0 || Math.Abs(combinedTurn) > 0)
+        {
+            ResetCamera(mainCamera);
+        }
+
         Rigidbody frontRb = frontHalf.GetComponent<Rigidbody>();
         Rigidbody backRb = backHalf.GetComponent<Rigidbody>();
 
@@ -402,6 +408,11 @@ public class PlayerManager : MonoBehaviour
 
         Rigidbody rb1 = P1.Half.GetComponent<Rigidbody>();
         Rigidbody rb2 = P2.Half.GetComponent<Rigidbody>();
+
+        float turnInputP1 = player1MoveInput.x * turnSpeed;
+        float moveInputP1 = player1MoveInput.y * walkSpeed;
+        float turnInputP2 = player2MoveInput.x * turnSpeed;
+        float moveInputP2 = player2MoveInput.y * walkSpeed;
         
         // Movement for Player 1's half
         if (P1.Species == "dog") {
@@ -413,6 +424,11 @@ public class PlayerManager : MonoBehaviour
             P1.Half.transform.Rotate(0.0f, player1MoveInput.x * immutableTurnSpeed, 0.0f, Space.Self);   
         }
         
+        // Reset Camera when movement is detected 
+        if (Math.Abs(moveInputP1) > 0 || Math.Abs(turnInputP1) > 0)
+        {
+            ResetCamera(player1Camera);
+        }
         
         // Movement for Player 2's half
         
@@ -423,6 +439,12 @@ public class PlayerManager : MonoBehaviour
         else {
             rb2.MovePosition(rb2.position + P2.Half.transform.forward * player2MoveInput.y * immutableWalkSpeed * Time.deltaTime);
             P2.Half.transform.Rotate(0.0f, player2MoveInput.x * immutableTurnSpeed, 0.0f, Space.Self);
+        }
+
+        // Reset Camera when movement is detected 
+        if (Math.Abs(moveInputP2) > 0 || Math.Abs(turnInputP2) > 0)
+        {
+            ResetCamera(player2Camera);
         }
         
     }
@@ -893,7 +915,7 @@ public class PlayerManager : MonoBehaviour
 
         if (composer != null)
         {
-            composer.Composition.ScreenPosition = new Vector2(0, 0);
+            composer.Composition.ScreenPosition = new Vector2(0f, 0.24f);
         }
     }
     // CAMERA MOVEMENT METHODS ////////////////////////////////////////////
