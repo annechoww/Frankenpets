@@ -15,7 +15,6 @@ public class JugShatter : MonoBehaviour
 
     public Task task = new Task("Shatter Jug", 1);
     private bool isShattered = false;
-    private AudioSource audioSource;
     // private TutorialText tutorialText;
 
     [Header("Locate Task Variables")]
@@ -26,7 +25,6 @@ public class JugShatter : MonoBehaviour
     void Awake()
     {
         // tutorialText = GameObject.Find("TutorialTextManager").GetComponent<TutorialText>();
-        audioSource = GameObject.Find("Background Music").GetComponent<AudioSource>(); 
         TaskManager.RegisterTask(task);
     }
 
@@ -48,7 +46,8 @@ public class JugShatter : MonoBehaviour
         
         if (shatterSound != null)
         {
-            AudioSource.PlayClipAtPoint(shatterSound, transform.position);
+            // AudioSource.PlayClipAtPoint(shatterSound, transform.position);
+            AudioManager.Instance.PlaySFX(shatterSound);
         }
 
         // Instantiate the broken jug at the jug's position and rotation
@@ -67,7 +66,7 @@ public class JugShatter : MonoBehaviour
         // GetComponent<FindTasks>().DestroyFindTaskMechanic(arrow, taskParticle, taskLight);
         if (taskCompleteSound != null)
         {
-            audioSource.PlayOneShot(taskCompleteSound);
+            AudioManager.Instance.PlayTaskCompletionSound(taskCompleteSound);
         }
     }
 }
