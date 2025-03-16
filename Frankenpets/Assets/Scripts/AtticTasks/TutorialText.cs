@@ -2,12 +2,16 @@ using System.Collections;
 using System.Diagnostics;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TutorialText : MonoBehaviour
 {
-    [Header("Text/Instruction Variables")]
+    [Header("Tutorial Overlay Variables")]
     public GameObject overlay;
     public GameObject overlayBG;
+
+    [Header("Bottom Text/Instruction Variables")]
+    public RectTransform bottomUIParent;
     public TextMeshProUGUI tutorialText;
     public TextMeshProUGUI tutorialSmallText;
     public GameObject speechBubbleTwoTails;
@@ -20,24 +24,34 @@ public class TutorialText : MonoBehaviour
     public GameObject switchUI;
     public GameObject grabUI;
     public GameObject pressEnterToContinueUI;
+
+    [Header("Black Overlays")]
+    public GameObject bottomUIParentHighlight;
+    public GameObject todoListHighlight;
+
+
+    [Header("Controls Menu Pop-up")]
     public GameObject controlsMenu;
+
+    [Header("Controls Corner Variables")]
     public GameObject controlsCornerUIParent;
     private GameObject controlsCornerUIChild;
     private GameObject P1ControlsCF;
-    private GameObject P1ControlsDF;
+    private GameObject P1ControlsDF; 
     private GameObject P1ControlsCB;
-    private GameObject P1ControlsDB;
-    private GameObject P2ControlsCF;
+    private GameObject P1ControlsDB; 
+    private GameObject P2ControlsCF; 
     private GameObject P2ControlsDF;
-    private GameObject P2ControlsCB;
+    private GameObject P2ControlsCB; 
     private GameObject P2ControlsDB;
 
     [Header("Icons and Sounds")]
     public GameObject P1IconLarge;
     public GameObject P2IconLarge;
-    public GameObject playerIcons;
+    // public GameObject playerIcons;
     public AudioClip whineSound;
     public AudioClip mewSound;
+    public AudioClip barkSound;
 
     [Header("Player Inputs")]
     public InputHandler player1Input;
@@ -70,11 +84,19 @@ public class TutorialText : MonoBehaviour
     private Light[] boxesLights;
     
     [Header("Rug Task")]    
-    public GameObject rugLight;
+    public GameObject rugMainLight;
+    public GameObject rugLightsParent;
+    private Light[] rugLights;
     public GameObject rugArrow;
-
+    public GameObject rugPawPath;
     private GameObject task3;
     private Task3Tutorial enterRugAreaTrigger;
+
+    [Header("Todo List")]
+    public GameObject vaseTaskTodo;
+    public GameObject boxTaskTodo;
+    public GameObject rugTaskTodo;
+
     
     // State tracking variables
     private int currTutorialStage = -1;
@@ -84,14 +106,14 @@ public class TutorialText : MonoBehaviour
     private bool canLeaveAttic = false;
     private FixedJoint fixedJoint;
 
-    // Other variables 
-    private GameObject emote;
-
     // Other script references    
     private PlayerManager playerManager;
     private MessageManager messageManager;
     private ControllerAssignment controllerAssignment; 
     private bool isKeyboard;   
+
+    private AudioSource audioSource;
+
 
     void Awake()
     {
@@ -112,6 +134,7 @@ public class TutorialText : MonoBehaviour
         fixedJoint = playerManager.getJoint();
         vaseLights = vaseLightsParent.GetComponentsInChildren<Light>();
         boxesLights = boxesLightsParent.GetComponentsInChildren<Light>();
+        rugLights = rugLightsParent.GetComponentsInChildren<Light>();
 
         // Set the instructions UI according to keycaps or gamepad
         isKeyboard = controllerAssignment.IsKeyboard();
@@ -158,6 +181,8 @@ public class TutorialText : MonoBehaviour
         playerManager.setCanSwitch(false);
         playerManager.setCanReconnect(false);
         playerManager.setCanSplit(false);
+
+        audioSource = GameObject.Find("Background Music").GetComponent<AudioSource>();
     }
 
     void Update()
@@ -177,7 +202,7 @@ public class TutorialText : MonoBehaviour
         }
 
         // BLOCK SPLITTING UNTIL tutSplit
-        if (getCurrTutorialStage() >= tutSplit)
+        if (getCurrTutorialStage() == tutSplit)
         {
             playerManager.setCanSplit(true);
         }
@@ -229,10 +254,10 @@ public class TutorialText : MonoBehaviour
         }
 
         // check for keypress / gamepad press on "creepy..."
-        if (getCurrTutorialStage() == 3 && checkForSpace())
-        {
-            advanceTutorialStage();
-        }
+        // if (getCurrTutorialStage() == 3 && checkForSpace())
+        // {
+        //     advanceTutorialStage();
+        // }
 
         // check for keypress / gamepad press to close the tutorial
         if (getCurrTutorialStage() == tutComplete && checkForSpace())
@@ -310,14 +335,12 @@ public class TutorialText : MonoBehaviour
         switch (currTutorialStage)
         {
             case tutMoveToVase:
-                // Speech UI
+                // Bottom UI
                 P1IconLarge.SetActive(true);
                 P2IconLarge.SetActive(true);
-                speechBubbleTwoTails.SetActive(true);
-                tutorialText.transform.SetParent(speechBubbleTwoTails.transform, true);
-                tutorialText.text = "Let's move to the vase.";
-                movementUI.SetActive(true);
-
+                StartCoroutine(Highlight(bottomUIParentHighlight));
+                StartCoroutine(ShowBotttomUI(movementUI, speechBubbleTwoTails, "Move to the vase.", ""));
+                
                 // Arrow (already active)
 
                 // Paw path (already active)
@@ -325,13 +348,30 @@ public class TutorialText : MonoBehaviour
                 // Light path (already active)
                 break;
             case tutBreakVase:
-                // Deactivate stuff from prev case 
+                // Deactivate prev case
+                StartCoroutine(HideEffect(movementUI, speechBubbleTwoTails));
+
+                // Turn on controls UI
+                controlsCornerUIParent.SetActive(true);
+
+                // Tell player to break the vase
+                StartCoroutine(Highlight(todoListHighlight));
+                revealTaskTodo(vaseTaskTodo);
+                break;
+
+            case tutSplit:
+                // Completed vase task
+                completeTaskTodo(vaseTaskTodo);
+                enterVaseAreaTrigger.enabled = false;
+
+                // Move the controls UI to the corner
+                StartCoroutine(MoveControlsCornerUI());
+                StartCoroutine(ShowBotttomUI(splitUI, speechBubbleTwoTails, "Chaos! Now, let's split apart.", ""));
+
+                // Deactivate prev paw path
                 vaseArrow.SetActive(false);
                 vasePawPath.SetActive(false);
                 vaseParticle.SetActive(false);
-                movementUI.SetActive(false);
-                // Turn on attic light
-                brightenWorldLights();
 
                 // Dim the previous light path
                 foreach (Light light in vaseLights)
@@ -340,63 +380,20 @@ public class TutorialText : MonoBehaviour
                 }
                 StartCoroutine(DelaySetActive(vaseLightsParent, false, 2.5f));
 
-                // Speech UI
-                tutorialText.text = "Hmm... can we break the vase?";
-                // jumpUI.SetActive(true);
-
-                // Turn on controls UI
-                controlsCornerUIParent.SetActive(true);
-                break;
-
-            case tutSplit:
-                // jumpUI.SetActive(false);
-                enterVaseAreaTrigger.enabled = false;
-
-                // Move the controls UI to the corner
-                StartCoroutine(MoveControlsCornerUI());
-
-                tutorialText.text = "Chaos! Now, let's split apart.";
-                splitUI.SetActive(true);
-
-                // gif
+                // Turn on attic light
+                brightenWorldLights();
+            
+                // gif ???
 
                 break;
-            // case 3:
-            //     splitUI.SetActive(false);
-            //     speechBubbleTwoTails.SetActive(false);
-
-            //     speechBubbleLeft.SetActive(true);
-            //     tutorialText.transform.SetParent(speechBubbleLeft.transform, true);
-            //     tutorialText.text = "Creepy...";
-            //     pressEnterToContinueUI.SetActive(true);
-
-            //     GameObject backHalf = playerManager.getBackHalf();
-            //     // emote = playerManager.startEmote(backHalf, "sad");
-            //     if (whineSound != null)
-            //     {
-            //         AudioSource.PlayClipAtPoint(whineSound, backHalf.transform.position);
-            //     }
-            //     break;
-            // case 4:
-            //     UnityEngine.Debug.Log("case 4");
-            //     playerManager.cancelEmote(emote);
-            //     tutorialText.text = "sorry, i take that back.";
-                
-            //     emote = playerManager.startEmote(playerManager.getBackHalf(), "happy");
-            //     // play happy dog sound
-            //     break;              
+           
             case tutScatterBoxes:
-                // Cancel prev case
-                splitUI.SetActive(false);
-                speechBubbleTwoTails.SetActive(false);
-                // playerManager.cancelEmote(emote);
-                // pressEnterToContinueUI.SetActive(false);
-                // speechBubbleLeft.SetActive(false);
+                // Deactivate prev case
+                StartCoroutine(HideEffect(splitUI, speechBubbleTwoTails));
 
-                // Speech UI
-                speechBubbleRight.SetActive(true);
-                tutorialText.transform.SetParent(speechBubbleRight.transform, true);
-                tutorialText.text = "Push the boxes while split apart."; 
+                // Tell player to push the boxes
+                StartCoroutine(Highlight(todoListHighlight));
+                revealTaskTodo(boxTaskTodo);
 
                 // Arrow 
                 backBoxArrow.SetActive(true);
@@ -419,7 +416,12 @@ public class TutorialText : MonoBehaviour
                 }
 
                 break;
+
             case tutReconnect:
+                // Box task is completed
+                completeTaskTodo(boxTaskTodo);
+
+                // Disable guiding path 
                 backBoxArrow.SetActive(false);
                 frontBoxArrow.SetActive(false);
                 boxesPawPath.SetActive(false);
@@ -435,79 +437,119 @@ public class TutorialText : MonoBehaviour
                 // Brighten the attic lights
                 brightenWorldLights();
                 
-                tutorialText.text = "Let's reconnect."; // speech bubble text
-                reconnectUI.SetActive(true); // small text
+                // Bottom UI
+                StartCoroutine(ShowBotttomUI(reconnectUI, speechBubbleTwoTails, "Let's reconnect.", ""));
 
                 break;
-            case tutMoveToRug:
-                reconnectUI.SetActive(false);
-                speechBubbleRight.SetActive(false);
 
-                speechBubbleLeft.SetActive(true);
-                tutorialText.transform.SetParent(speechBubbleLeft.transform, true);
-                tutorialText.text = "Hey, what's under that purple rug?"; // speech bubble text
+            case tutMoveToRug:
+                // Hide previous message, show new one 
+                StartCoroutine(HideEffect(reconnectUI, speechBubbleTwoTails));
+                StartCoroutine(DelayedCall(1.4f, () => 
+                {
+                    StartCoroutine(ShowBotttomUI(null, speechBubbleLeft, "Hey, what's under that purple rug?", ""));
+                }));
 
                 // Light
                 dimLights();
-                rugLight.SetActive(true);
-                StartCoroutine(lerpLightIntensity(rugLight.GetComponent<Light>(), 10.0f, 1.5f));
-
+                rugMainLight.SetActive(true);
+                StartCoroutine(lerpLightIntensity(rugMainLight.GetComponent<Light>(), 10.0f, 1.5f));
+                rugLightsParent.SetActive(true);
+                foreach (Light light in rugLights)
+                {
+                    StartCoroutine(lerpLightIntensity(light, 0.1f, 1.5f));
+                }
+                
                 // Arrow
                 rugArrow.SetActive(true);
+
+                // Paw path
+                rugPawPath.SetActive(true);
 
                 break;
             case tutSwitch:
                 enterRugAreaTrigger.enabled = false;
-                StartCoroutine(lerpLightIntensity(rugLight.GetComponent<Light>(), 0.0f, 2.0f));
-                StartCoroutine(DelaySetActive(rugLight, false, 2.5f));
-                rugArrow.SetActive(false);
 
-                // light 
+                // Hide previous message, show new one 
+                StartCoroutine(DelayedCall(0.5f, () => 
+                {
+                    StartCoroutine(HideEffect(null, speechBubbleLeft));
+                }));
+
+                StartCoroutine(DelayedCall(2.0f, () => 
+                {
+                    StartCoroutine(ShowBotttomUI(switchUI, speechBubbleLeft, "I can't grab this, can you help?", ""));
+                }));
+
+                // Disable previous guiding path + light 
+                foreach (Light light in rugLights)
+                {
+                    StartCoroutine(lerpLightIntensity(light, 0.0f, 1.5f));
+                }
+                StartCoroutine(DelaySetActive(rugLightsParent, false, 2.5f));
+
+                StartCoroutine(lerpLightIntensity(rugMainLight.GetComponent<Light>(), 0.0f, 2.0f));
+                StartCoroutine(DelaySetActive(rugMainLight, false, 2.5f));
+                
+                rugArrow.SetActive(false);
+                rugPawPath.SetActive(false);
+
+                // Add back world light  
                 brightenWorldLights();
                 
-                tutorialText.text = "I can't grab this, can you help?";
-                switchUI.SetActive(true);
+                // tutorialText.text = "I can't grab this, can you help?";
+                // switchUI.SetActive(true);
                 
                 break;
             case tutDragRug:
-                switchUI.SetActive(false);
-                speechBubbleLeft.SetActive(false);
+                // Hide previous message, show new one 
+                StartCoroutine(DelayedCall(0.5f, () => 
+                {
+                    StartCoroutine(HideEffect(switchUI, speechBubbleLeft));
+                }));
+                // tutorialText.transform.SetParent(speechBubbleRight.transform, true);
+                StartCoroutine(DelayedCall(2.0f, () => 
+                {
+                    StartCoroutine(ShowBotttomUI(grabUI, speechBubbleRight, "Woah, I'm at the front now!", ""));
+                }));
+
+                // StartCoroutine(Highlight(todoListHighlight));
+                revealTaskTodo(rugTaskTodo);
 
                 speechBubbleRight.SetActive(true);
 
-                tutorialText.transform.SetParent(speechBubbleRight.transform, true);
-
-                tutorialText.text = "Woah, I'm at the front now!";
-                grabUI.SetActive(true);
-
                 break;
             case tutComplete:
-                grabUI.SetActive(false);
-                speechBubbleRight.SetActive(false);
+                // Hide previous message, show new one 
+                // tutorialText.transform.SetParent(speechBubbleTwoTails.transform, true);
+                StartCoroutine(HideEffect(grabUI, speechBubbleRight));
+                StartCoroutine(DelayedCall(2.0f, () => 
+                {
+                    StartCoroutine(ShowBotttomUI(null, speechBubbleTwoTails, "Let's wreck this house!", "Leave the attic, or take a look around"));
+                }));
 
-                speechBubbleTwoTails.SetActive(true);
+                completeTaskTodo(rugTaskTodo);
 
-                tutorialText.transform.SetParent(speechBubbleTwoTails.transform, true);
 
-                tutorialText.text = "Let's wreck this house!";
-                tutorialSmallText.text = "Leave the attic, or take a look around";
                 messageManager.startPressEnterToHideTutorial();
 
                 // next case activated in AtticPrevention.cs
                 break;
             
             case scaredDog:
+                // Hide things from previous case and annoyedCat case 
                 messageManager.cancelPressEnterToHideTutorial();
                 speechBubbleLeft.SetActive(false);
                 speechBubbleTwoTails.SetActive(false);
                 switchUI.SetActive(false);
 
-                
-                tutorialSmallText.text = "";
-
-                speechBubbleRight.SetActive(true);
-                tutorialText.transform.SetParent(speechBubbleRight.transform, true);
-                tutorialText.text = "The drop's too high... I'm scared!";
+                // Show scaredDog dialogue
+                // tutorialText.transform.SetParent(speechBubbleRight.transform, true);
+                StartCoroutine(HideEffect(null, null));
+                StartCoroutine(DelayedCall(1.5f, () => 
+                {
+                    StartCoroutine(ShowBotttomUI(null, speechBubbleRight, "The drop's too high... I'm scared!", ""));
+                }));
                 pressEnterToContinueUI.SetActive(true);
 
                 if (whineSound != null)
@@ -516,14 +558,17 @@ public class TutorialText : MonoBehaviour
                 }
 
                 break;
-            case annoyedCat:
-                pressEnterToContinueUI.SetActive(false);
-                speechBubbleRight.SetActive(false);
 
-                speechBubbleLeft.SetActive(true);
-                switchUI.SetActive(true);
-                tutorialText.transform.SetParent(speechBubbleLeft.transform, true);
-                tutorialText.text = "Fine, I'll jump. Switch with me.";
+            case annoyedCat:
+        
+                // tutorialText.transform.SetParent(speechBubbleLeft.transform, true);
+
+
+                StartCoroutine(HideEffect(pressEnterToContinueUI, speechBubbleRight));
+                StartCoroutine(DelayedCall(1.5f, () => 
+                {
+                    StartCoroutine(ShowBotttomUI(switchUI, speechBubbleLeft, "Fine, I'll jump. Switch with me.", ""));
+                }));
 
                 if (mewSound != null)
                 {
@@ -539,10 +584,12 @@ public class TutorialText : MonoBehaviour
         }
     }
 
+    // TUTORIAL-SPECIFIC METHODS //////////////////////////////////////
     public void advanceTutorialStage()
     {
-        // Debug.Log("advanced to next tutorial stage");
+        
         currTutorialStage++;
+        UnityEngine.Debug.Log("tutorial stage: " + currTutorialStage);
         updateTutorialText();
     }
 
@@ -552,36 +599,10 @@ public class TutorialText : MonoBehaviour
         updateTutorialText();
     }
 
-    public int getCurrTutorialStage()
+    public void hideLeaveAtticSpeech()
     {
-        return currTutorialStage;
-    }
-
-    public bool checkForSpace()
-    {
-        return Input.GetKeyDown(KeyCode.Space) || 
-               player1Input.GetGlowPressed() || player2Input.GetGlowPressed();
-    }
-
-    // Coroutines
-    private IEnumerator waitForSeconds(float seconds)
-    {
-        Stopwatch stopwatch = new Stopwatch();
-        stopwatch.Start();
-
-        while (stopwatch.Elapsed.TotalSeconds < seconds) 
-        {
-            yield return null;
-        }
-
-        stopwatch.Reset();
-        advanceTutorialStage();
-    }
-
-    private IEnumerator DelaySetActive(GameObject obj, bool isActive, float seconds)
-    {
-        yield return new WaitForSeconds(seconds);
-        obj.SetActive(isActive);
+        currTutorialStage = leaveAttic;
+        updateTutorialText();
     }
 
     private void leaveTutorial()
@@ -598,6 +619,27 @@ public class TutorialText : MonoBehaviour
         // playerIcons.SetActive(true); 
     }
 
+    public int getCurrTutorialStage()
+    {
+        return currTutorialStage;
+    }
+    // TUTORIAL-SPECIFIC METHODS //////////////////////////////////////
+
+    // IDK WHAT TO CALL THIS //////////////////////////////////////////
+    public bool checkForSpace()
+    {
+        return Input.GetKeyDown(KeyCode.Space) || 
+               player1Input.GetGlowPressed() || player2Input.GetGlowPressed();
+    }
+
+    private IEnumerator DelaySetActive(GameObject obj, bool isActive, float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        obj.SetActive(isActive);
+    }
+    // IDK WHAT TO CALL THIS //////////////////////////////////////////
+
+    // LIGHTING ///////////////////////////////////////////////////////
     private void dimLights()
     {
         // directional light
@@ -630,7 +672,9 @@ public class TutorialText : MonoBehaviour
 
         light.intensity = targetIntensity;
     }
+    // LIGHTING ///////////////////////////////////////////////////////
 
+    // CONTROLS CORNER UI /////////////////////////////////////////////
     public void updateControlsCornerUI()
     {
         bool isP1Cat = playerManager.P1.Species == "cat";
@@ -680,4 +724,267 @@ public class TutorialText : MonoBehaviour
         P1RectTransform.anchoredPosition = P1targetPosition2; // Ensure final position is exact
         P2RectTransform.anchoredPosition = P2targetPosition2;
     }
+    // CONTROLS CORNER UI /////////////////////////////////////////////
+
+    // BOTTOM SPEECH UI ///////////////////////////////////////////////
+    private IEnumerator SlideUpEffect(RectTransform rectTransform)
+    {
+        float moveSpeed = 5.0f;
+        // Vector2 targetPosition = new Vector2(-10, -710);
+        Vector2 targetPosition = new Vector2(-10, -465);
+    
+        while (Vector2.Distance(rectTransform.anchoredPosition, targetPosition) > 1f)
+        {
+            rectTransform.anchoredPosition = Vector2.Lerp(rectTransform.anchoredPosition, targetPosition, Time.deltaTime * moveSpeed);
+            yield return null;
+        }
+    }
+
+    private IEnumerator SlideDownEffect(RectTransform rectTransform)
+    {
+        float moveSpeed = 5.0f;
+        Vector2 targetPosition = new Vector2(-10, -710);
+    
+        while (Vector2.Distance(rectTransform.anchoredPosition, targetPosition) > 1f)
+        {
+            rectTransform.anchoredPosition = Vector2.Lerp(rectTransform.anchoredPosition, targetPosition, Time.deltaTime * moveSpeed);
+            yield return null;
+        }
+    }
+
+    private IEnumerator HideEffect(GameObject uiComponent = null, GameObject bubble = null)
+    {
+        if (bounceCoroutine != null)
+        {
+            StopCoroutine(bounceCoroutine);
+            bounceCoroutine = null;
+        }
+
+        RectTransform rectTransform = bottomUIParent;
+
+        float moveSpeed = 5.0f;
+        Vector2 targetPosition = new Vector2(-10, -1086);
+    
+        while (Vector2.Distance(rectTransform.anchoredPosition, targetPosition) > 1f)
+        {
+            rectTransform.anchoredPosition = Vector2.Lerp(rectTransform.anchoredPosition, targetPosition, Time.deltaTime * moveSpeed);
+            yield return null;
+        }
+
+        if (uiComponent != null) uiComponent.SetActive(false);
+        if (bubble != null) bubble.SetActive(false);
+        tutorialSmallText.text = "";
+        tutorialText.text = "";
+    }
+
+    // Delay a coroutine 
+    private IEnumerator DelayedCall(float delay, System.Action callback)
+    {
+        yield return new WaitForSeconds(delay);
+        callback?.Invoke();
+    }
+
+    // Bounce effect
+    private float initialBounceHeight = 200.0f;
+    private float gravity = 500f;
+    private int bounceCount = 2;
+    private float heightDamping = 0.8f; // Higher = bounces higher 
+    private float speedDamping = 0.6f; // Higher = slower
+    private IEnumerator BounceEffect(RectTransform obj)
+    {
+        Vector2 startPosition = new Vector2(-10, -710);
+        float height = initialBounceHeight;
+        float velocity = Mathf.Sqrt(2 * gravity * height); // Convert height to velocity
+
+        // First fall (natural drop)    
+        yield return MoveYWithGravity(obj, startPosition.y, velocity);
+
+        for (int i = 0; i < bounceCount; i++)
+        {
+            velocity *= Mathf.Sqrt(heightDamping); // Reduce velocity smoothly
+            height *= heightDamping; // Reduce bounce height
+
+            // Move up and down naturally
+            yield return MoveYWithGravity(obj, startPosition.y + height, velocity);
+            velocity *= speedDamping; // Speed up next bounce
+            yield return MoveYWithGravity(obj, startPosition.y, velocity);
+
+            velocity *= speedDamping; // Slow down next bounce
+        }
+    }
+
+    // Moves the object smoothly using physics-based motion
+    private IEnumerator MoveYWithGravity(RectTransform rectTransform, float targetY, float velocity)
+    {
+        float startY = rectTransform.anchoredPosition.y;
+        float timeToPeak = velocity / gravity; // Time to reach the top
+
+        float elapsedTime = 0f;
+        while (elapsedTime < timeToPeak)
+        {
+            float t = elapsedTime / timeToPeak;
+            float easedT = Mathf.Sin(t * Mathf.PI * 0.5f); // Smooth ease-out for up movement
+            rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, Mathf.Lerp(startY, targetY, easedT));
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, targetY);
+    }
+
+    private Coroutine bounceCoroutine;
+    private IEnumerator ShowBotttomUI(GameObject uiComponent = null, GameObject bubble = null, string largeText = "", string smallText = "")
+    {
+        if (uiComponent != null) uiComponent.SetActive(true);
+        if (bubble != null) bubble.SetActive(true);
+        tutorialSmallText.text = smallText;
+        tutorialText.text = largeText;
+
+        if (bubble == speechBubbleLeft) audioSource.PlayOneShot(mewSound);
+        else if (bubble == speechBubbleRight) audioSource.PlayOneShot(barkSound);
+        else
+        {
+            audioSource.PlayOneShot(mewSound);
+            yield return new WaitForSeconds(0.5f);
+            audioSource.PlayOneShot(barkSound);
+        }
+
+        bottomUIParent.anchoredPosition = new Vector2(-10, -1086);
+
+        yield return StartCoroutine(SlideUpEffect(bottomUIParent));
+        yield return StartCoroutine(SlideDownEffect(bottomUIParent));
+
+        // Stop any ongoing bounce before starting a new one
+        // if (bounceCoroutine != null)
+        // {
+        //     StopCoroutine(bounceCoroutine);
+        //     bounceCoroutine = null;
+        // }
+
+        // bounceCoroutine = StartCoroutine(BounceAfterDelay(bottomUIParent, 0.7f));
+    }
+
+    private IEnumerator BounceAfterDelay(RectTransform rectTransform, float delay)
+    {
+        yield return new WaitForSeconds(delay); 
+
+        Vector3 initialPosition = rectTransform.anchoredPosition;
+
+        while (true)
+        {
+            float newY = initialPosition.y + Mathf.Sin(Time.time * 4.0f) * 20.0f; // speed, amplitude
+            rectTransform.anchoredPosition = new Vector3(initialPosition.x, newY, initialPosition.z);
+            yield return null; // Wait for next frame
+        }
+    }
+    // BOTTOM SPEECH UI ///////////////////////////////////////////////
+
+
+    // TO-DO LIST /////////////////////////////////////////////////////
+    private IEnumerator Highlight(GameObject highlight)
+    {
+        highlight.SetActive(true);
+        // highlight.color = new Color(0, 0, 0, 177);
+
+        yield return StartCoroutine(FadeIn(highlight, 1.0f));
+
+        yield return new WaitForSeconds(1.9f);
+
+        yield return StartCoroutine(FadeOut(highlight, 1.0f));
+
+        highlight.SetActive(false);
+    }
+
+    private IEnumerator FadeIn(GameObject highlight, float duration)
+    {
+        RectTransform rectTransform = highlight.GetComponent<RectTransform>();
+        Image image = highlight.GetComponent<Image>();
+
+        float elapsedTime = 0f;
+        Color startColor = image.color;
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            float alpha = Mathf.Lerp(0.0f, 0.7f, elapsedTime / duration);
+            image.color = new Color(startColor.r, startColor.g, startColor.b, alpha);
+            yield return null; // causing problem?
+        }
+
+        image.color = new Color(startColor.r, startColor.g, startColor.b, 0.7f);
+    }
+
+    private IEnumerator FadeOut(GameObject highlight, float duration)
+    {
+        RectTransform rectTransform = highlight.GetComponent<RectTransform>();
+        Image image = highlight.GetComponent<Image>();
+
+        float elapsedTime = 0f;
+        Color startColor = image.color;
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            float alpha = Mathf.Lerp(0.7f, 0f, elapsedTime / duration);
+            image.color = new Color(startColor.r, startColor.g, startColor.b, alpha);
+            yield return null; 
+        }
+
+        image.color = new Color(startColor.r, startColor.g, startColor.b, 0f); // Ensure it's fully invisible
+    }
+
+    private float pulseSpeed = 2f;
+    private float scaleAmount = 0.5f;
+    private Vector3 initialScale; // tbh should not be storing it as global var. should make a new instance for each rectTransform
+    private Coroutine StartPulseCoroutine;
+    private IEnumerator StartPulse(RectTransform rectTransform)
+    {
+        initialScale = rectTransform.localScale;
+        float time = 0f;
+
+        while (true) 
+        {
+            float scaleFactor = 1 + Mathf.Sin(time * pulseSpeed) * scaleAmount;
+            rectTransform.localScale = initialScale * scaleFactor;
+
+            time += Time.deltaTime;
+
+            yield return null; 
+        }
+    }
+
+    private IEnumerator StopPulse(RectTransform rectTransform)
+    {
+        if (StartPulseCoroutine != null) StopCoroutine(StartPulseCoroutine);
+
+        rectTransform.localScale = initialScale;
+
+        yield return null;
+    }
+
+    private void revealTaskTodo(GameObject taskTodo)
+    {
+        // Question mark --> task 
+        taskTodo.transform.GetChild(0).gameObject.SetActive(false);
+        taskTodo.transform.GetChild(1).gameObject.SetActive(true);
+
+        // Pulsing effect
+        StartPulseCoroutine = StartCoroutine(StartPulse(taskTodo.GetComponent<RectTransform>()));
+                
+    }
+
+    private void completeTaskTodo(GameObject taskTodo)
+    {
+        // Stop pulsing effect
+        StartCoroutine(StopPulse(taskTodo.GetComponent<RectTransform>()));
+
+        // Task --> strikethrough
+        taskTodo.transform.GetChild(1).gameObject.SetActive(false);
+        taskTodo.transform.GetChild(2).gameObject.SetActive(true);
+        
+    }
+
+
+    // TO-DO LIST /////////////////////////////////////////////////////
 }

@@ -25,6 +25,7 @@ public class AtticPrevention : MonoBehaviour
         {
             UnityEngine.Debug.Log("can fall ");
             blocker.SetActive(false);
+            tutorialText.hideLeaveAtticSpeech();
         }
 
        
