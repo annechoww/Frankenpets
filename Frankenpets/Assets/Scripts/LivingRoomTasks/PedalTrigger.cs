@@ -3,6 +3,7 @@ using System.Collections;
 
 public class PedalLidController : MonoBehaviour
 {
+    [Header("Lid Opening")]
     public Transform lidHinge;
     public float openAngle = 90f;
     public float speed = 2f;
@@ -14,7 +15,6 @@ public class PedalLidController : MonoBehaviour
 
     void Start()
     {
-        // Store initial and open rotations
         closedRotation = lidHinge.rotation;
         openRotation = Quaternion.Euler(lidHinge.rotation.eulerAngles.x, lidHinge.rotation.eulerAngles.y, lidHinge.rotation.eulerAngles.z - openAngle);
     }
