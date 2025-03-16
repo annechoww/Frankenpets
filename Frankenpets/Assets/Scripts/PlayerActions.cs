@@ -101,6 +101,7 @@ public class PlayerActions : MonoBehaviour
     [Header("UI Variables")]
     public GameObject grabText;
     public GameObject climbText;
+    public GameObject pawText;
     public GameObject controlsMenu;
     private bool isViewingControlsMenu = false;
     
@@ -213,6 +214,9 @@ public class PlayerActions : MonoBehaviour
             showGrabText(other.gameObject);
             
             canGrab = true;
+        } else if (other.CompareTag("FrontPaw") && !isPaw)
+        {
+            showPawText(other.gameObject);
         }
     }
 
@@ -240,6 +244,9 @@ public class PlayerActions : MonoBehaviour
             {
                 grabbableObject = null;
             }
+        } else if (other.CompareTag("FrontPaw"))
+        {
+            hidePawText();
         }
     }
 
@@ -1230,7 +1237,39 @@ public class PlayerActions : MonoBehaviour
         }
 
         grabText.SetActive(false);
-    }   
+    }
+
+    private void showPawText(GameObject other)
+    {
+        pawText.SetActive(true);
+        pawText.transform.position = other.transform.position;// + (Vector3.forward * 0.05f) - (Vector3.up * 0.10f);
+
+        if (controllerAssignment.IsKeyboard())
+        {
+            if (P1.IsFront) pawText.transform.GetChild(0).gameObject.SetActive(true);
+            else pawText.transform.GetChild(1).gameObject.SetActive(true);
+        }
+        else pawText.transform.GetChild(2).gameObject.SetActive(true);
+
+        // Make text always face frontHalf
+        pawText.transform.LookAt(frontHalf.transform); 
+        
+    }
+
+    private void hidePawText()
+    {
+        if (controllerAssignment.IsKeyboard())
+        {
+            if (P1.IsFront) pawText.transform.GetChild(0).gameObject.SetActive(false);
+            else pawText.transform.GetChild(1).gameObject.SetActive(false);
+        }
+        else
+        {
+            pawText.transform.GetChild(2).gameObject.SetActive(false);
+        }
+
+        pawText.SetActive(false);
+    }
 
     private void runControlsMenuLogic()
     {
