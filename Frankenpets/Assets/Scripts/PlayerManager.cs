@@ -842,6 +842,7 @@ public class PlayerManager : MonoBehaviour
         backMagnet = getBackMagnet();
 
         cameraMovement.frontHalf = frontHalf.transform;
+        cameraMovement.backHalf = backHalf.transform;
         mainCamera.Follow = frontHalf.transform;
         mainCamera.LookAt = frontHalf.transform;
 

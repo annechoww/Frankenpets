@@ -4044,7 +4044,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 385970812}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.06823695, y: 0.7038066, z: -0.06823695, w: 0.70380664}
+  m_LocalRotation: {x: 0.06823693, y: 0.7038066, z: -0.06823693, w: 0.70380664}
   m_LocalPosition: {x: -18.185, y: 2.13, z: -24.678}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -4122,7 +4122,7 @@ GameObject:
   - component: {fileID: 416603316}
   m_Layer: 0
   m_Name: Plane (2)
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4837,7 +4837,7 @@ GameObject:
   - component: {fileID: 558958283}
   m_Layer: 0
   m_Name: Plane (1)
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5894,7 +5894,7 @@ MonoBehaviour:
   TransparentLayers:
     serializedVersion: 2
     m_Bits: 0
-  MinimumDistanceFromTarget: 0.37
+  MinimumDistanceFromTarget: 0.55
   AvoidObstacles:
     Enabled: 1
     DistanceLimit: 0
@@ -5909,7 +5909,7 @@ MonoBehaviour:
     Damping: 0.4
     DampingWhenOccluded: 0.7
   ShotQualityEvaluation:
-    Enabled: 1
+    Enabled: 0
     OptimalDistance: 10
     NearLimit: 5
     FarLimit: 30
@@ -6788,7 +6788,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 885080204}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.068236955, y: 0.7038066, z: -0.06823695, w: 0.70380664}
+  m_LocalRotation: {x: 0.06823695, y: 0.7038066, z: -0.06823693, w: 0.70380664}
   m_LocalPosition: {x: -18.185, y: 2.13, z: -24.678}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -6905,7 +6905,7 @@ MonoBehaviour:
   TransparentLayers:
     serializedVersion: 2
     m_Bits: 0
-  MinimumDistanceFromTarget: 0.37
+  MinimumDistanceFromTarget: 0.55
   AvoidObstacles:
     Enabled: 1
     DistanceLimit: 0
@@ -6920,7 +6920,7 @@ MonoBehaviour:
     Damping: 0.4
     DampingWhenOccluded: 0.7
   ShotQualityEvaluation:
-    Enabled: 1
+    Enabled: 0
     OptimalDistance: 10
     NearLimit: 5
     FarLimit: 30
@@ -16851,7 +16851,14 @@ MonoBehaviour:
   mainCamera: {fileID: 385970813}
   p1Camera: {fileID: 375464461}
   p2Camera: {fileID: 1835445259}
+  mainTracker: {fileID: 885080209}
+  player1Tracker: {fileID: 724530859}
+  player2Tracker: {fileID: 1945211443}
   frontHalf: {fileID: 1203613814}
+  backHalf: {fileID: 999640107}
+  minOccluderDistance: 0.55
+  reducedOccluderDistance: 0.37
+  wallDetectionRadius: 1
 --- !u!1 &1939167140 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8053095095198786169, guid: 8537babd6d5004eebb8b00ae7a4dde12, type: 3}
@@ -17123,7 +17130,7 @@ MonoBehaviour:
   TransparentLayers:
     serializedVersion: 2
     m_Bits: 0
-  MinimumDistanceFromTarget: 0.37
+  MinimumDistanceFromTarget: 0.55
   AvoidObstacles:
     Enabled: 1
     DistanceLimit: 0
@@ -17138,7 +17145,7 @@ MonoBehaviour:
     Damping: 0.4
     DampingWhenOccluded: 0.7
   ShotQualityEvaluation:
-    Enabled: 1
+    Enabled: 0
     OptimalDistance: 10
     NearLimit: 5
     FarLimit: 30
@@ -17158,7 +17165,7 @@ GameObject:
   - component: {fileID: 1952738118}
   m_Layer: 0
   m_Name: Plane (5)
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -26642,7 +26649,7 @@ GameObject:
   - component: {fileID: 3010164153458103491}
   m_Layer: 0
   m_Name: walls
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
