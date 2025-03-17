@@ -7,7 +7,6 @@ public class VaseShatter : MonoBehaviour
     public GameObject brokenVase;
     public float shatterForce = 1f;
     public AudioClip shatterSound;
-    private AudioSource audioSource;
 
 
     [Header("Task Manager")]
@@ -21,7 +20,6 @@ public class VaseShatter : MonoBehaviour
     void Awake()
     {
         tutorialText = GameObject.Find("TutorialTextManager").GetComponent<TutorialText>();
-        audioSource = GameObject.Find("Background Music").GetComponent<AudioSource>(); 
         TaskManager.RegisterTask(task);
     }
 
@@ -41,7 +39,7 @@ public class VaseShatter : MonoBehaviour
         
         if (shatterSound != null)
         {
-            AudioSource.PlayClipAtPoint(shatterSound, transform.position);
+            AudioManager.Instance.Play3DSFX(shatterSound, transform.position);
         }
 
         // Instantiate the broken vase at the vase's position and rotation
