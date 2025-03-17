@@ -24,9 +24,6 @@ public class LivingRoomText : MonoBehaviour
     [Header("Player Inputs")]
     public InputHandler player1Input;
     public InputHandler player2Input;
-
-    [Header("Sound")]
-    public AudioSource levelCompleteSound;
     
     private int currStage = 0;
     private MessageManager messageManager;
