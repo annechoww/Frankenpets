@@ -36,8 +36,6 @@ public class PlayerManager : MonoBehaviour
     public float reconnectionDistance = 0.3f;
     public float splitTime = 1.2f;
     public KeyCode reconnectToggleKey = KeyCode.Space;
-    public AudioClip splitSound;
-    public AudioClip reconnectSound;
     private Stopwatch splitStopwatch = new Stopwatch();
     private Quaternion initialRelativeRotation;
     private GameObject frontHalf;
@@ -45,6 +43,7 @@ public class PlayerManager : MonoBehaviour
     private GameObject frontMagnet;
     private GameObject backMagnet;
     private bool splitCondition = false; // stretching rig listens for this
+    
 
 
     [Header("Switching Variables")]
@@ -80,12 +79,11 @@ public class PlayerManager : MonoBehaviour
     public GameObject P2CatSpeechIcon;
     public GameObject P2DogSpeechIcon;
 
+
     [Header("Sound")]
-    public AudioSource stretchAudioSource;
-    // public AudioSource switchAudioSource;
     public AudioClip meowSound;
     public AudioClip woofSound;
-
+    
     // Others
     private MessageManager messageManager;
 
@@ -431,21 +429,14 @@ public class PlayerManager : MonoBehaviour
             {
                 splitStopwatch.Start();
 
-                if (!stretchAudioSource.isPlaying)
-                {
-                    stretchAudioSource.Play();
-                }
+                AudioManager.Instance.PlayStretchSFX();
             }
         }
         else
         {
             if (splitStopwatch.IsRunning)
             {
-                // TODO: stop stretch sound
-                if (stretchAudioSource.isPlaying)
-                {
-                    stretchAudioSource.Stop();
-                }
+                AudioManager.Instance.StopStretchSFX();
                 splitStopwatch.Reset();
             }
         }
@@ -575,11 +566,9 @@ public class PlayerManager : MonoBehaviour
 
             messageManager.cameraIndicatorMessage(); // Will have split camera, so temporarily display the "P1" / "P2" labels
             
-            // Play audio
-            if (splitSound != null)
-            {
-                AudioSource.PlayClipAtPoint(splitSound, transform.position);
-            }
+            
+            AudioManager.Instance.PlaySplitSFX();
+            
             
 
             UnityEngine.Debug.Log("Halves disconnected due to opposing pull.");
@@ -600,11 +589,9 @@ public class PlayerManager : MonoBehaviour
 
             // TODO: Apply animation
 
-            // Play audio
-            if (reconnectSound != null)
-            {
-                AudioSource.PlayClipAtPoint(reconnectSound, transform.position); 
-            }
+
+            AudioManager.Instance.PlayReconnectSFX();
+    
 
             UnityEngine.Debug.Log("Halves reconnected.");
         
@@ -818,11 +805,7 @@ public class PlayerManager : MonoBehaviour
             
             updatePlayerIcons();
 
-            // Play audio (TODO: NEW AUDIO)
-            if (splitSound != null)
-            {
-                AudioSource.PlayClipAtPoint(splitSound, transform.position);
-            }
+            AudioManager.Instance.PlaySwitchSFX();
 
             UnityEngine.Debug.Log("Switched!");
             hasJustSwitched = true;

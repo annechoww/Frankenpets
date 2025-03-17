@@ -5,41 +5,38 @@ using UnityEngine;
 public class PlayAudioOnDrop : MonoBehaviour
 {
     [Header("References")]
-    public float force = 1f;
-    public AudioClip audioClip;
+    public float forceThreshold = 1f;  // Minimum force needed to trigger sound
+    public AudioClip dropSoundClip;
 
-    private Stopwatch stopwatch = new Stopwatch();
-    private bool shouldMute = true;
-    private float muteForSeconds = 5.0f;
+    private bool isMuted = true;
+    private float muteDuration = 5.0f;
 
-    void Start()
+    private void Start()
     {
-        stopwatch.Start();
+        StartCoroutine(UnmuteAfterDelay());
     }
 
-    void Update()
+    private void OnCollisionEnter(Collision collision)
     {
-        if (stopwatch.Elapsed.TotalSeconds > muteForSeconds) 
+        // Check if the object hit the ground with enough force
+        if (collision.relativeVelocity.magnitude > forceThreshold && !isMuted)
         {
-            shouldMute = false;
-            stopwatch.Stop();
+            PlaySoundAtPosition();
         }
     }
 
-    void OnCollisionEnter(Collision collision)
+    private void PlaySoundAtPosition()
     {
-        // Check if the vase hits the ground with enough force
-        if (collision.relativeVelocity.magnitude > force)
+        if (dropSoundClip != null)
         {
-            playSound();
+            // Send the drop sound to AudioManager for volume control
+            AudioManager.Instance.Play3DSFX(dropSoundClip, transform.position);
         }
     }
 
-    void playSound()
-    {   
-        if ((audioClip != null) && !shouldMute)
-        {
-            AudioSource.PlayClipAtPoint(audioClip, transform.position);
-        }
+    private IEnumerator UnmuteAfterDelay()
+    {
+        yield return new WaitForSeconds(muteDuration);
+        isMuted = false;
     }
 }

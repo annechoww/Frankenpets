@@ -20,8 +20,6 @@ public class TrashTask : MonoBehaviour
 
     void Awake()
     {
-        // tutorialText = GameObject.Find("TutorialTextManager").GetComponent<TutorialText>();
-        audioSource = GameObject.Find("Background Music").GetComponent<AudioSource>(); 
         TaskManager.RegisterTask(task);
     }
 
@@ -69,9 +67,6 @@ public class TrashTask : MonoBehaviour
         taskItem.color = completedColor;
         // tutorialText.advanceTutorialStage();
         task.IsComplete = true;
-        if (taskCompleteSound != null)
-        {
-            audioSource.PlayOneShot(taskCompleteSound);
-        }
+        AudioManager.Instance.PlayTaskCompletionSound();
     }
 }

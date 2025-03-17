@@ -46,7 +46,6 @@ public class LivingRoomText : MonoBehaviour
 
     private IEnumerator OverlaySequence()
     {
-        levelCompleteSound.PlayDelayed(1);
         
         yield return WaitForKey();
         overlay.transform.GetChild(1).gameObject.SetActive(false);

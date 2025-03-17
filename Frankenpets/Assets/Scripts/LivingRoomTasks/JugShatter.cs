@@ -66,7 +66,7 @@ public class JugShatter : MonoBehaviour
         // GetComponent<FindTasks>().DestroyFindTaskMechanic(arrow, taskParticle, taskLight);
         if (taskCompleteSound != null)
         {
-            AudioManager.Instance.PlayTaskCompletionSound(taskCompleteSound);
+            AudioManager.Instance.PlayTaskCompletionSound();
         }
     }
 }

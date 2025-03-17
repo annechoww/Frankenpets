@@ -14,12 +14,27 @@ public class AudioManager : MonoBehaviour
     public AudioSource musicSource; // For background music
     public AudioSource sfxSource;   // For SFX (task complete, collisions, etc.)
 
+    public AudioSource playerSource; // For player sounds (stretching, splitting, etc.)
+
+    public AudioSource UISource; // For UI sounds (button clicks, task complete etc.)
+
     [Header("Music Clips by Scene")]
     public AudioClip splashMusic;
     public AudioClip atticMusic;
     public AudioClip livingRoomMusic;
     public AudioClip basementMusic;
     public AudioClip levelCompleteMusic;
+
+    [Header("Player SFX Clips")]
+    public AudioClip stretchSFX;
+    public AudioClip splitSFX;
+    public AudioClip reconnectSFX;
+    public AudioClip switchSFX;
+
+    [Header("Game SFX Clips")]
+    public AudioClip taskCompleteSFX;
+
+    private bool isStretching = false;
 
 
     private void Awake()
@@ -118,10 +133,16 @@ public class AudioManager : MonoBehaviour
             sfxSource.PlayOneShot(clip);
     }
 
-    // If you want the music to fade out during a task SFX
-    public void PlayTaskCompletionSound(AudioClip taskClip, float fadeDuration = 1f)
+    public void PlayPlayerSFX(AudioClip clip)
     {
-        StartCoroutine(FadeOutMusicAndPlayTask(taskClip, fadeDuration));
+        if (clip != null)
+            playerSource.PlayOneShot(clip);
+    }
+
+    // If you want the music to fade out during a task SFX
+    public void PlayTaskCompletionSound(float fadeDuration = 0.5f)
+    {
+        StartCoroutine(FadeOutMusicAndPlayTask(taskCompleteSFX, fadeDuration));
     }
 
     private IEnumerator FadeOutMusicAndPlayTask(AudioClip taskClip, float fadeDuration)
@@ -137,7 +158,7 @@ public class AudioManager : MonoBehaviour
         musicSource.volume = 0;
 
         // Play task SFX
-        sfxSource.PlayOneShot(taskClip);
+        UISource.PlayOneShot(taskClip);
         // Wait until done
         yield return new WaitForSeconds(taskClip.length);
 
@@ -148,5 +169,47 @@ public class AudioManager : MonoBehaviour
             yield return null;
         }
         musicSource.volume = originalVolume;
+    }
+
+    public void Play3DSFX(AudioClip clip, Vector3 position)
+    {
+        if (clip == null) return;
+
+        // Create a new temporary GameObject at the collision point
+        GameObject tempAudio = new GameObject("TempAudio");
+        AudioSource audioSource = tempAudio.AddComponent<AudioSource>();
+
+        // Set up the AudioSource
+        audioSource.clip = clip;
+        audioSource.spatialBlend = 1f; // 3D sound
+        audioSource.volume = 1.0f; // Adjust based on needs
+        audioSource.outputAudioMixerGroup = sfxSource.outputAudioMixerGroup; // Route to SFX Mixer Group
+        audioSource.Play();
+
+        // Destroy after sound plays to clean up memory
+        Destroy(tempAudio, clip.length);
+    }
+
+    
+
+    public void PlayStretchSFX()
+    {
+        PlayPlayerSFX(stretchSFX);
+    }
+    public void StopStretchSFX()
+    {
+        playerSource.Stop();
+    }
+    public void PlaySplitSFX()
+    {
+        PlayPlayerSFX(splitSFX);
+    }
+    public void PlayReconnectSFX()
+    {
+        PlayPlayerSFX(reconnectSFX);
+    }
+    public void PlaySwitchSFX()
+    {
+        PlayPlayerSFX(switchSFX);
     }
 }
