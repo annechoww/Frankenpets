@@ -102,6 +102,9 @@ public class PlayerActions : MonoBehaviour
     public GameObject climbText;
     public GameObject controlsMenu;
     private bool isViewingControlsMenu = false;
+
+    [Header("Tutorial Variables")]
+    public bool isTutorial = false; // ENABLE THIS IN THE ATTIC
     
     // Tutorial overlay
     [Header("Tutorial Overlay")]
@@ -158,12 +161,19 @@ public class PlayerActions : MonoBehaviour
 
         runJumpLogic();
         runNoiseLogic();
-        runClimbLogic();
-        runGrabLogic();
         runTailLogic();
-        runPawLogic();
-        // runHindLegsLogic();
-        runDashLogic();
+
+        runGrabLogic();
+
+        if (!isTutorial)
+        {
+            runClimbLogic();
+            runPawLogic();
+            // runHindLegsLogic();
+            runDashLogic();
+        }
+
+        
 
         //if (isGrabbing && isDraggableObject) enforceAngleRestriction();
 

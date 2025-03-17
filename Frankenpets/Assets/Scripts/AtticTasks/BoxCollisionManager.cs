@@ -73,12 +73,11 @@ public class BoxCollisionManager : MonoBehaviour
         taskItem.color = completedColor;
         task.IsComplete = true;
 
-        TaskManager.Instance.CompleteTask();
-
         if (isFirstCollision && (tutorialText.getCurrTutorialStage() == TutorialText.tutScatterBoxes))
         {
             tutorialText.advanceTutorialStage();
             isFirstCollision = false;
+            TaskManager.Instance.CompleteTask(); 
         }
     }
 

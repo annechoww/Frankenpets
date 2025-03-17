@@ -89,7 +89,7 @@ public class PlayerManager : MonoBehaviour
     // Others
     private MessageManager messageManager;
 
-    // Mainly used for the tutorial
+    [Header("Tutorial Variables")]
     public bool canReconnect = true;
     public bool canSwitch = true;
     public bool canSplit = true;
