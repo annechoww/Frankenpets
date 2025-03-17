@@ -34,9 +34,6 @@ public class AudioManager : MonoBehaviour
     [Header("Game SFX Clips")]
     public AudioClip taskCompleteSFX;
 
-    private bool isStretching = false;
-
-
     private void Awake()
     {
         // Singleton pattern
@@ -68,7 +65,7 @@ public class AudioManager : MonoBehaviour
         // Check the scene name or build index to decide which music to play
         switch (scene.name)
         {
-            case "SplashScreen":
+            case "Splash Screen":
                 PlayMusic(splashMusic);
                 break;
             case "AtticLevel":

@@ -114,8 +114,6 @@ public class TutorialText : MonoBehaviour
     private ControllerAssignment controllerAssignment; 
     private bool isKeyboard;   
 
-    private AudioSource audioSource;
-
 
     void Awake()
     {
@@ -181,8 +179,6 @@ public class TutorialText : MonoBehaviour
         playerManager.setCanSwitch(false);
         playerManager.setCanReconnect(false);
         playerManager.setCanSplit(false);
-
-        audioSource = GameObject.Find("Background Music").GetComponent<AudioSource>();
     }
 
     void Update()
@@ -559,7 +555,7 @@ public class TutorialText : MonoBehaviour
 
                 if (whineSound != null)
                 {
-                    AudioSource.PlayClipAtPoint(whineSound, playerManager.getFrontHalf().transform.position);
+                    AudioManager.Instance.Play3DSFX(whineSound, playerManager.getFrontHalf().transform.position);
                 }
 
                 break;
@@ -575,7 +571,7 @@ public class TutorialText : MonoBehaviour
 
                 if (mewSound != null)
                 {
-                    AudioSource.PlayClipAtPoint(mewSound, playerManager.getBackHalf().transform.position);
+                    AudioManager.Instance.Play3DSFX(mewSound, playerManager.getBackHalf().transform.position);
                 }
                 break;
 
@@ -839,13 +835,13 @@ public class TutorialText : MonoBehaviour
 
         if (playSound)
         {
-            if (bubble == speechBubbleLeft) audioSource.PlayOneShot(mewSound);
-            else if (bubble == speechBubbleRight) audioSource.PlayOneShot(barkSound);
+            if (bubble == speechBubbleLeft) AudioManager.Instance.PlaySFX(mewSound);
+            else if (bubble == speechBubbleRight) AudioManager.Instance.PlaySFX(barkSound);
             else
             {
-                audioSource.PlayOneShot(mewSound);
+                AudioManager.Instance.PlaySFX(mewSound);
                 yield return new WaitForSeconds(0.5f);
-                audioSource.PlayOneShot(barkSound);
+                AudioManager.Instance.PlaySFX(barkSound);
             }
         }
 

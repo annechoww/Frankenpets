@@ -92,7 +92,7 @@ public class TaskManager : MonoBehaviour
 
         if (taskCompletedSound != null)
         {
-            audioSource.PlayOneShot(taskCompletedSound);
+            AudioManager.Instance.PlayTaskCompletionSound();
         }
 
         yield return new WaitForSeconds(2.0f); // Display banner for 2 seconds
