@@ -80,7 +80,7 @@ public class DoorShatter : MonoBehaviour
             // tutorialText.advanceTutorialStage();
             if (taskCompleteSound != null)
             {
-                AudioManager.Instance.PlayTaskCompletionSound(taskCompleteSound);
+                AudioManager.Instance.PlayTaskCompletionSound();
             }
         }
 

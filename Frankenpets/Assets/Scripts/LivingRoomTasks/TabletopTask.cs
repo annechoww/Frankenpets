@@ -56,9 +56,6 @@ public class TabletopTask : MonoBehaviour
         // tutorialText.advanceTutorialStage();
         task.IsComplete = true;
         // GetComponent<FindTasks>().DestroyFindTaskMechanic(arrow, taskParticle, taskLight);
-        if (taskCompleteSound != null)
-        {
-            AudioManager.Instance.PlayTaskCompletionSound(taskCompleteSound);
-        }
+        AudioManager.Instance.PlayTaskCompletionSound();
     }
 }
