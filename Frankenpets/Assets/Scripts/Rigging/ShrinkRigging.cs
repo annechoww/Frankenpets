@@ -19,6 +19,7 @@ public class ShirnkRigging : MonoBehaviour
     // State trackers
     private bool isShrinking = false;
     private Coroutine shrinkCoroutine;
+    private bool hasJustSwitched = false;
 
     // Original pet half scales
     private Vector3 dogFrontOriginalScale;
@@ -54,7 +55,7 @@ public class ShirnkRigging : MonoBehaviour
     {
         if (playerManager.CheckSwitchInput() && playerManager.getCanSwitch())
         {
-            if (!isShrinking)
+            if (!isShrinking & !hasJustSwitched)
             {
                 shrinkCoroutine = StartCoroutine(Shrink());
             }
@@ -66,6 +67,8 @@ public class ShirnkRigging : MonoBehaviour
                 StopCoroutine(shrinkCoroutine);
                 StartCoroutine(Expand());
             }
+
+            hasJustSwitched = false;
         }
     }
 
@@ -99,6 +102,7 @@ public class ShirnkRigging : MonoBehaviour
             yield return null;
         }
 
+        hasJustSwitched = true;
         StartCoroutine(Expand()); // expand after switch is complete
     }
 

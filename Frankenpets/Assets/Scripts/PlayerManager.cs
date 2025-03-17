@@ -79,6 +79,11 @@ public class PlayerManager : MonoBehaviour
     public GameObject P2CatSpeechIcon;
     public GameObject P2DogSpeechIcon;
 
+
+    [Header("Sound")]
+    public AudioClip meowSound;
+    public AudioClip woofSound;
+    
     // Others
     private MessageManager messageManager;
 
@@ -95,6 +100,7 @@ public class PlayerManager : MonoBehaviour
 
     void Awake()
     {
+        Screen.SetResolution(1920, 1080, true); // force their resolution to be 1920x1080 lol
 
         immutableWalkSpeed = walkSpeed;
         immutableTurnSpeed = turnSpeed;
@@ -281,17 +287,119 @@ public class PlayerManager : MonoBehaviour
 
 
     // PLAYER INPUT CHECKERS ////////////////////////////////////////////
+    // private bool isHolding; 
+    private Stopwatch player1Stopwatch = new Stopwatch();
+    private Stopwatch player2Stopwatch = new Stopwatch();   
+    private bool player1HoldingSwitch = false; 
+    private bool player2HoldingSwitch = false; 
     public bool CheckSwitchInput() {
         player1SwitchPressed = player1Input.GetSwitchPressed();
         player2SwitchPressed = player2Input.GetSwitchPressed();
 
+        if (player1SwitchPressed && !player2SwitchPressed && canSwitch)
+        {
+            if (!player1Stopwatch.IsRunning)
+            {
+                player1Stopwatch.Start();
+            }
+      
+            if (player1Stopwatch.Elapsed.TotalSeconds >= 0.75f && !player1HoldingSwitch)
+            {
+                player1HoldingSwitch = true;
+
+                messageManager.endP2WantsToSwitch();
+                messageManager.startP1WantsToSwitch();
+                AudioSource.PlayClipAtPoint(meowSound, P1.Half.transform.position); 
+            } 
+        } 
+        else
+        {
+            player1Stopwatch.Reset();
+            if (player1HoldingSwitch)
+            {
+                player1HoldingSwitch = false;
+                messageManager.endP1WantsToSwitch(); // Hide P1's switch message
+            }
+        }
+        
+        if (!player1SwitchPressed && player2SwitchPressed && canSwitch)
+        {   
+            if (!player2Stopwatch.IsRunning)
+            {
+                player2Stopwatch.Start();
+            }
+
+            if (player2Stopwatch.Elapsed.TotalSeconds >= 0.75f && !player2HoldingSwitch)
+            {
+                player2HoldingSwitch = true;
+
+                messageManager.endP1WantsToSwitch();
+                messageManager.startP2WantsToSwitch();
+                AudioSource.PlayClipAtPoint(woofSound, P2.Half.transform.position);
+            } 
+        } 
+        else
+        {
+            player2Stopwatch.Reset();
+            if (player2HoldingSwitch)
+            {
+                player2HoldingSwitch = false;
+                messageManager.endP2WantsToSwitch(); // Hide P2's switch message
+            }
+        }
+
         return player1SwitchPressed && player2SwitchPressed;
     }
 
+    private bool player1HoldingReconnect = false; 
+    private bool player2HoldingReconnect = false; 
     private void CheckReconnectInput() {
-        if ((player1Input.GetReconnectPressed() || player2Input.GetReconnectPressed()) && fixedJoint == null && canReconnect)
+        bool player1ReconnectPressed = player1Input.GetReconnectPressed();
+        bool player2ReconnectPressed = player2Input.GetReconnectPressed();
+
+        if (player1ReconnectPressed && player2ReconnectPressed && fixedJoint == null && canReconnect)
         {
             tryReconnect();
+        }
+
+        // Error messages
+        if (player1ReconnectPressed && !player2ReconnectPressed && canReconnect)
+        {
+            if (!player1HoldingReconnect)
+            {
+                player1HoldingReconnect = true;
+
+                messageManager.endP2WantsToReconnect();
+                messageManager.startP1WantsToReconnect();
+                AudioSource.PlayClipAtPoint(meowSound, P1.Half.transform.position);
+            }
+        }
+        else
+        {
+            if (player1HoldingReconnect)
+            {
+                player1HoldingReconnect = false;
+                messageManager.endP1WantsToReconnect(); 
+            }
+        }
+        
+        if (!player1Input.GetReconnectPressed() && player2Input.GetReconnectPressed() && canReconnect)
+        {
+            if (!player2HoldingReconnect)
+            {
+                player2HoldingReconnect = true;
+                messageManager.endP1WantsToReconnect();
+                messageManager.startP2WantsToReconnect();
+                AudioSource.PlayClipAtPoint(woofSound, P2.Half.transform.position);
+            }
+        }
+        else
+        {
+            if (player2HoldingReconnect)
+            {
+                player2HoldingReconnect = false;
+                messageManager.endP2WantsToReconnect(); 
+            }
         }
     }
 
@@ -317,7 +425,7 @@ public class PlayerManager : MonoBehaviour
         // Start or reset split timer based on pull direction
         if (splitCondition)
         {
-            if (!splitStopwatch.IsRunning)
+            if (!splitStopwatch.IsRunning && canSplit)
             {
                 splitStopwatch.Start();
 
@@ -524,11 +632,19 @@ public class PlayerManager : MonoBehaviour
     private void runSwitchLogic()
     {
         if (CheckSwitchInput() && canSwitch) 
+        { 
+            player1HoldingSwitch = false;
+            player2HoldingSwitch = false;
+            messageManager.endP1WantsToSwitch();
+            messageManager.endP2WantsToSwitch();
+
             tryStartSwitch();
+        }
         else
         {
             messageManager.switchFailMessageDeactivate();
             cancelSwitch();
+            hasJustSwitched = false;
         }
 
         tryFinishSwitch();
@@ -552,9 +668,10 @@ public class PlayerManager : MonoBehaviour
         switchStopwatch.Reset();
     }
 
+    private bool hasJustSwitched = false;
     private void tryFinishSwitch()
     {
-        if ((switchStopwatch.Elapsed.TotalSeconds > switchTime) && (fixedJoint != null))
+        if ((switchStopwatch.Elapsed.TotalSeconds > switchTime) && (fixedJoint != null) && !hasJustSwitched)
         {
             switchStopwatch.Reset();
 
@@ -691,6 +808,7 @@ public class PlayerManager : MonoBehaviour
             AudioManager.Instance.PlaySwitchSFX();
 
             UnityEngine.Debug.Log("Switched!");
+            hasJustSwitched = true;
         }
     }
 
