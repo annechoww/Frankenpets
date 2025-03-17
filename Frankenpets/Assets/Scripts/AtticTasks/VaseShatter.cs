@@ -7,6 +7,7 @@ public class VaseShatter : MonoBehaviour
     public GameObject brokenVase;
     public float shatterForce = 1f;
     public AudioClip shatterSound;
+    private AudioSource audioSource;
 
 
     [Header("Task Manager")]

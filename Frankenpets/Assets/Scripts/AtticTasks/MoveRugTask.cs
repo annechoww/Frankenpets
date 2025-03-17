@@ -18,7 +18,6 @@ public class MoveRugTask : MonoBehaviour
     void Awake()
     {
         TaskManager.RegisterTask(task);
-        audioSource = GameObject.Find("Background Music").GetComponent<AudioSource>(); 
         rug.constraints = RigidbodyConstraints.FreezeAll;
         foreach (Transform child in rug.transform)
         {

@@ -18,6 +18,7 @@ public class BoxCollisionManager : MonoBehaviour
 
     private TutorialText tutorialText;
     private bool isFirstCollision = true;
+    private AudioSource audioSource;
 
 
     // awake singleton
