@@ -13,6 +13,8 @@ public class LivingRoomText : MonoBehaviour
     public GameObject pressEnterToContinueUI;
     public GameObject glowUI;
     public GameObject accessControlsUI;
+    public GameObject overlay;
+    public GameObject overlayBG;
 
     [Header("Icons")]
     public GameObject P1SpeechIcons;
@@ -26,6 +28,7 @@ public class LivingRoomText : MonoBehaviour
     private int currStage = 0;
     private MessageManager messageManager;
     private ControllerAssignment controllerAssignment;
+    private int tutOverlayStage = 1;
 
     void Awake()
     {
@@ -36,8 +39,42 @@ public class LivingRoomText : MonoBehaviour
     void Start()
     {
         SetupControlsUI(); // Configure UI based on input method
+        StartCoroutine(OverlaySequence());
+        
+        //StartCoroutine(TutorialSequence()); // Start tutorial progression
+    }
+
+    private IEnumerator OverlaySequence()
+    {
+        levelCompleteSound.PlayDelayed(1);
+        
+        yield return WaitForKey();
+        overlay.transform.GetChild(1).gameObject.SetActive(false);
+        overlay.transform.GetChild(2).gameObject.SetActive(true);
+
+        yield return WaitForKey();
+        overlay.transform.GetChild(2).gameObject.SetActive(false);
+        overlay.transform.GetChild(3).gameObject.SetActive(true);
+        
+        yield return WaitForKey();
+        overlay.transform.GetChild(3).gameObject.SetActive(false);
+        overlay.transform.GetChild(4).gameObject.SetActive(true);
+
+        yield return WaitForKey();
+        overlay.transform.GetChild(4).gameObject.SetActive(false);
+        overlay.transform.GetChild(5).gameObject.SetActive(true);
+        
+        yield return WaitForKey();
+        overlay.transform.GetChild(5).gameObject.SetActive(false);
+        overlayBG.SetActive(false);
+        overlay.SetActive(false);
+        P1SpeechIcons.SetActive(true);
+        P2SpeechIcons.SetActive(true);
+
         StartCoroutine(TutorialSequence()); // Start tutorial progression
     }
+
+    
 
     private void SetupControlsUI()
     {
@@ -49,17 +86,25 @@ public class LivingRoomText : MonoBehaviour
         glowUI.transform.GetChild(1).gameObject.SetActive(!isKeyboard);
         accessControlsUI.transform.GetChild(1).gameObject.SetActive(!isKeyboard);
         pressEnterToContinueUI.transform.GetChild(1).gameObject.SetActive(!isKeyboard);
+
+        if (isKeyboard){
+            overlay.transform.GetChild(0).GetChild(0).gameObject.SetActive(true);
+        } else if (!isKeyboard){
+            overlay.transform.GetChild(0).GetChild(1).gameObject.SetActive(true);
+        }
     }
 
     private IEnumerator TutorialSequence()
-    {
+    {   
+        // moved upwards to tutorial overlay
+        // levelCompleteSound.PlayDelayed(1);
 
         speechBubbleTwoTails.SetActive(true);
         pressEnterToContinueUI.SetActive(true);
 
-        yield return ShowMessage("We made it Level 2: The Living Room!");
-        yield return ShowMessage("Explore the house and...");
-        yield return ShowMessage("complete the to-do list to go to the next level.");
+        // yield return ShowMessage("We made it Level 2: The Living Room!");
+        // yield return ShowMessage("Explore the house and...");
+        // yield return ShowMessage("complete the to-do list to go to the next level.");
         // yield return ShowMessage("If you don't know how to do something...");
 
         pressEnterToContinueUI.SetActive(false);
