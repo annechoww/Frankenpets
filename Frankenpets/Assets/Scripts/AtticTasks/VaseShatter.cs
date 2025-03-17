@@ -7,8 +7,8 @@ public class VaseShatter : MonoBehaviour
     public GameObject brokenVase;
     public float shatterForce = 1f;
     public AudioClip shatterSound;
-    public AudioClip taskCompleteSound;
     private AudioSource audioSource;
+
 
     [Header("Task Manager")]
     public Image taskItem;
@@ -57,9 +57,7 @@ public class VaseShatter : MonoBehaviour
         taskItem.color = completedColor;
         tutorialText.advanceTutorialStage();
         task.IsComplete = true;
-        if (taskCompleteSound != null)
-        {
-            audioSource.PlayOneShot(taskCompleteSound);
-        }
+
+        TaskManager.Instance.CompleteTask();
     }
 }

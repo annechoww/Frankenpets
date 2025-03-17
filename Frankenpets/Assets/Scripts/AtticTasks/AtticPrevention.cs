@@ -15,7 +15,7 @@ public class AtticPrevention : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         Debug.Log(tutorialText.getCurrTutorialStage());
-        if (other.CompareTag("dog front") && (tutorialText.getCurrTutorialStage() == TutorialText.tutComplete || tutorialText.getCurrTutorialStage() == TutorialText.annoyedCat))
+        if (other.CompareTag("dog front") && (tutorialText.getCurrTutorialStage() == TutorialText.tutComplete || tutorialText.getCurrTutorialStage() == TutorialText.annoyedCat || tutorialText.getCurrTutorialStage() == TutorialText.leaveAttic))
         {
             UnityEngine.Debug.Log("attic prevention");
             blocker.SetActive(true);
@@ -25,6 +25,7 @@ public class AtticPrevention : MonoBehaviour
         {
             UnityEngine.Debug.Log("can fall ");
             blocker.SetActive(false);
+            tutorialText.hideLeaveAtticSpeech();
         }
 
        

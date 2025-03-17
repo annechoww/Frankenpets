@@ -1,6 +1,9 @@
 using UnityEngine;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Diagnostics;
 
 /* This file holds all functions pertaining to managing the tasks.
     Lists of Task Names Implemented
@@ -13,6 +16,26 @@ using System.Linq;
 public class TaskManager : MonoBehaviour
 {
     private static List<Task> allTasks = new List<Task>();
+
+    public static TaskManager Instance { get; private set; }
+    public event Action OnTaskCompleted;
+    public AudioClip taskCompletedSound;
+    public AudioSource audioSource;
+
+    [SerializeField] private GameObject taskCompletedBanner;
+
+    private void Awake()
+    {
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(gameObject);
+    }
+
+    private void Start()
+    {
+        taskCompletedBanner.SetActive(false);
+    }
 
     public static void RegisterTask(Task task)
     {
@@ -52,5 +75,27 @@ public class TaskManager : MonoBehaviour
     {
         return tasks.All(task => task.IsComplete);
 
+    }
+
+
+
+
+    public void CompleteTask()
+    {
+        OnTaskCompleted?.Invoke();
+        StartCoroutine(ShowBanner());
+    }
+
+    private IEnumerator ShowBanner()
+    {
+        taskCompletedBanner.SetActive(true);
+
+        if (taskCompletedSound != null)
+        {
+            audioSource.PlayOneShot(taskCompletedSound);
+        }
+
+        yield return new WaitForSeconds(2.0f); // Display banner for 2 seconds
+        taskCompletedBanner.SetActive(false);
     }
 }
