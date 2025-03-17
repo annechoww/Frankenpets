@@ -299,6 +299,14 @@ public class TutorialText : MonoBehaviour
             case 4:
                 overlay.transform.GetChild(3).gameObject.SetActive(false);
                 overlay.transform.GetChild(4).gameObject.SetActive(true);
+
+                Transform menuUI = overlay.transform.GetChild(4).gameObject.transform.Find("MenuUI");
+                if (isKeyboard)
+                {
+                    menuUI.transform.GetChild(0).gameObject.SetActive(true);
+                } else{
+                    menuUI.transform.GetChild(1).gameObject.SetActive(true);
+                }
                 break;
             case 5:
                 overlay.transform.GetChild(4).gameObject.SetActive(false);
