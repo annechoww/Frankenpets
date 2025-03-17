@@ -36,13 +36,14 @@ public class TutorialText : MonoBehaviour
     [Header("Controls Corner Variables")]
     public GameObject controlsCornerUIParent;
     private GameObject controlsCornerUIChild;
+    public GameObject P2ControlsGrab;
     private GameObject P1ControlsCF;
-    private GameObject P1ControlsDF; 
+    // private GameObject P1ControlsDF; 
     private GameObject P1ControlsCB;
-    private GameObject P1ControlsDB; 
-    private GameObject P2ControlsCF; 
+    // private GameObject P1ControlsDB; 
+    // private GameObject P2ControlsCF; 
     private GameObject P2ControlsDF;
-    private GameObject P2ControlsCB; 
+    // private GameObject P2ControlsCB; 
     private GameObject P2ControlsDB;
 
     [Header("Icons and Sounds")]
@@ -96,6 +97,7 @@ public class TutorialText : MonoBehaviour
     public GameObject vaseTaskTodo;
     public GameObject boxTaskTodo;
     public GameObject rugTaskTodo;
+    public RectTransform todoList;
 
     
     // State tracking variables
@@ -129,7 +131,7 @@ public class TutorialText : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        updateTutorialText();
+        StartCoroutine(updateTutorialText());
 
         fixedJoint = playerManager.getJoint();
         vaseLights = vaseLightsParent.GetComponentsInChildren<Light>();
@@ -161,16 +163,14 @@ public class TutorialText : MonoBehaviour
         if (isKeyboard) controlsCornerUIChild = controlsCornerUIParent.transform.GetChild(0).gameObject; // update variable to be either its keyboard or gamepad child
         else controlsCornerUIChild = controlsCornerUIParent.transform.GetChild(1).gameObject;
 
-        UnityEngine.Debug.Log(controlsCornerUIChild);
-
         P1ControlsCF = controlsCornerUIChild.transform.GetChild(0).transform.GetChild(0).gameObject;
-        P1ControlsDF = controlsCornerUIChild.transform.GetChild(0).transform.GetChild(1).gameObject;
-        P1ControlsCB = controlsCornerUIChild.transform.GetChild(0).transform.GetChild(2).gameObject;
-        P1ControlsDB = controlsCornerUIChild.transform.GetChild(0).transform.GetChild(3).gameObject;
-        P2ControlsCF = controlsCornerUIChild.transform.GetChild(1).transform.GetChild(0).gameObject;
-        P2ControlsDF = controlsCornerUIChild.transform.GetChild(1).transform.GetChild(1).gameObject;
-        P2ControlsCB = controlsCornerUIChild.transform.GetChild(1).transform.GetChild(2).gameObject;
-        P2ControlsDB = controlsCornerUIChild.transform.GetChild(1).transform.GetChild(3).gameObject;
+        // P1ControlsDF = controlsCornerUIChild.transform.GetChild(0).transform.GetChild(1).gameObject;
+        P1ControlsCB = controlsCornerUIChild.transform.GetChild(0).transform.GetChild(1).gameObject; // old index was 2
+        // P1ControlsDB = controlsCornerUIChild.transform.GetChild(0).transform.GetChild(3).gameObject;
+        // P2ControlsCF = controlsCornerUIChild.transform.GetChild(1).transform.GetChild(0).gameObject;
+        P2ControlsDF = controlsCornerUIChild.transform.GetChild(1).transform.GetChild(0).gameObject; // old index was 1
+        // P2ControlsCB = controlsCornerUIChild.transform.GetChild(1).transform.GetChild(2).gameObject;
+        P2ControlsDB = controlsCornerUIChild.transform.GetChild(1).transform.GetChild(1).gameObject; // old index was 3
 
         if (isKeyboard){
             overlay.transform.GetChild(0).GetChild(0).gameObject.SetActive(true);
@@ -253,22 +253,18 @@ public class TutorialText : MonoBehaviour
             }
         }
 
-        // check for keypress / gamepad press on "creepy..."
-        // if (getCurrTutorialStage() == 3 && checkForSpace())
-        // {
-        //     advanceTutorialStage();
-        // }
-
         // check for keypress / gamepad press to close the tutorial
-        if (getCurrTutorialStage() == tutComplete && checkForSpace())
-        {
-            leaveTutorial();
-        }
+        // if (getCurrTutorialStage() == tutComplete && checkForSpace())
+        // {
+        //     // leaveTutorial();
+        //     StartCoroutine(HideEffect(pressEnterToContinueUI, speechBubbleTwoTails));
+        // }
 
         // check for return key press to switch before exit attic
         if (getCurrTutorialStage() == scaredDog && checkForSpace())
         {
             advanceTutorialStage();
+            
         }
 
         // check for last switch to exit attic
@@ -330,7 +326,7 @@ public class TutorialText : MonoBehaviour
 
 
     // Update is called once per frame
-    private void updateTutorialText()
+    private IEnumerator updateTutorialText()
     {
         switch (currTutorialStage)
         {
@@ -339,7 +335,7 @@ public class TutorialText : MonoBehaviour
                 P1IconLarge.SetActive(true);
                 P2IconLarge.SetActive(true);
                 StartCoroutine(Highlight(bottomUIParentHighlight));
-                StartCoroutine(ShowBotttomUI(movementUI, speechBubbleTwoTails, "Move to the vase.", ""));
+                yield return StartCoroutine(ShowBottomUI(movementUI, speechBubbleTwoTails, "Move to the vase.", ""));
                 
                 // Arrow (already active)
 
@@ -349,14 +345,17 @@ public class TutorialText : MonoBehaviour
                 break;
             case tutBreakVase:
                 // Deactivate prev case
-                StartCoroutine(HideEffect(movementUI, speechBubbleTwoTails));
-
-                // Turn on controls UI
-                controlsCornerUIParent.SetActive(true);
+                yield return StartCoroutine(HideEffect(movementUI, speechBubbleTwoTails));
 
                 // Tell player to break the vase
                 StartCoroutine(Highlight(todoListHighlight));
                 revealTaskTodo(vaseTaskTodo);
+                // Turn on controls UI (reveals jump control since it's already set as active)
+                controlsCornerUIParent.SetActive(true);
+
+                yield return new WaitForSeconds(2.0f);
+                yield return StartCoroutine(Bounce(controlsCornerUIChild.transform));
+
                 break;
 
             case tutSplit:
@@ -364,9 +363,12 @@ public class TutorialText : MonoBehaviour
                 completeTaskTodo(vaseTaskTodo);
                 enterVaseAreaTrigger.enabled = false;
 
-                // Move the controls UI to the corner
-                StartCoroutine(MoveControlsCornerUI());
-                StartCoroutine(ShowBotttomUI(splitUI, speechBubbleTwoTails, "Chaos! Now, let's split apart.", ""));
+                // Move the controls UI to the corner (OLD)
+                // StartCoroutine(MoveControlsCornerUI());
+                
+
+                // Bottom UI
+                yield return StartCoroutine(ShowBottomUI(splitUI, speechBubbleTwoTails, "Chaos! Now, let's split apart.", ""));
 
                 // Deactivate prev paw path
                 vaseArrow.SetActive(false);
@@ -389,7 +391,7 @@ public class TutorialText : MonoBehaviour
            
             case tutScatterBoxes:
                 // Deactivate prev case
-                StartCoroutine(HideEffect(splitUI, speechBubbleTwoTails));
+                yield return StartCoroutine(HideEffect(splitUI, speechBubbleTwoTails));
 
                 // Tell player to push the boxes
                 StartCoroutine(Highlight(todoListHighlight));
@@ -421,6 +423,9 @@ public class TutorialText : MonoBehaviour
                 // Box task is completed
                 completeTaskTodo(boxTaskTodo);
 
+                // Bottom UI
+                yield return StartCoroutine(ShowBottomUI(reconnectUI, speechBubbleTwoTails, "Let's reconnect.", ""));
+
                 // Disable guiding path 
                 backBoxArrow.SetActive(false);
                 frontBoxArrow.SetActive(false);
@@ -436,20 +441,16 @@ public class TutorialText : MonoBehaviour
 
                 // Brighten the attic lights
                 brightenWorldLights();
-                
-                // Bottom UI
-                StartCoroutine(ShowBotttomUI(reconnectUI, speechBubbleTwoTails, "Let's reconnect.", ""));
 
                 break;
 
             case tutMoveToRug:
-                // Hide previous message, show new one 
-                StartCoroutine(HideEffect(reconnectUI, speechBubbleTwoTails));
-                StartCoroutine(DelayedCall(1.4f, () => 
-                {
-                    StartCoroutine(ShowBotttomUI(null, speechBubbleLeft, "Hey, what's under that purple rug?", ""));
-                }));
-
+                // Hide previous message
+                yield return StartCoroutine(HideEffect(reconnectUI, speechBubbleTwoTails));
+                
+                // Reveal reconnect control in controls corner
+                yield return StartCoroutine(RevealControlsCornerUI(1));
+                                   
                 // Light
                 dimLights();
                 rugMainLight.SetActive(true);
@@ -466,21 +467,16 @@ public class TutorialText : MonoBehaviour
                 // Paw path
                 rugPawPath.SetActive(true);
 
+                // Show new message
+                yield return StartCoroutine(ShowBottomUI(null, speechBubbleLeft, "Hey, what's under that purple rug?", ""));
+
                 break;
             case tutSwitch:
                 enterRugAreaTrigger.enabled = false;
 
-                // Hide previous message, show new one 
-                StartCoroutine(DelayedCall(0.5f, () => 
-                {
-                    StartCoroutine(HideEffect(null, speechBubbleLeft));
-                }));
-
-                StartCoroutine(DelayedCall(2.0f, () => 
-                {
-                    StartCoroutine(ShowBotttomUI(switchUI, speechBubbleLeft, "I can't grab this, can you help?", ""));
-                }));
-
+                // Hide previous message
+                yield return StartCoroutine(HideEffect(null, null));
+                
                 // Disable previous guiding path + light 
                 foreach (Light light in rugLights)
                 {
@@ -496,61 +492,62 @@ public class TutorialText : MonoBehaviour
 
                 // Add back world light  
                 brightenWorldLights();
-                
-                // tutorialText.text = "I can't grab this, can you help?";
-                // switchUI.SetActive(true);
+
+                // Show new message
+                yield return StartCoroutine(ShowBottomUI(switchUI, speechBubbleLeft, "I can't grab this, can you help?", ""));
                 
                 break;
             case tutDragRug:
-                // Hide previous message, show new one 
-                StartCoroutine(DelayedCall(0.5f, () => 
-                {
-                    StartCoroutine(HideEffect(switchUI, speechBubbleLeft));
-                }));
-                // tutorialText.transform.SetParent(speechBubbleRight.transform, true);
-                StartCoroutine(DelayedCall(2.0f, () => 
-                {
-                    StartCoroutine(ShowBotttomUI(grabUI, speechBubbleRight, "Woah, I'm at the front now!", ""));
-                }));
+                // Hide previous message
+                yield return StartCoroutine(HideEffect(switchUI, speechBubbleLeft));
+                
+                // Reveal reconnect control in controls corner
+                yield return StartCoroutine(RevealControlsCornerUI(0));
 
                 // StartCoroutine(Highlight(todoListHighlight));
                 revealTaskTodo(rugTaskTodo);
 
-                speechBubbleRight.SetActive(true);
+                // Show new msg
+                // tutorialText.transform.SetParent(speechBubbleRight.transform, true);
+                yield return StartCoroutine(ShowBottomUI(grabUI, speechBubbleRight, "Woah, I'm at the front now!", ""));
 
                 break;
             case tutComplete:
-                // Hide previous message, show new one 
-                // tutorialText.transform.SetParent(speechBubbleTwoTails.transform, true);
-                StartCoroutine(HideEffect(grabUI, speechBubbleRight));
-                StartCoroutine(DelayedCall(2.0f, () => 
-                {
-                    StartCoroutine(ShowBotttomUI(null, speechBubbleTwoTails, "Let's wreck this house!", "Leave the attic, or take a look around"));
-                }));
-
+                // Hide previous message
+                yield return StartCoroutine(HideEffect(grabUI, speechBubbleRight));
                 completeTaskTodo(rugTaskTodo);
+               
+                // Reveal "grab" control for dog
+                P2ControlsGrab.SetActive(true);
 
 
-                messageManager.startPressEnterToHideTutorial();
+                // messageManager.startPressEnterToHideTutorial();
+
+                // Show new message
+                // tutorialText.transform.SetParent(speechBubbleTwoTails.transform, true);
+                yield return StartCoroutine(ShowBottomUI(null, speechBubbleTwoTails, "Let's wreck this house!", "Leave the attic, or look around"));
+
+                // Reveal remaining basic controls
+                yield return new WaitForSeconds(2.0f);
+                yield return StartCoroutine(RevealControlsCornerUI(3));
+                yield return StartCoroutine(Bounce(controlsCornerUIChild.transform));
 
                 // next case activated in AtticPrevention.cs
                 break;
             
             case scaredDog:
                 // Hide things from previous case and annoyedCat case 
-                messageManager.cancelPressEnterToHideTutorial();
+                // messageManager.cancelPressEnterToHideTutorial();
                 speechBubbleLeft.SetActive(false);
                 speechBubbleTwoTails.SetActive(false);
-                switchUI.SetActive(false);
+                // switchUI.SetActive(false);
 
                 // Show scaredDog dialogue
                 // tutorialText.transform.SetParent(speechBubbleRight.transform, true);
-                StartCoroutine(HideEffect(null, null));
-                StartCoroutine(DelayedCall(1.5f, () => 
-                {
-                    StartCoroutine(ShowBotttomUI(null, speechBubbleRight, "The drop's too high... I'm scared!", ""));
-                }));
-                pressEnterToContinueUI.SetActive(true);
+                yield return StartCoroutine(HideEffect(switchUI, null));
+                yield return StartCoroutine(ShowBottomUI(pressEnterToContinueUI, speechBubbleRight, "The drop's too high... I'm scared!", "", false));
+        
+                // pressEnterToContinueUI.SetActive(true);
 
                 if (whineSound != null)
                 {
@@ -564,11 +561,9 @@ public class TutorialText : MonoBehaviour
                 // tutorialText.transform.SetParent(speechBubbleLeft.transform, true);
 
 
-                StartCoroutine(HideEffect(pressEnterToContinueUI, speechBubbleRight));
-                StartCoroutine(DelayedCall(1.5f, () => 
-                {
-                    StartCoroutine(ShowBotttomUI(switchUI, speechBubbleLeft, "Fine, I'll jump. Switch with me.", ""));
-                }));
+                yield return StartCoroutine(HideEffect(pressEnterToContinueUI, speechBubbleRight));
+                yield return StartCoroutine(ShowBottomUI(switchUI, speechBubbleLeft, "Fine, I'll jump. Switch with me.", "", false));
+          
 
                 if (mewSound != null)
                 {
@@ -577,9 +572,7 @@ public class TutorialText : MonoBehaviour
                 break;
 
             case leaveAttic:
-                speechBubbleLeft.SetActive(false);
-                switchUI.SetActive(false);
-                tutorialText.text = "";
+                yield return StartCoroutine(HideEffect(switchUI, speechBubbleLeft));
                 break;
         }
     }
@@ -587,22 +580,21 @@ public class TutorialText : MonoBehaviour
     // TUTORIAL-SPECIFIC METHODS //////////////////////////////////////
     public void advanceTutorialStage()
     {
-        
         currTutorialStage++;
-        UnityEngine.Debug.Log("tutorial stage: " + currTutorialStage);
-        updateTutorialText();
+        UnityEngine.Debug.Log("Tutorial stage: " + currTutorialStage);
+        StartCoroutine(updateTutorialText());
     }
 
     public void leaveAtticSpeech()
     {
         currTutorialStage = scaredDog;
-        updateTutorialText();
+        StartCoroutine(updateTutorialText());
     }
 
     public void hideLeaveAtticSpeech()
     {
         currTutorialStage = leaveAttic;
-        updateTutorialText();
+        StartCoroutine(updateTutorialText());
     }
 
     private void leaveTutorial()
@@ -625,6 +617,7 @@ public class TutorialText : MonoBehaviour
     }
     // TUTORIAL-SPECIFIC METHODS //////////////////////////////////////
 
+
     // IDK WHAT TO CALL THIS //////////////////////////////////////////
     public bool checkForSpace()
     {
@@ -638,6 +631,7 @@ public class TutorialText : MonoBehaviour
         obj.SetActive(isActive);
     }
     // IDK WHAT TO CALL THIS //////////////////////////////////////////
+
 
     // LIGHTING ///////////////////////////////////////////////////////
     private void dimLights()
@@ -674,6 +668,7 @@ public class TutorialText : MonoBehaviour
     }
     // LIGHTING ///////////////////////////////////////////////////////
 
+
     // CONTROLS CORNER UI /////////////////////////////////////////////
     public void updateControlsCornerUI()
     {
@@ -681,14 +676,45 @@ public class TutorialText : MonoBehaviour
         bool isP1Front = playerManager.P1.IsFront;
 
         P1ControlsCF.SetActive(isP1Cat && isP1Front);
-        P1ControlsDF.SetActive(!isP1Cat && isP1Front);
+        // P1ControlsDF.SetActive(!isP1Cat && isP1Front);
         P1ControlsCB.SetActive(isP1Cat && !isP1Front);
-        P1ControlsDB.SetActive(!isP1Cat && !isP1Front);
+        // P1ControlsDB.SetActive(!isP1Cat && !isP1Front);
 
-        P2ControlsCF.SetActive(!isP1Cat && !isP1Front);
+        // P2ControlsCF.SetActive(!isP1Cat && !isP1Front);
         P2ControlsDF.SetActive(isP1Cat && !isP1Front);
-        P2ControlsCB.SetActive(!isP1Cat && isP1Front);
+        // P2ControlsCB.SetActive(!isP1Cat && isP1Front);
         P2ControlsDB.SetActive(isP1Cat && isP1Front);
+
+        if (getCurrTutorialStage() >= tutComplete) P2ControlsGrab.SetActive(isP1Cat && !isP1Front);
+    }
+
+    private IEnumerator RevealControlsCornerUI(int idx)
+    {
+        P1ControlsCF.transform.GetChild(idx).gameObject.SetActive(true);
+        P1ControlsCB.transform.GetChild(idx).gameObject.SetActive(true);
+       
+        P2ControlsDF.transform.GetChild(idx).gameObject.SetActive(true);
+        P2ControlsDB.transform.GetChild(idx).gameObject.SetActive(true);
+
+        yield return null;
+    }
+
+    private IEnumerator Bounce(Transform objectTransform, float bounceHeight = 20.0f, float bounceSpeed = 8.0f, float duration = 3.0f)
+    {
+        float elapsedTime = 0f;
+        Vector3 startPos = objectTransform.position;
+
+        while (elapsedTime < duration)
+        {
+            float bounceOffset = Mathf.Sin(Time.time * bounceSpeed) * bounceHeight;
+            objectTransform.position = startPos + new Vector3(0, bounceOffset, 0);
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        // Reset position after bouncing
+        objectTransform.position = startPos;
     }
 
     private IEnumerator MoveControlsCornerUI()
@@ -729,6 +755,11 @@ public class TutorialText : MonoBehaviour
     // BOTTOM SPEECH UI ///////////////////////////////////////////////
     private IEnumerator SlideUpEffect(RectTransform rectTransform)
     {
+        while (isCoroutineRunning)
+            yield return null;
+
+        isCoroutineRunning = true;
+        
         float moveSpeed = 5.0f;
         // Vector2 targetPosition = new Vector2(-10, -710);
         Vector2 targetPosition = new Vector2(-10, -465);
@@ -738,10 +769,17 @@ public class TutorialText : MonoBehaviour
             rectTransform.anchoredPosition = Vector2.Lerp(rectTransform.anchoredPosition, targetPosition, Time.deltaTime * moveSpeed);
             yield return null;
         }
+
+        isCoroutineRunning = false;
     }
 
     private IEnumerator SlideDownEffect(RectTransform rectTransform)
     {
+        while (isCoroutineRunning)
+            yield return null;
+
+        isCoroutineRunning = true;
+
         float moveSpeed = 5.0f;
         Vector2 targetPosition = new Vector2(-10, -710);
     
@@ -750,15 +788,17 @@ public class TutorialText : MonoBehaviour
             rectTransform.anchoredPosition = Vector2.Lerp(rectTransform.anchoredPosition, targetPosition, Time.deltaTime * moveSpeed);
             yield return null;
         }
+
+        isCoroutineRunning = false;
     }
 
+    private bool isCoroutineRunning = false;
     private IEnumerator HideEffect(GameObject uiComponent = null, GameObject bubble = null)
     {
-        if (bounceCoroutine != null)
-        {
-            StopCoroutine(bounceCoroutine);
-            bounceCoroutine = null;
-        }
+        while (isCoroutineRunning)
+            yield return null;
+
+        isCoroutineRunning = true;
 
         RectTransform rectTransform = bottomUIParent;
 
@@ -768,89 +808,43 @@ public class TutorialText : MonoBehaviour
         while (Vector2.Distance(rectTransform.anchoredPosition, targetPosition) > 1f)
         {
             rectTransform.anchoredPosition = Vector2.Lerp(rectTransform.anchoredPosition, targetPosition, Time.deltaTime * moveSpeed);
-            yield return null;
+            
         }
+
+        tutorialSmallText.text = "";
+        tutorialText.text = "";
 
         if (uiComponent != null) uiComponent.SetActive(false);
         if (bubble != null) bubble.SetActive(false);
-        tutorialSmallText.text = "";
-        tutorialText.text = "";
+        
+        isCoroutineRunning = false;
+        yield return null;
+        
     }
 
-    // Delay a coroutine 
-    private IEnumerator DelayedCall(float delay, System.Action callback)
-    {
-        yield return new WaitForSeconds(delay);
-        callback?.Invoke();
-    }
-
-    // Bounce effect
-    private float initialBounceHeight = 200.0f;
-    private float gravity = 500f;
-    private int bounceCount = 2;
-    private float heightDamping = 0.8f; // Higher = bounces higher 
-    private float speedDamping = 0.6f; // Higher = slower
-    private IEnumerator BounceEffect(RectTransform obj)
-    {
-        Vector2 startPosition = new Vector2(-10, -710);
-        float height = initialBounceHeight;
-        float velocity = Mathf.Sqrt(2 * gravity * height); // Convert height to velocity
-
-        // First fall (natural drop)    
-        yield return MoveYWithGravity(obj, startPosition.y, velocity);
-
-        for (int i = 0; i < bounceCount; i++)
-        {
-            velocity *= Mathf.Sqrt(heightDamping); // Reduce velocity smoothly
-            height *= heightDamping; // Reduce bounce height
-
-            // Move up and down naturally
-            yield return MoveYWithGravity(obj, startPosition.y + height, velocity);
-            velocity *= speedDamping; // Speed up next bounce
-            yield return MoveYWithGravity(obj, startPosition.y, velocity);
-
-            velocity *= speedDamping; // Slow down next bounce
-        }
-    }
-
-    // Moves the object smoothly using physics-based motion
-    private IEnumerator MoveYWithGravity(RectTransform rectTransform, float targetY, float velocity)
-    {
-        float startY = rectTransform.anchoredPosition.y;
-        float timeToPeak = velocity / gravity; // Time to reach the top
-
-        float elapsedTime = 0f;
-        while (elapsedTime < timeToPeak)
-        {
-            float t = elapsedTime / timeToPeak;
-            float easedT = Mathf.Sin(t * Mathf.PI * 0.5f); // Smooth ease-out for up movement
-            rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, Mathf.Lerp(startY, targetY, easedT));
-
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-
-        rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, targetY);
-    }
-
-    private Coroutine bounceCoroutine;
-    private IEnumerator ShowBotttomUI(GameObject uiComponent = null, GameObject bubble = null, string largeText = "", string smallText = "")
+    // private Coroutine bounceCoroutine;
+    private IEnumerator ShowBottomUI(GameObject uiComponent = null, GameObject bubble = null, string largeText = "", string smallText = "", bool playSound = true)
     {
         if (uiComponent != null) uiComponent.SetActive(true);
         if (bubble != null) bubble.SetActive(true);
-        tutorialSmallText.text = smallText;
-        tutorialText.text = largeText;
+        
 
-        if (bubble == speechBubbleLeft) audioSource.PlayOneShot(mewSound);
-        else if (bubble == speechBubbleRight) audioSource.PlayOneShot(barkSound);
-        else
+        if (playSound)
         {
-            audioSource.PlayOneShot(mewSound);
-            yield return new WaitForSeconds(0.5f);
-            audioSource.PlayOneShot(barkSound);
+            if (bubble == speechBubbleLeft) audioSource.PlayOneShot(mewSound);
+            else if (bubble == speechBubbleRight) audioSource.PlayOneShot(barkSound);
+            else
+            {
+                audioSource.PlayOneShot(mewSound);
+                yield return new WaitForSeconds(0.5f);
+                audioSource.PlayOneShot(barkSound);
+            }
         }
 
         bottomUIParent.anchoredPosition = new Vector2(-10, -1086);
+
+        tutorialSmallText.text = smallText;
+        tutorialText.text = largeText;
 
         yield return StartCoroutine(SlideUpEffect(bottomUIParent));
         yield return StartCoroutine(SlideDownEffect(bottomUIParent));
@@ -865,19 +859,76 @@ public class TutorialText : MonoBehaviour
         // bounceCoroutine = StartCoroutine(BounceAfterDelay(bottomUIParent, 0.7f));
     }
 
-    private IEnumerator BounceAfterDelay(RectTransform rectTransform, float delay)
+    // Delay a coroutine 
+    private IEnumerator DelayedCall(float delay, System.Action callback)
     {
-        yield return new WaitForSeconds(delay); 
-
-        Vector3 initialPosition = rectTransform.anchoredPosition;
-
-        while (true)
-        {
-            float newY = initialPosition.y + Mathf.Sin(Time.time * 4.0f) * 20.0f; // speed, amplitude
-            rectTransform.anchoredPosition = new Vector3(initialPosition.x, newY, initialPosition.z);
-            yield return null; // Wait for next frame
-        }
+        yield return new WaitForSeconds(delay);
+        callback?.Invoke();
     }
+
+
+    // Bounce effect (not currently used; looks a bit off)
+    // private float initialBounceHeight = 200.0f;
+    // private float gravity = 500f;
+    // private int bounceCount = 2;
+    // private float heightDamping = 0.8f; // Higher = bounces higher 
+    // private float speedDamping = 0.6f; // Higher = slower
+    // private IEnumerator BallBounceEffect(RectTransform obj)
+    // {
+    //     Vector2 startPosition = new Vector2(-10, -710);
+    //     float height = initialBounceHeight;
+    //     float velocity = Mathf.Sqrt(2 * gravity * height); // Convert height to velocity
+
+    //     // First fall (natural drop)    
+    //     yield return MoveYWithGravity(obj, startPosition.y, velocity);
+
+    //     for (int i = 0; i < bounceCount; i++)
+    //     {
+    //         velocity *= Mathf.Sqrt(heightDamping); // Reduce velocity smoothly
+    //         height *= heightDamping; // Reduce bounce height
+
+    //         // Move up and down naturally
+    //         yield return MoveYWithGravity(obj, startPosition.y + height, velocity);
+    //         velocity *= speedDamping; // Speed up next bounce
+    //         yield return MoveYWithGravity(obj, startPosition.y, velocity);
+
+    //         velocity *= speedDamping; // Slow down next bounce
+    //     }
+    // }
+
+    // Moves the object smoothly using physics-based motion
+    // private IEnumerator MoveYWithGravity(RectTransform rectTransform, float targetY, float velocity)
+    // {
+    //     float startY = rectTransform.anchoredPosition.y;
+    //     float timeToPeak = velocity / gravity; // Time to reach the top
+
+    //     float elapsedTime = 0f;
+    //     while (elapsedTime < timeToPeak)
+    //     {
+    //         float t = elapsedTime / timeToPeak;
+    //         float easedT = Mathf.Sin(t * Mathf.PI * 0.5f); // Smooth ease-out for up movement
+    //         rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, Mathf.Lerp(startY, targetY, easedT));
+
+    //         elapsedTime += Time.deltaTime;
+    //         yield return null;
+    //     }
+
+    //     rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, targetY);
+    // }
+
+    // private IEnumerator BounceAfterDelay(RectTransform rectTransform, float delay)
+    // {
+    //     yield return new WaitForSeconds(delay); 
+
+    //     Vector3 initialPosition = rectTransform.anchoredPosition;
+
+    //     while (true)
+    //     {
+    //         float newY = initialPosition.y + Mathf.Sin(Time.time * 4.0f) * 20.0f; // speed, amplitude
+    //         rectTransform.anchoredPosition = new Vector3(initialPosition.x, newY, initialPosition.z);
+    //         yield return null; // Wait for next frame
+    //     }
+    // }
     // BOTTOM SPEECH UI ///////////////////////////////////////////////
 
 
@@ -889,7 +940,7 @@ public class TutorialText : MonoBehaviour
 
         yield return StartCoroutine(FadeIn(highlight, 1.0f));
 
-        yield return new WaitForSeconds(1.9f);
+        yield return new WaitForSeconds(1.2f);
 
         yield return StartCoroutine(FadeOut(highlight, 1.0f));
 
@@ -907,12 +958,12 @@ public class TutorialText : MonoBehaviour
         while (elapsedTime < duration)
         {
             elapsedTime += Time.deltaTime;
-            float alpha = Mathf.Lerp(0.0f, 0.7f, elapsedTime / duration);
+            float alpha = Mathf.Lerp(0.0f, 0.85f, elapsedTime / duration);
             image.color = new Color(startColor.r, startColor.g, startColor.b, alpha);
             yield return null; // causing problem?
         }
 
-        image.color = new Color(startColor.r, startColor.g, startColor.b, 0.7f);
+        image.color = new Color(startColor.r, startColor.g, startColor.b, 0.85f);
     }
 
     private IEnumerator FadeOut(GameObject highlight, float duration)
@@ -926,16 +977,16 @@ public class TutorialText : MonoBehaviour
         while (elapsedTime < duration)
         {
             elapsedTime += Time.deltaTime;
-            float alpha = Mathf.Lerp(0.7f, 0f, elapsedTime / duration);
+            float alpha = Mathf.Lerp(0.85f, 0.0f, elapsedTime / duration);
             image.color = new Color(startColor.r, startColor.g, startColor.b, alpha);
             yield return null; 
         }
 
-        image.color = new Color(startColor.r, startColor.g, startColor.b, 0f); // Ensure it's fully invisible
+        image.color = new Color(startColor.r, startColor.g, startColor.b, 0.0f); // Ensure it's fully invisible
     }
 
-    private float pulseSpeed = 2f;
-    private float scaleAmount = 0.5f;
+    private float pulseSpeed = 1.5f;
+    private float scaleAmount = 0.2f;
     private Vector3 initialScale; // tbh should not be storing it as global var. should make a new instance for each rectTransform
     private Coroutine StartPulseCoroutine;
     private IEnumerator StartPulse(RectTransform rectTransform)
@@ -945,7 +996,7 @@ public class TutorialText : MonoBehaviour
 
         while (true) 
         {
-            float scaleFactor = 1 + Mathf.Sin(time * pulseSpeed) * scaleAmount;
+            float scaleFactor = 1 + Mathf.Abs(Mathf.Sin(time * pulseSpeed)) * scaleAmount;
             rectTransform.localScale = initialScale * scaleFactor;
 
             time += Time.deltaTime;
@@ -970,21 +1021,21 @@ public class TutorialText : MonoBehaviour
         taskTodo.transform.GetChild(1).gameObject.SetActive(true);
 
         // Pulsing effect
-        StartPulseCoroutine = StartCoroutine(StartPulse(taskTodo.GetComponent<RectTransform>()));
+        // StartPulseCoroutine = StartCoroutine(StartPulse(taskTodo.GetComponent<RectTransform>()));
+        StartPulseCoroutine = StartCoroutine(StartPulse(todoList));
                 
     }
 
     private void completeTaskTodo(GameObject taskTodo)
     {
         // Stop pulsing effect
-        StartCoroutine(StopPulse(taskTodo.GetComponent<RectTransform>()));
+        // StartCoroutine(StopPulse(taskTodo.GetComponent<RectTransform>()));
+        StartCoroutine(StopPulse(todoList));
 
         // Task --> strikethrough
         taskTodo.transform.GetChild(1).gameObject.SetActive(false);
         taskTodo.transform.GetChild(2).gameObject.SetActive(true);
         
     }
-
-
     // TO-DO LIST /////////////////////////////////////////////////////
 }
