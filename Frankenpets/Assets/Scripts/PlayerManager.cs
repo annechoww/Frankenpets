@@ -149,8 +149,6 @@ public class PlayerManager : MonoBehaviour
         {
             UnityEngine.Debug.LogError("GameObject 'Messages' not found in the scene.");
         }
-
-        if 
     }
     
     bool tutOverlayDone()
