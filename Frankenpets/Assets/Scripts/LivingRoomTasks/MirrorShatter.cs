@@ -56,5 +56,8 @@ public class MirrorShatter : MonoBehaviour
         taskItem.color = completedColor;
         // tutorialText.advanceTutorialStage();
         task.IsComplete = true;
+        
+        TaskManager.Instance.CompleteTask();
+        AudioManager.Instance.PlayTaskCompletionSound();
     }
 }

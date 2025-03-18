@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Diagnostics;
 using UnityEngine;
@@ -22,6 +23,9 @@ public class FindTasks : MonoBehaviour
     private float[] roomLightIntensities;
     private Coroutine glowCoroutine;
     private bool isGlowing = false;
+
+    public static FindTasks Instance { get; private set; }
+    public event Action OnTaskCompleted;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -150,6 +154,7 @@ public class FindTasks : MonoBehaviour
 
     public void DestroyFindTaskMechanic(GameObject arrow, GameObject particle, GameObject light)
     {
+        OnTaskCompleted?.Invoke();
         Destroy(arrow);
         Destroy(particle);
         Destroy(light);

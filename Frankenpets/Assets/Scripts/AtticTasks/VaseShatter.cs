@@ -57,5 +57,6 @@ public class VaseShatter : MonoBehaviour
         task.IsComplete = true;
 
         TaskManager.Instance.CompleteTask();
+        // AudioManager.Instance.PlayTaskCompletionSound();
     }
 }

@@ -8,7 +8,6 @@ public class DoorShatter : MonoBehaviour
     public GameObject brokenGlass;
     public float shatterForce = 1f;
     public AudioClip shatterSound;
-    public AudioClip taskCompleteSound;
 
     [Header("Task Manager")]
     public Image taskItem;
@@ -77,11 +76,10 @@ public class DoorShatter : MonoBehaviour
         if (taskComplete)
         {
             taskItem.color = completedColor;
-            // tutorialText.advanceTutorialStage();
-            if (taskCompleteSound != null)
-            {
-                AudioManager.Instance.PlayTaskCompletionSound();
-            }
+
+            // FindTasks.Instance.DestroyFindTaskMechanic(arrow, taskParticle, taskLight);
+            TaskManager.Instance.CompleteTask();
+            AudioManager.Instance.PlayTaskCompletionSound();
         }
 
     }
