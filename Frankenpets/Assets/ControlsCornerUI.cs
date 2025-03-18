@@ -4,7 +4,7 @@ public class ControlsCornerUI : MonoBehaviour
 {
     [Header("Corner/mini Controls")]
     public GameObject cornerControlsUIParent;
-    public GameObject cornerControlsUI;
+    private GameObject cornerControlsUI;
     private GameObject P1ControlsCF;
     private GameObject P1ControlsCB;
     private GameObject P2ControlsDF;
