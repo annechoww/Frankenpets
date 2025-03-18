@@ -10,13 +10,17 @@ public class ControlsCornerUI : MonoBehaviour
     private GameObject P2ControlsDF;
     private GameObject P2ControlsDB;
 
-    private ControllerAssignment controllerAssignment;
-    private PlayerManager playerManager;
+    [Header("Script references")]
+    public ControllerAssignment controllerAssignment;
+    public PlayerManager playerManager;
+
+    [Header("Show the controls corner?")]
+    public bool show = false; 
 
     void Awake()
     {
-        controllerAssignment = FindObjectOfType<ControllerAssignment>();
-        playerManager = FindObjectOfType<PlayerManager>();
+        // controllerAssignment = FindObjectOfType<ControllerAssignment>();
+        // playerManager = FindObjectOfType<PlayerManager>();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -25,6 +29,8 @@ public class ControlsCornerUI : MonoBehaviour
         if (controllerAssignment.IsKeyboard()) cornerControlsUI = cornerControlsUIParent.transform.GetChild(0).gameObject;
         else cornerControlsUI = cornerControlsUIParent.transform.GetChild(1).gameObject;
 
+        if (show) cornerControlsUI.SetActive(true);
+        
         Transform P1Controls = cornerControlsUI.transform.GetChild(0).gameObject.transform;
         Transform P2Controls = cornerControlsUI.transform.GetChild(1).gameObject.transform;
 
@@ -39,18 +45,24 @@ public class ControlsCornerUI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (show) cornerControlsUI.SetActive(true);
         updateControlsCornerUI();
     }
 
     public void updateControlsCornerUI()
     {
-        bool isP1Cat = playerManager.P1.Species == "cat";
+        // bool isP1Cat = playerManager.P1.Species == "cat";
         bool isP1Front = playerManager.P1.IsFront;
 
-        P1ControlsCF.SetActive(isP1Cat && isP1Front);
-        P1ControlsCB.SetActive(isP1Cat && !isP1Front);
+        P1ControlsCF.SetActive(isP1Front);
+        P1ControlsCB.SetActive(!isP1Front);
 
-        P2ControlsDF.SetActive(isP1Cat && !isP1Front);
-        P2ControlsDB.SetActive(isP1Cat && isP1Front);
+        P2ControlsDF.SetActive(!isP1Front);
+        P2ControlsDB.SetActive(isP1Front);
+    }
+
+    public void setShow(bool setting)
+    {
+        show = setting;
     }
 }
