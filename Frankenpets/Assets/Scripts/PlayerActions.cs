@@ -385,7 +385,8 @@ public class PlayerActions : MonoBehaviour
 ////////////////////////////////////// Noise Logic /////////////////////////////////////
     private void runNoiseLogic()
     {
-        if ((Input.GetKey(KeyCode.X) && P1.IsFront) || ((Input.GetKey(KeyCode.Period)) && P2.IsFront))
+        // if ((Input.GetKey(KeyCode.X) && P1.IsFront) || ((Input.GetKey(KeyCode.Period)) && P2.IsFront))
+        if ((player1Input.GetSoundTailPressed() && P1.IsFront) || (player2Input.GetSoundTailPressed() && P2.IsFront))
         {
             // TODO: Add animation trigger when this happens to frontHalf
             string frontSpecies = P1.IsFront ? P1.Species : P2.Species;
@@ -1135,7 +1136,8 @@ public class PlayerActions : MonoBehaviour
     ////////////////////////////////////////// Front Paws Action //////////////////////////////////////////////
     private void runPawLogic()
     {
-        if (((Input.GetKeyDown(KeyCode.Z) && P1.IsFront) || (Input.GetKeyDown(KeyCode.Comma) && P2.IsFront)))
+        // if (((Input.GetKeyDown(KeyCode.Z) && P1.IsFront) || (Input.GetKeyDown(KeyCode.Comma) && P2.IsFront)))
+        if ((player1Input.GetJumpPressed() && P1.IsFront) || (player2Input.GetJumpPressed() && P2.IsFront))
         {
             pawRiggingScript.liftPaw();
             isPaw = true;
@@ -1149,7 +1151,8 @@ public class PlayerActions : MonoBehaviour
 ////////////////////////////////////////// Tail Action ////////////////////////////////////////////////////
     private void runTailLogic()
     {
-        if (((Input.GetKeyDown(KeyCode.Z) && !P1.IsFront) || (Input.GetKeyDown(KeyCode.Period) && !P2.IsFront)))
+        // if (((Input.GetKeyDown(KeyCode.Z) && !P1.IsFront) || (Input.GetKeyDown(KeyCode.Period) && !P2.IsFront)))
+        if ((player1Input.GetSoundTailPressed() && !P1.IsFront) || (player2Input.GetSoundTailPressed() && !P2.IsFront))
         {
             tailRiggingScript.useTail();
         }
