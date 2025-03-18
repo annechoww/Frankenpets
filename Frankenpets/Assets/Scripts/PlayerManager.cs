@@ -70,15 +70,15 @@ public class PlayerManager : MonoBehaviour
     public GameObject sadEmote;    
     public GameObject happyEmote;
 
-    [Header("Icons")]
-    public GameObject P1CatIcon;    
-    public GameObject P1DogIcon;
-    public GameObject P2CatIcon;    
-    public GameObject P2DogIcon;
-    public GameObject P1CatSpeechIcon;
-    public GameObject P1DogSpeechIcon;
-    public GameObject P2CatSpeechIcon;
-    public GameObject P2DogSpeechIcon;
+    // [Header("Icons")]
+    // public GameObject P1CatIcon;    
+    // public GameObject P1DogIcon;
+    // public GameObject P2CatIcon;    
+    // public GameObject P2DogIcon;
+    // public GameObject P1CatSpeechIcon;
+    // public GameObject P1DogSpeechIcon;
+    // public GameObject P2CatSpeechIcon;
+    // public GameObject P2DogSpeechIcon;
 
     [Header("Sound")]
     public AudioSource stretchAudioSource;
@@ -150,7 +150,7 @@ public class PlayerManager : MonoBehaviour
 
         alignHalves();
         setJoint();
-        updatePlayerIcons();
+        // updatePlayerIcons();
 
         GameObject messageObject = GameObject.Find("Messages");
         if (messageObject != null)
@@ -794,7 +794,7 @@ public class PlayerManager : MonoBehaviour
                 setJoint();
             }
             
-            updatePlayerIcons();
+            // updatePlayerIcons();
 
             // Play audio (TODO: NEW AUDIO)
             if (splitSound != null)
@@ -842,7 +842,7 @@ public class PlayerManager : MonoBehaviour
             player2Camera.LookAt = P2.Half.transform;
 
             refreshHalves();
-            updatePlayerIcons();
+            // updatePlayerIcons();
 
             if (getJoint() == null)
             {
@@ -924,7 +924,7 @@ public class PlayerManager : MonoBehaviour
         }
 
         refreshHalves();
-        updatePlayerIcons();
+        // updatePlayerIcons();
     }
 
     public void refreshHalves()
@@ -1059,21 +1059,21 @@ public class PlayerManager : MonoBehaviour
 
 
     // ICONS ////////////////////////////////////////////
-    public void updatePlayerIcons()
-    {
-        bool isP1Cat = P1.Species == "cat";
-        bool isP1Front = P1.IsFront;
+    // public void updatePlayerIcons()
+    // {
+    //     bool isP1Cat = P1.Species == "cat";
+    //     bool isP1Front = P1.IsFront;
 
-        P1CatIcon.SetActive(isP1Cat);
-        P1DogIcon.SetActive(!isP1Cat);
-        P2CatIcon.SetActive(!isP1Cat);
-        P2DogIcon.SetActive(isP1Cat);
+    //     P1CatIcon.SetActive(isP1Cat);
+    //     P1DogIcon.SetActive(!isP1Cat);
+    //     P2CatIcon.SetActive(!isP1Cat);
+    //     P2DogIcon.SetActive(isP1Cat);
 
-        P1CatSpeechIcon.SetActive(isP1Cat);
-        P1DogSpeechIcon.SetActive(!isP1Cat);
-        P2CatSpeechIcon.SetActive(!isP1Cat);
-        P2DogSpeechIcon.SetActive(isP1Cat);
-    }
+    //     P1CatSpeechIcon.SetActive(isP1Cat);
+    //     P1DogSpeechIcon.SetActive(!isP1Cat);
+    //     P2CatSpeechIcon.SetActive(!isP1Cat);
+    //     P2DogSpeechIcon.SetActive(isP1Cat);
+    // }
     // ICONS ////////////////////////////////////////////
 
 

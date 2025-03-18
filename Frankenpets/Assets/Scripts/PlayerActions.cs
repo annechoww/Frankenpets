@@ -298,7 +298,7 @@ public class PlayerActions : MonoBehaviour
         frontRb = frontHalf.GetComponent<Rigidbody>();
         backRb = backHalf.GetComponent<Rigidbody>();
 
-        UpdateControllerAssignment();
+        UpdateControlsMenu();
     }
 
 ////////////////////////////////////// Jump Logic /////////////////////////////////////
@@ -318,8 +318,8 @@ public class PlayerActions : MonoBehaviour
         }
 
         // Charged Jump
-        else if ((player1Special && !P1.IsFront && P1.Species == "cat") || 
-                (player2Special && !P2.IsFront && P2.Species == "cat"))
+        else if (((player1Special && !P1.IsFront && P1.Species == "cat") || 
+                (player2Special && !P2.IsFront && P2.Species == "cat")) && !isTutorial)
         {
             tryChargedJump(chargedJumpForce, chargedJumpCooldown);
         }
@@ -1148,23 +1148,29 @@ public class PlayerActions : MonoBehaviour
 
 ////////////////////////////////////////// Actions UI ///////////////////////////////////////////////
 
-    public void UpdateControllerAssignment()
+    public void UpdateControlsMenu()
     {
         controllerAssignment = GameObject.Find("Pet").GetComponent<ControllerAssignment>();
         
         // Update the UI elements based on current controller assignment
         if (controllerAssignment != null)
         {
-            if (controllerAssignment.IsKeyboard())
-            {
-                controlsMenu.transform.GetChild(0).gameObject.SetActive(true);
-                controlsMenu.transform.GetChild(1).gameObject.SetActive(false);
-            }
-            else
-            {
-                controlsMenu.transform.GetChild(0).gameObject.SetActive(false);
-                controlsMenu.transform.GetChild(1).gameObject.SetActive(true);
-            }
+            Transform P1Controls = controlsMenu.transform.GetChild(0).gameObject.transform;
+            Transform P2Controls = controlsMenu.transform.GetChild(1).gameObject.transform;
+
+            bool P1isFront = P1.IsFront;
+          
+            P1Controls.GetChild(0).gameObject.SetActive(P1isFront);
+            P1Controls.GetChild(1).gameObject.SetActive(!P1isFront);
+
+            P2Controls.GetChild(0).gameObject.SetActive(!P1isFront);
+            P2Controls.GetChild(1).gameObject.SetActive(P1isFront);
+        
+            // controlsMenu.transform.GetChild(0).gameObject.SetActive(false);
+            // controlsMenu.transform.GetChild(1).gameObject.SetActive(true);
+            
+
+            
         }
     }
 
@@ -1243,7 +1249,7 @@ public class PlayerActions : MonoBehaviour
             controlsMenu.SetActive(true);
             isViewingControlsMenu = true;
         }
-        else if ((player1Input.GetGlowPressed() || player2Input.GetGlowPressed() || Input.GetKeyUp(KeyCode.I)) && isViewingControlsMenu)
+        else if ((player1Input.GetGlowPressed() || player2Input.GetGlowPressed() || Input.GetKeyDown(KeyCode.I)) && isViewingControlsMenu)
         {
             controlsMenu.SetActive(false);
             isViewingControlsMenu = false;
