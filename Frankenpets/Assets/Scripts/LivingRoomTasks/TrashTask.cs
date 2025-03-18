@@ -14,8 +14,14 @@ public class TrashTask : MonoBehaviour
     [Header("Task Manager")]
     public Image taskItem;
     public Color completedColor;
-
     public Task task = new Task("Throw away shoes", 1);
+
+    [Header("Locate Task Variables")]
+    public GameObject taskLight;
+    public GameObject taskParticle;
+    public GameObject arrow;
+
+
     private TutorialText tutorialText;
 
     void Awake()
@@ -65,8 +71,9 @@ public class TrashTask : MonoBehaviour
     private void FinishTask()
     {
         taskItem.color = completedColor;
-        // tutorialText.advanceTutorialStage();
         task.IsComplete = true;
+        FindTasks.Instance.DestroyFindTaskMechanic(arrow, taskParticle, taskLight);
+        TaskManager.Instance.CompleteTask();
         AudioManager.Instance.PlayTaskCompletionSound();
     }
 }

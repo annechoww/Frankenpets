@@ -53,9 +53,11 @@ public class TabletopTask : MonoBehaviour
 
     private void FinishTask(){
         taskItem.color = completedColor;
-        // tutorialText.advanceTutorialStage();
         task.IsComplete = true;
         // GetComponent<FindTasks>().DestroyFindTaskMechanic(arrow, taskParticle, taskLight);
+        
+        FindTasks.Instance.DestroyFindTaskMechanic(arrow, taskParticle, taskLight);
+        TaskManager.Instance.CompleteTask();
         AudioManager.Instance.PlayTaskCompletionSound();
     }
 }

@@ -7,7 +7,7 @@ public class JugShatter : MonoBehaviour
     public GameObject brokenJug;
     public float shatterForce = 1f;
     public AudioClip shatterSound;
-    public AudioClip taskCompleteSound;
+    // public AudioClip taskCompleteSound;
 
     [Header("Task Manager")]
     public Image taskItem;
@@ -63,10 +63,8 @@ public class JugShatter : MonoBehaviour
         taskItem.color = completedColor;
         // tutorialText.advanceTutorialStage();
         task.IsComplete = true;
-        // GetComponent<FindTasks>().DestroyFindTaskMechanic(arrow, taskParticle, taskLight);
-        if (taskCompleteSound != null)
-        {
-            AudioManager.Instance.PlayTaskCompletionSound();
-        }
+        FindTasks.Instance.DestroyFindTaskMechanic(arrow, taskParticle, taskLight);
+        TaskManager.Instance.CompleteTask();
+        AudioManager.Instance.PlayTaskCompletionSound();
     }
 }
