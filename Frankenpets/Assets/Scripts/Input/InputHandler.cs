@@ -12,6 +12,7 @@ public class InputHandler : MonoBehaviour
     private bool switchPressed;
     private bool controlsMenuPressed;
     private bool glowPressed;
+    private bool soundTailPressed;
 
     // Event methods called by PlayerInput component
     public void OnMove(InputAction.CallbackContext context)
@@ -31,6 +32,12 @@ public class InputHandler : MonoBehaviour
         // Get boolean value (pressed/released) from the input
         jumpPressed = context.ReadValueAsButton();
         Debug.Log($"Jump pressed: {jumpPressed}");
+    }
+
+    public void OnSoundTail(InputAction.CallbackContext context)
+    {
+        soundTailPressed = context.ReadValueAsButton();
+        Debug.Log($"Glow button pressed: {soundTailPressed}");
     }
 
     public void OnSpecialAction(InputAction.CallbackContext context)
@@ -78,6 +85,11 @@ public class InputHandler : MonoBehaviour
     public bool GetJumpPressed()
     {
         return jumpPressed;
+    }
+
+    public bool GetSoundTailPressed()
+    {
+        return soundTailPressed;
     }
 
     public bool GetSpecialActionPressed()

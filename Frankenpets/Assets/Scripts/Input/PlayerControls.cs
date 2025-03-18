@@ -98,6 +98,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Sound/Tail"",
+                    ""type"": ""Button"",
+                    ""id"": ""9d78e3fe-4f8a-46c8-849e-3103992aba06"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -386,6 +395,28 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""action"": ""Glow"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2135e5f0-f9a0-427c-b472-0741ecec21d1"",
+                    ""path"": ""<Keyboard>/x"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard"",
+                    ""action"": ""Sound/Tail"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d9d9725d-6c4f-4d6a-9e84-96372cc0104e"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";GamepadPlayer1"",
+                    ""action"": ""Sound/Tail"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -460,6 +491,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""name"": ""Glow"",
                     ""type"": ""Button"",
                     ""id"": ""bd42388e-8a70-4456-9f64-d1212f93d735"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Sound/Tail"",
+                    ""type"": ""Button"",
+                    ""id"": ""32bfb067-07aa-4cc4-8234-ad13d5659482"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -678,6 +718,28 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""0f723684-b6bf-4fbd-ab80-022aa9d0c9ec"",
+                    ""path"": ""<Keyboard>/x"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard"",
+                    ""action"": ""Sound/Tail"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0c9538d7-43fb-4c32-89f4-2f000fa8b528"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";GamepadPlayer2"",
+                    ""action"": ""Sound/Tail"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""3aac8cca-9ada-42cf-a2f2-32668c327716"",
                     ""path"": ""<Gamepad>/rightStick"",
                     ""interactions"": """",
@@ -791,6 +853,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_Player1_Switch = m_Player1.FindAction("Switch", throwIfNotFound: true);
         m_Player1_Menu = m_Player1.FindAction("Menu", throwIfNotFound: true);
         m_Player1_Glow = m_Player1.FindAction("Glow", throwIfNotFound: true);
+        m_Player1_SoundTail = m_Player1.FindAction("Sound/Tail", throwIfNotFound: true);
         // Player2
         m_Player2 = asset.FindActionMap("Player2", throwIfNotFound: true);
         m_Player2_Move = m_Player2.FindAction("Move", throwIfNotFound: true);
@@ -801,6 +864,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_Player2_Switch = m_Player2.FindAction("Switch", throwIfNotFound: true);
         m_Player2_Menu = m_Player2.FindAction("Menu", throwIfNotFound: true);
         m_Player2_Glow = m_Player2.FindAction("Glow", throwIfNotFound: true);
+        m_Player2_SoundTail = m_Player2.FindAction("Sound/Tail", throwIfNotFound: true);
     }
 
     ~@PlayerControls()
@@ -876,6 +940,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player1_Switch;
     private readonly InputAction m_Player1_Menu;
     private readonly InputAction m_Player1_Glow;
+    private readonly InputAction m_Player1_SoundTail;
     public struct Player1Actions
     {
         private @PlayerControls m_Wrapper;
@@ -888,6 +953,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         public InputAction @Switch => m_Wrapper.m_Player1_Switch;
         public InputAction @Menu => m_Wrapper.m_Player1_Menu;
         public InputAction @Glow => m_Wrapper.m_Player1_Glow;
+        public InputAction @SoundTail => m_Wrapper.m_Player1_SoundTail;
         public InputActionMap Get() { return m_Wrapper.m_Player1; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -921,6 +987,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Glow.started += instance.OnGlow;
             @Glow.performed += instance.OnGlow;
             @Glow.canceled += instance.OnGlow;
+            @SoundTail.started += instance.OnSoundTail;
+            @SoundTail.performed += instance.OnSoundTail;
+            @SoundTail.canceled += instance.OnSoundTail;
         }
 
         private void UnregisterCallbacks(IPlayer1Actions instance)
@@ -949,6 +1018,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Glow.started -= instance.OnGlow;
             @Glow.performed -= instance.OnGlow;
             @Glow.canceled -= instance.OnGlow;
+            @SoundTail.started -= instance.OnSoundTail;
+            @SoundTail.performed -= instance.OnSoundTail;
+            @SoundTail.canceled -= instance.OnSoundTail;
         }
 
         public void RemoveCallbacks(IPlayer1Actions instance)
@@ -978,6 +1050,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player2_Switch;
     private readonly InputAction m_Player2_Menu;
     private readonly InputAction m_Player2_Glow;
+    private readonly InputAction m_Player2_SoundTail;
     public struct Player2Actions
     {
         private @PlayerControls m_Wrapper;
@@ -990,6 +1063,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         public InputAction @Switch => m_Wrapper.m_Player2_Switch;
         public InputAction @Menu => m_Wrapper.m_Player2_Menu;
         public InputAction @Glow => m_Wrapper.m_Player2_Glow;
+        public InputAction @SoundTail => m_Wrapper.m_Player2_SoundTail;
         public InputActionMap Get() { return m_Wrapper.m_Player2; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1023,6 +1097,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Glow.started += instance.OnGlow;
             @Glow.performed += instance.OnGlow;
             @Glow.canceled += instance.OnGlow;
+            @SoundTail.started += instance.OnSoundTail;
+            @SoundTail.performed += instance.OnSoundTail;
+            @SoundTail.canceled += instance.OnSoundTail;
         }
 
         private void UnregisterCallbacks(IPlayer2Actions instance)
@@ -1051,6 +1128,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Glow.started -= instance.OnGlow;
             @Glow.performed -= instance.OnGlow;
             @Glow.canceled -= instance.OnGlow;
+            @SoundTail.started -= instance.OnSoundTail;
+            @SoundTail.performed -= instance.OnSoundTail;
+            @SoundTail.canceled -= instance.OnSoundTail;
         }
 
         public void RemoveCallbacks(IPlayer2Actions instance)
@@ -1105,6 +1185,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         void OnSwitch(InputAction.CallbackContext context);
         void OnMenu(InputAction.CallbackContext context);
         void OnGlow(InputAction.CallbackContext context);
+        void OnSoundTail(InputAction.CallbackContext context);
     }
     public interface IPlayer2Actions
     {
@@ -1116,5 +1197,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         void OnSwitch(InputAction.CallbackContext context);
         void OnMenu(InputAction.CallbackContext context);
         void OnGlow(InputAction.CallbackContext context);
+        void OnSoundTail(InputAction.CallbackContext context);
     }
 }
