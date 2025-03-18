@@ -172,6 +172,9 @@ public class TutorialText : MonoBehaviour
         // P2ControlsCB = controlsCornerUIChild.transform.GetChild(1).transform.GetChild(2).gameObject;
         P2ControlsDB = controlsCornerUIChild.transform.GetChild(1).transform.GetChild(1).gameObject; // old index was 3
 
+        P2ControlsGrab.transform.GetChild(0).gameObject.SetActive(isKeyboard);
+        P2ControlsGrab.transform.GetChild(1).gameObject.SetActive(isKeyboard);
+
         if (isKeyboard){
             overlay.transform.GetChild(0).GetChild(0).gameObject.SetActive(true);
         } else if (!isKeyboard){
