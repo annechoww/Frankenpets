@@ -72,7 +72,7 @@ public class TrashTask : MonoBehaviour
     {
         taskItem.color = completedColor;
         task.IsComplete = true;
-        // FindTasks.Instance.DestroyFindTaskMechanic(arrow, taskParticle, taskLight);
+        FindTasks.Instance.DestroyFindTaskMechanic(arrow, taskParticle, taskLight);
         TaskManager.Instance.CompleteTask();
         AudioManager.Instance.PlayTaskCompletionSound();
     }
