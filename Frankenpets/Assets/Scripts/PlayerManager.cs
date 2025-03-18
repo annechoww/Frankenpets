@@ -96,7 +96,9 @@ public class PlayerManager : MonoBehaviour
     [Header("Tutorial Overlay")]
     public TutorialText tutorialTextScript;
 
-
+    // check whether is currently climbing
+    private bool isClimbing = false;
+    private bool isMoving = false;
 
     void Awake()
     {
@@ -181,7 +183,11 @@ public class PlayerManager : MonoBehaviour
 
         if (fixedJoint != null)
         {
-            runMovementLogic();
+            if (isClimbing){
+                runClimbMovementLogic();
+            } else{
+                runMovementLogic();
+            }
         }
         else {
             runSeparatedMovementLogic();
@@ -200,7 +206,18 @@ public class PlayerManager : MonoBehaviour
     {
         if (fixedJoint != null)
         {
-            runMovementLogic();
+            if (isClimbing){
+                runClimbMovementLogic();
+                Rigidbody frontRb = frontHalf.GetComponent<Rigidbody>();
+                if (isMoving){
+                    frontRb.linearVelocity = Vector3.up * walkSpeed;
+                } else{
+                    frontRb.linearVelocity = Vector3.zero;
+                }
+            } else{
+                runMovementLogic();
+            }
+            
         }
         else {
             runSeparatedMovementLogic();
@@ -282,6 +299,10 @@ public class PlayerManager : MonoBehaviour
     public bool getCanSwitch()
     {
         return this.canSwitch;
+    }
+    public void setIsClimb(bool climbing)
+    {
+        isClimbing = climbing;
     }
     // GETTERS/SETTERS FOR TUTORIAL PURPOSES /////////////////////////////
 
@@ -494,6 +515,58 @@ public class PlayerManager : MonoBehaviour
         {
             rigging.changeTargetDirection(combinedMove);
         }
+    }
+
+    private void runClimbMovementLogic()
+    {
+        // Get player 1's input
+        Vector2 player1MoveInput = player1Input.GetMoveInput();
+        float horizontalInputP1 = player1MoveInput.x * 0.1f;
+        float moveInputP1 = player1MoveInput.y * 0.1f;
+        
+        // Get player 2's input
+        Vector2 player2MoveInput = player2Input.GetMoveInput();
+        float horizontalInputP2 = player2MoveInput.x * 0.1f;
+        float moveInputP2 = player2MoveInput.y * 0.1f;
+        
+        // Apply the combined rotation to both halves:
+        // float combinedTurn = horizontalInputP1 + horizontalInputP2;
+        // frontHalf.transform.Rotate(0.0f, combinedTurn, 0.0f, Space.Self);
+        // backHalf.transform.Rotate(0.0f, combinedTurn, 0.0f, Space.Self);
+        
+        // Apply the combined translation (forward/back) to both halves:
+        float combinedHorizontalMove = horizontalInputP1 + horizontalInputP2;
+        float combinedMove = moveInputP1 + moveInputP2;
+        // frontHalf.transform.Translate(Vector3.forward * combinedMove * Time.deltaTime, Space.Self);
+        // backHalf.transform.Translate(Vector3.forward * combinedMove * Time.deltaTime, Space.Self);
+
+        // Reset Camera when movement is detected 
+        if (Math.Abs(combinedMove) > 0 || Math.Abs(combinedHorizontalMove) > 0)
+        {
+            ResetCamera(mainCamera);
+        }
+
+        Rigidbody frontRb = frontHalf.GetComponent<Rigidbody>();
+        Rigidbody backRb = backHalf.GetComponent<Rigidbody>();
+
+        if (combinedMove == 0)
+        {
+            isMoving = false;
+        } else{
+            isMoving = true;
+        }
+
+        Vector3 moveVector = frontHalf.transform.up * (combinedMove * Time.deltaTime);
+        frontRb.MovePosition(frontRb.position + moveVector);
+        backRb.MovePosition(backRb.position + moveVector);
+        
+        
+        Vector3 moveHorizontalVector = frontHalf.transform.right* (combinedHorizontalMove * Time.deltaTime);
+        frontRb.MovePosition(frontRb.position + moveHorizontalVector);
+        backRb.MovePosition(backRb.position + moveHorizontalVector);
+
+        // Update split condition checking for pulling opposite directions
+        CheckSplitConditions(player1MoveInput.y, player2MoveInput.y);
     }
 
     private void runSeparatedMovementLogic()

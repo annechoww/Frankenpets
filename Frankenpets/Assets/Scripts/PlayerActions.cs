@@ -178,11 +178,11 @@ public class PlayerActions : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (isClimbing)
-        {
-            // Apply climbing movement in FixedUpdate for smooth physics
-            frontRb.linearVelocity = climbDirection * climbSpeed;
-        }
+        // if (isClimbing)
+        // {
+        //     // Apply climbing movement in FixedUpdate for smooth physics
+        //     frontRb.linearVelocity = climbDirection;
+        // }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -428,6 +428,7 @@ public class PlayerActions : MonoBehaviour
         UnityEngine.Debug.Log("in start climbing function");
         climbRiggingScript.climb();
         isClimbing = true;
+        playerManager.setIsClimb(true);
 
         frontRb.useGravity = false;
         // Zero out current velocities
@@ -442,6 +443,7 @@ public class PlayerActions : MonoBehaviour
         UnityEngine.Debug.Log("in end climbing function");
         climbRiggingScript.release();
         isClimbing = false;
+        playerManager.setIsClimb(false);
         frontRb.useGravity = true;
         frontRb.constraints = RigidbodyConstraints.None;
     }
