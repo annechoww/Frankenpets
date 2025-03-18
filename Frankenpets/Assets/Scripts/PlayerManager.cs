@@ -65,21 +65,6 @@ public class PlayerManager : MonoBehaviour
 
     private Stopwatch switchStopwatch = new Stopwatch();
 
-    [Header("Emoticons")]
-    public GameObject sadEmote;    
-    public GameObject happyEmote;
-
-    // [Header("Icons")]
-    // public GameObject P1CatIcon;    
-    // public GameObject P1DogIcon;
-    // public GameObject P2CatIcon;    
-    // public GameObject P2DogIcon;
-    // public GameObject P1CatSpeechIcon;
-    // public GameObject P1DogSpeechIcon;
-    // public GameObject P2CatSpeechIcon;
-    // public GameObject P2DogSpeechIcon;
-
-
     [Header("Sound")]
     public AudioClip meowSound;
     public AudioClip woofSound;
@@ -164,6 +149,8 @@ public class PlayerManager : MonoBehaviour
         {
             UnityEngine.Debug.LogError("GameObject 'Messages' not found in the scene.");
         }
+
+        if 
     }
     
     bool tutOverlayDone()
@@ -1110,50 +1097,6 @@ public class PlayerManager : MonoBehaviour
         }
     }
     // COLLISION METHODS ////////////////////////////////////////////
-
-
-    // EMOTES ////////////////////////////////////////////
-    public GameObject startEmote(GameObject half, string emotion)
-    {
-        GameObject emoticon;
-
-        switch (emotion)
-        {
-            case "sad": emoticon = sadEmote; break;
-            default: emoticon = happyEmote; break;
-        }
-
-        emoticon.SetActive(true);
-        emoticon.transform.SetParent(half.transform);
-        emoticon.transform.position = half.transform.position + (Vector3.up * 0.35f);
-        return emoticon;
-    }
-
-    public void cancelEmote(GameObject emoticon)
-    {
-        emoticon.transform.SetParent(null);
-        emoticon.SetActive(false);
-    }
-    // EMOTES ////////////////////////////////////////////
-
-
-    // ICONS ////////////////////////////////////////////
-    // public void updatePlayerIcons()
-    // {
-    //     bool isP1Cat = P1.Species == "cat";
-    //     bool isP1Front = P1.IsFront;
-
-    //     P1CatIcon.SetActive(isP1Cat);
-    //     P1DogIcon.SetActive(!isP1Cat);
-    //     P2CatIcon.SetActive(!isP1Cat);
-    //     P2DogIcon.SetActive(isP1Cat);
-
-    //     P1CatSpeechIcon.SetActive(isP1Cat);
-    //     P1DogSpeechIcon.SetActive(!isP1Cat);
-    //     P2CatSpeechIcon.SetActive(!isP1Cat);
-    //     P2DogSpeechIcon.SetActive(isP1Cat);
-    // }
-    // ICONS ////////////////////////////////////////////
 
 
     // COROUTINES //////////////////////////////////////
