@@ -56,7 +56,7 @@ public class TabletopTask : MonoBehaviour
         task.IsComplete = true;
         // GetComponent<FindTasks>().DestroyFindTaskMechanic(arrow, taskParticle, taskLight);
         
-        // FindTasks.Instance.DestroyFindTaskMechanic(arrow, taskParticle, taskLight);
+        FindTasks.Instance.DestroyFindTaskMechanic(arrow, taskParticle, taskLight);
         TaskManager.Instance.CompleteTask();
         AudioManager.Instance.PlayTaskCompletionSound();
     }

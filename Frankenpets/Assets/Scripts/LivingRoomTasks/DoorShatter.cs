@@ -77,7 +77,7 @@ public class DoorShatter : MonoBehaviour
         {
             taskItem.color = completedColor;
 
-            // FindTasks.Instance.DestroyFindTaskMechanic(arrow, taskParticle, taskLight);
+            FindTasks.Instance.DestroyFindTaskMechanic(arrow, taskParticle, taskLight);
             TaskManager.Instance.CompleteTask();
             AudioManager.Instance.PlayTaskCompletionSound();
         }
