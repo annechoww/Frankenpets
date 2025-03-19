@@ -204,7 +204,7 @@ public class LivingRoomText : MonoBehaviour
             }
 
             // Stop coroutine when player lifts key
-            yield return break;
+            yield break;
         }
     }
 
