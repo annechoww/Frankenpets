@@ -161,15 +161,13 @@ public class LivingRoomText : MonoBehaviour
 
         // wait for the key to be released first to prevent skipping the message
         while (Input.GetKey(KeyCode.Space) || 
-            player1Input.GetSwitchPressed() || player1Input.GetReconnectPressed() ||
-            player2Input.GetSwitchPressed() || player2Input.GetReconnectPressed())
+            player1Input.GetGlowPressed() || player2Input.GetGlowPressed())
         {
             yield return null;
         }
 
         while (!Input.GetKeyDown(KeyCode.Space) &&
-               !player1Input.GetSwitchPressed() && !player1Input.GetReconnectPressed() &&
-               !player2Input.GetSwitchPressed() && !player2Input.GetReconnectPressed())
+               !player1Input.GetGlowPressed() && !player2Input.GetGlowPressed())
         {
             yield return null;
         }
@@ -204,7 +202,7 @@ public class LivingRoomText : MonoBehaviour
             }
 
             // Stop coroutine when player lifts key
-            yield return break;
+            yield break;
         }
     }
 
