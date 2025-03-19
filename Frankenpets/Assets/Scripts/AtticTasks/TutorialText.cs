@@ -113,6 +113,8 @@ public class TutorialText : MonoBehaviour
     private MessageManager messageManager;
     private ControllerAssignment controllerAssignment; 
     private bool isKeyboard;   
+    private bool p1GlowPressed;
+    private bool p2GlowPressed;
 
 
     void Awake()
@@ -188,15 +190,46 @@ public class TutorialText : MonoBehaviour
     {
         updateControlsCornerUI();
 
+        // if (getCurrTutorialStage() == tutStartOverlay)
+        // {
+        //     handleOverlay();
+        //     if (isKeyboard && Input.GetKeyDown(KeyCode.Space))
+        //     {
+        //         tutOverlayOrder++;
+        //     } else if (!isKeyboard && (player1Input.GetGlowJustPressed() || player2Input.GetGlowJustPressed()))
+        //     {
+        //         tutOverlayOrder++;
+        //     }
+        // }
+
         if (getCurrTutorialStage() == tutStartOverlay)
         {
             handleOverlay();
+            
             if (isKeyboard && Input.GetKeyDown(KeyCode.Space))
             {
                 tutOverlayOrder++;
-            } else if (!isKeyboard && (player1Input.GetGlowPressed() || player2Input.GetGlowPressed()))
+            }
+            else if (!isKeyboard)
             {
-                tutOverlayOrder++;
+                // Set flags if each player just pressed glow
+                if (player1Input.GetGlowJustPressed())
+                {
+                    p1GlowPressed = true;
+                }
+                if (player2Input.GetGlowJustPressed())
+                {
+                    p2GlowPressed = true;
+                }
+                
+                // Only when both players have pressed do we advance
+                if (p1GlowPressed && p2GlowPressed)
+                {
+                    tutOverlayOrder++;
+                    // Reset for the next stage
+                    p1GlowPressed = false;
+                    p2GlowPressed = false;
+                }
             }
         }
 
