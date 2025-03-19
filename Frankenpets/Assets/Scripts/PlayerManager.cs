@@ -315,7 +315,7 @@ public class PlayerManager : MonoBehaviour
 
                 messageManager.endP2WantsToSwitch();
                 messageManager.startP1WantsToSwitch();
-                AudioSource.PlayClipAtPoint(meowSound, P1.Half.transform.position); 
+                AudioManager.Instance.PlayUIMeowSFX();
             } 
         } 
         else
@@ -341,7 +341,7 @@ public class PlayerManager : MonoBehaviour
 
                 messageManager.endP1WantsToSwitch();
                 messageManager.startP2WantsToSwitch();
-                AudioSource.PlayClipAtPoint(woofSound, P2.Half.transform.position);
+                AudioManager.Instance.PlayUIBarkSFX();
             } 
         } 
         else

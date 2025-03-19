@@ -31,8 +31,16 @@ public class AudioManager : MonoBehaviour
     public AudioClip reconnectSFX;
     public AudioClip switchSFX;
 
+    public AudioClip playerBarkSFX;
+
+    public AudioClip playerMeowSFX;
+
     [Header("Game SFX Clips")]
     public AudioClip taskCompleteSFX;
+
+    public AudioClip UIBarkSFX;
+
+    public AudioClip UIMeowSFX;
 
     private void Awake()
     {
@@ -208,5 +216,32 @@ public class AudioManager : MonoBehaviour
     public void PlaySwitchSFX()
     {
         PlayPlayerSFX(switchSFX);
+    }
+
+    public void PlayPlayerBarkSFX()
+    {
+        PlayPlayerSFX(playerBarkSFX);
+    }
+
+    public void PlayPlayerMeowSFX()
+    {
+        PlayPlayerSFX(playerMeowSFX);
+    }
+
+    public void playUISFX(AudioClip audioClip) {
+        if (!UISource.isPlaying)
+        {
+            UISource.PlayOneShot(audioClip);
+        }
+    }
+
+    public void PlayUIBarkSFX()
+    {
+        playUISFX(UIBarkSFX);
+    }
+
+    public void PlayUIMeowSFX()
+    {
+        playUISFX(UIMeowSFX);
     }
 }

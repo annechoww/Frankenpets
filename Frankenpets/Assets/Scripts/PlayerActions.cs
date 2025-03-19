@@ -386,13 +386,16 @@ public class PlayerActions : MonoBehaviour
     private void runNoiseLogic()
     {
         // if ((Input.GetKey(KeyCode.X) && P1.IsFront) || ((Input.GetKey(KeyCode.Period)) && P2.IsFront))
-        if ((player1Input.GetSoundTailPressed() && P1.IsFront) || (player2Input.GetSoundTailPressed() && P2.IsFront))
+        if ((player1Input.GetSoundTailJustPressed() && P1.IsFront) || (player2Input.GetSoundTailJustPressed() && P2.IsFront))
         {
             string frontSpecies = P1.IsFront ? P1.Species : P2.Species;
 
-            AudioClip clip = (frontSpecies == "cat") ? catClip : dogClip;
-
-            if (clip != null) AudioManager.Instance.PlaySFX(clip);
+            if (frontSpecies == "cat") {
+                AudioManager.Instance.PlayPlayerMeowSFX();
+            }
+            else {
+                AudioManager.Instance.PlayPlayerBarkSFX();
+            }
 
             mouthRiggingScript.openMouth();
         }

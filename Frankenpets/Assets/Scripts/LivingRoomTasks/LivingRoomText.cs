@@ -61,25 +61,25 @@ public class LivingRoomText : MonoBehaviour
     private IEnumerator OverlaySequence()
     {
         
-        yield return WaitForKey();
+        yield return WaitForKeyBoth();
         todoListCanvas.sortingOrder = 100;
         overlay.transform.GetChild(1).gameObject.SetActive(false);
         overlay.transform.GetChild(2).gameObject.SetActive(true);
 
-        yield return WaitForKey();
+        yield return WaitForKeyBoth();
         todoListCanvas.sortingOrder = 0;
         overlay.transform.GetChild(2).gameObject.SetActive(false);
         overlay.transform.GetChild(3).gameObject.SetActive(true);
         
-        yield return WaitForKey();
+        yield return WaitForKeyBoth();
         overlay.transform.GetChild(3).gameObject.SetActive(false);
         overlay.transform.GetChild(4).gameObject.SetActive(true);
 
-        yield return WaitForKey();
+        yield return WaitForKeyBoth();
         overlay.transform.GetChild(4).gameObject.SetActive(false);
         overlay.transform.GetChild(5).gameObject.SetActive(true);
         
-        yield return WaitForKey();
+        yield return WaitForKeyBoth();
         overlay.transform.GetChild(5).gameObject.SetActive(false);
         overlayBG.SetActive(false);
         overlay.SetActive(false);
@@ -159,18 +159,31 @@ public class LivingRoomText : MonoBehaviour
         // delay to prevent instant skipping if key was already down
         // yield return new WaitForSeconds(0.1f);
 
-        // wait for the key to be released first to prevent skipping the message
-        while (Input.GetKey(KeyCode.Space) || 
-            player1Input.GetGlowPressed() || player2Input.GetGlowPressed())
-        {
-            yield return null;
-        }
+        // // wait for the key to be released first to prevent skipping the message
+        // while (Input.GetKey(KeyCode.Space) || 
+        //     player1Input.GetGlowPressed() || player2Input.GetGlowPressed())
+        // {
+        //     yield return null;
+        // }
 
+        // Now wait until either Space is pressed down or glow is just pressed
         while (!Input.GetKeyDown(KeyCode.Space) &&
-               !player1Input.GetGlowPressed() && !player2Input.GetGlowPressed())
+            !player1Input.GetGlowJustPressed() && !player2Input.GetGlowJustPressed())
         {
             yield return null;
         }
+    }
+
+    private IEnumerator WaitForKeyBoth() {
+        bool player1Pressed = false;
+        bool player2Pressed = false;
+
+        while ((!player1Pressed || !player2Pressed) && !Input.GetKeyDown(KeyCode.Space)) {
+            if (player1Input.GetGlowJustPressed()) player1Pressed = true;
+            if (player2Input.GetGlowJustPressed()) player2Pressed = true;
+            yield return null;  // Allow waiting until the next frame.
+        }
+        yield return null;
     }
 
     private IEnumerator WaitForGlow(float keyDownDuration)

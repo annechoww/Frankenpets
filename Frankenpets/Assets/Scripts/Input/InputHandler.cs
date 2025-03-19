@@ -14,6 +14,10 @@ public class InputHandler : MonoBehaviour
     private bool glowPressed;
     private bool soundTailPressed;
 
+    // one shot event flags
+    private bool soundTailJustPressed;
+    private bool glowJustPressed;
+
     // Event methods called by PlayerInput component
     public void OnMove(InputAction.CallbackContext context)
     {
@@ -36,8 +40,16 @@ public class InputHandler : MonoBehaviour
 
     public void OnSoundTail(InputAction.CallbackContext context)
     {
-        soundTailPressed = context.ReadValueAsButton();
-        Debug.Log($"SoundTail pressed: {soundTailPressed}");
+        if (context.phase == InputActionPhase.Started)
+        {
+            // Button just pressed
+            soundTailJustPressed = true;
+            soundTailPressed = true;
+        }
+        else if (context.phase == InputActionPhase.Canceled)
+        {
+            soundTailPressed = false;
+        }
     }
 
     public void OnSpecialAction(InputAction.CallbackContext context)
@@ -66,8 +78,15 @@ public class InputHandler : MonoBehaviour
 
     public void OnGlowPressed(InputAction.CallbackContext context)
     {
-        glowPressed = context.ReadValueAsButton();
-        Debug.Log($"Glow pressed: {glowPressed}");
+        if (context.phase == InputActionPhase.Started)
+        {
+            glowJustPressed = true;
+            glowPressed = true;
+        }
+        else if (context.phase == InputActionPhase.Canceled)
+        {
+            glowPressed = false;
+        }
     }
 
     // Accessor methods for PlayerManager to get input values
@@ -115,5 +134,26 @@ public class InputHandler : MonoBehaviour
     public bool GetControlsMenuPressed()
     {
         return controlsMenuPressed;
+    }
+
+    // One-shot getters
+    public bool GetSoundTailJustPressed()
+    {
+        if (soundTailJustPressed)
+        {
+            soundTailJustPressed = false; // Reset flag after reading
+            return true;
+        }
+        return false;
+    }
+
+    public bool GetGlowJustPressed()
+    {
+        if (glowJustPressed)
+        {
+            glowJustPressed = false; // Reset flag after reading
+            return true;
+        }
+        return false;
     }
 }
