@@ -37,7 +37,7 @@ public class InputHandler : MonoBehaviour
     public void OnSoundTail(InputAction.CallbackContext context)
     {
         soundTailPressed = context.ReadValueAsButton();
-        Debug.Log($"Glow button pressed: {soundTailPressed}");
+        Debug.Log($"SoundTail pressed: {soundTailPressed}");
     }
 
     public void OnSpecialAction(InputAction.CallbackContext context)
@@ -67,7 +67,7 @@ public class InputHandler : MonoBehaviour
     public void OnGlowPressed(InputAction.CallbackContext context)
     {
         glowPressed = context.ReadValueAsButton();
-        Debug.Log($"Glow button pressed: {glowPressed}");
+        Debug.Log($"Glow pressed: {glowPressed}");
     }
 
     // Accessor methods for PlayerManager to get input values

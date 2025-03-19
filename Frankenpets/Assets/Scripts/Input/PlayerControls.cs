@@ -100,9 +100,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Sound/Tail"",
+                    ""name"": ""SoundTail"",
                     ""type"": ""Button"",
-                    ""id"": ""9d78e3fe-4f8a-46c8-849e-3103992aba06"",
+                    ""id"": ""a700f82c-1bca-4cb3-9299-dfeda462d3b8"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -245,7 +245,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""23c44c13-f485-41e1-8ed8-207273744b49"",
-                    ""path"": ""<Keyboard>/x"",
+                    ""path"": ""<Keyboard>/z"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";Keyboard"",
@@ -398,23 +398,23 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""2135e5f0-f9a0-427c-b472-0741ecec21d1"",
+                    ""id"": ""150cae5a-b4f0-48f9-b68a-a131b0c05183"",
                     ""path"": ""<Keyboard>/x"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";Keyboard"",
-                    ""action"": ""Sound/Tail"",
+                    ""action"": ""SoundTail"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
-                    ""id"": ""d9d9725d-6c4f-4d6a-9e84-96372cc0104e"",
+                    ""id"": ""3b83342e-46d7-4cc0-a6e4-02c4f548a433"",
                     ""path"": ""<Gamepad>/buttonNorth"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";GamepadPlayer1"",
-                    ""action"": ""Sound/Tail"",
+                    ""action"": ""SoundTail"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -497,9 +497,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Sound/Tail"",
+                    ""name"": ""SoundTail"",
                     ""type"": ""Button"",
-                    ""id"": ""32bfb067-07aa-4cc4-8234-ad13d5659482"",
+                    ""id"": ""ae725eaa-65f3-4010-adca-7a0b9188b635"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -718,28 +718,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""0f723684-b6bf-4fbd-ab80-022aa9d0c9ec"",
-                    ""path"": ""<Keyboard>/x"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";Keyboard"",
-                    ""action"": ""Sound/Tail"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""0c9538d7-43fb-4c32-89f4-2f000fa8b528"",
-                    ""path"": ""<Gamepad>/buttonNorth"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";GamepadPlayer2"",
-                    ""action"": ""Sound/Tail"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""3aac8cca-9ada-42cf-a2f2-32668c327716"",
                     ""path"": ""<Gamepad>/rightStick"",
                     ""interactions"": """",
@@ -803,6 +781,28 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""action"": ""CameraMove"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cc23c946-6ce6-4ef8-967f-04d0a1b036dd"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";GamepadPlayer2"",
+                    ""action"": ""SoundTail"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5b367584-8014-43bf-8a84-f2008f614d9e"",
+                    ""path"": ""<Keyboard>/period"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard"",
+                    ""action"": ""SoundTail"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -853,7 +853,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_Player1_Switch = m_Player1.FindAction("Switch", throwIfNotFound: true);
         m_Player1_Menu = m_Player1.FindAction("Menu", throwIfNotFound: true);
         m_Player1_Glow = m_Player1.FindAction("Glow", throwIfNotFound: true);
-        m_Player1_SoundTail = m_Player1.FindAction("Sound/Tail", throwIfNotFound: true);
+        m_Player1_SoundTail = m_Player1.FindAction("SoundTail", throwIfNotFound: true);
         // Player2
         m_Player2 = asset.FindActionMap("Player2", throwIfNotFound: true);
         m_Player2_Move = m_Player2.FindAction("Move", throwIfNotFound: true);
@@ -864,7 +864,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_Player2_Switch = m_Player2.FindAction("Switch", throwIfNotFound: true);
         m_Player2_Menu = m_Player2.FindAction("Menu", throwIfNotFound: true);
         m_Player2_Glow = m_Player2.FindAction("Glow", throwIfNotFound: true);
-        m_Player2_SoundTail = m_Player2.FindAction("Sound/Tail", throwIfNotFound: true);
+        m_Player2_SoundTail = m_Player2.FindAction("SoundTail", throwIfNotFound: true);
     }
 
     ~@PlayerControls()

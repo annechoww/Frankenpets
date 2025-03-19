@@ -388,16 +388,12 @@ public class PlayerActions : MonoBehaviour
         // if ((Input.GetKey(KeyCode.X) && P1.IsFront) || ((Input.GetKey(KeyCode.Period)) && P2.IsFront))
         if ((player1Input.GetSoundTailPressed() && P1.IsFront) || (player2Input.GetSoundTailPressed() && P2.IsFront))
         {
-            // TODO: Add animation trigger when this happens to frontHalf
             string frontSpecies = P1.IsFront ? P1.Species : P2.Species;
-            AudioSource audioSource = gameObject.GetComponent<AudioSource>();
-            if (audioSource == null)
-            {
-                audioSource = gameObject.AddComponent<AudioSource>();
-            }
 
-            audioSource.clip = (frontSpecies == "cat") ? catClip : dogClip;
-            audioSource.Play();
+            AudioClip clip = (frontSpecies == "cat") ? catClip : dogClip;
+
+            if (clip != null) AudioManager.Instance.PlaySFX(clip);
+
             mouthRiggingScript.openMouth();
         }
     }
@@ -1141,7 +1137,8 @@ public class PlayerActions : MonoBehaviour
         {
             pawRiggingScript.liftPaw();
             isPaw = true;
-        } else if (Input.GetKeyUp(KeyCode.Z) || Input.GetKeyUp(KeyCode.Comma))
+        // } else if (Input.GetKeyUp(KeyCode.Z) || Input.GetKeyUp(KeyCode.Comma))
+        } else if (!player1Input.GetJumpPressed() && !player2Input.GetJumpPressed())
         {
             isPaw = false;
         }
