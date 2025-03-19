@@ -1,6 +1,7 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class LivingRoomText : MonoBehaviour
 {
@@ -21,6 +22,10 @@ public class LivingRoomText : MonoBehaviour
     public GameObject P1SpeechIcons;
     public GameObject P2SpeechIcons;
     // public GameObject miniPlayerIcons;
+
+    [Header("Black Overlays and Highlight Variables")]
+    public GameObject bottomUIParentHighlight;
+    public Canvas todoListCanvas;
 
     [Header("Sounds")]
     public AudioClip barkSound;
@@ -57,10 +62,12 @@ public class LivingRoomText : MonoBehaviour
     {
         
         yield return WaitForKey();
+        todoListCanvas.sortingOrder = 100;
         overlay.transform.GetChild(1).gameObject.SetActive(false);
         overlay.transform.GetChild(2).gameObject.SetActive(true);
 
         yield return WaitForKey();
+        todoListCanvas.sortingOrder = 0;
         overlay.transform.GetChild(2).gameObject.SetActive(false);
         overlay.transform.GetChild(3).gameObject.SetActive(true);
         
@@ -108,8 +115,8 @@ public class LivingRoomText : MonoBehaviour
         // tutorial overlay starts first
 
         // speech bubbles start now
-        yield return ShowMessage("You can make to-do list items glow.", "glow");
-        yield return ShowMessage("Take a look at the controls menu, too.", "menu");
+        yield return ShowMessage("Try <u>locating</u> to-do list tasks.", "glow");
+        yield return ShowMessage("Check out the <u>controls menu</u>, too.", "menu");
 
         // messageManager.startPressEnterToHideTutorial();
         yield return ShowMessage("Let's play!", "end");
@@ -124,6 +131,7 @@ public class LivingRoomText : MonoBehaviour
         if (special == "glow") 
         {
             // glowUI.SetActive(true);
+            StartCoroutine(Highlight(bottomUIParentHighlight));
             yield return ShowBottomUI(glowUI, speechBubbleTwoTails, message);
             yield return WaitForGlow();
             yield return HideEffect(glowUI, speechBubbleTwoTails);
@@ -294,5 +302,59 @@ public class LivingRoomText : MonoBehaviour
         yield return StartCoroutine(SlideUpEffect(bottomUIParent));
         yield return StartCoroutine(SlideDownEffect(bottomUIParent));
 
+    }
+
+
+    // BLACK OVERLAY ///////////////////////////////////////////////////////////
+    private IEnumerator Highlight(GameObject highlight)
+    {
+        highlight.SetActive(true);
+        // highlight.color = new Color(0, 0, 0, 177);
+
+        yield return StartCoroutine(FadeIn(highlight, 1.0f));
+
+        yield return new WaitForSeconds(1.2f);
+
+        yield return StartCoroutine(FadeOut(highlight, 1.0f));
+
+        highlight.SetActive(false);
+    }
+
+    private IEnumerator FadeIn(GameObject highlight, float duration)
+    {
+        RectTransform rectTransform = highlight.GetComponent<RectTransform>();
+        Image image = highlight.GetComponent<Image>();
+
+        float elapsedTime = 0f;
+        Color startColor = image.color;
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            float alpha = Mathf.Lerp(0.0f, 0.85f, elapsedTime / duration);
+            image.color = new Color(startColor.r, startColor.g, startColor.b, alpha);
+            yield return null; // causing problem?
+        }
+
+        image.color = new Color(startColor.r, startColor.g, startColor.b, 0.85f);
+    }
+
+    private IEnumerator FadeOut(GameObject highlight, float duration)
+    {
+        RectTransform rectTransform = highlight.GetComponent<RectTransform>();
+        Image image = highlight.GetComponent<Image>();
+
+        float elapsedTime = 0f;
+        Color startColor = image.color;
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            float alpha = Mathf.Lerp(0.85f, 0.0f, elapsedTime / duration);
+            image.color = new Color(startColor.r, startColor.g, startColor.b, alpha);
+            yield return null; 
+        }
+
+        image.color = new Color(startColor.r, startColor.g, startColor.b, 0.0f); // Ensure it's fully invisible
     }
 }

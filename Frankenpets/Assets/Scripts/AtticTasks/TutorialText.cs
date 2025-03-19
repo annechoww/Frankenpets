@@ -260,14 +260,14 @@ public class TutorialText : MonoBehaviour
         // }
 
         // check for return key press to switch before exit attic
-        if (getCurrTutorialStage() == scaredDog && checkForSpace())
-        {
-            advanceTutorialStage();
+        // if (getCurrTutorialStage() == scaredDog && checkForSpace())
+        // {
+        //     advanceTutorialStage();
             
-        }
+        // }
 
         // check for last switch to exit attic
-        if (getCurrTutorialStage() == annoyedCat && playerManager.P1.IsFront && !playerManager.P2.IsFront)
+        if (getCurrTutorialStage() == scaredDog && playerManager.P1.IsFront && !playerManager.P2.IsFront)
         {
             advanceTutorialStage();
         }
@@ -284,8 +284,8 @@ public class TutorialText : MonoBehaviour
     public const int tutDragRug = 7;
     public const int tutComplete = 8;
     public const int scaredDog = 9;
-    public const int annoyedCat = 10;
-    public const int leaveAttic = 11;
+    // public const int annoyedCat = 10;
+    public const int leaveAttic = 10;
 
     // tutorial overlay variables
     private int tutOverlayOrder = 1;
@@ -375,7 +375,7 @@ public class TutorialText : MonoBehaviour
                 
 
                 // Bottom UI
-                yield return StartCoroutine(ShowBottomUI(splitUI, speechBubbleTwoTails, "Chaos! Now, let's split apart.", ""));
+                yield return StartCoroutine(ShowBottomUI(splitUI, speechBubbleTwoTails, "Chaos! Let's <u>split apart</u>.", ""));
 
                 // Deactivate prev paw path
                 vaseArrow.SetActive(false);
@@ -431,7 +431,7 @@ public class TutorialText : MonoBehaviour
                 completeTaskTodo(boxTaskTodo);
 
                 // Bottom UI
-                yield return StartCoroutine(ShowBottomUI(reconnectUI, speechBubbleTwoTails, "Let's reconnect.", ""));
+                yield return StartCoroutine(ShowBottomUI(reconnectUI, speechBubbleTwoTails, "Let's <u>reconnect</u>.", ""));
 
                 // Disable guiding path 
                 backBoxArrow.SetActive(false);
@@ -475,7 +475,7 @@ public class TutorialText : MonoBehaviour
                 rugPawPath.SetActive(true);
 
                 // Show new message
-                yield return StartCoroutine(ShowBottomUI(null, speechBubbleLeft, "Hey, what's under that purple rug?", ""));
+                yield return StartCoroutine(ShowBottomUI(null, speechBubbleLeft, "What's under that <u>purple rug</u>?", ""));
 
                 break;
             case tutSwitch:
@@ -501,7 +501,7 @@ public class TutorialText : MonoBehaviour
                 brightenWorldLights();
 
                 // Show new message
-                yield return StartCoroutine(ShowBottomUI(switchUI, speechBubbleLeft, "I can't grab this, can you help?", ""));
+                yield return StartCoroutine(ShowBottomUI(switchUI, speechBubbleLeft, "I can't grab this. Let's <u>switch</u>.", ""));
                 
                 break;
             case tutDragRug:
@@ -535,9 +535,9 @@ public class TutorialText : MonoBehaviour
                 yield return StartCoroutine(ShowBottomUI(null, speechBubbleTwoTails, "Let's wreck this house!", "Leave the attic, or look around"));
 
                 // Reveal remaining basic controls
-                yield return new WaitForSeconds(2.0f);
+                yield return new WaitForSeconds(1.0f);
                 yield return StartCoroutine(RevealControlsCornerUI(3));
-                yield return StartCoroutine(Bounce(controlsCornerUIChild.transform));
+                // yield return StartCoroutine(Bounce(controlsCornerUIChild.transform));
 
                 // next case activated in AtticPrevention.cs
                 break;
@@ -545,14 +545,14 @@ public class TutorialText : MonoBehaviour
             case scaredDog:
                 // Hide things from previous case and annoyedCat case 
                 // messageManager.cancelPressEnterToHideTutorial();
-                speechBubbleLeft.SetActive(false);
+                // speechBubbleLeft.SetActive(false);
                 speechBubbleTwoTails.SetActive(false);
                 // switchUI.SetActive(false);
 
                 // Show scaredDog dialogue
                 // tutorialText.transform.SetParent(speechBubbleRight.transform, true);
                 yield return StartCoroutine(HideEffect(switchUI, null));
-                yield return StartCoroutine(ShowBottomUI(pressEnterToContinueUI, speechBubbleRight, "The drop's too high... I'm scared!", "", false));
+                yield return StartCoroutine(ShowBottomUI(switchUI, speechBubbleRight, "The drop's too high for me... Let's <u>switch</u>!", "", false));
         
                 // pressEnterToContinueUI.SetActive(true);
 
@@ -563,20 +563,20 @@ public class TutorialText : MonoBehaviour
 
                 break;
 
-            case annoyedCat:
+            // case annoyedCat:
         
-                // tutorialText.transform.SetParent(speechBubbleLeft.transform, true);
+            //     // tutorialText.transform.SetParent(speechBubbleLeft.transform, true);
 
 
-                yield return StartCoroutine(HideEffect(pressEnterToContinueUI, speechBubbleRight));
-                yield return StartCoroutine(ShowBottomUI(switchUI, speechBubbleLeft, "Fine, I'll jump. Switch with me.", "", false));
+            //     yield return StartCoroutine(HideEffect(pressEnterToContinueUI, speechBubbleRight));
+            //     yield return StartCoroutine(ShowBottomUI(switchUI, speechBubbleLeft, "Fine, I'll jump. Switch with me.", "", false));
           
 
-                if (mewSound != null)
-                {
-                    AudioManager.Instance.Play3DSFX(mewSound, playerManager.getBackHalf().transform.position);
-                }
-                break;
+            //     if (mewSound != null)
+            //     {
+            //         AudioManager.Instance.Play3DSFX(mewSound, playerManager.getBackHalf().transform.position);
+            //     }
+            //     break;
 
             case leaveAttic:
                 yield return StartCoroutine(HideEffect(switchUI, speechBubbleLeft));
