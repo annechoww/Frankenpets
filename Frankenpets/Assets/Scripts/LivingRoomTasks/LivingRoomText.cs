@@ -133,7 +133,7 @@ public class LivingRoomText : MonoBehaviour
             // glowUI.SetActive(true);
             StartCoroutine(Highlight(bottomUIParentHighlight));
             yield return ShowBottomUI(glowUI, speechBubbleTwoTails, message);
-            yield return WaitForGlow();
+            yield return WaitForGlow(1.0f);
             yield return HideEffect(glowUI, speechBubbleTwoTails);
             // glowUI.SetActive(false);
         }
@@ -141,14 +141,15 @@ public class LivingRoomText : MonoBehaviour
         {
             // accessControlsUI.SetActive(true);
             yield return ShowBottomUI(accessControlsUI, speechBubbleTwoTails, message);
-            yield return WaitForMenu();
+            yield return WaitForMenu(); // Wait to open menu
+            yield return WaitForMenu(); // Wait to close menu
             yield return HideEffect(accessControlsUI, speechBubbleTwoTails);
             // accessControlsUI.SetActive(false);
         }
         else if (special == "end")
         {
             yield return ShowBottomUI(pressEnterToContinueUI, speechBubbleTwoTails, message);
-            yield return WaitForKey();
+            yield return new WaitForSeconds(3.0f);
             yield return HideEffect(pressEnterToContinueUI, speechBubbleTwoTails);
         }
     }
@@ -174,12 +175,36 @@ public class LivingRoomText : MonoBehaviour
         }
     }
 
-    private IEnumerator WaitForGlow()
+    private IEnumerator WaitForGlow(float keyDownDuration)
     {
-        while (!Input.GetKeyDown(KeyCode.V) && !Input.GetKeyDown(KeyCode.M) &&
-               !player1Input.GetGlowPressed() && !player2Input.GetGlowPressed())
+        while (true) // Keep running indefinitely
         {
-            yield return null;
+            float elapsedTime = 0f;
+
+            // Wait until the key is held down for the required duration
+            while (elapsedTime < keyDownDuration)
+            {
+                if (player1Input.GetGlowPressed() || player2Input.GetGlowPressed())
+                {
+                    elapsedTime += Time.deltaTime;
+                }
+                else
+                {
+                    elapsedTime = 0f; // Reset if the key is released
+                }
+
+                yield return null; // Wait for the next frame
+            }
+
+            // Required key down time is satisfied.
+            // But, if player is still holding key down, continue the coroutine
+            while (!player1Input.GetGlowPressed() && !player2Input.GetGlowPressed())
+            {
+                yield return null;
+            }
+
+            // Stop coroutine when player lifts key
+            yield return break;
         }
     }
 
