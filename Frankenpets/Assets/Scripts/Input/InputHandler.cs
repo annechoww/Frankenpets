@@ -17,6 +17,7 @@ public class InputHandler : MonoBehaviour
     // one shot event flags
     private bool soundTailJustPressed;
     private bool glowJustPressed;
+    private bool controlsMenuJustPressed;
 
     // Event methods called by PlayerInput component
     public void OnMove(InputAction.CallbackContext context)
@@ -72,8 +73,17 @@ public class InputHandler : MonoBehaviour
 
     public void OnControlsMenu(InputAction.CallbackContext context)
     {
-        controlsMenuPressed = context.ReadValueAsButton();
-        Debug.Log($"Controls menu pressed: {controlsMenuPressed}");
+        // controlsMenuPressed = context.ReadValueAsButton();
+        // Debug.Log($"Controls menu pressed: {controlsMenuPressed}");
+        if (context.phase == InputActionPhase.Started)
+        {
+            controlsMenuJustPressed = true;
+            controlsMenuPressed = true;
+        }
+        else if (context.phase == InputActionPhase.Canceled)
+        {
+            controlsMenuPressed = false;
+        }
     }
 
     public void OnGlowPressed(InputAction.CallbackContext context)
@@ -152,6 +162,16 @@ public class InputHandler : MonoBehaviour
         if (glowJustPressed)
         {
             glowJustPressed = false; // Reset flag after reading
+            return true;
+        }
+        return false;
+    }
+
+    public bool GetControlsMenuJustPressed()
+    {
+        if (controlsMenuJustPressed)
+        {
+            controlsMenuJustPressed = false; // Reset flag after reading
             return true;
         }
         return false;

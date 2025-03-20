@@ -1290,15 +1290,24 @@ public class PlayerActions : MonoBehaviour
 
     private void runControlsMenuLogic()
     {
-        if ((player1Input.GetControlsMenuPressed() || player2Input.GetControlsMenuPressed() || Input.GetKeyDown(KeyCode.I)) && !isViewingControlsMenu)
+        // if ((player1Input.GetControlsMenuJustPressed() || player2Input.GetControlsMenuJustPressed()) && !isViewingControlsMenu)
+        // {
+        //     UnityEngine.Debug.Log("viewing");
+        //     controlsMenu.SetActive(true);
+        //     isViewingControlsMenu = true;
+        // }
+        // else if ((player1Input.GetControlsMenuJustPressed() || player2Input.GetControlsMenuJustPressed()) && isViewingControlsMenu)
+        // {
+        //     UnityEngine.Debug.Log("not viewing");
+        //     controlsMenu.SetActive(false);
+        //     isViewingControlsMenu = false;
+        // }
+
+        if (player1Input.GetControlsMenuJustPressed() || player2Input.GetControlsMenuJustPressed())
         {
-            controlsMenu.SetActive(true);
-            isViewingControlsMenu = true;
-        }
-        else if ((player1Input.GetGlowPressed() || player2Input.GetGlowPressed() || Input.GetKeyUp(KeyCode.I)) && isViewingControlsMenu)
-        {
-            controlsMenu.SetActive(false);
-            isViewingControlsMenu = false;
+            isViewingControlsMenu = !isViewingControlsMenu;
+            controlsMenu.SetActive(isViewingControlsMenu);
+            UnityEngine.Debug.Log(isViewingControlsMenu ? "viewing" : "not viewing");
         }
     }
 }
