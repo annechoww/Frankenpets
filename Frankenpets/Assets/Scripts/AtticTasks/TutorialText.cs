@@ -125,7 +125,7 @@ public class TutorialText : MonoBehaviour
         GameObject pet = GameObject.Find("Pet");
         playerManager = pet.GetComponent<PlayerManager>();
         messageManager = GameObject.Find("Messages").GetComponent<MessageManager>();
-        controllerAssignment = pet.GetComponent<ControllerAssignment>();
+        controllerAssignment = ControllerAssignment.Instance;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created

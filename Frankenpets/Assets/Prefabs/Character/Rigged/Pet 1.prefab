@@ -586,7 +586,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5420053681546339756}
   - component: {fileID: 2133303873589785905}
-  - component: {fileID: 809403273594926195}
   - component: {fileID: 1822071720912223642}
   m_Layer: 10
   m_Name: Pet 1
@@ -651,25 +650,6 @@ MonoBehaviour:
   canSwitch: 1
   canSplit: 1
   tutorialTextScript: {fileID: 0}
---- !u!114 &809403273594926195
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9049433547381474192}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0ce7d21167c7c8f4a950b0b318392cfb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player1Input: {fileID: 3516907539488123271}
-  player2Input: {fileID: 6925291104570667319}
-  player1Scheme: GamepadPlayer1
-  player2Scheme: GamepadPlayer2
-  keyboardScheme: Keyboard
-  useKeyboardFallback: 1
-  reassignOnConnect: 1
 --- !u!114 &1822071720912223642
 MonoBehaviour:
   m_ObjectHideFlags: 0
