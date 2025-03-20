@@ -7715,9 +7715,17 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 2133303873589785905, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
+      propertyPath: meowSound
+      value: 
+      objectReference: {fileID: 8300000, guid: b0e5d96a3e349458b8a969dddefd579a, type: 3}
+    - target: {fileID: 2133303873589785905, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
       propertyPath: splitTime
       value: 1.5
       objectReference: {fileID: 0}
+    - target: {fileID: 2133303873589785905, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
+      propertyPath: woofSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 058bc93a9b74c4ce9b3f664c98fb182a, type: 3}
     - target: {fileID: 2133303873589785905, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
       propertyPath: happyEmote
       value: 
@@ -9368,6 +9376,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4039227268667338751, guid: 082bf6cdf0c78ad4586f2ea0680b813f, type: 3}
+      propertyPath: basementMusic
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 6068219539519862372, guid: 082bf6cdf0c78ad4586f2ea0680b813f, type: 3}
       propertyPath: m_Name
       value: AudioManager
@@ -39525,7 +39537,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: hold
+  m_text: press
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: aed9361b9dada446cb5c98d00f23ff8f, type: 2}
   m_sharedMaterial: {fileID: -6591440692960114744, guid: aed9361b9dada446cb5c98d00f23ff8f, type: 2}

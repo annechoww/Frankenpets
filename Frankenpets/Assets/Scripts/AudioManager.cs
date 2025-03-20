@@ -29,6 +29,7 @@ public class AudioManager : MonoBehaviour
     public AudioClip stretchSFX;
     public AudioClip splitSFX;
     public AudioClip reconnectSFX;
+    public AudioClip shrinkSFX;
     public AudioClip switchSFX;
 
     public AudioClip playerBarkSFX;
@@ -202,6 +203,14 @@ public class AudioManager : MonoBehaviour
         PlayPlayerSFX(stretchSFX);
     }
     public void StopStretchSFX()
+    {
+        playerSource.Stop();
+    }
+    public void PlayShrinkSFX()
+    {
+        PlayPlayerSFX(shrinkSFX);
+    }
+    public void StopShrinkSFX()
     {
         playerSource.Stop();
     }

@@ -133,7 +133,7 @@ public class LivingRoomText : MonoBehaviour
             // glowUI.SetActive(true);
             StartCoroutine(Highlight(bottomUIParentHighlight));
             yield return ShowBottomUI(glowUI, speechBubbleTwoTails, message);
-            yield return WaitForGlow(1.0f);
+            yield return WaitForGlow(0.7f);
             yield return HideEffect(glowUI, speechBubbleTwoTails);
             // glowUI.SetActive(false);
         }
@@ -142,15 +142,16 @@ public class LivingRoomText : MonoBehaviour
             // accessControlsUI.SetActive(true);
             yield return ShowBottomUI(accessControlsUI, speechBubbleTwoTails, message);
             yield return WaitForMenu(); // Wait to open menu
+            // yield return new WaitForSeconds(0.5f);
             yield return WaitForMenu(); // Wait to close menu
             yield return HideEffect(accessControlsUI, speechBubbleTwoTails);
             // accessControlsUI.SetActive(false);
         }
         else if (special == "end")
         {
-            yield return ShowBottomUI(pressEnterToContinueUI, speechBubbleTwoTails, message);
+            yield return ShowBottomUI(null, speechBubbleTwoTails, message);
             yield return new WaitForSeconds(3.0f);
-            yield return HideEffect(pressEnterToContinueUI, speechBubbleTwoTails);
+            yield return HideEffect(null, speechBubbleTwoTails);
         }
     }
 
@@ -221,8 +222,7 @@ public class LivingRoomText : MonoBehaviour
 
     private IEnumerator WaitForMenu()
     {
-        while (!Input.GetKeyDown(KeyCode.I) &&
-               !player1Input.GetControlsMenuPressed() && !player2Input.GetControlsMenuPressed())
+        while (!player1Input.GetControlsMenuPressed() && !player2Input.GetControlsMenuPressed())
         {
             yield return null;
         }
