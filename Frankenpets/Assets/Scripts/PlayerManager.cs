@@ -259,8 +259,9 @@ public class PlayerManager : MonoBehaviour
     // ADVANCED GETTERS/SETTERS ////////////////////////////////////////////
 
 
-    // GETTERS/SETTERS FOR TUTORIAL PURPOSES /////////////////////////////
+    // GETTERS/SETTERS FOR ALLOWING PET ACTIONS /////////////////////////////
     // Used to determine when a pet can split/switch/reconnect in specific points of the tutorial
+    // Also used in stretch and shrink animation
     public void setCanReconnect(bool canReconnect)
     {
         this.canReconnect = canReconnect;
@@ -285,11 +286,15 @@ public class PlayerManager : MonoBehaviour
     {
         return this.canSwitch;
     }
+    public bool getIsSplit()
+    {
+        return this.isSplit;
+    }
     public void setIsClimb(bool climbing)
     {
         isClimbing = climbing;
     }
-    // GETTERS/SETTERS FOR TUTORIAL PURPOSES /////////////////////////////
+    // GETTERS/SETTERS FOR ALLOWING PET ACTIONS /////////////////////////////
 
 
     // PLAYER INPUT CHECKERS ////////////////////////////////////////////
@@ -630,6 +635,7 @@ public class PlayerManager : MonoBehaviour
             
 
             UnityEngine.Debug.Log("Halves disconnected due to opposing pull.");
+            isSplit = true;
         }
     }
 
@@ -652,6 +658,7 @@ public class PlayerManager : MonoBehaviour
     
 
             UnityEngine.Debug.Log("Halves reconnected.");
+            isSplit = false;
         
             // Reset the relative rotation
             initialRelativeRotation = Quaternion.Inverse(frontHalf.transform.rotation) * backHalf.transform.rotation;
@@ -688,6 +695,7 @@ public class PlayerManager : MonoBehaviour
     // SWITCHING METHODS ////////////////////////////////////////////
     // runSwitchLogic(), tryStartSwitch(), cancelSwitch(), tryFinishSwitch() correspond to front <-> back switching (NOT SWITCHING SPECIES!)
     private bool shrinkIsPlaying = false; // stop shrink sound from playing multiple times when holding down button for >1.5s
+    private bool isSplit = false;
     private void runSwitchLogic()
     {
         if (CheckSwitchInput() && canSwitch) 
@@ -698,18 +706,11 @@ public class PlayerManager : MonoBehaviour
             messageManager.endP2WantsToSwitch();
 
             tryStartSwitch();
-            if (!shrinkIsPlaying && !hasJustSwitched) {
-                AudioManager.Instance.PlayShrinkSFX();
-                shrinkIsPlaying = true;
-            }
         }
         else
         {
             messageManager.switchFailMessageDeactivate();
             cancelSwitch();
-
-            AudioManager.Instance.StopShrinkSFX();
-            shrinkIsPlaying = false;
 
             hasJustSwitched = false;
         }
@@ -727,12 +728,21 @@ public class PlayerManager : MonoBehaviour
         else
         {
             switchStopwatch.Start();
+            if (!shrinkIsPlaying && !hasJustSwitched) {
+                AudioManager.Instance.PlayShrinkSFX();
+                shrinkIsPlaying = true;
+            }
         }
     }
 
     private void cancelSwitch()
     {
         switchStopwatch.Reset();
+        if (shrinkIsPlaying)
+        {
+            AudioManager.Instance.StopShrinkSFX();
+            shrinkIsPlaying = false;
+        }
     }
 
     private bool hasJustSwitched = false; // stop player from constantly switching when holding down button for >1.5s
@@ -742,7 +752,6 @@ public class PlayerManager : MonoBehaviour
         {
             switchStopwatch.Reset();
 
-            AudioManager.Instance.StopShrinkSFX();
             shrinkIsPlaying = false;
 
             // Switch which half the players are controlling

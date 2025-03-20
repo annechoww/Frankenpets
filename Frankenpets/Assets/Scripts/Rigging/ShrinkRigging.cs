@@ -53,7 +53,7 @@ public class ShirnkRigging : MonoBehaviour
 
     void Update()
     {
-        if (playerManager.CheckSwitchInput() && playerManager.getCanSwitch())
+        if (playerManager.CheckSwitchInput() && playerManager.getCanSwitch() & !playerManager.getIsSplit())
         {
             if (!isShrinking & !hasJustSwitched)
             {
