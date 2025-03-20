@@ -687,6 +687,7 @@ public class PlayerManager : MonoBehaviour
 
     // SWITCHING METHODS ////////////////////////////////////////////
     // runSwitchLogic(), tryStartSwitch(), cancelSwitch(), tryFinishSwitch() correspond to front <-> back switching (NOT SWITCHING SPECIES!)
+    private bool shrinkIsPlaying = false; // stop shrink sound from playing multiple times when holding down button for >1.5s
     private void runSwitchLogic()
     {
         if (CheckSwitchInput() && canSwitch) 
@@ -697,11 +698,19 @@ public class PlayerManager : MonoBehaviour
             messageManager.endP2WantsToSwitch();
 
             tryStartSwitch();
+            if (!shrinkIsPlaying && !hasJustSwitched) {
+                AudioManager.Instance.PlayShrinkSFX();
+                shrinkIsPlaying = true;
+            }
         }
         else
         {
             messageManager.switchFailMessageDeactivate();
             cancelSwitch();
+
+            AudioManager.Instance.StopShrinkSFX();
+            shrinkIsPlaying = false;
+
             hasJustSwitched = false;
         }
 
@@ -726,12 +735,15 @@ public class PlayerManager : MonoBehaviour
         switchStopwatch.Reset();
     }
 
-    private bool hasJustSwitched = false;
+    private bool hasJustSwitched = false; // stop player from constantly switching when holding down button for >1.5s
     private void tryFinishSwitch()
     {
         if ((switchStopwatch.Elapsed.TotalSeconds > switchTime) && (fixedJoint != null) && !hasJustSwitched)
         {
             switchStopwatch.Reset();
+
+            AudioManager.Instance.StopShrinkSFX();
+            shrinkIsPlaying = false;
 
             // Switch which half the players are controlling
             P1.IsFront = !P1.IsFront;
