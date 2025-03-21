@@ -20,7 +20,7 @@ public class PlayerActions : MonoBehaviour
     [Header("Input References")]
     public InputHandler player1Input;
     public InputHandler player2Input;
-    public ControllerAssignment controllerAssignment;
+    private ControllerAssignment controllerAssignment;
 
     [Header("Jumping Variables")]
     private float jumpForce = 20f;
@@ -133,6 +133,7 @@ public class PlayerActions : MonoBehaviour
     private void Start()
     {   
         getPlayerManager();
+        controllerAssignment = ControllerAssignment.Instance;
         Scene currentScene = SceneManager.GetActiveScene();
         currentSceneName = currentScene.name;
 
@@ -1166,9 +1167,7 @@ public class PlayerActions : MonoBehaviour
 ////////////////////////////////////////// Actions UI ///////////////////////////////////////////////
 
     public void UpdateControlsMenu()
-    {
-        controllerAssignment = GameObject.Find("Pet").GetComponent<ControllerAssignment>();
-        
+    {   
         // Update the UI elements based on current controller assignment
         if (controllerAssignment != null)
         {
