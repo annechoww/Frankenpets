@@ -60,12 +60,14 @@ public class TutorialText : MonoBehaviour
     public Transform frontHalf;
 
     [Header("Attic Lighting")]
-    public Light directionalLight;
-    public Light pointLight;
     public float minDirLightIntensity = 0.0f;
     public float maxDirLightIntensity = 2.0f;
     public float minPointLightIntensity = 0.5f;
     public float maxPointLightIntensity = 1.0f;
+    [Header("List of main lighting components in this room")]
+    public Light[] roomLights;
+    private float[] roomLightIntensities;
+    private float fadeDuration = 2.0f;
 
     [Header("Vase Task")]
     public GameObject vaseArrow;
@@ -184,6 +186,14 @@ public class TutorialText : MonoBehaviour
         playerManager.setCanSwitch(false);
         playerManager.setCanReconnect(false);
         playerManager.setCanSplit(false);
+
+        // Store the original intensities of the room lights
+        roomLightIntensities = new float[roomLights.Length];
+
+        for (int i = 0; i < roomLights.Length; i++)
+        {
+            roomLightIntensities[i] = roomLights[i].intensity;
+        }
     }
 
     void Update()
@@ -418,12 +428,12 @@ public class TutorialText : MonoBehaviour
                 // Dim the previous light path
                 foreach (Light light in vaseLights)
                 {
-                    StartCoroutine(lerpLightIntensity(light, 0.0f, 2.0f));
+                    StartCoroutine(LerpLightIntensity(light, 0.0f, 2.0f));
                 }
                 StartCoroutine(DelaySetActive(vaseLightsParent, false, 2.5f));
 
                 // Turn on attic light
-                brightenWorldLights();
+                BrightenRoomLights();
             
                 // gif ???
 
@@ -448,13 +458,13 @@ public class TutorialText : MonoBehaviour
                 boxesPawPath.SetActive(true); 
 
                 // Dim attic lights
-                dimLights();
+                DimRoomLights();
 
                 // Light path
                 boxesLightsParent.SetActive(true);
                 foreach (Light light in boxesLights)
                 {
-                    StartCoroutine(lerpLightIntensity(light, 0.1f, 1.5f));
+                    StartCoroutine(LerpLightIntensity(light, 0.1f, 1.5f));
                 }
 
                 break;
@@ -475,12 +485,12 @@ public class TutorialText : MonoBehaviour
                 // Dim the previous light path 
                 foreach (Light light in boxesLights)
                 {
-                    StartCoroutine(lerpLightIntensity(light, 0.0f, 2.0f));
+                    StartCoroutine(LerpLightIntensity(light, 0.0f, 2.0f));
                 }
                 StartCoroutine(DelaySetActive(boxesLightsParent, false, 2.5f));
 
                 // Brighten the attic lights
-                brightenWorldLights();
+                BrightenRoomLights();
 
                 break;
 
@@ -492,13 +502,13 @@ public class TutorialText : MonoBehaviour
                 yield return StartCoroutine(RevealControlsCornerUI(1));
                                    
                 // Light
-                dimLights();
+                DimRoomLights();
                 rugMainLight.SetActive(true);
-                StartCoroutine(lerpLightIntensity(rugMainLight.GetComponent<Light>(), 10.0f, 1.5f));
+                StartCoroutine(LerpLightIntensity(rugMainLight.GetComponent<Light>(), 10.0f, 1.5f));
                 rugLightsParent.SetActive(true);
                 foreach (Light light in rugLights)
                 {
-                    StartCoroutine(lerpLightIntensity(light, 0.1f, 1.5f));
+                    StartCoroutine(LerpLightIntensity(light, 0.1f, 1.5f));
                 }
                 
                 // Arrow
@@ -520,18 +530,18 @@ public class TutorialText : MonoBehaviour
                 // Disable previous guiding path + light 
                 foreach (Light light in rugLights)
                 {
-                    StartCoroutine(lerpLightIntensity(light, 0.0f, 1.5f));
+                    StartCoroutine(LerpLightIntensity(light, 0.0f, 1.5f));
                 }
                 StartCoroutine(DelaySetActive(rugLightsParent, false, 2.5f));
 
-                StartCoroutine(lerpLightIntensity(rugMainLight.GetComponent<Light>(), 0.0f, 2.0f));
+                StartCoroutine(LerpLightIntensity(rugMainLight.GetComponent<Light>(), 0.0f, 2.0f));
                 StartCoroutine(DelaySetActive(rugMainLight, false, 2.5f));
                 
                 rugArrow.SetActive(false);
                 rugPawPath.SetActive(false);
 
                 // Add back world light  
-                brightenWorldLights();
+                BrightenRoomLights();
 
                 // Show new message
                 yield return StartCoroutine(ShowBottomUI(switchUI, speechBubbleLeft, "I can't grab this. Let's <u>switch</u>.", ""));
@@ -674,25 +684,41 @@ public class TutorialText : MonoBehaviour
 
 
     // LIGHTING ///////////////////////////////////////////////////////
-    private void dimLights()
-    {
-        // directional light
-        StartCoroutine(lerpLightIntensity(directionalLight, minDirLightIntensity, 2.0f));
+    // private void DimRoomLights()
+    // {
+    //     // // directional light
+    //     // StartCoroutine(LerpLightIntensity(directionalLight, minDirLightIntensity, 2.0f));
 
-        // point light 
-        StartCoroutine(lerpLightIntensity(pointLight, minPointLightIntensity, 2.0f));
+    //     // // point light 
+    //     // StartCoroutine(LerpLightIntensity(pointLight, minPointLightIntensity, 2.0f));
+
+    //     for (int i = 0; i < roomLights.Length; i++)
+    //     {
+    //         StartCoroutine(LerpLightIntensity(roomLights[i], 0.0f, fadeDuration));
+    //         yield return null;
+    //     }
+    // }
+
+    private IEnumerator DimRoomLights()
+    {
+        for (int i = 0; i < roomLights.Length; i++)
+        {
+            StartCoroutine(LerpLightIntensity(roomLights[i], 0.0f, fadeDuration));
+            yield return null;
+        }
     }
 
-    private void brightenWorldLights()
+    private IEnumerator BrightenRoomLights()
     {
-        // directional light
-        StartCoroutine(lerpLightIntensity(directionalLight, maxDirLightIntensity, 2.0f));
-
-        // point light 
-        StartCoroutine(lerpLightIntensity(pointLight, maxPointLightIntensity, 2.0f));
+        for (int i = 0; i < roomLights.Length; i++)
+        {
+            StartCoroutine(LerpLightIntensity(roomLights[i], roomLightIntensities[i], fadeDuration));
+            yield return null;
+        }
+        
     }
 
-    private IEnumerator lerpLightIntensity(Light light, float targetIntensity, float duration)
+    private IEnumerator LerpLightIntensity(Light light, float targetIntensity, float duration)
     {
         float startIntensity = light.intensity;
         float time = 0.0f;

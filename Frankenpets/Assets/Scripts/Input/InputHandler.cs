@@ -183,6 +183,10 @@ public class InputHandler : MonoBehaviour
         {
             jumpJustPressed = false; // Reset flag after reading
             return true;
+        }
+        return false;
+    }
+
     public bool GetControlsMenuJustPressed()
     {
         if (controlsMenuJustPressed)
