@@ -7221,7 +7221,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   message: {fileID: 605846578}
-  woofSound: {fileID: 8300000, guid: 058bc93a9b74c4ce9b3f664c98fb182a, type: 3}
 --- !u!1 &312142872
 GameObject:
   m_ObjectHideFlags: 0
@@ -16406,7 +16405,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8274272510842866123, guid: b1699086a90904cbbb00ef0a1fd35e6d, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -18118,7 +18117,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   message: {fileID: 882042094}
-  meowSound: {fileID: 8300000, guid: eb871ad6bcf624904aee5606d1ae7925, type: 3}
 --- !u!1 &756130958
 GameObject:
   m_ObjectHideFlags: 0
@@ -21552,6 +21550,18 @@ PrefabInstance:
     - target: {fileID: 6758169202024770153, guid: 04d14fed7917b3b4b9149143e45ca838, type: 3}
       propertyPath: m_Name
       value: ControllerManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 7197956942799176458, guid: 04d14fed7917b3b4b9149143e45ca838, type: 3}
+      propertyPath: player1Input
+      value: 
+      objectReference: {fileID: 2019691516}
+    - target: {fileID: 7197956942799176458, guid: 04d14fed7917b3b4b9149143e45ca838, type: 3}
+      propertyPath: player2Input
+      value: 
+      objectReference: {fileID: 2019691515}
+    - target: {fileID: 7197956942799176458, guid: 04d14fed7917b3b4b9149143e45ca838, type: 3}
+      propertyPath: keyboardScheme
+      value: Keyboard
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -33179,7 +33189,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   message: {fileID: 605846578}
-  woofSound: {fileID: 8300000, guid: 058bc93a9b74c4ce9b3f664c98fb182a, type: 3}
 --- !u!54 &1500026714
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -33496,7 +33505,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   message: {fileID: 882042094}
-  meowSound: {fileID: 8300000, guid: eb871ad6bcf624904aee5606d1ae7925, type: 3}
 --- !u!1 &1528965908
 GameObject:
   m_ObjectHideFlags: 0
@@ -39241,6 +39249,28 @@ MonoBehaviour:
   bounceSpeed: 2
   bounceDistance: 0.001
   rotationSpeed: 0.001
+--- !u!114 &2019691515 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6925291104570667319, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
+  m_PrefabInstance: {fileID: 4927122028046557369}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2019691516 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3516907539488123271, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
+  m_PrefabInstance: {fileID: 4927122028046557369}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2021817407 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5669147881696129188, guid: 4f2713c47a27648e9b6e0f76bd3f4f57, type: 3}
@@ -44552,8 +44582,6 @@ MonoBehaviour:
   P1IconLarge: {fileID: 8197819126894124672}
   P2IconLarge: {fileID: 1739913556634900047}
   whineSound: {fileID: 8300000, guid: ba8377a8f00c346d5ba888695eb35c51, type: 3}
-  mewSound: {fileID: 8300000, guid: b0e5d96a3e349458b8a969dddefd579a, type: 3}
-  barkSound: {fileID: 8300000, guid: 058bc93a9b74c4ce9b3f664c98fb182a, type: 3}
   player1Input: {fileID: 4927122028046557372}
   player2Input: {fileID: 4927122028046557370}
   frontHalf: {fileID: 4927122028046557373}

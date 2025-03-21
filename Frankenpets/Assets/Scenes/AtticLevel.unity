@@ -10990,7 +10990,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6719120960560929831, guid: 561290ec09a034816a793f64c2f18331, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6811617475504656856, guid: 561290ec09a034816a793f64c2f18331, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -21114,6 +21114,17 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &703030254 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4795647201771096563, guid: b1699086a90904cbbb00ef0a1fd35e6d, type: 3}
+  m_PrefabInstance: {fileID: 653357109}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 438a8e3f017554a97ae96cbd80d93566, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &706023863
 GameObject:
   m_ObjectHideFlags: 0
@@ -29144,7 +29155,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   message: {fileID: 1452989839}
-  meowSound: {fileID: 8300000, guid: eb871ad6bcf624904aee5606d1ae7925, type: 3}
 --- !u!114 &1065082592
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -29158,7 +29168,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   message: {fileID: 1452989839}
-  meowSound: {fileID: 8300000, guid: eb871ad6bcf624904aee5606d1ae7925, type: 3}
 --- !u!114 &1065082593
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -29172,7 +29181,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   message: {fileID: 1422487865}
-  woofSound: {fileID: 8300000, guid: 058bc93a9b74c4ce9b3f664c98fb182a, type: 3}
 --- !u!114 &1065082594
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -29186,7 +29194,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   message: {fileID: 1422487865}
-  woofSound: {fileID: 8300000, guid: 058bc93a9b74c4ce9b3f664c98fb182a, type: 3}
 --- !u!1 &1068651709
 GameObject:
   m_ObjectHideFlags: 0
@@ -34159,7 +34166,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae1016c3f6b34455bb9eda53e2897b61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelLoader: {fileID: 0}
+  levelLoader: {fileID: 703030254}
 --- !u!23 &1287012717
 MeshRenderer:
   m_ObjectHideFlags: 0
