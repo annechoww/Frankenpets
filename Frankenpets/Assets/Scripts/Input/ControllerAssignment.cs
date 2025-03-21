@@ -8,7 +8,7 @@ public class ControllerAssignment: MonoBehaviour
     [Header("Control Schemes")]
     [SerializeField] private string player1Scheme = "GamepadPlayer1";
     [SerializeField] private string player2Scheme = "GamepadPlayer2";
-    [SerializeField] private string keyboardScheme = "Keyboard&Mouse";
+    [SerializeField] private string keyboardScheme = "Keyboard"; // "Keyboard&Mouse"
     
     [Header("Settings")]
     [SerializeField] private bool useKeyboardFallback = true;

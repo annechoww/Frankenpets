@@ -64,10 +64,6 @@ public class PlayerManager : MonoBehaviour
     public CinemachineCamera mainCamera;
 
     private Stopwatch switchStopwatch = new Stopwatch();
-
-    [Header("Sound")]
-    public AudioClip meowSound;
-    public AudioClip woofSound;
     
     // Others
     private MessageManager messageManager;
@@ -382,7 +378,7 @@ public class PlayerManager : MonoBehaviour
 
                 messageManager.endP2WantsToReconnect();
                 messageManager.startP1WantsToReconnect();
-                AudioSource.PlayClipAtPoint(meowSound, P1.Half.transform.position);
+                AudioManager.Instance.PlayUIMeowSFX();
             }
         }
         else
@@ -401,7 +397,7 @@ public class PlayerManager : MonoBehaviour
                 player2HoldingReconnect = true;
                 messageManager.endP1WantsToReconnect();
                 messageManager.startP2WantsToReconnect();
-                AudioSource.PlayClipAtPoint(woofSound, P2.Half.transform.position);
+                AudioManager.Instance.PlayUIBarkSFX();
             }
         }
         else

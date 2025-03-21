@@ -8,10 +8,8 @@ public class DogBoxes : MonoBehaviour
     private RectTransform messageRectTransform;
     private TutorialText tutorialText;
     public GameObject message;
-    public AudioClip meowSound;
 
     private Coroutine notMyBoxCoroutine;
-    private Coroutine bounceCoroutine;
 
     void Start()
     {
@@ -24,21 +22,8 @@ public class DogBoxes : MonoBehaviour
         if (other.gameObject.CompareTag("cat front") && notMyBoxCoroutine == null  && tutorialText.getCurrTutorialStage() == TutorialText.tutScatterBoxes)
         {   
             UnityEngine.Debug.Log("cat touched dog boxes");   
-            AudioSource.PlayClipAtPoint(meowSound, transform.position);
+            AudioManager.Instance.PlayUIMeowSFX();
             notMyBoxCoroutine = StartCoroutine(StartMessage(messageRectTransform));
-        }
-    }
-
-    private void OnCollisionExit(Collision other)
-    {
-        if (other.gameObject.CompareTag("cat front"))
-        {            
-            if (coroutineIsDone)
-            {
-                coroutineIsDone = false;
-                StopCoroutine(notMyBoxCoroutine);
-                notMyBoxCoroutine = null;
-            }  
         }
     }
 
@@ -49,6 +34,8 @@ public class DogBoxes : MonoBehaviour
         yield return new WaitForSeconds(1.5f);
         yield return HideEffect(rectTransform);
         message.SetActive(false);
+
+        notMyBoxCoroutine = null;
     }
 
     private IEnumerator SlideUpEffect(RectTransform rectTransform)

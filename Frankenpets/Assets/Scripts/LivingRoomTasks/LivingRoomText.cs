@@ -27,10 +27,6 @@ public class LivingRoomText : MonoBehaviour
     public GameObject bottomUIParentHighlight;
     public Canvas todoListCanvas;
 
-    [Header("Sounds")]
-    public AudioClip barkSound;
-    public AudioClip mewSound;
-
     [Header("Player Inputs")]
     public InputHandler player1Input;
     public InputHandler player2Input;
@@ -320,13 +316,11 @@ public class LivingRoomText : MonoBehaviour
 
         if (playSound)
         {
-            if (bubble == speechBubbleLeft) AudioManager.Instance.PlaySFX(mewSound);
-            else if (bubble == speechBubbleRight) AudioManager.Instance.PlaySFX(barkSound);
+            if (bubble == speechBubbleLeft) AudioManager.Instance.PlayUIMeowSFX();
+            else if (bubble == speechBubbleRight) AudioManager.Instance.PlayUIBarkSFX();
             else
             {
-                AudioManager.Instance.PlaySFX(mewSound);
-                yield return new WaitForSeconds(0.5f);
-                AudioManager.Instance.PlaySFX(barkSound);
+                AudioManager.Instance.PlayUIMeowBarkSFX();
             }
         }
 

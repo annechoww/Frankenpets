@@ -39,7 +39,7 @@ public class VaseShatter : MonoBehaviour
         
         if (shatterSound != null)
         {
-            AudioManager.Instance.Play3DSFX(shatterSound, transform.position);
+            AudioManager.Instance.PlaySFX(shatterSound);
         }
 
         // Instantiate the broken vase at the vase's position and rotation

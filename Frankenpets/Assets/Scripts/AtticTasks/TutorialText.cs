@@ -51,8 +51,6 @@ public class TutorialText : MonoBehaviour
     public GameObject P2IconLarge;
     // public GameObject playerIcons;
     public AudioClip whineSound;
-    public AudioClip mewSound;
-    public AudioClip barkSound;
 
     [Header("Player Inputs")]
     public InputHandler player1Input;
@@ -128,6 +126,14 @@ public class TutorialText : MonoBehaviour
         playerManager = pet.GetComponent<PlayerManager>();
         messageManager = GameObject.Find("Messages").GetComponent<MessageManager>();
         controllerAssignment = ControllerAssignment.Instance;
+
+        // Store the original intensities of the room lights
+        roomLightIntensities = new float[roomLights.Length];
+
+        for (int i = 0; i < roomLights.Length; i++)
+        {
+            roomLightIntensities[i] = roomLights[i].intensity;
+        }
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -187,13 +193,7 @@ public class TutorialText : MonoBehaviour
         playerManager.setCanReconnect(false);
         playerManager.setCanSplit(false);
 
-        // Store the original intensities of the room lights
-        roomLightIntensities = new float[roomLights.Length];
-
-        for (int i = 0; i < roomLights.Length; i++)
-        {
-            roomLightIntensities[i] = roomLights[i].intensity;
-        }
+        StartCoroutine(DimRoomLights());
     }
 
     void Update()
@@ -433,7 +433,7 @@ public class TutorialText : MonoBehaviour
                 StartCoroutine(DelaySetActive(vaseLightsParent, false, 2.5f));
 
                 // Turn on attic light
-                BrightenRoomLights();
+                StartCoroutine(BrightenRoomLights());
             
                 // gif ???
 
@@ -458,7 +458,7 @@ public class TutorialText : MonoBehaviour
                 boxesPawPath.SetActive(true); 
 
                 // Dim attic lights
-                DimRoomLights();
+                StartCoroutine(DimRoomLights());
 
                 // Light path
                 boxesLightsParent.SetActive(true);
@@ -490,7 +490,7 @@ public class TutorialText : MonoBehaviour
                 StartCoroutine(DelaySetActive(boxesLightsParent, false, 2.5f));
 
                 // Brighten the attic lights
-                BrightenRoomLights();
+                StartCoroutine(BrightenRoomLights());
 
                 break;
 
@@ -502,7 +502,7 @@ public class TutorialText : MonoBehaviour
                 yield return StartCoroutine(RevealControlsCornerUI(1));
                                    
                 // Light
-                DimRoomLights();
+                StartCoroutine(DimRoomLights());
                 rugMainLight.SetActive(true);
                 StartCoroutine(LerpLightIntensity(rugMainLight.GetComponent<Light>(), 10.0f, 1.5f));
                 rugLightsParent.SetActive(true);
@@ -541,7 +541,7 @@ public class TutorialText : MonoBehaviour
                 rugPawPath.SetActive(false);
 
                 // Add back world light  
-                BrightenRoomLights();
+                StartCoroutine(BrightenRoomLights());
 
                 // Show new message
                 yield return StartCoroutine(ShowBottomUI(switchUI, speechBubbleLeft, "I can't grab this. Let's <u>switch</u>.", ""));
@@ -570,13 +570,10 @@ public class TutorialText : MonoBehaviour
                 // Reveal "grab" control for dog
                 P2ControlsGrab.SetActive(true);
 
-
-                // messageManager.startPressEnterToHideTutorial();
-
                 // Show new message
-                // tutorialText.transform.SetParent(speechBubbleTwoTails.transform, true);
                 yield return StartCoroutine(ShowBottomUI(null, speechBubbleTwoTails, "Let's wreck this house!", "Leave the attic, or look around"));
-
+                //                             optional: ^^^^ press enter to continue
+               
                 // Reveal remaining basic controls
                 yield return new WaitForSeconds(1.0f);
                 yield return StartCoroutine(RevealControlsCornerUI(3));
@@ -586,40 +583,17 @@ public class TutorialText : MonoBehaviour
                 break;
             
             case scaredDog:
-                // Hide things from previous case and annoyedCat case 
-                // messageManager.cancelPressEnterToHideTutorial();
-                // speechBubbleLeft.SetActive(false);
-                speechBubbleTwoTails.SetActive(false);
-                // switchUI.SetActive(false);
-
                 // Show scaredDog dialogue
-                // tutorialText.transform.SetParent(speechBubbleRight.transform, true);
-                yield return StartCoroutine(HideEffect(switchUI, null));
+                yield return StartCoroutine(HideEffect(switchUI, speechBubbleTwoTails));
                 yield return StartCoroutine(ShowBottomUI(switchUI, speechBubbleRight, "The drop's too high for me... Let's <u>switch</u>!", "", false));
         
-                // pressEnterToContinueUI.SetActive(true);
-
                 if (whineSound != null)
                 {
-                    AudioManager.Instance.Play3DSFX(whineSound, playerManager.getFrontHalf().transform.position);
+                    // AudioManager.Instance.Play3DSFX(whineSound, playerManager.getFrontHalf().transform.position);
+                    AudioManager.Instance.PlayPlayerSFX(whineSound);
                 }
 
                 break;
-
-            // case annoyedCat:
-        
-            //     // tutorialText.transform.SetParent(speechBubbleLeft.transform, true);
-
-
-            //     yield return StartCoroutine(HideEffect(pressEnterToContinueUI, speechBubbleRight));
-            //     yield return StartCoroutine(ShowBottomUI(switchUI, speechBubbleLeft, "Fine, I'll jump. Switch with me.", "", false));
-          
-
-            //     if (mewSound != null)
-            //     {
-            //         AudioManager.Instance.Play3DSFX(mewSound, playerManager.getBackHalf().transform.position);
-            //     }
-            //     break;
 
             case leaveAttic:
                 yield return StartCoroutine(HideEffect(switchUI, speechBubbleLeft));
@@ -712,6 +686,7 @@ public class TutorialText : MonoBehaviour
     {
         for (int i = 0; i < roomLights.Length; i++)
         {
+            UnityEngine.Debug.Log("brightening " + roomLightIntensities[i]);
             StartCoroutine(LerpLightIntensity(roomLights[i], roomLightIntensities[i], fadeDuration));
             yield return null;
         }
@@ -897,13 +872,13 @@ public class TutorialText : MonoBehaviour
 
         if (playSound)
         {
-            if (bubble == speechBubbleLeft) AudioManager.Instance.PlaySFX(mewSound);
-            else if (bubble == speechBubbleRight) AudioManager.Instance.PlaySFX(barkSound);
+            if (bubble == speechBubbleLeft) AudioManager.Instance.PlayUIMeowSFX();
+            else if (bubble == speechBubbleRight) AudioManager.Instance.PlayUIBarkSFX();
             else
             {
-                AudioManager.Instance.PlaySFX(mewSound);
-                yield return new WaitForSeconds(0.5f);
-                AudioManager.Instance.PlaySFX(barkSound);
+                AudioManager.Instance.PlayUIMeowBarkSFX();
+                // yield return new WaitForSeconds(0.5f);
+                // AudioManager.Instance.PlayUIBarkSFX();
             }
         }
 
