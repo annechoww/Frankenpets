@@ -370,7 +370,7 @@ public class PlayerManager : MonoBehaviour
         }
 
         // Error messages
-        if (player1ReconnectPressed && !player2ReconnectPressed && canReconnect)
+        if (player1ReconnectPressed && !player2ReconnectPressed && fixedJoint == null && canReconnect)
         {
             if (!player1HoldingReconnect)
             {
@@ -390,7 +390,7 @@ public class PlayerManager : MonoBehaviour
             }
         }
         
-        if (!player1Input.GetReconnectPressed() && player2Input.GetReconnectPressed() && canReconnect)
+        if (!player1Input.GetReconnectPressed() && player2Input.GetReconnectPressed() && fixedJoint == null && canReconnect)
         {
             if (!player2HoldingReconnect)
             {
