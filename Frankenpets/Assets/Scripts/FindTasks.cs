@@ -8,10 +8,10 @@ public class FindTasks : MonoBehaviour
     [Header("List of main lighting components in this room")]
     public Light[] roomLights;
 
-    [Header("Parent object containing all task lights")]
+    [Header("Parent object containing all task lights. Set parent AND children active.")]
     public GameObject taskLightsParent;
 
-    [Header("Parent object containing all arrows and particles")]
+    [Header("Parent object containing all arrows and particles. Set parent as active and children inactive.")]
     public GameObject arrowsAndParticlesParent;
 
     [Header("Other variables")]
@@ -35,7 +35,6 @@ public class FindTasks : MonoBehaviour
             Destroy(gameObject);
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         // Get all task lights in the room

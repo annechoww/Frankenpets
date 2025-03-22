@@ -40,7 +40,7 @@ public class LivingRoomText : MonoBehaviour
     void Awake()
     {
         messageManager = GameObject.Find("Messages").GetComponent<MessageManager>();
-        controllerAssignment = GameObject.Find("Pet").GetComponent<ControllerAssignment>();
+        controllerAssignment = ControllerAssignment.Instance;
         cornerControlsUI = GameObject.Find("MiniControlsUI").GetComponent<ControlsCornerUI>();
 
         Screen.SetResolution(1920, 1080, true);
