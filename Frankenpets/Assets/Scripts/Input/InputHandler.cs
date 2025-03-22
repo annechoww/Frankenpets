@@ -186,6 +186,7 @@ public class InputHandler : MonoBehaviour
         }
         return false;
     }
+
     public bool GetControlsMenuJustPressed()
     {
         if (controlsMenuJustPressed)

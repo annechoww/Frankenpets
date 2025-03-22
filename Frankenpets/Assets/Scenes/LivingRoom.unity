@@ -698,12 +698,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 139164956}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -18.38, y: 1.341, z: -23.17}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -1.3949986, y: -0.09100008, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 431817201}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &155496543
 PrefabInstance:
@@ -2325,6 +2325,42 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5d2cb49298b87b644be9538c0cfcb517, type: 3}
+--- !u!1 &431817200
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 431817201}
+  m_Layer: 0
+  m_Name: WorldLights
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &431817201
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 431817200}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -16.985, y: 1.432, z: -23.17}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1057851930}
+  - {fileID: 139164959}
+  - {fileID: 1478225360}
+  - {fileID: 1780881508}
+  - {fileID: 1943167760}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &448732090
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5698,11 +5734,11 @@ Transform:
   m_GameObject: {fileID: 1057851928}
   serializedVersion: 2
   m_LocalRotation: {x: 0.24494942, y: -0.4681293, z: 0.7063323, w: -0.47111505}
-  m_LocalPosition: {x: -16.06, y: 5.9, z: -24.57}
+  m_LocalPosition: {x: 0.92500114, y: 4.468, z: -1.3999996}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 431817201}
   m_LocalEulerAnglesHint: {x: 25.5, y: 60.7, z: 262.5}
 --- !u!114 &1057851931
 MonoBehaviour:
@@ -6202,8 +6238,6 @@ MonoBehaviour:
   reconnectionDistance: 0.3
   splitTime: 1
   reconnectToggleKey: 32
-  splitSound: {fileID: 0}
-  reconnectSound: {fileID: 0}
   switchTime: 1.5
   catFront: {fileID: 8612791468857303926}
   dogFront: {fileID: 6569402262588528833, guid: ed1703ed477104038b3bf74fb553da40, type: 3}
@@ -6214,17 +6248,6 @@ MonoBehaviour:
   player2Camera: {fileID: 1945211443}
   cameraMovement: {fileID: 1927466711}
   mainCamera: {fileID: 885080209}
-  sadEmote: {fileID: 0}
-  happyEmote: {fileID: 0}
-  P1CatIcon: {fileID: 0}
-  P1DogIcon: {fileID: 0}
-  P2CatIcon: {fileID: 0}
-  P2DogIcon: {fileID: 0}
-  P1CatSpeechIcon: {fileID: 0}
-  P1DogSpeechIcon: {fileID: 0}
-  P2CatSpeechIcon: {fileID: 0}
-  P2DogSpeechIcon: {fileID: 0}
-  stretchAudioSource: {fileID: 0}
   canReconnect: 1
   canSwitch: 1
   canSplit: 1
@@ -7793,12 +7816,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1478225357}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -15.629, y: 1.432, z: -23.17}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 1.3560009, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 431817201}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1488391252 stripped
 Transform:
@@ -9690,12 +9713,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1780881505}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -15.629, y: 1.569, z: -26.028}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 1.3560009, y: 0.13699996, z: -2.8579998}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 431817201}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1835445258
 GameObject:
@@ -10129,7 +10152,14 @@ MonoBehaviour:
   mainCamera: {fileID: 385970813}
   p1Camera: {fileID: 375464461}
   p2Camera: {fileID: 1835445259}
+  mainTracker: {fileID: 0}
+  player1Tracker: {fileID: 0}
+  player2Tracker: {fileID: 0}
   frontHalf: {fileID: 66020961}
+  backHalf: {fileID: 0}
+  minOccluderDistance: 0.55
+  reducedOccluderDistance: 0.3
+  wallDetectionRadius: 1
 --- !u!1001 &1935545280
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10305,12 +10335,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1943167757}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -16.985, y: 1.432, z: -23.17}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 431817201}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1945211439
 GameObject:
@@ -11065,6 +11095,7 @@ PrefabInstance:
     - {fileID: -344426129042602905, guid: 9cb858a8d6d58fd49be5aa7a0b40c195, type: 3}
     - {fileID: 8797859139289945371, guid: 9cb858a8d6d58fd49be5aa7a0b40c195, type: 3}
     - {fileID: 7548629778434899262, guid: 9cb858a8d6d58fd49be5aa7a0b40c195, type: 3}
+    - {fileID: -3852341972610935857, guid: 9cb858a8d6d58fd49be5aa7a0b40c195, type: 3}
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 9cb858a8d6d58fd49be5aa7a0b40c195, type: 3}
       insertIndex: -1
@@ -12412,7 +12443,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player1Input: {fileID: 0}
   player2Input: {fileID: 0}
-  controllerAssignment: {fileID: 0}
   jumpCooldown: 0.5
   chargedJumpCooldown: 0.8
   dogClip: {fileID: 8300000, guid: 418a120e114bd42ab9de1f36b93d9fa4, type: 3}
@@ -12425,9 +12455,12 @@ MonoBehaviour:
   defaultSpringForce: 1000
   defaultDamperForce: 20
   objectGrabPoint: {fileID: 0}
+  isPaw: 0
   grabText: {fileID: 0}
   climbText: {fileID: 0}
+  pawText: {fileID: 0}
   controlsMenu: {fileID: 0}
+  isTutorial: 0
   tutorialTextScript: {fileID: 0}
   dashForce: 50
   dashUpwardForce: 2
@@ -12537,11 +12570,7 @@ SceneRoots:
   - {fileID: 951777104}
   - {fileID: 1371434109}
   - {fileID: 1874713504}
-  - {fileID: 1057851930}
-  - {fileID: 139164959}
-  - {fileID: 1478225360}
-  - {fileID: 1780881508}
-  - {fileID: 1943167760}
+  - {fileID: 431817201}
   - {fileID: 1312950535}
   - {fileID: 1528965910}
   - {fileID: 358674594}

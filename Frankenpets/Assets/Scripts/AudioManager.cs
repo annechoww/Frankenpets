@@ -244,6 +244,15 @@ public class AudioManager : MonoBehaviour
         }
     }
 
+    private IEnumerator playDoubleUISFX(AudioClip audioClip1, AudioClip audioClip2) {
+        if (!UISource.isPlaying)
+        {
+            UISource.PlayOneShot(audioClip1);
+            yield return new WaitForSeconds(0.4f);
+            UISource.PlayOneShot(audioClip2);
+        }
+    }
+
     public void PlayUIBarkSFX()
     {
         playUISFX(UIBarkSFX);
@@ -252,5 +261,10 @@ public class AudioManager : MonoBehaviour
     public void PlayUIMeowSFX()
     {
         playUISFX(UIMeowSFX);
+    }
+
+    public void PlayUIMeowBarkSFX()
+    {
+        StartCoroutine(playDoubleUISFX(UIMeowSFX, UIBarkSFX));
     }
 }
