@@ -23,6 +23,14 @@ public class Startup : MonoBehaviour
     public Image player2DogIcon;
     public GameObject player2LockedIndicator;
 
+    [Header("Player 1 Icon Outlines")]
+    public Image player1CatOutline;
+    public Image player1DogOutline;
+
+    [Header("Player 2 Icon Outlines")]
+    public Image player2CatOutline;
+    public Image player2DogOutline;
+
     [Header("UI Feedback Colors")]
     public Color highlightColor = Color.yellow;
     public Color player1LockedColor = Color.red;
@@ -209,6 +217,16 @@ public class Startup : MonoBehaviour
                 if (!(player2Locked && ((player1SelectingDog && !player2SelectingCat) || (!player1SelectingDog && player2SelectingCat))))
                 {
                     player1Locked = true;
+
+                    if (player1SelectingDog && !player2Locked && !player2SelectingCat) {
+                        // If Player 1 locked dog, automatically move Player 2 to cat
+                        player2SelectingCat = true;
+                    }
+                    else if (!player1SelectingDog && !player2Locked && player2SelectingCat) {
+                        // If Player 1 locked cat, automatically move Player 2 to dog
+                        player2SelectingCat = false;
+                    }
+
                     player1LockedIndicator.SetActive(true);
                     UpdateCharacterSelectionUI();
                 }
@@ -226,22 +244,22 @@ public class Startup : MonoBehaviour
                 float horizontalInput = player2Input.GetMoveInput().x;
                 print($"Player 2 horizontal input: {horizontalInput}");
                 
-                if (horizontalInput > 0.5f && !player2SelectingCat)
+                if (horizontalInput > 0.5f && player2SelectingCat)
                 {
-                    // Moving right to select cat, if not already locked by Player 1
-                    if (!(player1Locked && !player1SelectingDog))
+                    // Moving right to select dog, if not already locked by Player 1
+                    if (!(player1Locked && player1SelectingDog))
                     {
-                        player2SelectingCat = true;
+                        player2SelectingCat = false;
                         player2InputCooldown = INPUT_COOLDOWN_TIME;
                         UpdateCharacterSelectionUI();
                     }
                 }
-                else if (horizontalInput < -0.5f && player2SelectingCat)
+                else if (horizontalInput < -0.5f && !player2SelectingCat)
                 {
-                    // Moving left to select dog, if not already locked by Player 1
-                    if (!(player1Locked && player1SelectingDog))
+                    // Moving left to select cat, if not already locked by Player 1
+                    if (!(player1Locked && !player1SelectingDog))
                     {
-                        player2SelectingCat = false;
+                        player2SelectingCat = true;
                         player2InputCooldown = INPUT_COOLDOWN_TIME;
                         UpdateCharacterSelectionUI();
                     }
@@ -268,6 +286,16 @@ public class Startup : MonoBehaviour
                 if (!(player1Locked && ((player2SelectingCat && !player1SelectingDog) || (!player2SelectingCat && player1SelectingDog))))
                 {
                     player2Locked = true;
+
+                    if (player2SelectingCat && !player1Locked && !player1SelectingDog) {
+                        // If Player 2 locked cat, automatically move Player 1 to dog
+                        player1SelectingDog = true;
+                    }
+                    else if (!player2SelectingCat && !player1Locked && player1SelectingDog) {
+                        // If Player 2 locked dog, automatically move Player 1 to cat
+                        player1SelectingDog = false;
+                    }
+
                     player2LockedIndicator.SetActive(true);
                     UpdateCharacterSelectionUI();
                 }
@@ -277,7 +305,14 @@ public class Startup : MonoBehaviour
 
     void UpdateCharacterSelectionUI()
     {
-        // Reset colors first
+
+        // Reset all outline states
+        player1CatOutline.enabled = false;
+        player1DogOutline.enabled = false;
+        player2CatOutline.enabled = false;
+        player2DogOutline.enabled = false;
+
+        // Reset icon colors
         player1CatIcon.color = normalColor;
         player1DogIcon.color = normalColor;
         player2CatIcon.color = normalColor;
@@ -291,13 +326,17 @@ public class Startup : MonoBehaviour
             // Locked selection
             if (player1SelectingDog)
             {
-                player1DogIcon.color = player1LockedColor;
+                player1DogOutline.enabled = true;
+                player1DogOutline.color = player1LockedColor;
+
                 // Make dog unavailable to Player 2
                 player2DogIcon.color = unavailableColor;
             }
             else
             {
-                player1CatIcon.color = player1LockedColor;
+                player1CatOutline.enabled = true;
+                player1CatOutline.color = player1LockedColor;
+
                 // Make cat unavailable to Player 2
                 player2CatIcon.color = unavailableColor;
             }
@@ -307,26 +346,13 @@ public class Startup : MonoBehaviour
             // Current highlighted selection
             if (player1SelectingDog)
             {
-                player1DogIcon.color = highlightColor;
+                player1DogOutline.enabled = true;
+                player1DogOutline.color = highlightColor;
             }
             else
             {
-                player1CatIcon.color = highlightColor;
-            }
-            
-            // Gray out options locked by Player 2
-            if (player2Locked)
-            {
-                if (player2SelectingCat)
-                {
-                    // If Player 2 locked cat, make cat unavailable for Player 1
-                    player1CatIcon.color = unavailableColor;
-                }
-                else
-                {
-                    // If Player 2 locked dog, make dog unavailable for Player 1
-                    player1DogIcon.color = unavailableColor;
-                }
+                player1CatOutline.enabled = true;
+                player1CatOutline.color = highlightColor;
             }
         }
         
@@ -338,13 +364,17 @@ public class Startup : MonoBehaviour
             // Locked selection
             if (player2SelectingCat)
             {
-                player2CatIcon.color = player2LockedColor;
+                player2CatOutline.enabled = true;
+                player2CatOutline.color = player2LockedColor;
+
                 // Make cat unavailable to Player 1
                 player1CatIcon.color = unavailableColor;
             }
             else
             {
-                player2DogIcon.color = player2LockedColor;
+                player2DogOutline.enabled = true;
+                player2DogOutline.color = player2LockedColor;
+
                 // Make dog unavailable to Player 1
                 player1DogIcon.color = unavailableColor;
             }
@@ -354,26 +384,13 @@ public class Startup : MonoBehaviour
             // Current highlighted selection
             if (player2SelectingCat)
             {
-                player2CatIcon.color = highlightColor;
+                player2CatOutline.enabled = true;
+                player2CatOutline.color = highlightColor;
             }
             else
             {
-                player2DogIcon.color = highlightColor;
-            }
-            
-            // Gray out options locked by Player 1
-            if (player1Locked)
-            {
-                if (player1SelectingDog)
-                {
-                    // If Player 1 locked dog, make dog unavailable for Player 2
-                    player2DogIcon.color = unavailableColor;
-                }
-                else
-                {
-                    // If Player 1 locked cat, make cat unavailable for Player 2
-                    player2CatIcon.color = unavailableColor;
-                }
+                player2DogOutline.enabled = true;
+                player2DogOutline.color = highlightColor;
             }
         }
         
