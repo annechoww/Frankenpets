@@ -90,10 +90,10 @@ public class TaskManager : MonoBehaviour
     {
         taskCompletedBanner.SetActive(true);
 
-        // if (taskCompletedSound != null)
-        // {
-        //     AudioManager.Instance.PlayTaskCompletionSound();
-        // }
+        if (taskCompletedSound != null)
+        {
+            AudioManager.Instance.PlayTaskCompletionSound();
+        }
 
         yield return new WaitForSeconds(3.0f); // Display banner for 3 seconds
         taskCompletedBanner.SetActive(false);

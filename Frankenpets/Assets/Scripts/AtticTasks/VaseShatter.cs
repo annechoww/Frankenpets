@@ -13,20 +13,26 @@ public class VaseShatter : MonoBehaviour
     public Image taskItem;
     public Color completedColor;
 
+    [Header("Is this vase related to a task?")]
+    public bool isTask = true;
+
     public Task task = new Task("Shatter Vase", 0);
     private bool isShattered = false;
     private TutorialText tutorialText;
 
     void Awake()
     {
-        tutorialText = GameObject.Find("TutorialTextManager").GetComponent<TutorialText>();
-        TaskManager.RegisterTask(task);
+        if (isTask)
+        {
+            tutorialText = GameObject.Find("TutorialTextManager").GetComponent<TutorialText>();
+            TaskManager.RegisterTask(task);
+        }
     }
 
     void OnCollisionEnter(Collision collision)
     {
         // Check if the vase hits the ground with enough force
-        if (!isShattered && collision.relativeVelocity.magnitude > shatterForce)
+        if (isTask && !isShattered && collision.relativeVelocity.magnitude > shatterForce)
         {
             ShatterVase();
         }
@@ -39,7 +45,7 @@ public class VaseShatter : MonoBehaviour
         
         if (shatterSound != null)
         {
-            AudioManager.Instance.Play3DSFX(shatterSound, transform.position);
+            AudioManager.Instance.PlaySFX(shatterSound);
         }
 
         // Instantiate the broken vase at the vase's position and rotation
@@ -48,7 +54,7 @@ public class VaseShatter : MonoBehaviour
         // Destroy the intact vase after shattering
         Destroy(gameObject);
 
-        FinishTask();
+        if (isTask) FinishTask();
     }
 
     private void FinishTask(){
