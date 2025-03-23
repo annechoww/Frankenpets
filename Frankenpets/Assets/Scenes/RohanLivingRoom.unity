@@ -52978,6 +52978,9 @@ MonoBehaviour:
   brokenGlass: {fileID: 4461997106517542138, guid: 72b49d25d28064956a19b2af8bc9fcc3, type: 3}
   shatterForce: 0.5
   shatterSound: {fileID: 8300000, guid: d69e6f3b789f1429a87810cf2392e7f1, type: 3}
+  crackSound: {fileID: 0}
+  intactGlassMaterial: {fileID: 2100000, guid: 51928ac287456c6468c4e84eb13d9648, type: 2}
+  crackedGlassMaterial: {fileID: 2100000, guid: 2591648cdaad9574da06640a001dae84, type: 2}
   taskItem: {fileID: 1100847930}
   completedColor: {r: 0, g: 0, b: 0, a: 0}
   taskLight: {fileID: 1188139759}
@@ -55354,6 +55357,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1400552457955626039, guid: 5d4f53b3a062244dba872a6f27081434, type: 3}
+      propertyPath: m_Color.b
+      value: 0.21337666
+      objectReference: {fileID: 0}
+    - target: {fileID: 1400552457955626039, guid: 5d4f53b3a062244dba872a6f27081434, type: 3}
+      propertyPath: m_Color.g
+      value: 0.21337666
+      objectReference: {fileID: 0}
+    - target: {fileID: 1400552457955626039, guid: 5d4f53b3a062244dba872a6f27081434, type: 3}
+      propertyPath: m_Color.r
+      value: 0.3301887
+      objectReference: {fileID: 0}
     - target: {fileID: 3893501184346662538, guid: 5d4f53b3a062244dba872a6f27081434, type: 3}
       propertyPath: CBTarget1
       value: 
@@ -55392,7 +55407,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7585490812691115598, guid: 5d4f53b3a062244dba872a6f27081434, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -59255,6 +59270,9 @@ MonoBehaviour:
   brokenGlass: {fileID: 3283310597390763522, guid: 1299bd95ad1164df0b70f2d9d29fedb3, type: 3}
   shatterForce: 0.5
   shatterSound: {fileID: 8300000, guid: d69e6f3b789f1429a87810cf2392e7f1, type: 3}
+  crackSound: {fileID: 0}
+  intactGlassMaterial: {fileID: 2100000, guid: 51928ac287456c6468c4e84eb13d9648, type: 2}
+  crackedGlassMaterial: {fileID: 2100000, guid: 2591648cdaad9574da06640a001dae84, type: 2}
   taskItem: {fileID: 1100847930}
   completedColor: {r: 0, g: 0, b: 0, a: 0}
   taskLight: {fileID: 1188139759}
@@ -64027,7 +64045,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7969375938114496086}
   m_Layer: 0
-  m_Name: Empty
+  m_Name: Glass door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
