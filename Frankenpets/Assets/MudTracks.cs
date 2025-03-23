@@ -28,8 +28,10 @@ public class MudTracks : MonoBehaviour
 
     [Header("Script references")] 
     public PlayerActions playerActions; 
+    public PlayerActions playerManager; 
 
-    void OnTriggerEnter(Collider other)
+
+    void OnTriggerExit(Collider other)
     {
         UnityEngine.Debug.Log("muddy " + other);
         
@@ -61,13 +63,13 @@ public class MudTracks : MonoBehaviour
         }
     }
 
-    void OnTriggerStay(Collider other)
-    {
-        if (playerActions.isPaw)
-        {
-            // Instantiate mud particles
-        }
-    }
+    // void OnTriggerStay(Collider other)
+    // {
+    //     if (playerActions.isPaw)
+    //     {
+    //         // Instantiate mud particles
+    //     }
+    // }
 
     private IEnumerator SpawnPawPrints(GameObject half, GameObject pawPrintPrefab, Transform foot1, Transform foot2)
     {
@@ -78,10 +80,12 @@ public class MudTracks : MonoBehaviour
             if (half == null) break;
             
             Quaternion pawPrintRotation = Quaternion.Euler(90, half.transform.eulerAngles.y, half.transform.eulerAngles.z);
+            Vector3 foot1Position = new Vector3(foot1.position.x, 0, foot1.position.z); 
+            Vector3 foot2Position = new Vector3(foot2.position.x, 0, foot2.position.z); 
 
-            // check that player is moving 
-            Instantiate(pawPrintPrefab, foot1.position, pawPrintRotation);
-            Instantiate(pawPrintPrefab, foot2.position, pawPrintRotation);
+            // check that player is moving ?
+            Instantiate(pawPrintPrefab, foot1Position, pawPrintRotation);
+            Instantiate(pawPrintPrefab, foot2Position, pawPrintRotation);
 
             yield return new WaitForSeconds(spawnInterval);
             elapsedTime += spawnInterval;
