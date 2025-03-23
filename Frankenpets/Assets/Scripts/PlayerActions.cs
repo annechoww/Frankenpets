@@ -94,7 +94,7 @@ public class PlayerActions : MonoBehaviour
     private GrabRigging grabRiggingScript;
     
     public Transform objectGrabPoint;
-    public bool isPaw;
+    public bool isPaw; // MudTracks.cs listens to this bool, so leave it as public!
     //public Transform objectDragPoint;
     private bool isStanding = false;
 
