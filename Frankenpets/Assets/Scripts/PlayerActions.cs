@@ -25,7 +25,7 @@ public class PlayerActions : MonoBehaviour
     [Header("Jumping Variables")]
     private float jumpForce = 20f;
     public float jumpCooldown = 0.5f;
-    private float chargedJumpForce = 35f;
+    public float chargedJumpForce = 35f;
     public float chargedJumpCooldown = 0.8f;
     private float lastJumpTime = -10f;
 
@@ -352,7 +352,7 @@ public class PlayerActions : MonoBehaviour
         }
     }
 
-    private void tryChargedJump(float jumpForce, float jumpCooldown)
+    public void tryChargedJump(float jumpForce, float jumpCooldown)
     {
         if (Time.time - lastJumpTime > jumpCooldown)
         {

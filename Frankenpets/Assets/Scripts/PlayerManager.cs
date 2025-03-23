@@ -607,31 +607,33 @@ public class PlayerManager : MonoBehaviour
     
 
     // SPLITTING METHODS ////////////////////////////////////////////
+    public void DestroyJoint()
+    {
+        Destroy(fixedJoint); // Split the halves
+        fixedJoint = null;
+
+        ResetCamera(mainCamera);
+
+        // Add rotation constraints when split
+        frontHalf.GetComponent<Rigidbody>().constraints |= RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        backHalf.GetComponent<Rigidbody>().constraints |= RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+
+        messageManager.cameraIndicatorMessage(); // Will have split camera, so temporarily display the "P1" / "P2" labels
+            
+        isSplit = true;
+    }
+    
     private void runSplitLogic() 
     {
         // If the split timer exceeds the threshold and the halves are still connected, split them.
         if (splitStopwatch.IsRunning && splitStopwatch.Elapsed.TotalSeconds > splitTime && fixedJoint != null && canSplit)
         {
             splitStopwatch.Reset();
-            Destroy(fixedJoint); // Split the halves
-            fixedJoint = null;
-
-            // TODO: Stop Stretch Sound
-            ResetCamera(mainCamera);
-
-            // Add rotation constraints when split
-            frontHalf.GetComponent<Rigidbody>().constraints |= RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
-            backHalf.GetComponent<Rigidbody>().constraints |= RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
-
-            messageManager.cameraIndicatorMessage(); // Will have split camera, so temporarily display the "P1" / "P2" labels
-            
-            
+            DestroyJoint();
+        
             AudioManager.Instance.PlaySplitSFX();
             
-            
-
             UnityEngine.Debug.Log("Halves disconnected due to opposing pull.");
-            isSplit = true;
         }
     }
 
