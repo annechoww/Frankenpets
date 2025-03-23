@@ -8,6 +8,12 @@ public class DoorShatter : MonoBehaviour
     public GameObject brokenGlass;
     public float shatterForce = 1f;
     public AudioClip shatterSound;
+    public AudioClip crackSound;
+
+    [Header("Glass Materials")]
+    public Material intactGlassMaterial;
+    public Material crackedGlassMaterial;
+    
 
     [Header("Task Manager")]
     public Image taskItem;
@@ -15,6 +21,8 @@ public class DoorShatter : MonoBehaviour
 
     public Task task = new Task("Shatter Door", 1);
     private bool isShattered = false;
+    private bool isCracked = false;
+
 
     // private TutorialText tutorialText;
 
@@ -23,10 +31,25 @@ public class DoorShatter : MonoBehaviour
     public GameObject taskParticle;
     public GameObject arrow;
 
+    private Renderer glassRenderer;
+
     void Awake()
     {
         // tutorialText = GameObject.Find("TutorialTextManager").GetComponent<TutorialText>();
         TaskManager.RegisterTask(task);
+
+        glassRenderer = GetComponent<Renderer>();
+
+        if (glassRenderer != null && intactGlassMaterial != null)
+        {
+            if (intactGlassMaterial == null) {
+                intactGlassMaterial = glassRenderer.material;
+            }
+            else {
+                glassRenderer.material = intactGlassMaterial;
+            }
+        }
+
     }
 
     void OnCollisionEnter(Collision collision)
@@ -40,7 +63,40 @@ public class DoorShatter : MonoBehaviour
                 ShatterGlass();
             }
         }
+        else {
+            PlayerActions pa = collision.gameObject.GetComponent<PlayerActions>();
+            if (pa != null && pa.IsDashing && collision.relativeVelocity.magnitude > shatterForce) {
+                if (!isShattered) {
+                    if (isCracked) {
+                        ShatterGlass();
+                    }
+                    else if (!isCracked) {
+                        CrackGlass();
+                    }
+                }
+            }
+        }
     }
+
+    void CrackGlass()
+    {
+        isCracked = true;
+        Debug.Log("Glass cracked!");
+        
+        // Change to cracked glass material
+        if (glassRenderer != null && crackedGlassMaterial != null)
+        {
+            glassRenderer.material = crackedGlassMaterial;
+        }
+        
+        // Play cracking sound
+        if (crackSound != null)
+        {
+            AudioManager.Instance.PlaySFX(crackSound);
+        }
+    }
+
+
     
 
     void ShatterGlass()

@@ -125,6 +125,11 @@ public class PlayerActions : MonoBehaviour
 
     // State flags:
     private bool isDashing = false;
+
+    public bool IsDashing
+    {
+        get { return isDashing; }
+    }
     private bool canDash = true;
     private float originalWalkSpeed;
 
