@@ -26,10 +26,16 @@ public class MudTracks : MonoBehaviour
     public Transform DBTarget1;
     public Transform DBTarget2;    
 
-    [Header("Script references")] 
-    public PlayerActions playerActions; 
+    [Header("Mud particles")]
+    public ParticleSystem mudJumpParticles;
 
-    void OnTriggerEnter(Collider other)
+    [Header("Script references")] 
+    public PlayerActions playerActionsDF; 
+    public PlayerActions playerActionsCF;
+    public PlayerManager playerManager; 
+
+
+    void OnTriggerExit(Collider other)
     {
         UnityEngine.Debug.Log("muddy " + other);
         
@@ -63,9 +69,26 @@ public class MudTracks : MonoBehaviour
 
     void OnTriggerStay(Collider other)
     {
-        if (playerActions.isPaw)
+        if (playerActionsCF.isPaw || playerActionsDF.isPaw)
         {
             // Instantiate mud particles
+        }
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        UnityEngine.Debug.Log("mud collision " + collision.relativeVelocity.magnitude);
+        if (collision.relativeVelocity.magnitude > 0.2f && 
+           (collision.gameObject.CompareTag("dog front") || 
+            collision.gameObject.CompareTag("dog back")  ||
+            collision.gameObject.CompareTag("cat front") ||
+            collision.gameObject.CompareTag("cat back")))
+        {
+            // Play mud splash particle effect
+            if (mudJumpParticles != null && !mudJumpParticles.isPlaying)
+            {
+                mudJumpParticles.Play();
+            }
         }
     }
 
@@ -78,10 +101,12 @@ public class MudTracks : MonoBehaviour
             if (half == null) break;
             
             Quaternion pawPrintRotation = Quaternion.Euler(90, half.transform.eulerAngles.y, half.transform.eulerAngles.z);
+            Vector3 foot1Position = new Vector3(foot1.position.x, 0, foot1.position.z); 
+            Vector3 foot2Position = new Vector3(foot2.position.x, 0, foot2.position.z); 
 
-            // check that player is moving 
-            Instantiate(pawPrintPrefab, foot1.position, pawPrintRotation);
-            Instantiate(pawPrintPrefab, foot2.position, pawPrintRotation);
+            // check that player is moving ?
+            Instantiate(pawPrintPrefab, foot1Position, pawPrintRotation);
+            Instantiate(pawPrintPrefab, foot2Position, pawPrintRotation);
 
             yield return new WaitForSeconds(spawnInterval);
             elapsedTime += spawnInterval;
