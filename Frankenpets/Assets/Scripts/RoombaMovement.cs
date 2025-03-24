@@ -29,11 +29,11 @@ public class RoombaMovement : MonoBehaviour
         // If dragging, move the pet with the Roomba
         if (draggingPet && pet != null && pet.isPaw)
         {
-            pet.transform.position = transform.position; // Keep pet above the Roomba
+            // pet.transform.position = transform.position;
         }
         else
         {
-            draggingPet = false; // Stop dragging if pet.isPaw is false
+            draggingPet = false;
             pet = null;
         }
 
