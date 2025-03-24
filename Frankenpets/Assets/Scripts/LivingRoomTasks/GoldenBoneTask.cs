@@ -1,0 +1,53 @@
+using UnityEngine;
+using UnityEngine.UI;
+
+public class GoldenBoneTask : MonoBehaviour
+{
+    [Header("Task Manager")]
+    public Image taskItem;
+    public Color completedColor;
+    public Task task = new Task("Find Golden Bone", 1);
+
+    [Header("Locate Task Variables")]
+    public GameObject taskLight;
+    public GameObject taskParticle;
+    public GameObject arrow;
+
+    private bool isBoneFound = false;
+
+    void Awake()
+    {
+        // Register the task with the TaskManager
+        TaskManager.RegisterTask(task);
+        print("Task registered: " + task.Name);
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        // Check if a player collided with the bone
+        if (!isBoneFound && collision.gameObject.layer == LayerMask.NameToLayer("Pet"))
+        {
+            FindGoldenBone();
+        }
+    }
+
+    void FindGoldenBone()
+    {
+        isBoneFound = true;
+        print("Golden Bone found!");
+        FinishTask();
+    }
+
+    private void FinishTask()
+    {
+        taskItem.color = completedColor;
+        task.IsComplete = true;
+        
+        // Destroy task location indicators
+        FindTasks.Instance.DestroyFindTaskMechanic(arrow, taskParticle, taskLight);
+        
+        // Mark task as complete in the TaskManager
+        TaskManager.Instance.CompleteTask();
+        AudioManager.Instance.PlayTaskCompletionSound();
+    }
+}

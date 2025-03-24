@@ -19,8 +19,6 @@ public class TaskManager : MonoBehaviour
 
     public static TaskManager Instance { get; private set; }
     public event Action OnTaskCompleted;
-    public AudioClip taskCompletedSound;
-    public AudioSource audioSource;
 
     [SerializeField] private GameObject taskCompletedBanner;
 
@@ -89,11 +87,8 @@ public class TaskManager : MonoBehaviour
     private IEnumerator ShowBanner()
     {
         taskCompletedBanner.SetActive(true);
-
-        if (taskCompletedSound != null)
-        {
-            AudioManager.Instance.PlayTaskCompletionSound();
-        }
+        
+        AudioManager.Instance.PlayTaskCompletionSound();
 
         yield return new WaitForSeconds(3.0f); // Display banner for 3 seconds
         taskCompletedBanner.SetActive(false);
