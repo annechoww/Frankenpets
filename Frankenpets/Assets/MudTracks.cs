@@ -26,9 +26,13 @@ public class MudTracks : MonoBehaviour
     public Transform DBTarget1;
     public Transform DBTarget2;    
 
+    [Header("Mud particles")]
+    public ParticleSystem mudJumpParticles;
+
     [Header("Script references")] 
-    public PlayerActions playerActions; 
-    public PlayerActions playerManager; 
+    public PlayerActions playerActionsDF; 
+    public PlayerActions playerActionsCF;
+    public PlayerManager playerManager; 
 
 
     void OnTriggerExit(Collider other)
@@ -63,13 +67,30 @@ public class MudTracks : MonoBehaviour
         }
     }
 
-    // void OnTriggerStay(Collider other)
-    // {
-    //     if (playerActions.isPaw)
-    //     {
-    //         // Instantiate mud particles
-    //     }
-    // }
+    void OnTriggerStay(Collider other)
+    {
+        if (playerActionsCF.isPaw || playerActionsDF.isPaw)
+        {
+            // Instantiate mud particles
+        }
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        UnityEngine.Debug.Log("mud collision " + collision.relativeVelocity.magnitude);
+        if (collision.relativeVelocity.magnitude > 0.2f && 
+           (collision.gameObject.CompareTag("dog front") || 
+            collision.gameObject.CompareTag("dog back")  ||
+            collision.gameObject.CompareTag("cat front") ||
+            collision.gameObject.CompareTag("cat back")))
+        {
+            // Play mud splash particle effect
+            if (mudJumpParticles != null && !mudJumpParticles.isPlaying)
+            {
+                mudJumpParticles.Play();
+            }
+        }
+    }
 
     private IEnumerator SpawnPawPrints(GameObject half, GameObject pawPrintPrefab, Transform foot1, Transform foot2)
     {
