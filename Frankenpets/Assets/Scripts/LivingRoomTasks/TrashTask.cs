@@ -59,7 +59,7 @@ public class TrashTask : MonoBehaviour
 
     void CheckTaskCompletion()
     {
-        if (ff1InTrash && ff2InTrash)
+        if (ff1InTrash || ff2InTrash)
         {
             if (!task.IsComplete)
             {
