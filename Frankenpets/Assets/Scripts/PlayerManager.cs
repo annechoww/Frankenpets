@@ -766,7 +766,6 @@ public class PlayerManager : MonoBehaviour
             // Switch the half to the player's species
             if (P1.IsFront)
             {
-                UnityEngine.Debug.Log("P1 is now front");
                 if (P1.Species == "cat")
                 {
                     // make sure all halves have no parents before setting their position
@@ -816,7 +815,6 @@ public class PlayerManager : MonoBehaviour
             }
             else // if P2.IsFront
             {
-                UnityEngine.Debug.Log("P2 is now front");
                 if (P2.Species == "cat")
                 {
                     // front half = cat = P2
@@ -884,7 +882,6 @@ public class PlayerManager : MonoBehaviour
 
             AudioManager.Instance.PlaySwitchSFX();
 
-            UnityEngine.Debug.Log("Switched!");
             hasJustSwitched = true;
         }
     }
@@ -1021,7 +1018,7 @@ public class PlayerManager : MonoBehaviour
         mainCamera.Follow = frontHalf.transform;
         mainCamera.LookAt = frontHalf.transform;
 
-        PlayerActions playerActions = GetComponent<PlayerActions>();
+        PlayerActions playerActions = frontHalf.GetComponent<PlayerActions>();
         if (playerActions != null)
         {
             playerActions.RefreshAfterSwitch(this);
