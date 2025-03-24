@@ -7623,7 +7623,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: THROW SHOES IN TRASH
+  m_text: THROW SHOE IN TRASH
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: aed9361b9dada446cb5c98d00f23ff8f, type: 2}
   m_sharedMaterial: {fileID: -6591440692960114744, guid: aed9361b9dada446cb5c98d00f23ff8f, type: 2}
@@ -10820,8 +10820,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.291376, y: 0.51128674, z: 0.20794384}
-  m_Center: {x: -0.0028574094, y: -0.019856572, z: 0.0013289303}
+  m_Size: {x: 0.291376, y: 0.51128674, z: 0.15701}
+  m_Center: {x: -0.0028574169, y: -0.019856572, z: 0.02679585}
 --- !u!65 &574935314
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -12203,7 +12203,7 @@ GameObject:
   - component: {fileID: 762695114}
   - component: {fileID: 762695115}
   m_Layer: 0
-  m_Name: z
+  m_Name: a
   m_TagString: PawText
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12268,7 +12268,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 404dec22b719449d4b3f9187c61ef96f, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 008835da56fab43838ae12fe81099637, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 0.74509805}
   m_FlipX: 0
   m_FlipY: 0
@@ -29405,6 +29405,14 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: ee66f152fa5f84bd980d32fbe71cc9ba, type: 3}
       propertyPath: m_Name
       value: ROOMBA
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ee66f152fa5f84bd980d32fbe71cc9ba, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ee66f152fa5f84bd980d32fbe71cc9ba, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
