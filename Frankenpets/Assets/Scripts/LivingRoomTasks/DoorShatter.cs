@@ -13,6 +13,9 @@ public class DoorShatter : MonoBehaviour
     [Header("Glass Materials")]
     public Material intactGlassMaterial;
     public Material crackedGlassMaterial;
+
+    [Header("Required Object")]
+    public Collider specificCollider;
     
 
     [Header("Task Manager")]
@@ -55,10 +58,10 @@ public class DoorShatter : MonoBehaviour
     void OnCollisionEnter(Collision collision)
     {
 
-        if (collision.gameObject.CompareTag("Grabbable"))
+        if (collision.collider == specificCollider)
         {
             // Check if the glass hits the ground with enough force
-            if (!isShattered && collision.relativeVelocity.magnitude > shatterForce)
+            if (!isShattered)
             {
                 ShatterGlass();
             }
