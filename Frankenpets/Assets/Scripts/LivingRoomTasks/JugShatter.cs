@@ -12,6 +12,7 @@ public class JugShatter : MonoBehaviour
     [Header("Task Manager")]
     public Image taskItem;
     public Color completedColor;
+    public TMPro.TextMeshProUGUI taskLabel;
 
     public Task task = new Task("Shatter Jug", 1);
     private bool isShattered = false;
@@ -61,6 +62,7 @@ public class JugShatter : MonoBehaviour
 
     private void FinishTask(){
         taskItem.color = completedColor;
+        taskLabel.fontStyle = TMPro.FontStyles.Strikethrough;
         // tutorialText.advanceTutorialStage();
         task.IsComplete = true;
         FindTasks.Instance.DestroyFindTaskMechanic(arrow, taskParticle, taskLight);

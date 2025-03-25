@@ -14,6 +14,7 @@ public class TrashTask : MonoBehaviour
     [Header("Task Manager")]
     public Image taskItem;
     public Color completedColor;
+    public TMPro.TextMeshProUGUI taskLabel;
     public Task task = new Task("Throw away shoes", 1);
 
     [Header("Locate Task Variables")]
@@ -71,6 +72,7 @@ public class TrashTask : MonoBehaviour
     private void FinishTask()
     {
         taskItem.color = completedColor;
+        taskLabel.fontStyle = TMPro.FontStyles.Strikethrough;
         task.IsComplete = true;
         FindTasks.Instance.DestroyFindTaskMechanic(arrow, taskParticle, taskLight);
         TaskManager.Instance.CompleteTask();

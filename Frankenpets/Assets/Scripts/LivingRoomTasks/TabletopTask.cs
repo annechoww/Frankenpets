@@ -7,7 +7,7 @@ public class TabletopTask : MonoBehaviour
     [Header("Task Manager")]
     public Image taskItem;
     public Color completedColor;
-    public AudioClip taskCompleteSound;
+    public TMPro.TextMeshProUGUI taskLabel;
 
     [Header("Locate Task Variables")]
     public GameObject taskLight;
@@ -53,6 +53,7 @@ public class TabletopTask : MonoBehaviour
 
     private void FinishTask(){
         taskItem.color = completedColor;
+        taskLabel.fontStyle = TMPro.FontStyles.Strikethrough;
         task.IsComplete = true;
         // GetComponent<FindTasks>().DestroyFindTaskMechanic(arrow, taskParticle, taskLight);
         

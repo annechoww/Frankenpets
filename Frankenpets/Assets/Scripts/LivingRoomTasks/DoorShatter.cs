@@ -13,11 +13,15 @@ public class DoorShatter : MonoBehaviour
     [Header("Glass Materials")]
     public Material intactGlassMaterial;
     public Material crackedGlassMaterial;
+
+    [Header("Required Object")]
+    public Collider specificCollider;
     
 
     [Header("Task Manager")]
     public Image taskItem;
     public Color completedColor;
+    public TMPro.TextMeshProUGUI taskLabel;
 
     public Task task = new Task("Shatter Door", 1);
     private bool isShattered = false;
@@ -55,10 +59,10 @@ public class DoorShatter : MonoBehaviour
     void OnCollisionEnter(Collision collision)
     {
 
-        if (collision.gameObject.CompareTag("Grabbable"))
+        if (collision.collider == specificCollider)
         {
             // Check if the glass hits the ground with enough force
-            if (!isShattered && collision.relativeVelocity.magnitude > shatterForce)
+            if (!isShattered)
             {
                 ShatterGlass();
             }
@@ -132,6 +136,7 @@ public class DoorShatter : MonoBehaviour
         if (taskComplete)
         {
             taskItem.color = completedColor;
+            taskLabel.fontStyle = TMPro.FontStyles.Strikethrough;
 
             FindTasks.Instance.DestroyFindTaskMechanic(arrow, taskParticle, taskLight);
             TaskManager.Instance.CompleteTask();
