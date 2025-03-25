@@ -11,6 +11,7 @@ public class MirrorShatter : MonoBehaviour
     [Header("Task Manager")]
     public Image taskItem;
     public Color completedColor;
+    public TMPro.TextMeshProUGUI taskLabel;
     public bool isTask = false;
 
     public Task task = new Task("Shatter Mirror", 1);
@@ -51,6 +52,7 @@ public class MirrorShatter : MonoBehaviour
 
     private void FinishTask(){
         taskItem.color = completedColor;
+        taskLabel.fontStyle = TMPro.FontStyles.Strikethrough;
         // tutorialText.advanceTutorialStage();
         task.IsComplete = true;
         

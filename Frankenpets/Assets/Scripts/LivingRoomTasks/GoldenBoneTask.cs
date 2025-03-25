@@ -6,6 +6,7 @@ public class GoldenBoneTask : MonoBehaviour
     [Header("Task Manager")]
     public Image taskItem;
     public Color completedColor;
+    public TMPro.TextMeshProUGUI taskLabel;
     public Task task = new Task("Find Golden Bone", 1);
 
     [Header("Locate Task Variables")]
@@ -42,6 +43,7 @@ public class GoldenBoneTask : MonoBehaviour
     {
         taskItem.color = completedColor;
         task.IsComplete = true;
+        taskLabel.fontStyle = TMPro.FontStyles.Strikethrough;
         
         // Destroy task location indicators
         FindTasks.Instance.DestroyFindTaskMechanic(arrow, taskParticle, taskLight);
