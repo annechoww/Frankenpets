@@ -8,10 +8,14 @@ public class PedalLidController : MonoBehaviour
     public float openAngle = 90f;
     public float speed = 2f;
 
+    [Header("Audio")]
+    public AudioClip pedalSound;
+
     private Quaternion closedRotation; 
     private Quaternion openRotation; 
     private Coroutine moveCoroutine;
     private PlayerActions pet;
+    private bool pedalPressed = false;
 
     void Start()
     {
@@ -27,6 +31,7 @@ public class PedalLidController : MonoBehaviour
 
             if (pet != null && pet.isPaw)
             {
+
                 if (moveCoroutine != null) StopCoroutine(moveCoroutine);
                 moveCoroutine = StartCoroutine(MoveLid(openRotation));
             }
@@ -40,11 +45,19 @@ public class PedalLidController : MonoBehaviour
             pet = other.GetComponent<PlayerActions>();
             if (pet != null && pet.isPaw)
             {
+                // Play pedal sound
+                if (pedalSound != null && !pedalPressed)
+                {
+                    pedalPressed = true;
+                    AudioManager.Instance.PlaySFX(pedalSound);
+                }
+                
                 if (moveCoroutine != null) StopCoroutine(moveCoroutine);
                 moveCoroutine = StartCoroutine(MoveLid(openRotation));
             }
             else if (pet != null && !pet.isPaw)
             {
+                pedalPressed = false;
                 if (moveCoroutine != null) StopCoroutine(moveCoroutine);
                 moveCoroutine = StartCoroutine(MoveLid(closedRotation));
             }

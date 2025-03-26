@@ -7382,6 +7382,7 @@ MonoBehaviour:
   lidHinge: {fileID: 1915130580}
   openAngle: 90
   speed: 2
+  pedalSound: {fileID: 8300000, guid: b6b5b93ef84d840e98b35f84bf0c564b, type: 3}
 --- !u!1 &315138866
 GameObject:
   m_ObjectHideFlags: 0
@@ -8729,6 +8730,10 @@ PrefabInstance:
     - target: {fileID: 4020232081103216799, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
       propertyPath: dashUpwardForce
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4020232081103216799, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
+      propertyPath: chargedJumpForce
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 4020232081103216799, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
       propertyPath: grabMouthPosition
@@ -19175,6 +19180,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   flipFlop1: {fileID: 4327546796781926769}
   flipFlop2: {fileID: 2440120721089905276}
+  thrownInTrashSound: {fileID: 8300000, guid: d6b35b23c41b54cfcad246eaf34ed79f, type: 3}
   taskCompleteSound: {fileID: 8300000, guid: 7ede2ff7994054bccabde62d31c54d49, type: 3}
   taskItem: {fileID: 1273811399}
   completedColor: {r: 0, g: 0, b: 0, a: 0}
