@@ -17,11 +17,13 @@ public class Startup : MonoBehaviour
     public Image player1CatIcon;
     public Image player1DogIcon;
     public GameObject player1LockedIndicator;
+    public GameObject player1Text;
 
     [Header("Character Selection UI - Player 2")]
     public Image player2CatIcon;
     public Image player2DogIcon;
     public GameObject player2LockedIndicator;
+    public GameObject player2Text;
 
     [Header("Player 1 Icon Outlines")]
     public Image player1CatOutline;
@@ -207,6 +209,7 @@ public class Startup : MonoBehaviour
                 if (!player2Locked)
                 {
                     player1Locked = false;
+                    player1Text.SetActive(true);
                     player1LockedIndicator.SetActive(false);
                     UpdateCharacterSelectionUI();
                 }
@@ -228,6 +231,7 @@ public class Startup : MonoBehaviour
                     }
 
                     player1LockedIndicator.SetActive(true);
+                    player1Text.SetActive(false);
                     UpdateCharacterSelectionUI();
                 }
             }
@@ -277,6 +281,7 @@ public class Startup : MonoBehaviour
                 {
                     player2Locked = false;
                     player2LockedIndicator.SetActive(false);
+                    player2Text.SetActive(true);
                     UpdateCharacterSelectionUI();
                 }
             }
@@ -297,6 +302,7 @@ public class Startup : MonoBehaviour
                     }
 
                     player2LockedIndicator.SetActive(true);
+                    player2Text.SetActive(false);
                     UpdateCharacterSelectionUI();
                 }
             }
@@ -331,6 +337,7 @@ public class Startup : MonoBehaviour
 
                 // Make dog unavailable to Player 2
                 player2DogIcon.color = unavailableColor;
+                player1CatIcon.color = unavailableColor;
             }
             else
             {
@@ -339,6 +346,7 @@ public class Startup : MonoBehaviour
 
                 // Make cat unavailable to Player 2
                 player2CatIcon.color = unavailableColor;
+                player1DogIcon.color = unavailableColor;
             }
         }
         else
@@ -369,6 +377,7 @@ public class Startup : MonoBehaviour
 
                 // Make cat unavailable to Player 1
                 player1CatIcon.color = unavailableColor;
+                player2DogIcon.color = unavailableColor;
             }
             else
             {
@@ -377,6 +386,7 @@ public class Startup : MonoBehaviour
 
                 // Make dog unavailable to Player 1
                 player1DogIcon.color = unavailableColor;
+                player2CatIcon.color = unavailableColor;
             }
         }
         else
