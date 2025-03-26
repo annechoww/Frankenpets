@@ -125,6 +125,7 @@ public class PlayerActions : MonoBehaviour
 
     // State flags:
     private bool isDashing = false;
+    private bool hasLiftedPaw = false; 
 
     public bool IsDashing
     {
@@ -1144,11 +1145,17 @@ public class PlayerActions : MonoBehaviour
         // if (((Input.GetKeyDown(KeyCode.Z) && P1.IsFront) || (Input.GetKeyDown(KeyCode.Comma) && P2.IsFront)))
         if ((player1Input.GetJumpPressed() && P1.IsFront) || (player2Input.GetJumpPressed() && P2.IsFront))
         {
-            pawRiggingScript.liftPaw();
-            isPaw = true;
+            // If paw hasn't been lifted yet, call the liftPaw() method
+            if (!hasLiftedPaw)
+            {
+                pawRiggingScript.liftPaw();
+                hasLiftedPaw = true;  // Mark that paw has been lifted
+                isPaw = true;
+            }
         // } else if (Input.GetKeyUp(KeyCode.Z) || Input.GetKeyUp(KeyCode.Comma))
         } else if (!player1Input.GetJumpPressed() && !player2Input.GetJumpPressed())
         {
+            hasLiftedPaw = false;
             isPaw = false;
         }
         
