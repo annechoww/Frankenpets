@@ -5,9 +5,7 @@ public class RoombaMovement : MonoBehaviour
     public float speed = 2f;
     public BoxCollider boundary;
     private Vector3 direction;
-    private PlayerActions pet;
-    private bool draggingPet = false;
-
+    
     void Start()
     {
         if (boundary == null)
@@ -25,17 +23,6 @@ public class RoombaMovement : MonoBehaviour
         if (boundary == null) return;
 
         transform.position += direction * speed * Time.deltaTime;
-
-        // If dragging, move the pet with the Roomba
-        if (draggingPet && pet != null && pet.isPaw)
-        {
-            // pet.transform.position = transform.position;
-        }
-        else
-        {
-            draggingPet = false;
-            pet = null;
-        }
 
         CheckBounds();
     }
@@ -64,28 +51,6 @@ public class RoombaMovement : MonoBehaviour
             pos.x = Mathf.Clamp(pos.x, bounds.min.x, bounds.max.x);
             pos.z = Mathf.Clamp(pos.z, bounds.min.z, bounds.max.z);
             transform.position = pos;
-        }
-    }
-
-    void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.layer == LayerMask.NameToLayer("Pet"))
-        {
-            pet = other.GetComponent<PlayerActions>();
-
-            if (pet != null && pet.isPaw)
-            {
-                draggingPet = true;
-            }
-        }
-    }
-
-    void OnTriggerExit(Collider other)
-    {
-        if (other.gameObject.layer == LayerMask.NameToLayer("Pet") && pet != null)
-        {
-            draggingPet = false;
-            pet = null;
         }
     }
 }

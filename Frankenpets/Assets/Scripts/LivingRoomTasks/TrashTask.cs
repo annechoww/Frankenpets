@@ -6,6 +6,7 @@ public class TrashTask : MonoBehaviour
     [Header("References")]
     public GameObject flipFlop1;
     public GameObject flipFlop2;
+    public AudioClip thrownInTrashSound;
     private bool ff1InTrash = false;
     private bool ff2InTrash = false;
     public AudioClip taskCompleteSound;
@@ -42,6 +43,11 @@ public class TrashTask : MonoBehaviour
         {
             ff2InTrash = true;
             CheckTaskCompletion();
+        }
+
+        if (thrownInTrashSound != null)
+        {
+            AudioManager.Instance.PlaySFX(thrownInTrashSound);
         }
     }
 
