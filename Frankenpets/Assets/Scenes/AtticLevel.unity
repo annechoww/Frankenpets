@@ -13139,6 +13139,10 @@ PrefabInstance:
       value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 4020232081103216799, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
+      propertyPath: controlsMenuParent
+      value: 
+      objectReference: {fileID: 750616359}
+    - target: {fileID: 4020232081103216799, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
       propertyPath: tutorialTextScript
       value: 
       objectReference: {fileID: 687193108}
@@ -13625,7 +13629,7 @@ MonoBehaviour:
   grabText: {fileID: 89351596}
   climbText: {fileID: 89351595}
   pawText: {fileID: 0}
-  controlsMenu: {fileID: 750616359}
+  controlsMenuParent: {fileID: 750616359}
   isTutorial: 1
   tutorialTextScript: {fileID: 687193108}
   dashForce: 80
@@ -22748,6 +22752,10 @@ PrefabInstance:
     - target: {fileID: 3689217712745482986, guid: d066c11ac75c64470bd16d89e74db432, type: 3}
       propertyPath: m_Name
       value: ControlsMenu
+      objectReference: {fileID: 0}
+    - target: {fileID: 3689217712745482986, guid: d066c11ac75c64470bd16d89e74db432, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7511220843374283000, guid: d066c11ac75c64470bd16d89e74db432, type: 3}
       propertyPath: m_Pivot.x
