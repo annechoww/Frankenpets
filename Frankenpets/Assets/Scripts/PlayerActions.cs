@@ -102,7 +102,9 @@ public class PlayerActions : MonoBehaviour
     public GameObject grabText;
     public GameObject climbText;
     public GameObject pawText;
-    public GameObject controlsMenu;
+    public GameObject controlsMenuParent;
+    private GameObject controlsMenu;
+
     private bool isViewingControlsMenu = false;
 
     [Header("Tutorial Variables")]
@@ -146,20 +148,21 @@ public class PlayerActions : MonoBehaviour
         // Set the Controls Menu to keycaps or gamepad
         if (controllerAssignment.IsKeyboard())
         {
-            controlsMenu.transform.GetChild(0).gameObject.SetActive(true);
-            controlsMenu.transform.GetChild(1).gameObject.SetActive(false);
+            controlsMenu = controlsMenuParent.transform.GetChild(0).gameObject;
+            controlsMenu.SetActive(true);
+            controlsMenuParent.transform.GetChild(1).gameObject.SetActive(false);
         }
         else
         {
-            controlsMenu.transform.GetChild(0).gameObject.SetActive(false);
-            controlsMenu.transform.GetChild(1).gameObject.SetActive(true);
+            controlsMenuParent.transform.GetChild(0).gameObject.SetActive(false);
+            controlsMenu = controlsMenuParent.transform.GetChild(1).gameObject;
+            controlsMenu.SetActive(true);
         }
     }
 
     bool tutOverlayDone()
     {
         return tutorialTextScript.overlayDone();
-
     }
 
     private void Update()
@@ -1187,15 +1190,13 @@ public class PlayerActions : MonoBehaviour
             Transform P2Controls = controlsMenu.transform.GetChild(1).gameObject.transform;
 
             bool P1isFront = P1.IsFront;
+            UnityEngine.Debug.Log("p1isfront is "+ P1isFront);
           
             P1Controls.GetChild(0).gameObject.SetActive(P1isFront);
             P1Controls.GetChild(1).gameObject.SetActive(!P1isFront);
 
             P2Controls.GetChild(0).gameObject.SetActive(!P1isFront);
             P2Controls.GetChild(1).gameObject.SetActive(P1isFront);
-        
-            // controlsMenu.transform.GetChild(0).gameObject.SetActive(false);
-            // controlsMenu.transform.GetChild(1).gameObject.SetActive(true);
         }
     }
 
@@ -1301,25 +1302,11 @@ public class PlayerActions : MonoBehaviour
 
     private void runControlsMenuLogic()
     {
-        // if ((player1Input.GetControlsMenuJustPressed() || player2Input.GetControlsMenuJustPressed()) && !isViewingControlsMenu)
-        // {
-        //     UnityEngine.Debug.Log("viewing");
-        //     controlsMenu.SetActive(true);
-        //     isViewingControlsMenu = true;
-        // }
-        // else if ((player1Input.GetControlsMenuJustPressed() || player2Input.GetControlsMenuJustPressed()) && isViewingControlsMenu)
-        // {
-        //     UnityEngine.Debug.Log("not viewing");
-        //     controlsMenu.SetActive(false);
-        //     isViewingControlsMenu = false;
-        // }
-
         if (player1Input.GetControlsMenuJustPressed() || player2Input.GetControlsMenuJustPressed())
         {
             isViewingControlsMenu = !isViewingControlsMenu;
-            controlsMenu.SetActive(isViewingControlsMenu);
+            controlsMenuParent.SetActive(isViewingControlsMenu);
             UnityEngine.Debug.Log(isViewingControlsMenu ? "viewing" : "not viewing");
         }
     }
 }
-
