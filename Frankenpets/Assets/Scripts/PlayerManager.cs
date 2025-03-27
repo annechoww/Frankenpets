@@ -464,13 +464,13 @@ public class PlayerManager : MonoBehaviour
         float turnInputP2 = player2MoveInput.x * turnSpeed;
         float moveInputP2 = player2MoveInput.y * walkSpeed;
         
-        // Apply the combined rotation to both halves:
-        float combinedTurn = turnInputP1 + turnInputP2;
+        // Apply the rotation of front half
+        float combinedTurn = P1.IsFront ? turnInputP1 : turnInputP2;
         frontHalf.transform.Rotate(0.0f, combinedTurn, 0.0f, Space.Self);
         backHalf.transform.Rotate(0.0f, combinedTurn, 0.0f, Space.Self);
         
-        // Apply the combined translation (forward/back) to both halves:
-        float combinedMove = moveInputP1 + moveInputP2;
+        // Apply the translation (forward/back) of back half
+        float combinedMove = !P1.IsFront ? moveInputP1 : moveInputP2;
         // frontHalf.transform.Translate(Vector3.forward * combinedMove * Time.deltaTime, Space.Self);
         // backHalf.transform.Translate(Vector3.forward * combinedMove * Time.deltaTime, Space.Self);
 
