@@ -7132,7 +7132,6 @@ MonoBehaviour:
   openAngle: 90
   speed: 2
   pedalSound: {fileID: 8300000, guid: b6b5b93ef84d840e98b35f84bf0c564b, type: 3}
-  LidSound: {fileID: 8300000, guid: b0328226f38674e22b5d2a5b713e9e93, type: 3}
 --- !u!4 &328671186 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1035603379083452995, guid: 5d4f53b3a062244dba872a6f27081434, type: 3}
@@ -8357,7 +8356,7 @@ PrefabInstance:
     - target: {fileID: 4020232081103216799, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
       propertyPath: controlsMenuParent
       value: 
-      objectReference: {fileID: 1225016319}
+      objectReference: {fileID: 5908284514070905049}
     - target: {fileID: 4020232081103216799, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
       propertyPath: useHybridGrabSystem
       value: 0
@@ -26371,7 +26370,7 @@ MonoBehaviour:
   grabText: {fileID: 2220197021737308832}
   climbText: {fileID: 3785619593068436551}
   pawText: {fileID: 778911139}
-  controlsMenuParent: {fileID: 0}
+  controlsMenuParent: {fileID: 5908284514070905049}
   isTutorial: 0
   tutorialTextScript: {fileID: 0}
   dashForce: 80
@@ -44682,6 +44681,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 42dd53922366b458c8d154ff587869d9, type: 3}
+--- !u!1 &5908284514070905049 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8239218779626072873, guid: 42dd53922366b458c8d154ff587869d9, type: 3}
+  m_PrefabInstance: {fileID: 5908284514070905048}
+  m_PrefabAsset: {fileID: 0}
 --- !u!222 &5911472205510340198
 CanvasRenderer:
   m_ObjectHideFlags: 0
