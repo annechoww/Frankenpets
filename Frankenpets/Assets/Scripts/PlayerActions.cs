@@ -1,8 +1,11 @@
 using System.Collections;
 using System.Diagnostics;
+using Microsoft.Unity.VisualStudio.Editor;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using TMPro;
 
 /**
 This Class handles all player actions. The actions are mapped as follows:
@@ -104,8 +107,13 @@ public class PlayerActions : MonoBehaviour
     public GameObject pawText;
     public GameObject controlsMenuParent;
     private GameObject controlsMenu;
-
     private bool isViewingControlsMenu = false;
+
+    [Header("Movement Toggle")]
+    public Toggle movementToggle;
+    public TextMeshProUGUI standardLabel;
+    public TextMeshProUGUI altLabel;
+    private bool isTogglingMovement = false; // Prevent multiple toggles in a single frame
 
     [Header("Tutorial Variables")]
     public bool isTutorial = false; // ENABLE THIS IN THE ATTIC
@@ -158,6 +166,11 @@ public class PlayerActions : MonoBehaviour
             controlsMenu = controlsMenuParent.transform.GetChild(1).gameObject;
             controlsMenu.SetActive(true);
         }
+
+        if (playerManager != null && movementToggle != null)
+        {
+            movementToggle.isOn = playerManager.altMovement;
+        }
     }
 
     bool tutOverlayDone()
@@ -170,6 +183,8 @@ public class PlayerActions : MonoBehaviour
         // if ((currentSceneName == "AtticLevel") && !tutOverlayDone() ){
         //     return;
         // }
+
+        //print("P1 GlowJustPressed: " + player1Input.GetGlowJustPressed());
 
         runJumpLogic();
         runNoiseLogic();
@@ -1307,6 +1322,12 @@ public class PlayerActions : MonoBehaviour
             isViewingControlsMenu = !isViewingControlsMenu;
             controlsMenuParent.SetActive(isViewingControlsMenu);
             UnityEngine.Debug.Log(isViewingControlsMenu ? "viewing" : "not viewing");
+        }
+
+        if (isViewingControlsMenu && controlsMenuParent.activeSelf && (player1Input.GetGlowJustPressed() || player2Input.GetGlowJustPressed()))
+        {
+            movementToggle.isOn = !movementToggle.isOn;
+            playerManager.altMovement = movementToggle.isOn;
         }
     }
 }
