@@ -594,22 +594,6 @@ public class TutorialText : MonoBehaviour
 
                 // Hide previous message
                 yield return StartCoroutine(HideEffect(null, null));
-                
-                // Disable previous guiding path + light 
-                foreach (Light light in rugLights)
-                {
-                    StartCoroutine(LerpLightIntensity(light, 0.0f, 1.5f));
-                }
-                StartCoroutine(DelaySetActive(rugLightsParent, false, 2.5f));
-
-                StartCoroutine(LerpLightIntensity(rugMainLight.GetComponent<Light>(), 0.0f, 2.0f));
-                StartCoroutine(DelaySetActive(rugMainLight, false, 2.5f));
-                
-                rugArrow.SetActive(false);
-                rugPawPath.SetActive(false);
-
-                // Add back world light  
-                StartCoroutine(BrightenRoomLights());
 
                 // Show new message
                 yield return StartCoroutine(ShowBottomUI(switchUI, speechBubbleLeft, "I can't grab this. Let's <u>switch</u>.", ""));
@@ -628,6 +612,22 @@ public class TutorialText : MonoBehaviour
                 // Show new msg
                 // tutorialText.transform.SetParent(speechBubbleRight.transform, true);
                 yield return StartCoroutine(ShowBottomUI(grabUI, speechBubbleRight, "Woah, I'm at the front now!", ""));
+
+                // Disable previous guiding path + light 
+                foreach (Light light in rugLights)
+                {
+                    StartCoroutine(LerpLightIntensity(light, 0.0f, 1.5f));
+                }
+                StartCoroutine(DelaySetActive(rugLightsParent, false, 2.5f));
+
+                StartCoroutine(LerpLightIntensity(rugMainLight.GetComponent<Light>(), 0.0f, 2.0f));
+                StartCoroutine(DelaySetActive(rugMainLight, false, 2.5f));
+                
+                rugArrow.SetActive(false);
+                rugPawPath.SetActive(false);
+
+                // Add back world light  
+                StartCoroutine(BrightenRoomLights());
 
                 break;
             case tutComplete:
