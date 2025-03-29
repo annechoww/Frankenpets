@@ -1,4 +1,6 @@
 using UnityEngine;
+using System.Collections;
+using System.Diagnostics;
 
 public class PlayerRespawn : MonoBehaviour
 {
@@ -18,6 +20,9 @@ public class PlayerRespawn : MonoBehaviour
     private Player P2;
     private bool playersInitialized = false;
 
+    private Stopwatch rightingStopwatchP1 = new Stopwatch();
+    private Stopwatch rightingStopwatchP2 = new Stopwatch();
+
     void Start()
     {
         // Initialize players with a slight delay to ensure PlayerManager is available
@@ -32,6 +37,10 @@ public class PlayerRespawn : MonoBehaviour
         // Check if players are out of bounds
         CheckAndRespawnIfNeeded(P1);
         CheckAndRespawnIfNeeded(P2);
+
+        // Check if players fell over
+        CheckAndRightIfNeeded(P1, rightingStopwatchP1);
+        CheckAndRightIfNeeded(P2, rightingStopwatchP2);
     }
     
     void InitializePlayers()
@@ -47,21 +56,72 @@ public class PlayerRespawn : MonoBehaviour
             if (P1 != null && P2 != null)
             {
                 playersInitialized = true;
-                Debug.Log("Players initialized successfully.");
-                Debug.Log("P1 Species: " + P1.Species);
-                Debug.Log("P2 Species: " + P2.Species);
+                UnityEngine.Debug.Log("Players initialized successfully.");
+                UnityEngine.Debug.Log("P1 Species: " + P1.Species);
+                UnityEngine.Debug.Log("P2 Species: " + P2.Species);
             }
             else
             {
-                Debug.LogWarning("Player references in PlayerManager are null.");
+                UnityEngine.Debug.LogWarning("Player references in PlayerManager are null.");
             }
         }
         else
         {
-            Debug.LogError("PlayerManager not found in the scene!");
+            UnityEngine.Debug.LogError("PlayerManager not found in the scene!");
         }
     }
     
+    void CheckAndRightIfNeeded(Player player, Stopwatch rightingStopwatch)
+    {
+        if (player == null || player.Half == null)
+            return;
+
+        // UnityEngine.Debug.Log("euler  " + player.Half.transform.rotation.eulerAngles);
+
+        if (HasFallenOver(player.Half.transform.rotation.eulerAngles, rightingStopwatch))
+        {
+            UnityEngine.Debug.Log("fell over " + player.Half.transform.rotation.eulerAngles);
+            Right(player);
+        }
+    }
+
+    
+    bool HasFallenOver(Vector3 eulerRotation, Stopwatch rightingStopwatch)
+    {
+        float xRotation = (eulerRotation.x > 180) ? eulerRotation.x - 360 : eulerRotation.x;
+        float zRotation = (eulerRotation.z > 180) ? eulerRotation.z - 360 : eulerRotation.z;
+
+        bool hasFallen = Mathf.Abs(xRotation) > 50 || Mathf.Abs(zRotation) > 50;
+
+        if (hasFallen)
+        {
+            if (!rightingStopwatch.IsRunning)
+            {
+                rightingStopwatch.Start(); // Start stopwatch if not already running
+            }
+
+            if (rightingStopwatch.Elapsed.TotalSeconds >= 2.5f)
+            {
+                return true;
+            }
+        }
+        else
+        {
+            if (rightingStopwatch.IsRunning)
+            {
+                rightingStopwatch.Reset();
+            }
+        }
+
+        return false;
+    }
+
+    private void Right(Player player)
+    {
+        float yRotation = player.Half.transform.rotation.eulerAngles.y;
+        player.Half.transform.rotation = Quaternion.Euler(0, yRotation, 0);
+    }
+
     void CheckAndRespawnIfNeeded(Player player)
     {
         if (player == null || player.Half == null)
@@ -85,11 +145,11 @@ public class PlayerRespawn : MonoBehaviour
         if (respawnPoint != null)
         {
             player.Half.transform.position = respawnPoint.position;
-            Debug.Log($"Respawned player ({player.Species}) at designated respawn point.");
+            UnityEngine.Debug.Log($"Respawned player ({player.Species}) at designated respawn point.");
         }
         else
         {
-            Debug.LogWarning("Respawn point is not set!");
+            UnityEngine.Debug.LogWarning("Respawn point is not set!");
         }
     }
     
