@@ -68,6 +68,8 @@ public class Startup : MonoBehaviour
 
     void Start()
     {
+        Screen.SetResolution(1920, 1080, true); // force their resolution to be 1920x1080
+
         // Show splash screen initially
         splashPanel.SetActive(true);
         characterSelectionPanel.SetActive(false);

@@ -1201,6 +1201,8 @@ public class PlayerActions : MonoBehaviour
         // Update the UI elements based on current controller assignment
         if (controllerAssignment != null)
         {
+            if (controllerAssignment.IsKeyboard()) return;
+            
             Transform P1Controls = controlsMenu.transform.GetChild(0).gameObject.transform;
             Transform P2Controls = controlsMenu.transform.GetChild(1).gameObject.transform;
 

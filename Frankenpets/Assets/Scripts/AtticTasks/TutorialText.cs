@@ -9,6 +9,13 @@ public class TutorialText : MonoBehaviour
     [Header("Tutorial Overlay Variables")]
     public GameObject overlay;
     public GameObject overlayBG;
+    public GameObject leftTutIcon;
+    public GameObject rightTutIcon;
+    private Animator leftTutAnimator;
+    private Animator rightTutAnimator;
+    private Animator continueTutAnimator;
+    private GameObject singleOverlay;
+    //private GameObject doubleOverlay;
 
     [Header("Bottom Text/Instruction Variables")]
     public RectTransform bottomUIParent;
@@ -184,10 +191,17 @@ public class TutorialText : MonoBehaviour
         P2ControlsGrab.transform.GetChild(1).gameObject.SetActive(!isKeyboard);
 
         if (isKeyboard){
-            overlay.transform.GetChild(0).GetChild(0).gameObject.SetActive(true);
+            overlay.transform.GetChild(2).GetChild(0).GetChild(0).gameObject.SetActive(true);
+            UnityEngine.Debug.Log("keyboard input");
         } else if (!isKeyboard){
-            overlay.transform.GetChild(0).GetChild(1).gameObject.SetActive(true);
+            overlay.transform.GetChild(2).GetChild(0).GetChild(1).gameObject.SetActive(true);
+            UnityEngine.Debug.Log("xbox input");
         }
+        // tutorial overlay 
+        singleOverlay = overlay.transform.GetChild(0).gameObject;
+        //doubleOverlay = overlay.transform.GetChild(1).gameObject;
+        overlayUI();
+        
 
         playerManager.setCanSwitch(false);
         playerManager.setCanReconnect(false);
@@ -226,16 +240,20 @@ public class TutorialText : MonoBehaviour
                 if (player1Input.GetGlowJustPressed())
                 {
                     p1GlowPressed = true;
+                    leftTutAnimator.SetBool("pressed", true);
                 }
                 if (player2Input.GetGlowJustPressed())
                 {
                     p2GlowPressed = true;
+                    rightTutAnimator.SetBool("pressed", true);
                 }
                 
                 // Only when both players have pressed do we advance
                 if (p1GlowPressed && p2GlowPressed)
                 {
-                    tutOverlayOrder++;
+                    StartCoroutine(TutOverlayAdvance(3.0f));
+                    //tutOverlayOrder++;
+
                     // Reset for the next stage
                     p1GlowPressed = false;
                     p2GlowPressed = false;
@@ -338,24 +356,74 @@ public class TutorialText : MonoBehaviour
         return currTutorialStage!=-1;
     }
 
+    // overlay player icon
+    public void overlayUI()
+    {
+        bool isP1Cat = playerManager.P1.Species == "cat";
+        bool isP1Front = playerManager.P1.IsFront;
+
+        if (isP1Front && isP1Cat)
+        {
+            leftTutIcon.transform.GetChild(0).gameObject.SetActive(true);
+            rightTutIcon.transform.GetChild(1).gameObject.SetActive(true);
+        }
+        if (!isP1Front && isP1Cat)
+        { 
+            leftTutIcon.transform.GetChild(1).gameObject.SetActive(true);
+            rightTutIcon.transform.GetChild(0).gameObject.SetActive(true);
+        }
+
+        leftTutAnimator = leftTutIcon.GetComponent<Animator>();
+        rightTutAnimator = rightTutIcon.GetComponent<Animator>();
+        continueTutAnimator = overlay.transform.GetChild(2).GetChild(0).gameObject.GetComponent<Animator>();
+        leftTutAnimator.Play("P1 Tut icon", 0, 0f);
+        rightTutAnimator.Play("P2 Tut icon", 0, 0f);
+        continueTutAnimator.Play("Instruction continue animation", 0, 0f);
+    }
+
+    private IEnumerator TutOverlayAdvance(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        tutOverlayOrder++;
+
+        leftTutAnimator.Play("P1 Tut icon", 0, 0f);
+        rightTutAnimator.Play("P2 Tut icon", 0, 0f);
+        continueTutAnimator.Play("Instruction continue animation", 0, 0f);
+        leftTutAnimator.SetBool("pressed", false);
+        rightTutAnimator.SetBool("pressed", false);
+    }
+
     private void handleOverlay()
     {
         switch(tutOverlayOrder)
         {
             
-            case 2:
-                overlay.transform.GetChild(1).gameObject.SetActive(false);
-                overlay.transform.GetChild(2).gameObject.SetActive(true);
+            case 2: // third layer
+                overlay.transform.GetChild(4).gameObject.SetActive(false);
+                overlay.transform.GetChild(8).gameObject.SetActive(true);
                 break;
-            case 3:
-                overlay.transform.GetChild(2).gameObject.SetActive(false);
-                overlay.transform.GetChild(3).gameObject.SetActive(true);
-                break;
-            case 4:
-                overlay.transform.GetChild(3).gameObject.SetActive(false);
-                overlay.transform.GetChild(4).gameObject.SetActive(true);
+            // case 3: // switch instruction layer
+            //     overlay.transform.GetChild(5).gameObject.SetActive(false);
+            //     overlay.transform.GetChild(6).gameObject.SetActive(true);
+            //     break;
+            // case 4: // special instruction layer 1
+            //     singleOverlay.SetActive(false);
+            //     doubleOverlay.SetActive(true);
+            //     overlay.transform.GetChild(6).gameObject.SetActive(false);
+            //     overlay.transform.GetChild(7).gameObject.SetActive(true);
+            //     break;
+            // case 5: // third layer
+            //     singleOverlay.SetActive(true);
+            //     doubleOverlay.SetActive(false);
+            //     overlay.transform.GetChild(7).gameObject.SetActive(false);
+            //     overlay.transform.GetChild(8).gameObject.SetActive(true);
+            //     break;
+            case 3: // fourth layer
+                overlay.transform.GetChild(8).gameObject.SetActive(false);
+                overlay.transform.GetChild(9).gameObject.SetActive(true);
 
-                Transform menuUI = overlay.transform.GetChild(4).gameObject.transform.Find("MenuUI");
+                Transform menuUI = overlay.transform.GetChild(9).gameObject.transform.Find("MenuUI");
+                UnityEngine.Debug.Log("layer");
                 if (isKeyboard)
                 {
                     menuUI.transform.GetChild(0).gameObject.SetActive(true);
@@ -363,8 +431,8 @@ public class TutorialText : MonoBehaviour
                     menuUI.transform.GetChild(1).gameObject.SetActive(true);
                 }
                 break;
-            case 5:
-                overlay.transform.GetChild(4).gameObject.SetActive(false);
+            
+            case 4: // exit tutorial
                 overlayBG.SetActive(false);
                 overlay.SetActive(false);
                 P1IconLarge.SetActive(true);
@@ -526,22 +594,6 @@ public class TutorialText : MonoBehaviour
 
                 // Hide previous message
                 yield return StartCoroutine(HideEffect(null, null));
-                
-                // Disable previous guiding path + light 
-                foreach (Light light in rugLights)
-                {
-                    StartCoroutine(LerpLightIntensity(light, 0.0f, 1.5f));
-                }
-                StartCoroutine(DelaySetActive(rugLightsParent, false, 2.5f));
-
-                StartCoroutine(LerpLightIntensity(rugMainLight.GetComponent<Light>(), 0.0f, 2.0f));
-                StartCoroutine(DelaySetActive(rugMainLight, false, 2.5f));
-                
-                rugArrow.SetActive(false);
-                rugPawPath.SetActive(false);
-
-                // Add back world light  
-                StartCoroutine(BrightenRoomLights());
 
                 // Show new message
                 yield return StartCoroutine(ShowBottomUI(switchUI, speechBubbleLeft, "I can't grab this. Let's <u>switch</u>.", ""));
@@ -560,6 +612,22 @@ public class TutorialText : MonoBehaviour
                 // Show new msg
                 // tutorialText.transform.SetParent(speechBubbleRight.transform, true);
                 yield return StartCoroutine(ShowBottomUI(grabUI, speechBubbleRight, "Woah, I'm at the front now!", ""));
+
+                // Disable previous guiding path + light 
+                foreach (Light light in rugLights)
+                {
+                    StartCoroutine(LerpLightIntensity(light, 0.0f, 1.5f));
+                }
+                StartCoroutine(DelaySetActive(rugLightsParent, false, 2.5f));
+
+                StartCoroutine(LerpLightIntensity(rugMainLight.GetComponent<Light>(), 0.0f, 2.0f));
+                StartCoroutine(DelaySetActive(rugMainLight, false, 2.5f));
+                
+                rugArrow.SetActive(false);
+                rugPawPath.SetActive(false);
+
+                // Add back world light  
+                StartCoroutine(BrightenRoomLights());
 
                 break;
             case tutComplete:

@@ -105,13 +105,37 @@ public class MudTracks : MonoBehaviour
             Vector3 foot2Position = new Vector3(foot2.position.x, 0, foot2.position.z); 
 
             // check that player is moving ?
-            Instantiate(pawPrintPrefab, foot1Position, pawPrintRotation);
-            Instantiate(pawPrintPrefab, foot2Position, pawPrintRotation);
+            GameObject pawPrint1 = Instantiate(pawPrintPrefab, foot1Position, pawPrintRotation);
+            GameObject pawPrint2 = Instantiate(pawPrintPrefab, foot2Position, pawPrintRotation);
+
+            // Destroy paw print after 5 seconds
+            StartCoroutine(FadeAndDestroy(pawPrint1, 5.0f));
+            StartCoroutine(FadeAndDestroy(pawPrint2, 5.0f));
 
             yield return new WaitForSeconds(spawnInterval);
             elapsedTime += spawnInterval;
         }
 
         activePawPrints.Remove(half);
+    }
+
+    private IEnumerator FadeAndDestroy(GameObject pawPrint, float fadeDuration)
+    {
+        SpriteRenderer sr = pawPrint.GetComponent<SpriteRenderer>();
+        if (sr == null) yield break;
+
+        Color originalColor = sr.color;
+        float elapsedTime = 0f;
+
+        while (elapsedTime < fadeDuration)
+        {
+            float alpha = Mathf.Lerp(originalColor.a, 0f, elapsedTime / fadeDuration);
+            sr.color = new Color(originalColor.r, originalColor.g, originalColor.b, alpha);
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        Destroy(pawPrint);
     }
 }
