@@ -76,11 +76,8 @@ public class PlayerRespawn : MonoBehaviour
         if (player == null || player.Half == null)
             return;
 
-        // UnityEngine.Debug.Log("euler  " + player.Half.transform.rotation.eulerAngles);
-
         if (HasFallenOver(player.Half.transform.rotation.eulerAngles, rightingStopwatch))
         {
-            UnityEngine.Debug.Log("fell over " + player.Half.transform.rotation.eulerAngles);
             Right(player);
         }
     }
