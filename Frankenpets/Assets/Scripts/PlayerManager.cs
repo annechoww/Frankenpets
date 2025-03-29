@@ -30,6 +30,8 @@ public class PlayerManager : MonoBehaviour
     private float immutableWalkSpeed;
     private float immutableTurnSpeed;
     public float turnSpeed = 1.0f;
+
+    public bool altMovement = false; // whether to use the alternative movement scheme
     // private bool isFrozen = false; // whether the half's RigidBody's position is frozen in place 
 
     [Header("Splitting Variables")]
@@ -432,6 +434,10 @@ public class PlayerManager : MonoBehaviour
         // Start or reset split timer based on pull direction
         if (splitCondition)
         {
+            if (altMovement)
+            {
+
+            }
             if (!splitStopwatch.IsRunning && canSplit)
             {
                 splitStopwatch.Start();
@@ -464,15 +470,20 @@ public class PlayerManager : MonoBehaviour
         float turnInputP2 = player2MoveInput.x * turnSpeed;
         float moveInputP2 = player2MoveInput.y * walkSpeed;
         
-        // Apply the combined rotation to both halves:
-        float combinedTurn = turnInputP1 + turnInputP2;
+        // Apply the rotation depending on scheme
+        float combinedTurn = 0f;
+        float combinedMove = 0f;
+        if (!altMovement) {
+            combinedTurn = turnInputP1 + turnInputP2;
+            combinedMove = moveInputP1 + moveInputP2;
+        }
+        else {
+            combinedTurn = P1.IsFront ? turnInputP1 : turnInputP2;
+            combinedMove = !P1.IsFront ? moveInputP1 : moveInputP2;
+        }
+
         frontHalf.transform.Rotate(0.0f, combinedTurn, 0.0f, Space.Self);
         backHalf.transform.Rotate(0.0f, combinedTurn, 0.0f, Space.Self);
-        
-        // Apply the combined translation (forward/back) to both halves:
-        float combinedMove = moveInputP1 + moveInputP2;
-        // frontHalf.transform.Translate(Vector3.forward * combinedMove * Time.deltaTime, Space.Self);
-        // backHalf.transform.Translate(Vector3.forward * combinedMove * Time.deltaTime, Space.Self);
 
         // Reset Camera when movement is detected 
         if (Math.Abs(combinedMove) > 0 || Math.Abs(combinedTurn) > 0)
@@ -483,9 +494,12 @@ public class PlayerManager : MonoBehaviour
         Rigidbody frontRb = frontHalf.GetComponent<Rigidbody>();
         Rigidbody backRb = backHalf.GetComponent<Rigidbody>();
 
-        Vector3 moveVector = frontHalf.transform.forward * (combinedMove * Time.deltaTime);
-        frontRb.MovePosition(frontRb.position + moveVector);
-        backRb.MovePosition(backRb.position + moveVector);
+        if (!splitCondition) {
+            Vector3 moveVector = frontHalf.transform.forward * (combinedMove * Time.deltaTime);
+            frontRb.MovePosition(frontRb.position + moveVector);
+            backRb.MovePosition(backRb.position + moveVector);
+        }
+        
 
         // Update split condition checking for pulling opposite directions
         CheckSplitConditions(player1MoveInput.y, player2MoveInput.y);

@@ -1,8 +1,11 @@
 using System.Collections;
 using System.Diagnostics;
+using Microsoft.Unity.VisualStudio.Editor;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using TMPro;
 
 /**
 This Class handles all player actions. The actions are mapped as follows:
@@ -104,8 +107,14 @@ public class PlayerActions : MonoBehaviour
     public GameObject pawText;
     public GameObject controlsMenuParent;
     private GameObject controlsMenu;
-
     private bool isViewingControlsMenu = false;
+
+    [Header("Movement Scheme UI")]
+    public Slider movementSchemeSlider;
+    public TextMeshProUGUI standardSchemeText;
+    public TextMeshProUGUI altSchemeText;
+    private Color activeColor = new Color(1f, 0.8f, 0.2f); // Bright yellow-orange
+    private Color inactiveColor = new Color(0.7f, 0.5f, 0.3f); // Dimmed version
 
     [Header("Tutorial Variables")]
     public bool isTutorial = false; // ENABLE THIS IN THE ATTIC
@@ -138,6 +147,15 @@ public class PlayerActions : MonoBehaviour
 
     private string currentSceneName;
 
+    private void InitializeMovementUI() {
+        if (playerManager != null && movementSchemeSlider != null)
+        {
+            // Set initial slider value based on current altMovement state
+            movementSchemeSlider.value = playerManager.altMovement ? 1 : 0;
+            UpdateMovementSchemeUI();
+        }
+    }
+
     private void Start()
     {   
         getPlayerManager();
@@ -158,6 +176,8 @@ public class PlayerActions : MonoBehaviour
             controlsMenu = controlsMenuParent.transform.GetChild(1).gameObject;
             controlsMenu.SetActive(true);
         }
+
+        InitializeMovementUI();
     }
 
     bool tutOverlayDone()
@@ -170,6 +190,8 @@ public class PlayerActions : MonoBehaviour
         // if ((currentSceneName == "AtticLevel") && !tutOverlayDone() ){
         //     return;
         // }
+
+        //print("P1 GlowJustPressed: " + player1Input.GetGlowJustPressed());
 
         runJumpLogic();
         runNoiseLogic();
@@ -1309,6 +1331,34 @@ public class PlayerActions : MonoBehaviour
             isViewingControlsMenu = !isViewingControlsMenu;
             controlsMenuParent.SetActive(isViewingControlsMenu);
             UnityEngine.Debug.Log(isViewingControlsMenu ? "viewing" : "not viewing");
+
+            if (isViewingControlsMenu && movementSchemeSlider != null) {
+                movementSchemeSlider.value = playerManager.altMovement ? 1 : 0;
+                UpdateMovementSchemeUI();
+            }
+        }
+
+        if (isViewingControlsMenu && (player1Input.GetGlowJustPressed() || player2Input.GetGlowJustPressed()))
+        {
+            playerManager.altMovement = !playerManager.altMovement;
+
+            movementSchemeSlider.value = playerManager.altMovement ? 1 : 0;
+
+            UpdateMovementSchemeUI();
+
+            AudioManager.Instance.PlayUIMeowBarkSFX();
+        }
+    }
+
+    private void UpdateMovementSchemeUI()
+    {
+        bool isAltMovement = playerManager.altMovement;
+        
+        // Update text colors if they're assigned
+        if (standardSchemeText != null && altSchemeText != null)
+        {
+            standardSchemeText.color = isAltMovement ? inactiveColor : activeColor;
+            altSchemeText.color = isAltMovement ? activeColor : inactiveColor;
         }
     }
 }

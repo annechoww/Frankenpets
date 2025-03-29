@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections;
 
 public class InputHandler : MonoBehaviour
 {
@@ -17,7 +18,7 @@ public class InputHandler : MonoBehaviour
 
     // one shot event flags
     private bool soundTailJustPressed;
-    private bool glowJustPressed;
+    private bool glowPressedLastFrame;
     private bool controlsMenuJustPressed;
 
     private bool jumpJustPressed;
@@ -100,7 +101,6 @@ public class InputHandler : MonoBehaviour
     {
         if (context.phase == InputActionPhase.Started)
         {
-            glowJustPressed = true;
             glowPressed = true;
         }
         else if (context.phase == InputActionPhase.Canceled)
@@ -169,6 +169,35 @@ public class InputHandler : MonoBehaviour
         return controlsMenuPressed;
     }
 
+    // Rumble
+    public void TriggerRumble(float lowFrequency, float highFrequency, float duration)
+    {
+        PlayerInput playerInput = GetComponent<PlayerInput>();
+        if (playerInput == null)
+            return;
+            
+        foreach (var device in playerInput.devices)
+        {
+            if (device is Gamepad gamepad)
+            {
+                // Set rumble
+                gamepad.SetMotorSpeeds(lowFrequency, highFrequency);
+                
+                // Schedule turning it off after duration
+                StartCoroutine(StopRumbleAfterDuration(gamepad, duration));
+                break; // Only need to rumble one gamepad per player
+            }
+        }
+    }
+
+    private IEnumerator StopRumbleAfterDuration(Gamepad gamepad, float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        if (gamepad != null)
+            gamepad.SetMotorSpeeds(0f, 0f);
+
+    }
+
     public bool GetRespawnPressed()
     {
         return respawnPressed;
@@ -187,12 +216,10 @@ public class InputHandler : MonoBehaviour
 
     public bool GetGlowJustPressed()
     {
-        if (glowJustPressed)
-        {
-            glowJustPressed = false; // Reset flag after reading
-            return true;
-        }
-        return false;
+        bool justPreseed = glowPressed && !glowPressedLastFrame;
+        glowPressedLastFrame = glowPressed;
+        return justPreseed;
+
     }
 
 
