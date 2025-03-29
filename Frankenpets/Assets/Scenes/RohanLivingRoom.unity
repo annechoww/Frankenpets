@@ -8256,6 +8256,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4020232081103216799, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
+      propertyPath: isTutorial
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4020232081103216799, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
       propertyPath: controlsMenu
       value: 
       objectReference: {fileID: 1225016319}
@@ -8290,7 +8294,7 @@ PrefabInstance:
     - target: {fileID: 4020232081103216799, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
       propertyPath: controlsMenuParent
       value: 
-      objectReference: {fileID: 5908284514070905049}
+      objectReference: {fileID: 1225016319}
     - target: {fileID: 4020232081103216799, guid: 4c47807eab052684b87cf6b4c560f2db, type: 3}
       propertyPath: useHybridGrabSystem
       value: 0
@@ -26307,8 +26311,8 @@ MonoBehaviour:
   grabText: {fileID: 2220197021737308832}
   climbText: {fileID: 3785619593068436551}
   pawText: {fileID: 778911139}
-  controlsMenuParent: {fileID: 5908284514070905049}
-  isTutorial: 0
+  controlsMenuParent: {fileID: 1225016319}
+  isTutorial: 1
   tutorialTextScript: {fileID: 0}
   dashForce: 80
   dashUpwardForce: 10
@@ -44530,11 +44534,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 42dd53922366b458c8d154ff587869d9, type: 3}
---- !u!1 &5908284514070905049 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8239218779626072873, guid: 42dd53922366b458c8d154ff587869d9, type: 3}
-  m_PrefabInstance: {fileID: 5908284514070905048}
-  m_PrefabAsset: {fileID: 0}
 --- !u!222 &5911472205510340198
 CanvasRenderer:
   m_ObjectHideFlags: 0
