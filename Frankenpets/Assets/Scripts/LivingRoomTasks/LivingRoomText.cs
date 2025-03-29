@@ -115,6 +115,7 @@ public class LivingRoomText : MonoBehaviour
         leftTutAnimator.Play("P1 Tut icon", 0, 0f);
         rightTutAnimator.Play("P2 Tut icon", 0, 0f);
         continueTutAnimator.Play("Instruction continue animation", 0, 0f);
+        todoListCanvas.sortingOrder = 0;
     }
 
     private IEnumerator tutOverlayAdvance(float delay)

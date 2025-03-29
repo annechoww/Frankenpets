@@ -4,9 +4,9 @@ using UnityEngine.UI;
 public class GoldenBoneTask : MonoBehaviour
 {
     [Header("Task Manager")]
-    public Image taskItem;
-    public Color completedColor;
-    public TMPro.TextMeshProUGUI taskLabel;
+    public GameObject taskItem;
+    //public Color completedColor;
+    //public TMPro.TextMeshProUGUI taskLabel;
     public Task task = new Task("Find Golden Bone", 1);
 
     [Header("Locate Task Variables")]
@@ -41,9 +41,10 @@ public class GoldenBoneTask : MonoBehaviour
 
     private void FinishTask()
     {
-        taskItem.color = completedColor;
+        //taskItem.color = completedColor;
         task.IsComplete = true;
-        taskLabel.fontStyle = TMPro.FontStyles.Strikethrough;
+        //taskLabel.fontStyle = TMPro.FontStyles.Strikethrough;
+        taskItem.transform.GetChild(1).gameObject.SetActive(true);
         
         // Destroy task location indicators
         FindTasks.Instance.DestroyFindTaskMechanic(arrow, taskParticle, taskLight);
