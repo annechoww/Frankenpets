@@ -196,6 +196,8 @@ public class InputHandler : MonoBehaviour
         if (gamepad != null)
             gamepad.SetMotorSpeeds(0f, 0f);
 
+    }
+
     public bool GetRespawnPressed()
     {
         return respawnPressed;
