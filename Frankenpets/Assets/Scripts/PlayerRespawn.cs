@@ -80,7 +80,7 @@ public class PlayerRespawn : MonoBehaviour
                position.z < minBoundary.z || position.z > maxBoundary.z;
     }
 
-    void Respawn(Player player)
+    public void Respawn(Player player)
     {
         if (respawnPoint != null)
         {

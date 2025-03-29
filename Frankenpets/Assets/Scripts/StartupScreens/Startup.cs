@@ -68,6 +68,8 @@ public class Startup : MonoBehaviour
 
     void Start()
     {
+        Screen.SetResolution(1920, 1080, true); // force their resolution to be 1920x1080
+
         // Show splash screen initially
         splashPanel.SetActive(true);
         characterSelectionPanel.SetActive(false);
@@ -220,6 +222,7 @@ public class Startup : MonoBehaviour
                 if (!(player2Locked && ((player1SelectingDog && !player2SelectingCat) || (!player1SelectingDog && player2SelectingCat))))
                 {
                     player1Locked = true;
+                    //player1Input.TriggerRumble(0.5f, 0.3f, 0.3f);
 
                     if (player1SelectingDog && !player2Locked && !player2SelectingCat) {
                         // If Player 1 locked dog, automatically move Player 2 to cat
@@ -291,6 +294,7 @@ public class Startup : MonoBehaviour
                 if (!(player1Locked && ((player2SelectingCat && !player1SelectingDog) || (!player2SelectingCat && player1SelectingDog))))
                 {
                     player2Locked = true;
+                    //player2Input.TriggerRumble(0.5f, 0.3f, 0.3f);
 
                     if (player2SelectingCat && !player1Locked && !player1SelectingDog) {
                         // If Player 2 locked cat, automatically move Player 1 to dog

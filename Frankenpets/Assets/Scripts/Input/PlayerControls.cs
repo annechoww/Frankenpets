@@ -100,6 +100,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""Respawn"",
+                    ""type"": ""Button"",
+                    ""id"": ""a0ca5456-0ec9-40e1-ae76-49b9718cc057"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""SoundTail"",
                     ""type"": ""Button"",
                     ""id"": ""a700f82c-1bca-4cb3-9299-dfeda462d3b8"",
@@ -398,6 +407,28 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""072862b5-c9e7-4eae-9c89-a2e650921b26"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard"",
+                    ""action"": ""Respawn"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""88c81137-7b1e-4756-98d0-80610f01039a"",
+                    ""path"": ""<Gamepad>/dpad/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";GamepadPlayer1"",
+                    ""action"": ""Respawn"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""150cae5a-b4f0-48f9-b68a-a131b0c05183"",
                     ""path"": ""<Keyboard>/x"",
                     ""interactions"": """",
@@ -491,6 +522,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""name"": ""Glow"",
                     ""type"": ""Button"",
                     ""id"": ""bd42388e-8a70-4456-9f64-d1212f93d735"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Respawn"",
+                    ""type"": ""Button"",
+                    ""id"": ""51890688-6ad9-479c-80b9-4b789e20b271"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -718,6 +758,28 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""7c5023a8-6cc1-4061-b5a6-33358035d048"",
+                    ""path"": ""<Keyboard>/o"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard"",
+                    ""action"": ""Respawn"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7b18a09b-591e-40fd-adf1-53375d5f3e6e"",
+                    ""path"": ""<Gamepad>/dpad/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";GamepadPlayer2"",
+                    ""action"": ""Respawn"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""3aac8cca-9ada-42cf-a2f2-32668c327716"",
                     ""path"": ""<Gamepad>/rightStick"",
                     ""interactions"": """",
@@ -853,6 +915,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_Player1_Switch = m_Player1.FindAction("Switch", throwIfNotFound: true);
         m_Player1_Menu = m_Player1.FindAction("Menu", throwIfNotFound: true);
         m_Player1_Glow = m_Player1.FindAction("Glow", throwIfNotFound: true);
+        m_Player1_Respawn = m_Player1.FindAction("Respawn", throwIfNotFound: true);
         m_Player1_SoundTail = m_Player1.FindAction("SoundTail", throwIfNotFound: true);
         // Player2
         m_Player2 = asset.FindActionMap("Player2", throwIfNotFound: true);
@@ -864,6 +927,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_Player2_Switch = m_Player2.FindAction("Switch", throwIfNotFound: true);
         m_Player2_Menu = m_Player2.FindAction("Menu", throwIfNotFound: true);
         m_Player2_Glow = m_Player2.FindAction("Glow", throwIfNotFound: true);
+        m_Player2_Respawn = m_Player2.FindAction("Respawn", throwIfNotFound: true);
         m_Player2_SoundTail = m_Player2.FindAction("SoundTail", throwIfNotFound: true);
     }
 
@@ -940,6 +1004,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player1_Switch;
     private readonly InputAction m_Player1_Menu;
     private readonly InputAction m_Player1_Glow;
+    private readonly InputAction m_Player1_Respawn;
     private readonly InputAction m_Player1_SoundTail;
     public struct Player1Actions
     {
@@ -953,6 +1018,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         public InputAction @Switch => m_Wrapper.m_Player1_Switch;
         public InputAction @Menu => m_Wrapper.m_Player1_Menu;
         public InputAction @Glow => m_Wrapper.m_Player1_Glow;
+        public InputAction @Respawn => m_Wrapper.m_Player1_Respawn;
         public InputAction @SoundTail => m_Wrapper.m_Player1_SoundTail;
         public InputActionMap Get() { return m_Wrapper.m_Player1; }
         public void Enable() { Get().Enable(); }
@@ -987,6 +1053,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Glow.started += instance.OnGlow;
             @Glow.performed += instance.OnGlow;
             @Glow.canceled += instance.OnGlow;
+            @Respawn.started += instance.OnRespawn;
+            @Respawn.performed += instance.OnRespawn;
+            @Respawn.canceled += instance.OnRespawn;
             @SoundTail.started += instance.OnSoundTail;
             @SoundTail.performed += instance.OnSoundTail;
             @SoundTail.canceled += instance.OnSoundTail;
@@ -1018,6 +1087,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Glow.started -= instance.OnGlow;
             @Glow.performed -= instance.OnGlow;
             @Glow.canceled -= instance.OnGlow;
+            @Respawn.started -= instance.OnRespawn;
+            @Respawn.performed -= instance.OnRespawn;
+            @Respawn.canceled -= instance.OnRespawn;
             @SoundTail.started -= instance.OnSoundTail;
             @SoundTail.performed -= instance.OnSoundTail;
             @SoundTail.canceled -= instance.OnSoundTail;
@@ -1050,6 +1122,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player2_Switch;
     private readonly InputAction m_Player2_Menu;
     private readonly InputAction m_Player2_Glow;
+    private readonly InputAction m_Player2_Respawn;
     private readonly InputAction m_Player2_SoundTail;
     public struct Player2Actions
     {
@@ -1063,6 +1136,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         public InputAction @Switch => m_Wrapper.m_Player2_Switch;
         public InputAction @Menu => m_Wrapper.m_Player2_Menu;
         public InputAction @Glow => m_Wrapper.m_Player2_Glow;
+        public InputAction @Respawn => m_Wrapper.m_Player2_Respawn;
         public InputAction @SoundTail => m_Wrapper.m_Player2_SoundTail;
         public InputActionMap Get() { return m_Wrapper.m_Player2; }
         public void Enable() { Get().Enable(); }
@@ -1097,6 +1171,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Glow.started += instance.OnGlow;
             @Glow.performed += instance.OnGlow;
             @Glow.canceled += instance.OnGlow;
+            @Respawn.started += instance.OnRespawn;
+            @Respawn.performed += instance.OnRespawn;
+            @Respawn.canceled += instance.OnRespawn;
             @SoundTail.started += instance.OnSoundTail;
             @SoundTail.performed += instance.OnSoundTail;
             @SoundTail.canceled += instance.OnSoundTail;
@@ -1128,6 +1205,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Glow.started -= instance.OnGlow;
             @Glow.performed -= instance.OnGlow;
             @Glow.canceled -= instance.OnGlow;
+            @Respawn.started -= instance.OnRespawn;
+            @Respawn.performed -= instance.OnRespawn;
+            @Respawn.canceled -= instance.OnRespawn;
             @SoundTail.started -= instance.OnSoundTail;
             @SoundTail.performed -= instance.OnSoundTail;
             @SoundTail.canceled -= instance.OnSoundTail;
@@ -1185,6 +1265,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         void OnSwitch(InputAction.CallbackContext context);
         void OnMenu(InputAction.CallbackContext context);
         void OnGlow(InputAction.CallbackContext context);
+        void OnRespawn(InputAction.CallbackContext context);
         void OnSoundTail(InputAction.CallbackContext context);
     }
     public interface IPlayer2Actions
@@ -1197,6 +1278,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         void OnSwitch(InputAction.CallbackContext context);
         void OnMenu(InputAction.CallbackContext context);
         void OnGlow(InputAction.CallbackContext context);
+        void OnRespawn(InputAction.CallbackContext context);
         void OnSoundTail(InputAction.CallbackContext context);
     }
 }

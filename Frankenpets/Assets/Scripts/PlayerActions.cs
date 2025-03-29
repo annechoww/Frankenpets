@@ -109,11 +109,12 @@ public class PlayerActions : MonoBehaviour
     private GameObject controlsMenu;
     private bool isViewingControlsMenu = false;
 
-    [Header("Movement Toggle")]
-    public Toggle movementToggle;
-    public TextMeshProUGUI standardLabel;
-    public TextMeshProUGUI altLabel;
-    private bool isTogglingMovement = false; // Prevent multiple toggles in a single frame
+    [Header("Movement Scheme UI")]
+    public Slider movementSchemeSlider;
+    public TextMeshProUGUI standardSchemeText;
+    public TextMeshProUGUI altSchemeText;
+    private Color activeColor = new Color(1f, 0.8f, 0.2f); // Bright yellow-orange
+    private Color inactiveColor = new Color(0.7f, 0.5f, 0.3f); // Dimmed version
 
     [Header("Tutorial Variables")]
     public bool isTutorial = false; // ENABLE THIS IN THE ATTIC
@@ -146,6 +147,15 @@ public class PlayerActions : MonoBehaviour
 
     private string currentSceneName;
 
+    private void InitializeMovementUI() {
+        if (playerManager != null && movementSchemeSlider != null)
+        {
+            // Set initial slider value based on current altMovement state
+            movementSchemeSlider.value = playerManager.altMovement ? 1 : 0;
+            UpdateMovementSchemeUI();
+        }
+    }
+
     private void Start()
     {   
         getPlayerManager();
@@ -167,10 +177,7 @@ public class PlayerActions : MonoBehaviour
             controlsMenu.SetActive(true);
         }
 
-        if (playerManager != null && movementToggle != null)
-        {
-            movementToggle.isOn = playerManager.altMovement;
-        }
+        InitializeMovementUI();
     }
 
     bool tutOverlayDone()
@@ -1201,6 +1208,8 @@ public class PlayerActions : MonoBehaviour
         // Update the UI elements based on current controller assignment
         if (controllerAssignment != null)
         {
+            if (controllerAssignment.IsKeyboard()) return;
+            
             Transform P1Controls = controlsMenu.transform.GetChild(0).gameObject.transform;
             Transform P2Controls = controlsMenu.transform.GetChild(1).gameObject.transform;
 
@@ -1322,12 +1331,34 @@ public class PlayerActions : MonoBehaviour
             isViewingControlsMenu = !isViewingControlsMenu;
             controlsMenuParent.SetActive(isViewingControlsMenu);
             UnityEngine.Debug.Log(isViewingControlsMenu ? "viewing" : "not viewing");
+
+            if (isViewingControlsMenu && movementSchemeSlider != null) {
+                movementSchemeSlider.value = playerManager.altMovement ? 1 : 0;
+                UpdateMovementSchemeUI();
+            }
         }
 
-        if (isViewingControlsMenu && controlsMenuParent.activeSelf && (player1Input.GetGlowJustPressed() || player2Input.GetGlowJustPressed()))
+        if (isViewingControlsMenu && (player1Input.GetGlowJustPressed() || player2Input.GetGlowJustPressed()))
         {
-            movementToggle.isOn = !movementToggle.isOn;
-            playerManager.altMovement = movementToggle.isOn;
+            playerManager.altMovement = !playerManager.altMovement;
+
+            movementSchemeSlider.value = playerManager.altMovement ? 1 : 0;
+
+            UpdateMovementSchemeUI();
+
+            AudioManager.Instance.PlayUIMeowBarkSFX();
+        }
+    }
+
+    private void UpdateMovementSchemeUI()
+    {
+        bool isAltMovement = playerManager.altMovement;
+        
+        // Update text colors if they're assigned
+        if (standardSchemeText != null && altSchemeText != null)
+        {
+            standardSchemeText.color = isAltMovement ? inactiveColor : activeColor;
+            altSchemeText.color = isAltMovement ? activeColor : inactiveColor;
         }
     }
 }
