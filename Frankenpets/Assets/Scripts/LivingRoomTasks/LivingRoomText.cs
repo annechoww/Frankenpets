@@ -70,23 +70,24 @@ public class LivingRoomText : MonoBehaviour
     private IEnumerator OverlaySequence()
     {
         yield return WaitForKeyBoth();
+        yield return tutOverlayAdvance(2f);
         todoListCanvas.sortingOrder = 100;
         overlay.transform.GetChild(3).gameObject.SetActive(false);
         overlay.transform.GetChild(4).gameObject.SetActive(true);
 
         yield return WaitForKeyBoth();
+        yield return tutOverlayAdvance(2f);
         todoListCanvas.sortingOrder = 0;
         overlay.transform.GetChild(4).gameObject.SetActive(false);
         overlay.transform.GetChild(8).gameObject.SetActive(true);
         
         yield return WaitForKeyBoth();
+        yield return tutOverlayAdvance(2f);
         overlay.transform.GetChild(8).gameObject.SetActive(false);
         singleOverlay.SetActive(false);
         overlay.transform.GetChild(7).gameObject.SetActive(true);
         continueParentTutAnimator.SetBool("moveDown", true);
         doubleOverlay.SetActive(true);
-        
-
 
         // yield return WaitForKeyBoth();
         // overlay.transform.GetChild(7).gameObject.SetActive(false);
@@ -114,6 +115,16 @@ public class LivingRoomText : MonoBehaviour
         leftTutAnimator.Play("P1 Tut icon", 0, 0f);
         rightTutAnimator.Play("P2 Tut icon", 0, 0f);
         continueTutAnimator.Play("Instruction continue animation", 0, 0f);
+    }
+
+    private IEnumerator tutOverlayAdvance(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        leftTutAnimator.Play("P1 Tut icon", 0, 0f);
+        rightTutAnimator.Play("P2 Tut icon", 0, 0f);
+        continueTutAnimator.Play("Instruction continue animation", 0, 0f);
+        leftTutAnimator.SetBool("pressed", false);
+        rightTutAnimator.SetBool("pressed", false);
     }
 
     private void SetupControlsUI()
@@ -204,8 +215,14 @@ public class LivingRoomText : MonoBehaviour
         bool player2Pressed = false;
 
         while ((!player1Pressed || !player2Pressed) && !Input.GetKeyDown(KeyCode.Space)) {
-            if (player1Input.GetGlowJustPressed()) player1Pressed = true;
-            if (player2Input.GetGlowJustPressed()) player2Pressed = true;
+            if (player1Input.GetGlowJustPressed()){
+                player1Pressed = true;
+                leftTutAnimator.SetBool("pressed", true);
+            }
+            if (player2Input.GetGlowJustPressed()){
+                player2Pressed = true;
+                rightTutAnimator.SetBool("pressed", true);
+            }
             yield return null;  // Allow waiting until the next frame.
         }
         yield return null;
