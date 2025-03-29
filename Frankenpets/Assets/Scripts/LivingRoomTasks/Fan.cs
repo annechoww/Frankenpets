@@ -31,7 +31,7 @@ public class Fan : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         // Check if dog grabbed bone 
         joint = dogFront.GetComponent<ConfigurableJoint>();
@@ -44,23 +44,16 @@ public class Fan : MonoBehaviour
                 UnityEngine.Debug.Log("pet is rotating");
 
                 // Pet should follow the bone's transform 
-                dogFront.transform.position = bone.transform.position;
-            //     Quaternion deltaRotation = Quaternion.Euler(rotationSpeed * Time.deltaTime);
-            // dogRb.MoveRotation(dogRb.rotation * deltaRotation);
-            // catRb.MoveRotation(catRb.rotation * deltaRotation);
-            dogRb.constraints = RigidbodyConstraints.FreezePositionY;
-            catRb.constraints = RigidbodyConstraints.FreezePositionY;
-      
+                dogRb.MovePosition(Vector3.Lerp(dogRb.position, bone.transform.position, Time.deltaTime / 10));
 
-                // dogFront.transform.Rotate(rotationSpeed * Time.deltaTime);
-                // catBack.transform.Rotate(rotationSpeed * Time.deltaTime);
-                // dogFront.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionZ;
-                // catBack.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionZ;
-          
-            } else {
-                UnityEngine.Debug.Log("let go; pet is rotating");
-               ResetFanState();
+                dogRb.constraints = RigidbodyConstraints.FreezePositionY;
+                catRb.constraints = RigidbodyConstraints.FreezePositionY;
             }
+        } 
+        else
+        {
+            UnityEngine.Debug.Log("let go; pet is rotating");
+            ResetFanState();
         }
 
         // Condition to drop the ceiling fan 
@@ -72,8 +65,9 @@ public class Fan : MonoBehaviour
             boneRigidbody.constraints = RigidbodyConstraints.None;
             ropeRigidbody.constraints = RigidbodyConstraints.None;
 
+            rope.GetComponent<MeshCollider>().enabled = true;
             Destroy(GetComponent<BoxCollider>());
-            
+            Destroy(this); // Remove this script from fan gameobject
         }
     }
 
@@ -82,7 +76,7 @@ public class Fan : MonoBehaviour
         if (other.CompareTag("dog front"))
         {
             // Rotate ceiling fan
-            // transform.Rotate(rotationSpeed * Time.deltaTime);
+            transform.Rotate(rotationSpeed * Time.deltaTime);
         }
     }
 
@@ -98,8 +92,6 @@ public class Fan : MonoBehaviour
     {
         ResetFanState();
         transform.Rotate(Vector3.zero);
-
-
     }
 
     private void ResetFanState()
@@ -110,7 +102,7 @@ public class Fan : MonoBehaviour
         // Reset Rigidbody constraints and stop rotation
         dogRb.constraints = RigidbodyConstraints.None;
         catRb.constraints = RigidbodyConstraints.None;
-        dogRb.angularVelocity = Vector3.zero;
-        catRb.angularVelocity = Vector3.zero;
+        // dogRb.angularVelocity = Vector3.zero;
+        // catRb.angularVelocity = Vector3.zero;
     }
 }

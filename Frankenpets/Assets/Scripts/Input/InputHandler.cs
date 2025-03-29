@@ -13,6 +13,7 @@ public class InputHandler : MonoBehaviour
     private bool controlsMenuPressed;
     private bool glowPressed;
     private bool soundTailPressed;
+    private bool respawnPressed;
 
     // one shot event flags
     private bool soundTailJustPressed;
@@ -108,6 +109,19 @@ public class InputHandler : MonoBehaviour
         }
     }
 
+    public void OnRespawnPressed(InputAction.CallbackContext context)
+    {
+        if (context.phase == InputActionPhase.Started)
+        {
+            respawnPressed = true;
+        }
+        else if (context.phase == InputActionPhase.Canceled)
+        {
+            respawnPressed = false;
+        }
+    }
+
+
     // Accessor methods for PlayerManager to get input values
     public Vector2 GetMoveInput()
     {
@@ -153,6 +167,11 @@ public class InputHandler : MonoBehaviour
     public bool GetControlsMenuPressed()
     {
         return controlsMenuPressed;
+    }
+
+    public bool GetRespawnPressed()
+    {
+        return respawnPressed;
     }
 
     // One-shot getters

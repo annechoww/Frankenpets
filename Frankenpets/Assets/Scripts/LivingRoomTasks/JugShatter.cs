@@ -7,27 +7,7 @@ public class JugShatter : MonoBehaviour
     public GameObject brokenJug;
     public float shatterForce = 1f;
     public AudioClip shatterSound;
-    // public AudioClip taskCompleteSound;
-
-    [Header("Task Manager")]
-    public Image taskItem;
-    public Color completedColor;
-    public TMPro.TextMeshProUGUI taskLabel;
-
-    public Task task = new Task("Shatter Jug", 1);
     private bool isShattered = false;
-    // private TutorialText tutorialText;
-
-    [Header("Locate Task Variables")]
-    public GameObject taskLight;
-    public GameObject taskParticle;
-    public GameObject arrow;
-
-    void Awake()
-    {
-        // tutorialText = GameObject.Find("TutorialTextManager").GetComponent<TutorialText>();
-        TaskManager.RegisterTask(task);
-    }
 
     void OnCollisionEnter(Collision collision)
     {
@@ -47,7 +27,6 @@ public class JugShatter : MonoBehaviour
         
         if (shatterSound != null)
         {
-            // AudioSource.PlayClipAtPoint(shatterSound, transform.position);
             AudioManager.Instance.PlaySFX(shatterSound);
         }
 
@@ -56,17 +35,6 @@ public class JugShatter : MonoBehaviour
 
         // Destroy the intact jug after shattering
         Destroy(gameObject);
-
-        FinishTask();
     }
 
-    private void FinishTask(){
-        taskItem.color = completedColor;
-        taskLabel.fontStyle = TMPro.FontStyles.Strikethrough;
-        // tutorialText.advanceTutorialStage();
-        task.IsComplete = true;
-        FindTasks.Instance.DestroyFindTaskMechanic(arrow, taskParticle, taskLight);
-        TaskManager.Instance.CompleteTask();
-        AudioManager.Instance.PlayTaskCompletionSound();
-    }
 }
