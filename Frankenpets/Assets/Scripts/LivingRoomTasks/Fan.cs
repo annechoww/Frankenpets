@@ -41,7 +41,6 @@ public class Fan : MonoBehaviour
             if (joint.connectedBody == boneRigidbody)
             {
                 if (!stopwatch.IsRunning) stopwatch.Start();
-                UnityEngine.Debug.Log("pet is rotating");
 
                 // Pet should follow the bone's transform 
                 dogRb.MovePosition(Vector3.Lerp(dogRb.position, bone.transform.position, Time.deltaTime / 10));
@@ -52,7 +51,6 @@ public class Fan : MonoBehaviour
         } 
         else
         {
-            UnityEngine.Debug.Log("let go; pet is rotating");
             ResetFanState();
         }
 
