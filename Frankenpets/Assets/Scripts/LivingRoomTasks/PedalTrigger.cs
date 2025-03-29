@@ -10,7 +10,6 @@ public class PedalLidController : MonoBehaviour
 
     [Header("Audio")]
     public AudioClip pedalSound;
-    public AudioClip LidSound;
 
     private Quaternion closedRotation; 
     private Quaternion openRotation; 
@@ -19,7 +18,6 @@ public class PedalLidController : MonoBehaviour
 
     // Flags
     private bool pedalPressed = false;
-    private bool isClosed = true;
 
     void Start()
     {
@@ -38,7 +36,6 @@ public class PedalLidController : MonoBehaviour
                 UnityEngine.Debug.Log(lidHinge.rotation);
                 if (moveCoroutine != null) StopCoroutine(moveCoroutine);
                 moveCoroutine = StartCoroutine(MoveLid(openRotation));
-                isClosed = false;
             }
         }
     }
@@ -56,10 +53,8 @@ public class PedalLidController : MonoBehaviour
                     pedalPressed = true;
                     AudioManager.Instance.PlaySFX(pedalSound);
                 }
-                UnityEngine.Debug.Log(lidHinge.rotation);
                 if (moveCoroutine != null) StopCoroutine(moveCoroutine);
                 moveCoroutine = StartCoroutine(MoveLid(openRotation));
-                isClosed = false;
             }
             else if (pet != null && !pet.isPaw)
             {
@@ -89,12 +84,6 @@ public class PedalLidController : MonoBehaviour
             yield return null;
         }
         lidHinge.rotation = targetRotation;
-
-        if (!isClosed)
-        {
-            AudioManager.Instance.PlaySFX(LidSound);
-            isClosed = true;
-        }
         
     }
 }
