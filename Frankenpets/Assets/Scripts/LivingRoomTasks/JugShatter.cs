@@ -9,11 +9,6 @@ public class JugShatter : MonoBehaviour
     public AudioClip shatterSound;
     private bool isShattered = false;
 
-    [Header("Locate Task Variables")]
-    public GameObject taskLight;
-    public GameObject taskParticle;
-    public GameObject arrow;
-
     void OnCollisionEnter(Collision collision)
     {
 

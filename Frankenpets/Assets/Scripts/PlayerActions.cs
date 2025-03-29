@@ -61,9 +61,6 @@ public class PlayerActions : MonoBehaviour
     private GrabbableObject currentGrabbableObject;
     private bool isDraggableObject = false;
 
-    // Respawn Variables
-    private PlayerRespawn playerRespawn;
-
     [Header("Angle Restriction")]
     [Tooltip("Maximum angle the pet can turn away from the grab point (in degrees)")]
     public float maxTurnAngle = 45f;
@@ -147,23 +144,19 @@ public class PlayerActions : MonoBehaviour
         controllerAssignment = ControllerAssignment.Instance;
         Scene currentScene = SceneManager.GetActiveScene();
         currentSceneName = currentScene.name;
-        playerRespawn = FindObjectOfType<PlayerRespawn>();
 
         // Set the Controls Menu to keycaps or gamepad
-        if (!isTutorial)
-        {
         if (controllerAssignment.IsKeyboard())
-            {
-                controlsMenu = controlsMenuParent.transform.GetChild(0).gameObject;
-                controlsMenu.SetActive(true);
-                controlsMenuParent.transform.GetChild(1).gameObject.SetActive(false);
-            }
-            else
-            {
-                controlsMenuParent.transform.GetChild(0).gameObject.SetActive(false);
-                controlsMenu = controlsMenuParent.transform.GetChild(1).gameObject;
-                controlsMenu.SetActive(true);
-            }
+        {
+            controlsMenu = controlsMenuParent.transform.GetChild(0).gameObject;
+            controlsMenu.SetActive(true);
+            controlsMenuParent.transform.GetChild(1).gameObject.SetActive(false);
+        }
+        else
+        {
+            controlsMenuParent.transform.GetChild(0).gameObject.SetActive(false);
+            controlsMenu = controlsMenuParent.transform.GetChild(1).gameObject;
+            controlsMenu.SetActive(true);
         }
     }
 
@@ -181,7 +174,7 @@ public class PlayerActions : MonoBehaviour
         runJumpLogic();
         runNoiseLogic();
         runTailLogic();
-        runRespawnLogic();
+
         runGrabLogic();
 
         if (!isTutorial)
@@ -196,7 +189,7 @@ public class PlayerActions : MonoBehaviour
 
         //if (isGrabbing && isDraggableObject) enforceAngleRestriction();
 
-        if (!isTutorial) runControlsMenuLogic();
+        runControlsMenuLogic();
 
         // This makes the grabText and climbText float :3
         grabText.transform.position += new Vector3(0, Mathf.Sin(Time.time * 2) * 0.0005f, 0);
@@ -1185,26 +1178,14 @@ public class PlayerActions : MonoBehaviour
 
     }
      
-////////////////////////////////////////// Respawn Action ////////////////////////////////////////////
-    public void runRespawnLogic()
-    {
-        if (player1Input.GetRespawnPressed())
-        {
-            playerRespawn.Respawn(P1);
-        }
-        
-        if (player2Input.GetRespawnPressed())
-        {
-            playerRespawn.Respawn(P2);
-        }
-    }
-
 
 ////////////////////////////////////////// Actions UI ///////////////////////////////////////////////
 
     public void UpdateControlsMenu()
     {   
         // Update the UI elements based on current controller assignment
+        if (controllerAssignment.IsKeyboard()) return;
+
         if (controllerAssignment != null)
         {
             Transform P1Controls = controlsMenu.transform.GetChild(0).gameObject.transform;
