@@ -15,8 +15,15 @@ public class LivingRoomText : MonoBehaviour
     public GameObject pressEnterToContinueUI;
     public GameObject glowUI;
     public GameObject accessControlsUI;
+
     public GameObject overlay;
     public GameObject overlayBG;
+    public GameObject leftTutIcon;
+    public GameObject rightTutIcon;
+    private Animator leftTutAnimator;
+    private Animator rightTutAnimator;
+    private Animator continueTutAnimator;
+    private Animator continueParentTutAnimator;
 
     [Header("Icons")]
     public GameObject P1SpeechIcons;
@@ -37,6 +44,9 @@ public class LivingRoomText : MonoBehaviour
     private ControlsCornerUI cornerControlsUI;
     private int tutOverlayStage = 1;
 
+    private GameObject singleOverlay;
+    private GameObject doubleOverlay;
+
     void Awake()
     {
         messageManager = GameObject.Find("Messages").GetComponent<MessageManager>();
@@ -49,6 +59,9 @@ public class LivingRoomText : MonoBehaviour
     void Start()
     {
         SetupControlsUI(); // Configure UI based on input method
+        overlayUI();
+        singleOverlay = overlay.transform.GetChild(0).gameObject;
+        doubleOverlay = overlay.transform.GetChild(1).gameObject;
         StartCoroutine(OverlaySequence());
         
         //StartCoroutine(TutorialSequence()); // Start tutorial progression
@@ -56,27 +69,33 @@ public class LivingRoomText : MonoBehaviour
 
     private IEnumerator OverlaySequence()
     {
-        
         yield return WaitForKeyBoth();
         todoListCanvas.sortingOrder = 100;
-        overlay.transform.GetChild(1).gameObject.SetActive(false);
-        overlay.transform.GetChild(2).gameObject.SetActive(true);
-
-        yield return WaitForKeyBoth();
-        todoListCanvas.sortingOrder = 0;
-        overlay.transform.GetChild(2).gameObject.SetActive(false);
-        overlay.transform.GetChild(3).gameObject.SetActive(true);
-        
-        yield return WaitForKeyBoth();
         overlay.transform.GetChild(3).gameObject.SetActive(false);
         overlay.transform.GetChild(4).gameObject.SetActive(true);
 
         yield return WaitForKeyBoth();
+        todoListCanvas.sortingOrder = 0;
         overlay.transform.GetChild(4).gameObject.SetActive(false);
-        overlay.transform.GetChild(5).gameObject.SetActive(true);
+        overlay.transform.GetChild(8).gameObject.SetActive(true);
         
         yield return WaitForKeyBoth();
-        overlay.transform.GetChild(5).gameObject.SetActive(false);
+        overlay.transform.GetChild(8).gameObject.SetActive(false);
+        singleOverlay.SetActive(false);
+        overlay.transform.GetChild(7).gameObject.SetActive(true);
+        continueParentTutAnimator.SetBool("moveDown", true);
+        doubleOverlay.SetActive(true);
+        
+
+
+        // yield return WaitForKeyBoth();
+        // overlay.transform.GetChild(7).gameObject.SetActive(false);
+        // overlay.transform.GetChild(10).gameObject.SetActive(true);
+        // doubleOverlay.SetActive(false);
+        // singleOverlay.SetActive(true);
+        
+        yield return WaitForKeyBoth();
+        overlay.transform.GetChild(7).gameObject.SetActive(false);
         overlayBG.SetActive(false);
         overlay.SetActive(false);
         P1SpeechIcons.SetActive(true);
@@ -86,7 +105,16 @@ public class LivingRoomText : MonoBehaviour
         StartCoroutine(TutorialSequence()); // Start tutorial progression
     }
 
-    
+    private void overlayUI()
+    {
+        leftTutAnimator = leftTutIcon.GetComponent<Animator>();
+        rightTutAnimator = rightTutIcon.GetComponent<Animator>();
+        continueTutAnimator = overlay.transform.GetChild(2).GetChild(0).gameObject.GetComponent<Animator>();
+        continueParentTutAnimator = overlay.transform.GetChild(2).gameObject.GetComponent<Animator>();
+        leftTutAnimator.Play("P1 Tut icon", 0, 0f);
+        rightTutAnimator.Play("P2 Tut icon", 0, 0f);
+        continueTutAnimator.Play("Instruction continue animation", 0, 0f);
+    }
 
     private void SetupControlsUI()
     {
@@ -100,9 +128,9 @@ public class LivingRoomText : MonoBehaviour
         pressEnterToContinueUI.transform.GetChild(1).gameObject.SetActive(!isKeyboard);
 
         if (isKeyboard){
-            overlay.transform.GetChild(0).GetChild(0).gameObject.SetActive(true);
+            overlay.transform.GetChild(2).GetChild(0).GetChild(0).gameObject.SetActive(true);
         } else if (!isKeyboard){
-            overlay.transform.GetChild(0).GetChild(1).gameObject.SetActive(true);
+            overlay.transform.GetChild(2).GetChild(0).GetChild(1).gameObject.SetActive(true);
         }
     }
 
