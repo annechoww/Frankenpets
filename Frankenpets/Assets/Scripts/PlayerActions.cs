@@ -150,17 +150,20 @@ public class PlayerActions : MonoBehaviour
         playerRespawn = FindObjectOfType<PlayerRespawn>();
 
         // Set the Controls Menu to keycaps or gamepad
+        if (!isTutorial)
+        {
         if (controllerAssignment.IsKeyboard())
-        {
-            controlsMenu = controlsMenuParent.transform.GetChild(0).gameObject;
-            controlsMenu.SetActive(true);
-            controlsMenuParent.transform.GetChild(1).gameObject.SetActive(false);
-        }
-        else
-        {
-            controlsMenuParent.transform.GetChild(0).gameObject.SetActive(false);
-            controlsMenu = controlsMenuParent.transform.GetChild(1).gameObject;
-            controlsMenu.SetActive(true);
+            {
+                controlsMenu = controlsMenuParent.transform.GetChild(0).gameObject;
+                controlsMenu.SetActive(true);
+                controlsMenuParent.transform.GetChild(1).gameObject.SetActive(false);
+            }
+            else
+            {
+                controlsMenuParent.transform.GetChild(0).gameObject.SetActive(false);
+                controlsMenu = controlsMenuParent.transform.GetChild(1).gameObject;
+                controlsMenu.SetActive(true);
+            }
         }
     }
 
@@ -193,7 +196,7 @@ public class PlayerActions : MonoBehaviour
 
         //if (isGrabbing && isDraggableObject) enforceAngleRestriction();
 
-        runControlsMenuLogic();
+        if (!isTutorial) runControlsMenuLogic();
 
         // This makes the grabText and climbText float :3
         grabText.transform.position += new Vector3(0, Mathf.Sin(Time.time * 2) * 0.0005f, 0);
