@@ -35,9 +35,6 @@ public class ClimbMovement: MonoBehaviour
 
     private void StateMachine()
     {
-        UnityEngine.Debug.Log($"StateMachine - wallFront: {wallFront}, wallLookAngle: {wallLookAngle}, maxWallLookAngle: {maxWallLookAngle}");
-
-
         UnityEngine.Debug.Log("checking state machine");
         if (wallFront && wallLookAngle < maxWallLookAngle){
             climbing = true;
@@ -70,7 +67,7 @@ public class ClimbMovement: MonoBehaviour
         } else{
             UnityEngine.Debug.Log("wall not front");
         }
-        //UnityEngine.Debug.Log("wall look angle: " + wallLookAngle);
+        UnityEngine.Debug.Log("wall look angle: " + wallLookAngle);
 
         
     }
