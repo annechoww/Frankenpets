@@ -132,7 +132,7 @@ public class TutorialText : MonoBehaviour
         GameObject pet = GameObject.Find("Pet");
         playerManager = pet.GetComponent<PlayerManager>();
         messageManager = GameObject.Find("Messages").GetComponent<MessageManager>();
-        controllerAssignment = ControllerAssignment.Instance;
+        
 
         // Store the original intensities of the room lights
         roomLightIntensities = new float[roomLights.Length];
@@ -152,6 +152,8 @@ public class TutorialText : MonoBehaviour
         vaseLights = vaseLightsParent.GetComponentsInChildren<Light>();
         boxesLights = boxesLightsParent.GetComponentsInChildren<Light>();
         rugLights = rugLightsParent.GetComponentsInChildren<Light>();
+
+        controllerAssignment = ControllerAssignment.Instance;
 
         // Set the instructions UI according to keycaps or gamepad
         isKeyboard = controllerAssignment.IsKeyboard();
