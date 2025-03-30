@@ -1,8 +1,11 @@
 using System.Collections;
 using System.Diagnostics;
+using Microsoft.Unity.VisualStudio.Editor;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using TMPro;
 
 /**
 This Class handles all player actions. The actions are mapped as follows:
@@ -104,8 +107,22 @@ public class PlayerActions : MonoBehaviour
     public GameObject pawText;
     public GameObject controlsMenuParent;
     private GameObject controlsMenu;
-
     private bool isViewingControlsMenu = false;
+
+    [Header("Movement Scheme UI")]
+    public Slider movementSchemeSlider;
+    public TextMeshProUGUI standardSchemeText;
+    public TextMeshProUGUI altSchemeText;
+    private Color activeColor = new Color(1f, 1f, 0.5f); // Bright yellow-orange
+    private Color inactiveColor = new Color(0.49f, 0.4f, 0.31f); // Dimmed version
+
+    [Header("Rumble Control UI")]
+    public Slider player1RumbleSlider;
+    public Slider player2RumbleSlider;
+    public UnityEngine.UI.Image player1RumbleBackground;
+    public UnityEngine.UI.Image player2RumbleBackground;
+    private Color rumbleEnabledColor = new Color(1f, 1f, 0.5f); 
+    private Color rumbleDisabledColor = new Color(0.49f, 0.4f, 0.31f);
 
     [Header("Tutorial Variables")]
     public bool isTutorial = false; // ENABLE THIS IN THE ATTIC
@@ -138,6 +155,7 @@ public class PlayerActions : MonoBehaviour
 
     private string currentSceneName;
 
+
     private void Start()
     {   
         getPlayerManager();
@@ -158,6 +176,13 @@ public class PlayerActions : MonoBehaviour
             controlsMenu = controlsMenuParent.transform.GetChild(1).gameObject;
             controlsMenu.SetActive(true);
         }
+
+        movementSchemeSlider.value = playerManager.altMovement ? 1 : 0;
+        UpdateMovementSchemeUI();
+
+        player1RumbleSlider.value = player1Input.rumbleEnabled ? 1 : 0;
+        player2RumbleSlider.value = player2Input.rumbleEnabled ? 1 : 0;
+        UpdateRumbleUI();
     }
 
     bool tutOverlayDone()
@@ -170,6 +195,8 @@ public class PlayerActions : MonoBehaviour
         // if ((currentSceneName == "AtticLevel") && !tutOverlayDone() ){
         //     return;
         // }
+
+        //print("P1 GlowJustPressed: " + player1Input.GetGlowJustPressed());
 
         runJumpLogic();
         runNoiseLogic();
@@ -1304,11 +1331,78 @@ public class PlayerActions : MonoBehaviour
 
     private void runControlsMenuLogic()
     {
+        float rumbleConfirmationLow = 0.2f;
+        float rumbleConfirmationHigh = 0.2f;
+        float rumbleConfirmationDuration = 0.25f;
+
         if (player1Input.GetControlsMenuJustPressed() || player2Input.GetControlsMenuJustPressed())
         {
             isViewingControlsMenu = !isViewingControlsMenu;
             controlsMenuParent.SetActive(isViewingControlsMenu);
-            UnityEngine.Debug.Log(isViewingControlsMenu ? "viewing" : "not viewing");
+
+            if (isViewingControlsMenu) {
+                movementSchemeSlider.value = playerManager.altMovement ? 1 : 0;
+                UpdateMovementSchemeUI();
+
+                UpdateRumbleUI();
+            }
         }
+
+        if (isViewingControlsMenu)
+        {
+            if (player1Input.GetGlowJustPressed() || player2Input.GetGlowJustPressed()) {
+                playerManager.altMovement = !playerManager.altMovement;
+
+                movementSchemeSlider.value = playerManager.altMovement ? 1 : 0;
+
+                UpdateMovementSchemeUI();
+
+                AudioManager.Instance.PlayUIMeowBarkSFX();
+            }
+
+            if (player1Input.GetSpecialActionJustPressed()) {
+                player1Input.rumbleEnabled = !player1Input.rumbleEnabled;
+                if (player1Input.rumbleEnabled) {
+                    player1Input.TriggerRumble(rumbleConfirmationLow, rumbleConfirmationHigh, rumbleConfirmationDuration);
+                }
+                player1RumbleSlider.value = player1Input.rumbleEnabled ? 1 : 0;
+                UpdateRumbleUI();
+                AudioManager.Instance.PlayUIMeowSFX(); // Feedback sound
+            }
+
+            if (player2Input.GetSpecialActionJustPressed()) {
+                player2Input.rumbleEnabled = !player2Input.rumbleEnabled;
+                if (player2Input.rumbleEnabled) {
+                    player2Input.TriggerRumble(rumbleConfirmationLow, rumbleConfirmationHigh, rumbleConfirmationDuration);
+                }
+                player2RumbleSlider.value = player2Input.rumbleEnabled ? 1 : 0;
+                UpdateRumbleUI();
+                AudioManager.Instance.PlayUIBarkSFX(); // Feedback sound
+            }
+            
+        }
+    }
+
+    private void UpdateMovementSchemeUI()
+    {
+        bool isAltMovement = playerManager.altMovement;
+        
+        // Update text colors if they're assigned
+        if (standardSchemeText != null && altSchemeText != null)
+        {
+            standardSchemeText.color = isAltMovement ? inactiveColor : activeColor;
+            altSchemeText.color = isAltMovement ? activeColor : inactiveColor;
+        }
+    }
+
+    private void UpdateRumbleUI()
+    {
+        // Update slider values to match current settings
+        player1RumbleSlider.value = player1Input.rumbleEnabled ? 1 : 0;
+        player2RumbleSlider.value = player2Input.rumbleEnabled ? 1 : 0;
+        
+        // Update background colors
+        player1RumbleBackground.color = player1Input.rumbleEnabled ? rumbleEnabledColor : rumbleDisabledColor;
+        player2RumbleBackground.color = player2Input.rumbleEnabled ? rumbleEnabledColor : rumbleDisabledColor;
     }
 }
