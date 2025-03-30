@@ -1144,7 +1144,7 @@ public class TutorialText : MonoBehaviour
         StartCoroutine(StopPulse(todoList));
 
         // Task --> strikethrough
-        taskTodo.transform.GetChild(1).gameObject.SetActive(false);
+        //taskTodo.transform.GetChild(1).gameObject.SetActive(false);
         taskTodo.transform.GetChild(2).gameObject.SetActive(true);
         
     }
