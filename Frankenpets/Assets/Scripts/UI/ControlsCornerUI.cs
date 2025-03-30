@@ -11,7 +11,7 @@ public class ControlsCornerUI : MonoBehaviour
     private GameObject P2ControlsDB;
 
     [Header("Script references")]
-    public ControllerAssignment controllerAssignment;
+    private ControllerAssignment controllerAssignment;
     public PlayerManager playerManager;
 
     [Header("Show the controls corner?")]
@@ -26,6 +26,7 @@ public class ControlsCornerUI : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        controllerAssignment = ControllerAssignment.Instance;
         if (controllerAssignment.IsKeyboard()) cornerControlsUI = cornerControlsUIParent.transform.GetChild(0).gameObject;
         else cornerControlsUI = cornerControlsUIParent.transform.GetChild(1).gameObject;
 

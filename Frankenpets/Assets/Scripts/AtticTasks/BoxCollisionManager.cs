@@ -18,7 +18,6 @@ public class BoxCollisionManager : MonoBehaviour
 
     private TutorialText tutorialText;
     private bool isFirstCollision = true;
-    private AudioSource audioSource;
 
 
     // awake singleton
@@ -34,7 +33,6 @@ public class BoxCollisionManager : MonoBehaviour
         }
 
         tutorialText = GameObject.Find("TutorialTextManager").GetComponent<TutorialText>();
-        audioSource = GameObject.Find("Background Music").GetComponent<AudioSource>(); 
         TaskManager.RegisterTask(task);
     }
     

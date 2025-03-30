@@ -4,6 +4,7 @@ using System.Collections;
 
 public class InputHandler : MonoBehaviour
 {
+    public bool rumbleEnabled = true; // Flag to enable/disable rumble
     // Store player input values
     private Vector2 moveInput;
     private Vector2 cameraMoveInput;
@@ -19,6 +20,7 @@ public class InputHandler : MonoBehaviour
     // one shot event flags
     private bool soundTailJustPressed;
     private bool glowPressedLastFrame;
+    private bool specialActionPressedLastFrame;
     private bool controlsMenuJustPressed;
 
     private bool jumpJustPressed;
@@ -66,8 +68,14 @@ public class InputHandler : MonoBehaviour
 
     public void OnSpecialAction(InputAction.CallbackContext context)
     {
-        specialActionPressed = context.ReadValueAsButton();
-        Debug.Log($"Special action pressed: {specialActionPressed}");
+        if (context.phase == InputActionPhase.Started)
+        {
+            specialActionPressed = true;
+        }
+        else if (context.phase == InputActionPhase.Canceled)
+        {
+            specialActionPressed = false;
+        }
     }
 
     public void OnReconnect(InputAction.CallbackContext context)
@@ -172,6 +180,8 @@ public class InputHandler : MonoBehaviour
     // Rumble
     public void TriggerRumble(float lowFrequency, float highFrequency, float duration)
     {
+        if (!rumbleEnabled) return;
+
         PlayerInput playerInput = GetComponent<PlayerInput>();
         if (playerInput == null)
             return;
@@ -231,6 +241,13 @@ public class InputHandler : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    public bool GetSpecialActionJustPressed()
+    {
+        bool justPressed = specialActionPressed && !specialActionPressedLastFrame;
+        specialActionPressedLastFrame = specialActionPressed;
+        return justPressed;
     }
 
     public bool GetControlsMenuJustPressed()
