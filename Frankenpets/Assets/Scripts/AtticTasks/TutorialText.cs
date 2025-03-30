@@ -129,7 +129,7 @@ public class TutorialText : MonoBehaviour
         enterVaseAreaTrigger = GameObject.Find("Task 2").GetComponent<Task2Tutorial>();
         enterRugAreaTrigger = GameObject.Find("Task 3").GetComponent<Task3Tutorial>();
 
-        GameObject pet = GameObject.Find("Pet");
+        GameObject pet = GameObject.Find("Pet New Model");
         playerManager = pet.GetComponent<PlayerManager>();
         messageManager = GameObject.Find("Messages").GetComponent<MessageManager>();
         

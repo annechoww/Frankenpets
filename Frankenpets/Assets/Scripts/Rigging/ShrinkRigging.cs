@@ -32,7 +32,7 @@ public class ShirnkRigging : MonoBehaviour
 
     void Awake()
     {
-        GameObject petObject = GameObject.Find("Pet");
+        GameObject petObject = GameObject.Find("Pet New Model");
         if (petObject != null)
         {
             playerManager = petObject.GetComponent<PlayerManager>();
