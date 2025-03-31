@@ -7,25 +7,12 @@ public class MirrorShatter : MonoBehaviour
     public GameObject brokenMirror;
     public float shatterForce = 1f;
     public AudioClip shatterSound;
-
-    [Header("Task Manager")]
-    public Image taskItem;
-    public Color completedColor;
-    public TMPro.TextMeshProUGUI taskLabel;
-    public bool isTask = false;
-
-    public Task task = new Task("Shatter Mirror", 1);
     private bool isShattered = false;
     
-    void Awake()
-    {
-        if (isTask) TaskManager.RegisterTask(task);
-    }
-
     void OnCollisionEnter(Collision collision)
     {
         // Check if the mirror hits the ground with enough force
-        if (isTask && !isShattered && collision.relativeVelocity.magnitude > shatterForce)
+        if (!isShattered && collision.relativeVelocity.magnitude > shatterForce)
         {
             ShatterMirror();
         }
@@ -46,17 +33,5 @@ public class MirrorShatter : MonoBehaviour
 
         // Destroy the intact mirror after shattering
         Destroy(gameObject);
-
-        if (isTask) FinishTask();
-    }
-
-    private void FinishTask(){
-        taskItem.color = completedColor;
-        taskLabel.fontStyle = TMPro.FontStyles.Strikethrough;
-        // tutorialText.advanceTutorialStage();
-        task.IsComplete = true;
-        
-        TaskManager.Instance.CompleteTask();
-        AudioManager.Instance.PlayTaskCompletionSound();
     }
 }

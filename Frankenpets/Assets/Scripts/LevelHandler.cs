@@ -8,16 +8,40 @@ using System.Diagnostics;
 public class LevelHandler : MonoBehaviour
 {
     public LevelLoader levelLoader;
-    private bool levelComplete = false;
     private List<Task> tasks;
+    private Collider basementTrigger;
 
-    // Update is called once per frame
+    private void Awake()
+    {
+        basementTrigger = GetComponent<Collider>();
+        if (basementTrigger != null)
+        {
+            basementTrigger.enabled = false;
+        }
+    }
+
     void Update()
     {
         tasks = TaskManager.GetAllTasksOfLevel(1);
         if (TaskManager.CheckTaskCompletion(tasks))
         {
-            if (levelLoader != null) 
+            UnlockNextLevel();
+        }
+    }
+
+    void UnlockNextLevel()
+    {
+        if (basementTrigger != null)
+        {
+            basementTrigger.enabled = true;
+        }
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("dog front") || other.CompareTag("cat front"))
+        {
+            if (levelLoader != null)
             {
                 levelLoader.LoadNextLevel();
             }
