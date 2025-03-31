@@ -176,6 +176,7 @@ public class PlayerActions : MonoBehaviour
             controlsMenu = controlsMenuParent.transform.GetChild(1).gameObject;
             controlsMenu.SetActive(true);
         }
+        UpdateControlsMenu();
 
         movementSchemeSlider.value = playerManager.altMovement ? 1 : 0;
         UpdateMovementSchemeUI();
@@ -1213,7 +1214,10 @@ public class PlayerActions : MonoBehaviour
         // Update the UI elements based on current controller assignment
         if (controllerAssignment != null)
         {
-            if (controllerAssignment.IsKeyboard()) return;
+            if (controllerAssignment.IsKeyboard()) {
+                print("Is keyboard");
+                return;
+            }
             
             Transform P1Controls = controlsMenu.transform.GetChild(0).gameObject.transform;
             Transform P2Controls = controlsMenu.transform.GetChild(1).gameObject.transform;
