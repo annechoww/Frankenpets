@@ -26125,9 +26125,17 @@ PrefabInstance:
       propertyPath: player2RumbleBackground
       value: 
       objectReference: {fileID: 1697513219}
+    - target: {fileID: 490241166539529850, guid: c9cb63c316c234e13891cde99e2852d1, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3144213041435619035, guid: c9cb63c316c234e13891cde99e2852d1, type: 3}
       propertyPath: m_Name
       value: Pet New Model
+      objectReference: {fileID: 0}
+    - target: {fileID: 3176520700859543026, guid: c9cb63c316c234e13891cde99e2852d1, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4610796828453212334, guid: c9cb63c316c234e13891cde99e2852d1, type: 3}
       propertyPath: m_LocalPosition.x
@@ -26167,6 +26175,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4610796828453212334, guid: c9cb63c316c234e13891cde99e2852d1, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5303770486695781813, guid: c9cb63c316c234e13891cde99e2852d1, type: 3}
+      propertyPath: m_ApplyRootMotion
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7710581987340819386, guid: c9cb63c316c234e13891cde99e2852d1, type: 3}
@@ -49680,8 +49692,8 @@ MonoBehaviour:
   P2SpeechIcons: {fileID: 8289308003835170639}
   bottomUIParentHighlight: {fileID: 108511702}
   todoListCanvas: {fileID: 1219434551}
-  player1Input: {fileID: 378464678}
-  player2Input: {fileID: 378464677}
+  player1Input: {fileID: 1473620268}
+  player2Input: {fileID: 1473620267}
 --- !u!224 &7749940369109101512
 RectTransform:
   m_ObjectHideFlags: 0
