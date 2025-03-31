@@ -19,9 +19,9 @@ public class DoorShatter : MonoBehaviour
     
 
     [Header("Task Manager")]
-    public Image taskItem;
-    public Color completedColor;
-    public TMPro.TextMeshProUGUI taskLabel;
+    public GameObject taskItem;
+    //public Color completedColor;
+    //public TMPro.TextMeshProUGUI taskLabel;
 
     public Task task = new Task("Shatter Door", 1);
     private bool isShattered = false;
@@ -135,8 +135,9 @@ public class DoorShatter : MonoBehaviour
         Debug.Log(taskComplete);
         if (taskComplete)
         {
-            taskItem.color = completedColor;
-            taskLabel.fontStyle = TMPro.FontStyles.Strikethrough;
+            //taskItem.color = completedColor;
+            //taskLabel.fontStyle = TMPro.FontStyles.Strikethrough;
+            taskItem.transform.GetChild(1).gameObject.SetActive(true);
 
             FindTasks.Instance.DestroyFindTaskMechanic(arrow, taskParticle, taskLight);
             TaskManager.Instance.CompleteTask();

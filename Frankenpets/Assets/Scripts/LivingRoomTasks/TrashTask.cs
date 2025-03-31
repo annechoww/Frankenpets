@@ -13,9 +13,9 @@ public class TrashTask : MonoBehaviour
     private AudioSource audioSource;
 
     [Header("Task Manager")]
-    public Image taskItem;
-    public Color completedColor;
-    public TMPro.TextMeshProUGUI taskLabel;
+    public GameObject taskItem;
+    //public Color completedColor;
+    //public TMPro.TextMeshProUGUI taskLabel;
     public Task task = new Task("Throw away shoes", 1);
 
     [Header("Locate Task Variables")]
@@ -77,8 +77,9 @@ public class TrashTask : MonoBehaviour
 
     private void FinishTask()
     {
-        taskItem.color = completedColor;
-        taskLabel.fontStyle = TMPro.FontStyles.Strikethrough;
+        //taskItem.color = completedColor;
+        //taskLabel.fontStyle = TMPro.FontStyles.Strikethrough;
+        taskItem.transform.GetChild(1).gameObject.SetActive(true);
         task.IsComplete = true;
         FindTasks.Instance.DestroyFindTaskMechanic(arrow, taskParticle, taskLight);
         TaskManager.Instance.CompleteTask();
