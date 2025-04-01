@@ -1,3 +1,4 @@
+using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -42,6 +43,12 @@ public class Startup : MonoBehaviour
 
     [Header("Ready UI")]
     public GameObject readyIndicator;
+
+    [Header("Intro Comic")]
+    public ComicManager comicManager;
+    public GameObject comicPanel;
+    public GameObject comicCanvas;
+    private bool comicPlayed = false;
 
     [Header("Scene Transition")]
     public GameObject startText;
@@ -111,19 +118,19 @@ public class Startup : MonoBehaviour
     void HandleSplashScreen()
     {
         bool startPressed = false;
-        
+    
         if (controllerAssignment.IsKeyboard() && Input.GetKey(KeyCode.Space))
         {
             startPressed = true;
         } 
-        else if (!controllerAssignment.IsKeyboard() && (player1Input.GetJumpJustPressed() || player2Input.GetJumpJustPressed()))
+        else if (!controllerAssignment.IsKeyboard() && (player1Input.GetJumpPressed() || player2Input.GetJumpPressed()))
         {
             startPressed = true;
         }
         
         if (startPressed)
         {
-            // Transition to character selection
+            // Transition directly to character selection
             splashPanel.SetActive(false);
             characterSelectionPanel.SetActive(true);
             splashDone = true;
@@ -131,6 +138,25 @@ public class Startup : MonoBehaviour
             
             // Initialize character selection UI
             InitializeCharacterSelectionUI();
+        }
+    }
+
+    // Add method for comic to call when finished
+    public void OnComicComplete()
+    {
+        // Don't hide the comic canvas - keep it visible with the black overlay
+        // Instead, we'll just hide the comic panel
+        comicPanel.SetActive(false);
+        
+        // Now load the next level
+        if (levelLoader != null)
+        {
+            // The black overlay will remain visible during level loading
+            levelLoader.LoadNextLevel();
+        }
+        else
+        {
+            Debug.LogError("Level Loader not assigned!");
         }
     }
 
@@ -453,20 +479,20 @@ public class Startup : MonoBehaviour
         controllerAssignment.FinalizeAssignment(!player1ChoseDog);
         
         // Short delay before loading next level (for visual feedback)
-        print("Loading next level...");
-        Invoke("LoadNextLevel", 1.0f);
+        TransitionToComic();
     }
-    
-    void LoadNextLevel()
+
+    void TransitionToComic()
     {
-        if (levelLoader != null)
-        {
-            levelLoader.LoadNextLevel();
-        }
-        else
-        {
-            Debug.LogError("Level Loader not assigned!");
-        }
+        // Hide character selection
+        characterSelectionPanel.SetActive(false);
+        
+        // Activate comic canvas and panel
+        comicCanvas.SetActive(true);
+        comicPanel.SetActive(true);
+        
+        // Start the comic sequence
+        comicManager.StartComic(player1Input, player2Input, this);
     }
 
     
