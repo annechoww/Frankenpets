@@ -1361,7 +1361,7 @@ public class PlayerActions : MonoBehaviour
 
                 UpdateMovementSchemeUI();
 
-                AudioManager.Instance.PlayUIMeowBarkSFX();
+                AudioManager.Instance.playUIClickSFX();
             }
 
             if (player1Input.GetSpecialActionJustPressed()) {
@@ -1371,7 +1371,8 @@ public class PlayerActions : MonoBehaviour
                 }
                 player1RumbleSlider.value = player1Input.rumbleEnabled ? 1 : 0;
                 UpdateRumbleUI();
-                AudioManager.Instance.PlayUIMeowSFX(); // Feedback sound
+                
+                AudioManager.Instance.playUIClickSFX();
             }
 
             if (player2Input.GetSpecialActionJustPressed()) {
@@ -1381,7 +1382,9 @@ public class PlayerActions : MonoBehaviour
                 }
                 player2RumbleSlider.value = player2Input.rumbleEnabled ? 1 : 0;
                 UpdateRumbleUI();
-                AudioManager.Instance.PlayUIBarkSFX(); // Feedback sound
+                
+                AudioManager.Instance.playUIClickSFX();
+                
             }
             
         }

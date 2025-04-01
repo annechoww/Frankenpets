@@ -43,6 +43,8 @@ public class AudioManager : MonoBehaviour
 
     public AudioClip UIMeowSFX;
 
+    public AudioClip UIClick;
+
     private void Awake()
     {
         // Singleton pattern
@@ -242,6 +244,29 @@ public class AudioManager : MonoBehaviour
         {
             UISource.PlayOneShot(audioClip);
         }
+    }
+
+    public void playUIClickSFX() {
+        playUISFX(UIClick);
+    }
+
+    public void PlayUIClickWithPitch(float pitchValue)
+    {
+        // Set the pitch parameter in the Audio Mixer first
+        audioMixer.SetFloat("UIPitch", pitchValue);
+        
+        // Small delay to ensure the pitch change is applied
+        StartCoroutine(PlaySoundAfterPitchChange(UIClick));
+    }
+
+    private IEnumerator PlaySoundAfterPitchChange(AudioClip clip)
+    {
+        yield return null; // Wait one frame
+        playUISFX(clip);
+        
+        // Reset to normal pitch after a delay
+        yield return new WaitForSeconds(0.5f);
+        audioMixer.SetFloat("UIPitch", 1.0f);
     }
 
     private IEnumerator playDoubleUISFX(AudioClip audioClip1, AudioClip audioClip2) {
