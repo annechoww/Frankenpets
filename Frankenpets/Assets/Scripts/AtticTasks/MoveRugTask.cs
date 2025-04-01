@@ -91,8 +91,6 @@ public class MoveRugTask : MonoBehaviour
     {
         Task shatterVaseTask = TaskManager.FindTaskByName("Shatter Vase");
         Task scatterBoxesTask = TaskManager.FindTaskByName("Scatter Boxes");
-        UnityEngine.Debug.Log("shattervasetask: " + shatterVaseTask);
-                UnityEngine.Debug.Log("shatterboxtask: " + scatterBoxesTask);
 
 
         return shatterVaseTask != null && scatterBoxesTask != null && shatterVaseTask.IsComplete && scatterBoxesTask.IsComplete;

@@ -531,7 +531,7 @@ public class PlayerActions : MonoBehaviour
             }
             
             // Use the grab point's position as the connection point
-            grabPoint = grabbableObject.transform.position;
+            grabPoint = currentGrabPoint.transform.position;
 
             isDraggableObject = currentGrabPoint.grabBehavior == GrabPoint.GrabBehavior.Draggable;
             
@@ -832,7 +832,7 @@ public class PlayerActions : MonoBehaviour
             
             // For portable objects, make them move to the dog's mouth
             grabJoint.autoConfigureConnectedAnchor = false;
-            grabJoint.connectedAnchor = targetRigidbody.transform.InverseTransformPoint(targetRigidbody.transform.position);
+            grabJoint.connectedAnchor = targetRigidbody.transform.InverseTransformPoint(grabPoint);
 
             // grabJoint.xMotion = ConfigurableJointMotion.Limited;
             // grabJoint.yMotion = ConfigurableJointMotion.Limited;
