@@ -15,6 +15,8 @@ public class Fan : MonoBehaviour
     public PlayerManager playerManager; 
     private ConfigurableJoint joint;
 
+    public AudioClip fanFallingClip;
+
     private Rigidbody dogRb;
     private Rigidbody catRb;
 
@@ -65,7 +67,8 @@ public class Fan : MonoBehaviour
 
             rope.GetComponent<MeshCollider>().enabled = true;
             Destroy(GetComponent<BoxCollider>());
-            Destroy(this); // Remove this script from fan gameobject
+
+            StartCoroutine(PlayFanFallingNoise());
         }
     }
 
@@ -102,5 +105,15 @@ public class Fan : MonoBehaviour
         catRb.constraints = RigidbodyConstraints.None;
         // dogRb.angularVelocity = Vector3.zero;
         // catRb.angularVelocity = Vector3.zero;
+    }
+
+    private IEnumerator PlayFanFallingNoise()
+    {
+        yield return new WaitForSeconds(0.2f);
+        AudioManager.Instance.PlaySFX(fanFallingClip);
+
+        yield return new WaitForSeconds(3.0f);
+
+        Destroy(this); // Remove this script from fan gameobject
     }
 }
