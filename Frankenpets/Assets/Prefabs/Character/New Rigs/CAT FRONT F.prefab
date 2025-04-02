@@ -390,11 +390,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88d99215b3bbd42e29c03b0cbc8012fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mouthTarget: {fileID: 7808955567518108364}
-  moveDistance: 0.05
-  horizontalOffset: 0
-  verticalOffset: 0
   moveSpeed: 1
+  horizontalOffset: 0
+  verticalOffset: -0.2
 --- !u!1 &2687582931488510514
 GameObject:
   m_ObjectHideFlags: 0
@@ -908,12 +906,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: deea383462c894fffb4fcea30314b09b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pawTarget: {fileID: 5994434114898134334}
-  verticalMove: 0.1
-  horizontalMove: 0.05
-  horizontalOffset: 0.05
-  verticalOffset: 0.25
-  moveSpeed: 0.5
+  verticalMove: 0.5
+  horizontalMove: 0.5
+  moveSpeed: 1
   pawRig: {fileID: 7343471976116485887}
 --- !u!1001 &4634277344280564178
 PrefabInstance:
@@ -1345,9 +1340,9 @@ MonoBehaviour:
   catTorso: {fileID: 2379815206731258277}
   dogParentBone: {fileID: 0}
   rotateSpeed: 2
-  catRotation: 0
-  dogRotation: 30
-  dogVerticalOffset: -0.01
+  catRotation: -80
+  dogRotation: 10
+  dogVerticalOffset: -0.012
   catWalkingRig: {fileID: 4547468528865451582}
   dogWalkingRig: {fileID: 0}
   animator: {fileID: 0}

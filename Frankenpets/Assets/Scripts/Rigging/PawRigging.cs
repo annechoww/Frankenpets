@@ -4,63 +4,49 @@ using System.Collections;
 
 public class PawRigging : MonoBehaviour
 {
-    public Transform pawTarget;
+
     public float verticalMove; 
     public float horizontalMove; 
-    public float horizontalOffset;
-    public float verticalOffset;
     public float moveSpeed;
     public Rig pawRig;
 
-    Vector3 oldPosition, newPosition;
-    private Vector3 pawTargetPosition;
+    private Vector3 oldPosition, newPosition;
 
     void Start()
     {
-        oldPosition=newPosition=transform.position;
+        oldPosition=newPosition=transform.localPosition;
         pawRig.weight = 0f;
-    }
-
-    void Update()
-    {
-        //pawTargetPosition = pawTarget.position + Vector3.down * verticalOffset + transform.right * horizontalOffset;
-        pawTargetPosition = pawTarget.position;
     }
 
     public void liftPaw(){
         pawRig.weight = 1f;
-        StartCoroutine(LiftUpPaw(pawTargetPosition));
+        StartCoroutine(LiftUpPaw());
     }
 
-    private IEnumerator LiftUpPaw(Vector3 targetPosition)
+    private IEnumerator LiftUpPaw()
     {
-        oldPosition = targetPosition;
-        newPosition = targetPosition + transform.right * horizontalMove + Vector3.up * verticalMove;
-
-        // Ray ray =  new Ray(newPosition, Vector3.down);
-        // Debug.DrawRay(ray.origin, ray.direction * 2f, Color.red);
-
         float elapsedTime = 0f;
         float duration = 0.2f;
 
+        newPosition = transform.localPosition + Vector3.right * horizontalMove + Vector3.up * verticalMove;
+
         while (elapsedTime < duration)
         {
-            transform.position = Vector3.Lerp(oldPosition, newPosition, elapsedTime / duration);
+            transform.localPosition = Vector3.Lerp(transform.localPosition, newPosition, Time.deltaTime * moveSpeed);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-        transform.position = newPosition;
-        yield return new WaitForSeconds(0.1f);
         
+        yield return new WaitForSeconds(0.1f); // Wait 1 second before closing
+
         elapsedTime = 0f;
         while (elapsedTime < duration)
         {
-            transform.position = Vector3.Lerp(newPosition, oldPosition, elapsedTime / duration);
+            transform.localPosition = Vector3.Lerp(transform.localPosition, oldPosition, Time.deltaTime * moveSpeed);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-
-        transform.position = oldPosition;
+        transform.localPosition = oldPosition;
         pawRig.weight = 0f;
         }
 

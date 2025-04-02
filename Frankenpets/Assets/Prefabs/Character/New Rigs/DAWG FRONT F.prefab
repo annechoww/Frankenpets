@@ -278,12 +278,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: deea383462c894fffb4fcea30314b09b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pawTarget: {fileID: 4863177069218943865}
-  verticalMove: 0.1
-  horizontalMove: 0.05
-  horizontalOffset: 0.05
-  verticalOffset: 0.25
-  moveSpeed: 0.5
+  verticalMove: 0.5
+  horizontalMove: 0.4
+  moveSpeed: 1
   pawRig: {fileID: 5256070355203791863}
 --- !u!1 &2830261951967408995
 GameObject:
@@ -372,7 +369,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4023963199257123338}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.47657076, y: 0.52974826, z: 0.46923772, w: -0.5215967}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -17.107374, y: 0.19597569, z: -24.036985}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 0
@@ -391,11 +388,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88d99215b3bbd42e29c03b0cbc8012fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mouthTarget: {fileID: 6698649610286971843}
-  moveDistance: 0.05
+  moveSpeed: 3
   horizontalOffset: 0
-  verticalOffset: 0
-  moveSpeed: 1
+  verticalOffset: -0.1
 --- !u!1 &4371576693443137546
 GameObject:
   m_ObjectHideFlags: 0
