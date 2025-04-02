@@ -14,6 +14,7 @@ public class Fan : MonoBehaviour
     public GameObject pet;
     public PlayerManager playerManager; 
     private ConfigurableJoint joint;
+    private bool fanHasFallen = false;
 
     public AudioClip fanFallingClip;
 
@@ -38,7 +39,7 @@ public class Fan : MonoBehaviour
         // Check if dog grabbed bone 
         joint = dogFront.GetComponent<ConfigurableJoint>();
 
-        if (joint != null)
+        if (joint != null && !fanHasFallen)
         {
             if (joint.connectedBody == boneRigidbody)
             {
@@ -59,6 +60,8 @@ public class Fan : MonoBehaviour
         // Condition to drop the ceiling fan 
         if (stopwatch.Elapsed.TotalSeconds >= 3.0f)
         {
+            fanHasFallen = true;
+
             stopCeilingFan();
 
             gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
