@@ -5,6 +5,8 @@ using System.Collections;
 public class InputHandler : MonoBehaviour
 {
     public bool rumbleEnabled = true; // Flag to enable/disable rumble
+    private bool isRumbling = false; // Flag to check if rumble is active
+    private Gamepad activeGamepad = null; // Reference to the active gamepad
     // Store player input values
     private Vector2 moveInput;
     private Vector2 cameraMoveInput;
@@ -203,6 +205,64 @@ public class InputHandler : MonoBehaviour
         if (gamepad != null)
             gamepad.SetMotorSpeeds(0f, 0f);
 
+    }
+
+    public void StartContinuousRumble(float lowFrequency, float highFrequency) {
+        if (!rumbleEnabled) return;
+
+        // Stop any existing rumble first
+        StopRumble();
+        
+        PlayerInput playerInput = GetComponent<PlayerInput>();
+        if (playerInput == null)
+            return;
+            
+        foreach (var device in playerInput.devices)
+        {
+            if (device is Gamepad gamepad)
+            {
+                // Store the gamepad reference
+                activeGamepad = gamepad;
+                
+                // Set rumble
+                gamepad.SetMotorSpeeds(lowFrequency, highFrequency);
+                isRumbling = true;
+                
+                // Debug log
+                Debug.Log($"Started continuous rumble at {lowFrequency}/{highFrequency}");
+                break; // Only need to rumble one gamepad per player
+            }
+        }
+    }
+
+    public void StopRumble()
+    {
+        if (isRumbling && activeGamepad != null)
+        {
+            activeGamepad.SetMotorSpeeds(0f, 0f);
+            isRumbling = false;
+            Debug.Log("Stopped rumble");
+        }
+    }
+
+    private void OnDisable()
+    {
+        StopRumble();
+    }
+
+    private void OnDestroy()
+    {
+        StopRumble();
+    }
+
+    // If player toggles rumble off, stop any active rumble
+    public void SetRumbleEnabled(bool enabled)
+    {
+        rumbleEnabled = enabled;
+        if (!rumbleEnabled)
+        {
+            StopRumble();
+        }
     }
 
     public bool GetRespawnPressed()

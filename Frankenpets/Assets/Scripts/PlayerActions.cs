@@ -199,19 +199,24 @@ public class PlayerActions : MonoBehaviour
 
         //print("P1 GlowJustPressed: " + player1Input.GetGlowJustPressed());
 
-        runJumpLogic();
-        runNoiseLogic();
-        runTailLogic();
+        if (!isViewingControlsMenu) {
+            runGrabLogic();
+            runJumpLogic();
+            runNoiseLogic();
+            runTailLogic(); 
 
-        runGrabLogic();
-
-        if (!isTutorial)
-        {
-            runClimbLogic();
-            runPawLogic();
-            // runHindLegsLogic();
-            runDashLogic();
+            if (!isTutorial)
+            {
+                runClimbLogic();
+                runPawLogic();
+                runDashLogic();
+            }
         }
+        
+
+        
+
+        
 
         
 

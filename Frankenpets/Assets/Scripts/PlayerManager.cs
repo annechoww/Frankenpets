@@ -434,13 +434,11 @@ public class PlayerManager : MonoBehaviour
         // Start or reset split timer based on pull direction
         if (splitCondition)
         {
-            if (altMovement)
-            {
-
-            }
             if (!splitStopwatch.IsRunning && canSplit)
             {
                 splitStopwatch.Start();
+                player1Input.StartContinuousRumble(0.2f, 0.2f);
+                player2Input.StartContinuousRumble(0.2f, 0.2f);
 
                 AudioManager.Instance.PlayStretchSFX();
             }
@@ -449,6 +447,8 @@ public class PlayerManager : MonoBehaviour
         {
             if (splitStopwatch.IsRunning)
             {
+                player1Input.StopRumble();
+                player2Input.StopRumble();
                 AudioManager.Instance.StopStretchSFX();
                 splitStopwatch.Reset();
             }
@@ -643,6 +643,10 @@ public class PlayerManager : MonoBehaviour
         if (splitStopwatch.IsRunning && splitStopwatch.Elapsed.TotalSeconds > splitTime && fixedJoint != null && canSplit)
         {
             splitStopwatch.Reset();
+
+            player1Input.StopRumble();
+            player2Input.StopRumble();
+
             DestroyJoint();
         
             AudioManager.Instance.PlaySplitSFX();
