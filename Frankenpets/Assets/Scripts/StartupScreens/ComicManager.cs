@@ -64,8 +64,8 @@ public class ComicManager : MonoBehaviour
             panel.SetActive(false);
         }
         
-        // Hide skip prompt initially
-        skipPromptContainer.SetActive(false);
+        // Show skip prompt
+        skipPromptContainer.SetActive(true);
         skipProgressIndicator.fillAmount = 0f;
         
         // Start playing music if available
@@ -320,11 +320,9 @@ public class ComicManager : MonoBehaviour
             return;
             
         // Check for skip input (B button on both controllers)
-        bool player1SkipPressed = player1Input != null && player1Input.GetSpecialActionPressed();
-        bool player2SkipPressed = player2Input != null && player2Input.GetSpecialActionPressed();
+        bool player1SkipPressed = player1Input != null && player1Input.GetGlowPressed();
+        bool player2SkipPressed = player2Input != null && player2Input.GetGlowPressed();
         
-        // Show skip prompt if either player is holding B
-        skipPromptContainer.SetActive(player1SkipPressed || player2SkipPressed);
         
         // Only increment skip progress if both players are holding B
         if (player1SkipPressed && player2SkipPressed)

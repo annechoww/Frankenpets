@@ -1,6 +1,7 @@
 using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 
 public class Startup : MonoBehaviour
@@ -67,7 +68,7 @@ public class Startup : MonoBehaviour
     // Selection input cooldown (prevent rapid toggling)
     private float player1InputCooldown = 0f;
     private float player2InputCooldown = 0f;
-    private const float INPUT_COOLDOWN_TIME = 0f;
+    private const float INPUT_COOLDOWN_TIME = 0.5f;
 
     // Selection finalization state
     private bool selectionFinalized = false;
@@ -138,6 +139,7 @@ public class Startup : MonoBehaviour
             
             // Initialize character selection UI
             InitializeCharacterSelectionUI();
+
         }
     }
 
@@ -178,6 +180,9 @@ public class Startup : MonoBehaviour
         player1LockedIndicator.SetActive(false);
         player2LockedIndicator.SetActive(false);
         readyIndicator.SetActive(false);
+
+        player1Input.gameObject.SendMessage("ResetJumpState", null, SendMessageOptions.DontRequireReceiver);
+        player2Input.gameObject.SendMessage("ResetJumpState", null, SendMessageOptions.DontRequireReceiver);
         
         // Set initial highlights
         UpdateCharacterSelectionUI();

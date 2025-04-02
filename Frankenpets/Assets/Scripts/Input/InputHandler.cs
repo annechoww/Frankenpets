@@ -22,8 +22,7 @@ public class InputHandler : MonoBehaviour
     private bool glowPressedLastFrame;
     private bool specialActionPressedLastFrame;
     private bool controlsMenuJustPressed;
-
-    private bool jumpJustPressed;
+    private bool jumpPressedLastFrame;
 
     // Event methods called by PlayerInput component
     public void OnMove(InputAction.CallbackContext context)
@@ -42,8 +41,6 @@ public class InputHandler : MonoBehaviour
     {
         if (context.phase == InputActionPhase.Started)
         {
-            // Button just pressed
-            jumpJustPressed = true;
             jumpPressed = true;
         }
         else if (context.phase == InputActionPhase.Canceled)
@@ -235,12 +232,9 @@ public class InputHandler : MonoBehaviour
 
     public bool GetJumpJustPressed()
     {
-        if (jumpJustPressed)
-        {
-            jumpJustPressed = false; // Reset flag after reading
-            return true;
-        }
-        return false;
+        bool justPreseed = jumpPressed && !jumpPressedLastFrame;
+        jumpPressedLastFrame = jumpPressed;
+        return justPreseed;
     }
 
     public bool GetSpecialActionJustPressed()
@@ -258,5 +252,11 @@ public class InputHandler : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    // Reset methods
+    public void ResetJumpState()
+    {
+        jumpPressedLastFrame = jumpPressed;
     }
 }
