@@ -20,8 +20,8 @@ public class MouthRigging : MonoBehaviour
     void Update()
     {   
         // newPosition = transform.localPosition + Vector3.down * verticalOffset;
-        Ray ray =  new Ray(transform.position, Vector3.down);
-        Debug.DrawRay(ray.origin, ray.direction * 2f, Color.red);
+        // Ray ray =  new Ray(transform.position, Vector3.down);
+        // Debug.DrawRay(ray.origin, ray.direction * 2f, Color.red);
         
     }
 
