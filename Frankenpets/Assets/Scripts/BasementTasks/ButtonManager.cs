@@ -7,7 +7,7 @@ public class ButtonManager : MonoBehaviour
     private Vector3 originalPosition;
     private bool isPressed = false;
     private bool isColliding = false;
-    private bool hasExploded = false; // Add this flag
+    private bool hasExploded = false;
 
     // References to the intact tubes
     public GameObject leftTube;
@@ -19,6 +19,7 @@ public class ButtonManager : MonoBehaviour
     
     // Explosion force
     public float explosionForce = 300f;
+    public AudioClip shatterSound;
 
     private void Start()
     {
@@ -70,7 +71,12 @@ public class ButtonManager : MonoBehaviour
             
             GameObject brokenLeft = Instantiate(brokenLeftTubePrefab, leftPos, Quaternion.identity);
             GameObject brokenRight = Instantiate(brokenRightTubePrefab, rightPos, Quaternion.identity);
-            
+
+            if (shatterSound != null)
+            {
+                AudioManager.Instance.PlaySFX(shatterSound);
+            }
+
             // Add explosion force to each piece
             foreach (Rigidbody rb in brokenLeft.GetComponentsInChildren<Rigidbody>())
             {
