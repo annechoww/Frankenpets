@@ -2,24 +2,23 @@ using UnityEngine;
 
 public class ButtonManager : MonoBehaviour
 {
+    [Header("Button References")]
     public float pressDistance = 0.1f;
     public float pressSpeed = 8.0f;
     private Vector3 originalPosition;
+    
+    [Header("Tube References")]
+    public GameObject leftTube;
+    public GameObject rightTube;
+    public GameObject brokenLeftTubePrefab;
+    public GameObject brokenRightTubePrefab;
+    public float explosionForce = 300f;
+    public AudioClip shatterSound;
+
+    // Flags
     private bool isPressed = false;
     private bool isColliding = false;
     private bool hasExploded = false;
-
-    // References to the intact tubes
-    public GameObject leftTube;
-    public GameObject rightTube;
-    
-    // References to the broken tube prefabs
-    public GameObject brokenLeftTubePrefab;
-    public GameObject brokenRightTubePrefab;
-    
-    // Explosion force
-    public float explosionForce = 300f;
-    public AudioClip shatterSound;
 
     private void Start()
     {
@@ -54,7 +53,6 @@ public class ButtonManager : MonoBehaviour
         }
         else
         {
-            // Move button up
             transform.localPosition = Vector3.Lerp(transform.localPosition, originalPosition, pressSpeed * Time.deltaTime);
         }
     }
