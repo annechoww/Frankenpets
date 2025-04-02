@@ -20,7 +20,12 @@ public class TaskManager : MonoBehaviour
     public static TaskManager Instance { get; private set; }
     public event Action OnTaskCompleted;
 
+    [Header("Task Banner variables")]
     [SerializeField] private GameObject taskCompletedBanner;
+    private Vector3 targetPosition = new Vector3(0, 423, 0);
+    private Vector3 originalPosition = new Vector3(0, 723, 0);
+    private RectTransform bannerChildRectTransform; 
+    private float moveSpeed = 5.0f;
 
     private void Awake()
     {
@@ -28,6 +33,8 @@ public class TaskManager : MonoBehaviour
             Instance = this;
         else
             Destroy(gameObject);
+
+        bannerChildRectTransform = taskCompletedBanner.transform.GetChild(0).gameObject.GetComponent<RectTransform>();
     }
 
     private void Start()
@@ -75,9 +82,6 @@ public class TaskManager : MonoBehaviour
 
     }
 
-
-
-
     public void CompleteTask()
     {
         OnTaskCompleted?.Invoke();
@@ -86,11 +90,24 @@ public class TaskManager : MonoBehaviour
 
     private IEnumerator ShowBanner()
     {
-        taskCompletedBanner.SetActive(true);
-        
         AudioManager.Instance.PlayTaskCompletionSound();
 
-        yield return new WaitForSeconds(3.0f); // Display banner for 3 seconds
+        taskCompletedBanner.SetActive(true);
+        StartCoroutine(MoveToPosition(targetPosition));
+
+        yield return new WaitForSeconds(4.0f); // Display banner for 3 seconds
+
+        StartCoroutine(MoveToPosition(originalPosition));
+        yield return new WaitForSeconds(3.0f);
         taskCompletedBanner.SetActive(false);
+    }
+
+    private IEnumerator MoveToPosition(Vector2 target)
+    {
+        while (Vector2.Distance(bannerChildRectTransform.anchoredPosition, target) > 1f)
+        {
+            bannerChildRectTransform.anchoredPosition = Vector2.Lerp(bannerChildRectTransform.anchoredPosition, target, moveSpeed * Time.deltaTime);
+            yield return null;
+        }
     }
 }
