@@ -4,72 +4,92 @@ using System.Collections;
 
 public class TailRigging : MonoBehaviour
 {
-    // target that the tail rig target will rig towards
-    public Transform tailTarget;
     public float speed;
     public float range;
     public float naturalSpeed;
     public float naturalRange;
-    public float horizontalOffset;
-    public float verticalOffset;
 
-    private Vector3 neutralPosition;
+    private Vector3 oldPosition;
     private bool isMoving = false;
     private bool isMovingNaturally = false;
 
-    void Update(){
-        neutralPosition = tailTarget.position + transform.up * verticalOffset + transform.right * horizontalOffset;
+    void Start(){
+        oldPosition = transform.localPosition;
     }
-    
+
     void OnEnable()
     {
         isMoving = false;
         isMovingNaturally = false;
     }
 
+      void Update()
+    {   
+        // newPosition = transform.localPosition + Vector3.down * verticalOffset;
+        Ray ray =  new Ray(transform.position, Vector3.down);
+        Debug.DrawRay(ray.origin, ray.direction * 2f, Color.red);
+        
+    }
+
     public void naturalTailMovement()
     {
-        // Debug.Log("natural movement");
         if (!isMoving && !isMovingNaturally){
-            //transform.position += new Vector3(0, 0, Mathf.Sin(Time.time*3) * 0.001f);
             isMovingNaturally = true;
             isMoving = false;
-            StartCoroutine(SwingTail(naturalSpeed, naturalRange));
+            StopCoroutine(swingTailCoroutine()); 
+            StartCoroutine(naturalTailCoroutine());
+            
         }
+    }
+
+    private IEnumerator naturalTailCoroutine()
+    {
+        float duration = naturalSpeed;
+        float elapsedTime = 0f;
+
+        while (elapsedTime < duration)
+        {
+            float phase = (elapsedTime / duration) * Mathf.PI * 2;
+            float targetZ = Mathf.Sin(phase) * naturalRange;
+
+            Vector3 targetPosition = oldPosition + Vector3.forward * targetZ;
+            transform.localPosition = Vector3.Lerp(transform.localPosition, targetPosition, Time.deltaTime*naturalSpeed);
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        isMoving= false;
+        isMovingNaturally = false;
     }
 
     public void useTail()
     {
-        Debug.Log("use tail");
         isMoving = true;
         isMovingNaturally = false;
-        StartCoroutine(SwingTail(speed, range));
+        transform.localPosition = oldPosition;
+        StopCoroutine(naturalTailCoroutine());
+        StartCoroutine(swingTailCoroutine());
+        transform.localPosition = oldPosition;
     }
 
-    private IEnumerator SwingTail(float tailSpeed, float tailRange)
+    private IEnumerator swingTailCoroutine()
     {
-        float duration = tailSpeed;
+        float duration = speed;
         float elapsedTime = 0f;
 
         while (elapsedTime < duration)
         {
             float phase = (elapsedTime / duration) * Mathf.PI * 2; // Maps time to sin wave
-            float targetZ = Mathf.Sin(phase) * tailRange; // Move left → right → neutral
+            float targetZ = Mathf.Sin(phase) * range; // Move left → right → neutral
 
-            Vector3 targetPosition = neutralPosition + transform.forward * targetZ;
-            transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime*tailSpeed);
-            
-            //Ray ray =  new Ray(targetPosition, Vector3.down);
-            //Debug.DrawRay(ray.origin, ray.direction * 2f, Color.red, duration=2.0f);
-            
+            Vector3 targetPosition = oldPosition + Vector3.forward * targetZ;
+            transform.localPosition = Vector3.Lerp(transform.localPosition, targetPosition, Time.deltaTime*speed);
+
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-
-        // Ensure the tail returns exactly to neutral
-        // transform.position = neutralPosition;
-        isMovingNaturally = false;
         isMoving= false;
+        isMovingNaturally = false;
     }
 
 
