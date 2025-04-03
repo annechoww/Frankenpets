@@ -10,7 +10,10 @@ using System.Diagnostics;
     - "Scatter Boxes" [0]
     - "Shatter Vase" [0]
     - "Move Rug" [0]
-
+    - "Break Glass Doors" [1]
+    - "Throw Away Shoes" [1]
+    - "Find Golden Bone" [1]
+    - "Free the Pets" [2]
 */
 
 public class TaskManager : MonoBehaviour
@@ -25,6 +28,7 @@ public class TaskManager : MonoBehaviour
     private Vector3 targetPosition = new Vector3(0, 423, 0);
     private Vector3 originalPosition = new Vector3(0, 723, 0);
     private RectTransform bannerChildRectTransform; 
+    private RectTransform bannerTextChildRectTransform; 
     private float moveSpeed = 5.0f;
 
     private void Awake()
@@ -35,11 +39,15 @@ public class TaskManager : MonoBehaviour
             Destroy(gameObject);
 
         bannerChildRectTransform = taskCompletedBanner.transform.GetChild(0).gameObject.GetComponent<RectTransform>();
+        bannerTextChildRectTransform = taskCompletedBanner.transform.GetChild(1).gameObject.GetComponent<RectTransform>();
+
     }
 
     private void Start()
     {
         taskCompletedBanner.SetActive(false);
+        bannerChildRectTransform.anchoredPosition = originalPosition;
+        bannerTextChildRectTransform.anchoredPosition = originalPosition + new Vector3(0, 723 + 197, 0);
     }
 
     public static void RegisterTask(Task task)
@@ -107,6 +115,8 @@ public class TaskManager : MonoBehaviour
         while (Vector2.Distance(bannerChildRectTransform.anchoredPosition, target) > 1f)
         {
             bannerChildRectTransform.anchoredPosition = Vector2.Lerp(bannerChildRectTransform.anchoredPosition, target, moveSpeed * Time.deltaTime);
+            bannerTextChildRectTransform.anchoredPosition = Vector2.Lerp(bannerTextChildRectTransform.anchoredPosition, target + new Vector2(0, 197), moveSpeed * Time.deltaTime);
+
             yield return null;
         }
     }

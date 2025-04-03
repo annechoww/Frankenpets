@@ -28,6 +28,10 @@ public class ButtonManager : MonoBehaviour
     private bool isColliding = false;
     private bool hasExploded = false;
 
+    [Header("Task Manager")]
+    public GameObject taskItem;
+    public Task task = new Task("Free the pets", 2);
+
     [Header("Locate Task Variables")]
     public GameObject taskLight;
     public GameObject taskParticle;
@@ -37,6 +41,7 @@ public class ButtonManager : MonoBehaviour
     private void Start()
     {
         originalPosition = transform.localPosition;
+        TaskManager.RegisterTask(task);
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -108,7 +113,8 @@ public class ButtonManager : MonoBehaviour
 
             // Task complete
             FindTasks.Instance.DestroyFindTaskMechanic(arrow, taskParticle, taskLight);
-            // Check mark
+            task.IsComplete = true;
+            TaskManager.Instance.CompleteTask();
         }
     }
 }
