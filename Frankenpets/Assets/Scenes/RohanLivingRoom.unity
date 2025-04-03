@@ -9861,6 +9861,17 @@ MonoBehaviour:
   bounceSpeed: 2.5
   bounceDistance: 0.0015
   rotationSpeed: 0.002
+--- !u!114 &471490814 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7715943059085506255, guid: cea46dbb002fd604d9aa4682ba0fa624, type: 3}
+  m_PrefabInstance: {fileID: 997687066}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &487380818 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7796619641989118348, guid: 4f87904439d194584938fefc68e98f8d, type: 3}
@@ -18283,6 +18294,10 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6211397604188874295, guid: cea46dbb002fd604d9aa4682ba0fa624, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6539206647276792898, guid: cea46dbb002fd604d9aa4682ba0fa624, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -18412,6 +18427,71 @@ MonoBehaviour:
 --- !u!1 &997687070 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2837968233609565672, guid: cea46dbb002fd604d9aa4682ba0fa624, type: 3}
+  m_PrefabInstance: {fileID: 997687066}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &997687071 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5185836247056348326, guid: cea46dbb002fd604d9aa4682ba0fa624, type: 3}
+  m_PrefabInstance: {fileID: 997687066}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &997687072 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3815609679956711650, guid: cea46dbb002fd604d9aa4682ba0fa624, type: 3}
+  m_PrefabInstance: {fileID: 997687066}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &997687073 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3918386048256558460, guid: cea46dbb002fd604d9aa4682ba0fa624, type: 3}
+  m_PrefabInstance: {fileID: 997687066}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &997687074 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1798013882118162573, guid: cea46dbb002fd604d9aa4682ba0fa624, type: 3}
+  m_PrefabInstance: {fileID: 997687066}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &997687075 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6211397604188874295, guid: cea46dbb002fd604d9aa4682ba0fa624, type: 3}
+  m_PrefabInstance: {fileID: 997687066}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &997687076 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3160366706743898149, guid: cea46dbb002fd604d9aa4682ba0fa624, type: 3}
+  m_PrefabInstance: {fileID: 997687066}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &997687077 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8581201895615205987, guid: cea46dbb002fd604d9aa4682ba0fa624, type: 3}
   m_PrefabInstance: {fileID: 997687066}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &999640107 stripped
@@ -26154,9 +26234,29 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 997687067}
     - target: {fileID: 93875958167169779, guid: c9cb63c316c234e13891cde99e2852d1, type: 3}
+      propertyPath: radialFillImage
+      value: 
+      objectReference: {fileID: 997687076}
+    - target: {fileID: 93875958167169779, guid: c9cb63c316c234e13891cde99e2852d1, type: 3}
+      propertyPath: confirmPromptText
+      value: 
+      objectReference: {fileID: 997687074}
+    - target: {fileID: 93875958167169779, guid: c9cb63c316c234e13891cde99e2852d1, type: 3}
+      propertyPath: confirmationPopup
+      value: 
+      objectReference: {fileID: 997687075}
+    - target: {fileID: 93875958167169779, guid: c9cb63c316c234e13891cde99e2852d1, type: 3}
       propertyPath: controlsMenuParent
       value: 
       objectReference: {fileID: 997687070}
+    - target: {fileID: 93875958167169779, guid: c9cb63c316c234e13891cde99e2852d1, type: 3}
+      propertyPath: player1ConfirmText
+      value: 
+      objectReference: {fileID: 997687073}
+    - target: {fileID: 93875958167169779, guid: c9cb63c316c234e13891cde99e2852d1, type: 3}
+      propertyPath: player2ConfirmText
+      value: 
+      objectReference: {fileID: 471490814}
     - target: {fileID: 93875958167169779, guid: c9cb63c316c234e13891cde99e2852d1, type: 3}
       propertyPath: standardSchemeText
       value: 
@@ -26173,6 +26273,14 @@ PrefabInstance:
       propertyPath: movementSchemeSlider
       value: 
       objectReference: {fileID: 997687069}
+    - target: {fileID: 93875958167169779, guid: c9cb63c316c234e13891cde99e2852d1, type: 3}
+      propertyPath: player1ConfirmedText
+      value: 
+      objectReference: {fileID: 997687072}
+    - target: {fileID: 93875958167169779, guid: c9cb63c316c234e13891cde99e2852d1, type: 3}
+      propertyPath: player2ConfirmedText
+      value: 
+      objectReference: {fileID: 997687071}
     - target: {fileID: 93875958167169779, guid: c9cb63c316c234e13891cde99e2852d1, type: 3}
       propertyPath: player1RumbleBackground
       value: 
@@ -26270,9 +26378,33 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 997687067}
     - target: {fileID: 8448371081331746598, guid: c9cb63c316c234e13891cde99e2852d1, type: 3}
+      propertyPath: radialFillImage
+      value: 
+      objectReference: {fileID: 997687076}
+    - target: {fileID: 8448371081331746598, guid: c9cb63c316c234e13891cde99e2852d1, type: 3}
+      propertyPath: confirmPromptText
+      value: 
+      objectReference: {fileID: 997687074}
+    - target: {fileID: 8448371081331746598, guid: c9cb63c316c234e13891cde99e2852d1, type: 3}
+      propertyPath: confirmationPopup
+      value: 
+      objectReference: {fileID: 997687075}
+    - target: {fileID: 8448371081331746598, guid: c9cb63c316c234e13891cde99e2852d1, type: 3}
       propertyPath: controlsMenuParent
       value: 
       objectReference: {fileID: 997687070}
+    - target: {fileID: 8448371081331746598, guid: c9cb63c316c234e13891cde99e2852d1, type: 3}
+      propertyPath: player1ConfirmText
+      value: 
+      objectReference: {fileID: 997687073}
+    - target: {fileID: 8448371081331746598, guid: c9cb63c316c234e13891cde99e2852d1, type: 3}
+      propertyPath: player2ConfirmText
+      value: 
+      objectReference: {fileID: 997687073}
+    - target: {fileID: 8448371081331746598, guid: c9cb63c316c234e13891cde99e2852d1, type: 3}
+      propertyPath: restartGameSection
+      value: 
+      objectReference: {fileID: 997687077}
     - target: {fileID: 8448371081331746598, guid: c9cb63c316c234e13891cde99e2852d1, type: 3}
       propertyPath: standardSchemeText
       value: 
@@ -26289,6 +26421,14 @@ PrefabInstance:
       propertyPath: movementSchemeSlider
       value: 
       objectReference: {fileID: 997687069}
+    - target: {fileID: 8448371081331746598, guid: c9cb63c316c234e13891cde99e2852d1, type: 3}
+      propertyPath: player1ConfirmedText
+      value: 
+      objectReference: {fileID: 997687072}
+    - target: {fileID: 8448371081331746598, guid: c9cb63c316c234e13891cde99e2852d1, type: 3}
+      propertyPath: player2ConfirmedText
+      value: 
+      objectReference: {fileID: 997687071}
     - target: {fileID: 8448371081331746598, guid: c9cb63c316c234e13891cde99e2852d1, type: 3}
       propertyPath: player1RumbleBackground
       value: 
@@ -27799,6 +27939,14 @@ MonoBehaviour:
   player2RumbleSlider: {fileID: 2000398868}
   player1RumbleBackground: {fileID: 1127926262}
   player2RumbleBackground: {fileID: 1697513219}
+  radialFillImage: {fileID: 0}
+  confirmationPopup: {fileID: 0}
+  player1ConfirmText: {fileID: 0}
+  player1ConfirmedText: {fileID: 0}
+  player2ConfirmText: {fileID: 0}
+  player2ConfirmedText: {fileID: 0}
+  confirmPromptText: {fileID: 0}
+  initialSceneName: Splash Screen
   isTutorial: 0
   tutorialTextScript: {fileID: 0}
   dashForce: 80

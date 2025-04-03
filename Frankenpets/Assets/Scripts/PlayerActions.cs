@@ -124,6 +124,30 @@ public class PlayerActions : MonoBehaviour
     private Color rumbleEnabledColor = new Color(1f, 1f, 0.5f); 
     private Color rumbleDisabledColor = new Color(0.49f, 0.4f, 0.31f);
 
+    [Header("Restart Game UI")]
+    public UnityEngine.UI.Image radialFillImage;             // Reference to the radial fill image
+    public GameObject confirmationPopup;      // Reference to the confirmation popup
+    public TextMeshProUGUI player1ConfirmText;   // Reference to P1 "Confirm?" text
+    public TextMeshProUGUI player1ConfirmedText; // Reference to P1 "Confirmed!" text
+    public TextMeshProUGUI player2ConfirmText;   // Reference to P2 "Confirm?" text
+    public TextMeshProUGUI player2ConfirmedText; // Reference to P2 "Confirmed!" text
+    public TextMeshProUGUI confirmPromptText; // Reference to the confirmation prompt text
+
+    // Restart system variables
+    private float radialFillAmount = 0f;      // Current fill amount (0-1)
+    private float fillSpeed = 0.5f;           // Speed of fill per second
+    private float decaySpeed = 0.4f;          // Speed of decay per second when not holding
+    private float confirmThreshold = 0.95f;   // Threshold to trigger confirmation popup
+    private bool player1HoldingRestart = false;
+    private bool player2HoldingRestart = false;
+    private bool player1Confirmed = false;   // For confirmation popup
+    private bool player2Confirmed = false;   // For confirmation popup
+    private bool inConfirmationPhase = false;
+
+    // Initial scene to load on restart
+    public string initialSceneName = "Splash Screen";
+
+
     [Header("Tutorial Variables")]
     public bool isTutorial = false; // ENABLE THIS IN THE ATTIC
     
@@ -184,6 +208,8 @@ public class PlayerActions : MonoBehaviour
         player1RumbleSlider.value = player1Input.rumbleEnabled ? 1 : 0;
         player2RumbleSlider.value = player2Input.rumbleEnabled ? 1 : 0;
         UpdateRumbleUI();
+
+        InitializeRestartUI();
     }
 
     bool tutOverlayDone()
@@ -212,17 +238,19 @@ public class PlayerActions : MonoBehaviour
                 runDashLogic();
             }
         }
-        
-
-        
-
-        
-
-        
 
         //if (isGrabbing && isDraggableObject) enforceAngleRestriction();
 
-        runControlsMenuLogic();
+        if (inConfirmationPhase) {
+            HandleConfirmationInput();
+        }
+        else {
+            runControlsMenuLogic();
+
+            if (isViewingControlsMenu) {
+                HandleRestartRadialFill();
+            }
+        }
 
         // This makes the grabText and climbText float :3
         grabText.transform.position += new Vector3(0, Mathf.Sin(Time.time * 2) * 0.0005f, 0);
@@ -1201,7 +1229,7 @@ public class PlayerActions : MonoBehaviour
     private void runTailLogic()
     {
         // if (((Input.GetKeyDown(KeyCode.Z) && !P1.IsFront) || (Input.GetKeyDown(KeyCode.Period) && !P2.IsFront)))
-        if ((player1Input.GetSoundTailPressed() && !P1.IsFront) || (player2Input.GetSoundTailPressed() && !P2.IsFront))
+        if ((player1Input.GetSoundTailJustPressed() && !P1.IsFront) || (player2Input.GetSoundTailJustPressed() && !P2.IsFront))
         {
             tailRiggingScript.useTail();
         }
@@ -1429,4 +1457,207 @@ public class PlayerActions : MonoBehaviour
         player1RumbleBackground.color = player1Input.rumbleEnabled ? rumbleEnabledColor : rumbleDisabledColor;
         player2RumbleBackground.color = player2Input.rumbleEnabled ? rumbleEnabledColor : rumbleDisabledColor;
     }
+
+    private void InitializeRestartUI()
+    {
+        // Ensure all UI components are properly set
+        if (radialFillImage != null)
+        {
+            radialFillImage.fillAmount = 0f;
+        }
+        
+        if (confirmationPopup != null)
+        {
+            confirmationPopup.SetActive(false);
+        }
+        
+        // Reset all state variables
+        radialFillAmount = 0f;
+        player1HoldingRestart = false;
+        player2HoldingRestart = false;
+        player1Confirmed = false;
+        player2Confirmed = false;
+        inConfirmationPhase = false;
+        
+        // Reset UI states
+        UpdateRestartUI();
+    }
+
+    private void HandleRestartRadialFill()
+    {
+        if (!isViewingControlsMenu) return;
+
+        print("Handling restart radial fill");
+        
+        // Check if players are holding the makeSoundTail button
+        player1HoldingRestart = player1Input.GetSoundTailPressed();
+        player2HoldingRestart = player2Input.GetSoundTailPressed();
+
+        if (player1HoldingRestart || player2HoldingRestart)
+        {
+            print("Holding restart");
+
+        }
+        
+        bool anyPlayerHolding = player1HoldingRestart || player2HoldingRestart;
+        bool bothPlayersHolding = player1HoldingRestart && player2HoldingRestart;
+        
+        // Update fill amount based on player input
+        if (anyPlayerHolding)
+        {
+            // Determine target fill amount
+            float targetFill = bothPlayersHolding ? 1.0f : 0.5f;
+            
+            // If current fill is higher than target and we're not at both players holding,
+            // decay to target fill instead of increasing
+            if (radialFillAmount > targetFill && !bothPlayersHolding)
+            {
+                radialFillAmount -= decaySpeed * Time.deltaTime;
+                radialFillAmount = Mathf.Max(radialFillAmount, targetFill);
+            }
+            else
+            {
+                // Fill up to target
+                radialFillAmount += fillSpeed * Time.deltaTime;
+                radialFillAmount = Mathf.Min(radialFillAmount, targetFill);
+            }
+        }
+        else
+        {
+            // Both players released, decay to zero
+            radialFillAmount -= decaySpeed * Time.deltaTime;
+            radialFillAmount = Mathf.Max(radialFillAmount, 0f);
+        }
+        
+        // Update UI
+        if (radialFillImage != null)
+        {
+            radialFillImage.fillAmount = radialFillAmount;
+        }
+        
+        // Check if we've hit the confirmation threshold
+        if (radialFillAmount >= confirmThreshold && !inConfirmationPhase)
+        {
+            ShowRestartConfirmation();
+        }
+    }
+
+    private void ShowRestartConfirmation()
+    {
+        inConfirmationPhase = true;
+        
+        // Reset confirmation states
+        player1Confirmed = false;
+        player2Confirmed = false;
+        
+        // Activate confirmation popup
+        if (confirmationPopup != null)
+        {
+            confirmationPopup.SetActive(true);
+        }
+        
+        // Update the UI to show initial confirmation state
+        UpdateConfirmationUI();
+    }
+
+    private void HandleConfirmationInput()
+    {
+        // Check for confirmation input (Jump) and cancel input (Glow)
+        bool player1Confirm = player1Input.GetJumpJustPressed();
+        bool player2Confirm = player2Input.GetJumpJustPressed();
+        bool player1Cancel = player1Input.GetGlowJustPressed();
+        bool player2Cancel = player2Input.GetGlowJustPressed();
+        
+        // Handle Player 1 confirmation toggle
+        if (player1Confirm)
+        {
+            // Toggle confirmation status
+            player1Confirmed = !player1Confirmed;
+            AudioManager.Instance.playUIClickSFX();
+            UpdateConfirmationUI();
+        }
+        
+        // Handle Player 2 confirmation toggle
+        if (player2Confirm)
+        {
+            // Toggle confirmation status
+            player2Confirmed = !player2Confirmed;
+            AudioManager.Instance.playUIClickSFX();
+            UpdateConfirmationUI();
+        }
+        
+        // Handle cancellation
+        if (player1Cancel || player2Cancel)
+        {
+            CancelRestart();
+            return;
+        }
+        
+        // Check if both players have confirmed
+        if (player1Confirmed && player2Confirmed)
+        {
+            // Both players confirmed, perform restart
+            StartCoroutine(PerformRestart());
+        }
+    }
+
+    private void UpdateConfirmationUI()
+    {
+        // Update Player 1 confirmation status
+        if (player1ConfirmText != null && player1ConfirmedText != null)
+        {
+            player1ConfirmText.gameObject.SetActive(!player1Confirmed);
+            player1ConfirmedText.gameObject.SetActive(player1Confirmed);
+        }
+        
+        // Update Player 2 confirmation status
+        if (player2ConfirmText != null && player2ConfirmedText != null)
+        {
+            player2ConfirmText.gameObject.SetActive(!player2Confirmed);
+            player2ConfirmedText.gameObject.SetActive(player2Confirmed);
+        }
+    }
+
+    private void UpdateRestartUI()
+    {
+        if (radialFillImage != null)
+        {
+            radialFillImage.fillAmount = radialFillAmount;
+        }
+    }
+
+    private void CancelRestart()
+    {
+        inConfirmationPhase = false;
+        
+        // Hide the confirmation popup
+        if (confirmationPopup != null)
+        {
+            confirmationPopup.SetActive(false);
+        }
+        
+        // Reset fill amount
+        radialFillAmount = 0f;
+        UpdateRestartUI();
+        
+    }
+
+    private IEnumerator PerformRestart()
+    {
+        
+        // Show a loading message or transition effect
+        if (confirmPromptText != null)
+        {
+            confirmPromptText.text = "Restarting game...";
+        }
+        
+        // Wait a short time for feedback
+        yield return new WaitForSeconds(1.0f);
+        
+        // Load the initial scene
+        Destroy(ControllerAssignment.Instance.gameObject);
+        Destroy(AudioManager.Instance.gameObject);
+        SceneManager.LoadScene(initialSceneName);
+    }
+
 }

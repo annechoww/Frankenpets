@@ -484,20 +484,46 @@ public class Startup : MonoBehaviour
         controllerAssignment.FinalizeAssignment(!player1ChoseDog);
         
         // Short delay before loading next level (for visual feedback)
+        StartCoroutine(DelayedTransitionToComic());
+    }
+
+    private IEnumerator DelayedTransitionToComic()
+    {
+        // Wait for two frames to ensure controller assignment is fully processed
+        yield return null;
+        yield return null;
+        
+        // Now transition to comic
         TransitionToComic();
     }
 
     void TransitionToComic()
     {
+
+        if (!controllerAssignment.isFinalized())
+        {
+            Debug.LogError("Attempting to transition to comic before controller assignment is finalized!");
+            return;
+        }
+
+        Debug.Log("Controller assignment finalized. Transitioning to comic.");
+        Debug.Log($"Controller swapped status: {controllerAssignment.isSwapped()}");
+
         // Hide character selection
         characterSelectionPanel.SetActive(false);
         
         // Activate comic canvas and panel
         comicCanvas.SetActive(true);
         comicPanel.SetActive(true);
+
+        Debug.Log($"Controller swapped: {controllerAssignment.isSwapped()}");
+    
+        // Get the actual input handlers based on controller assignment
+        InputHandler actualPlayer1Input = controllerAssignment.isSwapped() ? player2Input : player1Input;
+        InputHandler actualPlayer2Input = controllerAssignment.isSwapped() ? player1Input : player2Input;
         
-        // Start the comic sequence
-        comicManager.StartComic(player1Input, player2Input, this);
+        // Start the comic sequence with the CORRECT input handlers
+        comicManager.StartComic(actualPlayer1Input, actualPlayer2Input, this);
     }
 
     
