@@ -12,8 +12,16 @@ public class ButtonManager : MonoBehaviour
     public GameObject rightTube;
     public GameObject brokenLeftTubePrefab;
     public GameObject brokenRightTubePrefab;
+
+    [Header("Explosion References")]
     public float explosionForce = 300f;
     public AudioClip shatterSound;
+
+    [Header("Test Subjects")]
+    public Rigidbody catFront;
+    public Rigidbody dogBack;
+    public Rigidbody dogFront;
+    public Rigidbody catBack;
 
     // Flags
     private bool isPressed = false;
@@ -85,6 +93,12 @@ public class ButtonManager : MonoBehaviour
             {
                 rb.AddExplosionForce(explosionForce, brokenRight.transform.position, 2f);
             }
+
+            // Unfreeze test subjects
+            catFront.constraints = RigidbodyConstraints.None;
+            dogBack.constraints = RigidbodyConstraints.None;
+            catBack.constraints = RigidbodyConstraints.None;
+            dogFront.constraints = RigidbodyConstraints.None;
         }
     }
 }
