@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 public class ComicManager : MonoBehaviour
 {
@@ -318,14 +319,38 @@ public class ComicManager : MonoBehaviour
     {
         if (!comicActive)
             return;
-            
-        // Check for skip input (B button on both controllers)
-        bool player1SkipPressed = player1Input != null && player1Input.GetGlowPressed();
-        bool player2SkipPressed = player2Input != null && player2Input.GetGlowPressed();
+                
+        // Get all gamepad devices
+        var gamepads = Gamepad.all.ToArray();
         
+        // Direct check for button presses on the physical controllers
+        bool p1ButtonPressed = false;
+        bool p2ButtonPressed = false;
         
-        // Only increment skip progress if both players are holding B
-        if (player1SkipPressed && player2SkipPressed)
+        if (gamepads.Length > 0)
+        {
+            // Assuming the first gamepad is Player 1's controller after assignment
+            p1ButtonPressed = gamepads[0].buttonEast.isPressed; 
+        }
+        
+        if (gamepads.Length > 1)
+        {
+            // Assuming the second gamepad is Player 2's controller after assignment
+            p2ButtonPressed = gamepads[1].buttonEast.isPressed; 
+        }
+        
+        if (Time.frameCount % 60 == 0)
+        {
+            Debug.Log($"Direct gamepad check - P1 Button: {p1ButtonPressed}, P2 Button: {p2ButtonPressed}");
+            Debug.Log($"Gamepad count: {gamepads.Length}");
+            for (int i = 0; i < gamepads.Length && i < 2; i++)
+            {
+                Debug.Log($"Gamepad {i}: {gamepads[i].name}, East: {gamepads[i].buttonEast.isPressed}, West: {gamepads[i].buttonWest.isPressed}");
+            }
+        }
+        
+        // Use direct button presses for skipping
+        if (p1ButtonPressed && p2ButtonPressed)
         {
             skipProgress += Time.deltaTime;
             
