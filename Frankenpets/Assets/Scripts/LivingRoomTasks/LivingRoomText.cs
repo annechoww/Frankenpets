@@ -54,17 +54,34 @@ public class LivingRoomText : MonoBehaviour
         cornerControlsUI = GameObject.Find("MiniControlsUI").GetComponent<ControlsCornerUI>();
 
         Screen.SetResolution(1920, 1080, true);
+
+        StartCoroutine(WaitForControllerAssignment());
     }
 
     void Start()
     {
-        SetupControlsUI(); // Configure UI based on input method
+
+    }
+
+    private IEnumerator WaitForControllerAssignment()
+    {
+        // Wait for the ControllerAssignment singleton to exist
+        while (ControllerAssignment.Instance == null)
+            yield return null;
+            
+        // Wait for it to be fully initialized
+        while (!ControllerAssignment.Instance.IsInitialized())
+            yield return null;
+            
+        // Now it's safe to use
+        controllerAssignment = ControllerAssignment.Instance;
+        
+        // Continue with initialization
+        SetupControlsUI();
         overlayUI();
         singleOverlay = overlay.transform.GetChild(0).gameObject;
         doubleOverlay = overlay.transform.GetChild(1).gameObject;
         StartCoroutine(OverlaySequence());
-        
-        //StartCoroutine(TutorialSequence()); // Start tutorial progression
     }
 
     private IEnumerator OverlaySequence()

@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class ControlsCornerUI : MonoBehaviour
 {
@@ -17,16 +18,35 @@ public class ControlsCornerUI : MonoBehaviour
     [Header("Show the controls corner?")]
     public bool show = false; 
 
+    private bool initialized = false;
+
     void Awake()
     {
-        // controllerAssignment = FindObjectOfType<ControllerAssignment>();
-        // playerManager = FindObjectOfType<PlayerManager>();
+        StartCoroutine(WaitForControllerAssignment());
+    }
+
+    private IEnumerator WaitForControllerAssignment() {
+        // Wait for the ControllerAssignment singleton to exist
+        while (ControllerAssignment.Instance == null)
+            yield return null;
+            
+        // Wait for it to be fully initialized
+        while (!ControllerAssignment.Instance.IsInitialized())
+            yield return null;
+            
+        // Now it's safe to use
+        controllerAssignment = ControllerAssignment.Instance;
+        
+        // Initialize your UI
+        InitializeControlsUI();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         controllerAssignment = ControllerAssignment.Instance;
+
+
         if (controllerAssignment.IsKeyboard()) cornerControlsUI = cornerControlsUIParent.transform.GetChild(0).gameObject;
         else cornerControlsUI = cornerControlsUIParent.transform.GetChild(1).gameObject;
 
@@ -45,9 +65,48 @@ public class ControlsCornerUI : MonoBehaviour
 
     // Update is called once per frame
     void Update()
+    {   
+        if (initialized && show)
+        {
+            cornerControlsUI.SetActive(true);
+            updateControlsCornerUI();
+        }
+        else if (initialized && !show)
+        {
+            cornerControlsUI.SetActive(false);
+        }
+    }
+
+    void InitializeControlsUI()
     {
-        if (show) cornerControlsUI.SetActive(true);
-        updateControlsCornerUI();
+        // Get controller assignment if needed
+        if (controllerAssignment == null)
+            controllerAssignment = ControllerAssignment.Instance;
+            
+        if (playerManager == null)
+            playerManager = FindAnyObjectByType<PlayerManager>();
+        
+        // Ensure we have all the required references
+        if (controllerAssignment == null || cornerControlsUIParent == null || playerManager == null)
+            return;
+        
+        // Set up the proper UI based on input type
+        cornerControlsUI = controllerAssignment.IsKeyboard() 
+            ? cornerControlsUIParent.transform.GetChild(0).gameObject 
+            : cornerControlsUIParent.transform.GetChild(1).gameObject;
+        
+        // Set up control references
+        Transform P1Controls = cornerControlsUI.transform.GetChild(0);
+        Transform P2Controls = cornerControlsUI.transform.GetChild(1);
+        
+        P1ControlsCF = P1Controls.GetChild(0).gameObject;
+        P1ControlsCB = P1Controls.GetChild(1).gameObject;
+        
+        P2ControlsDF = P2Controls.GetChild(0).gameObject;
+        P2ControlsDB = P2Controls.GetChild(1).gameObject;
+        
+        initialized = true;
+        Debug.Log("Controls Corner UI successfully initialized");
     }
 
     public void updateControlsCornerUI()
