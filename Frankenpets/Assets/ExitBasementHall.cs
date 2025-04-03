@@ -4,17 +4,14 @@ using System.Collections;
 public class ExitBasementHall : MonoBehaviour
 {
     public GameObject lightsParent;
+    public GameObject pawPath;
     private Light[] lights;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         lights = lightsParent.GetComponentsInChildren<Light>();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        pawPath.SetActive(true);
+        lightsParent.SetActive(true);
     }
 
     void OnTriggerExit(Collider other)
@@ -27,6 +24,7 @@ public class ExitBasementHall : MonoBehaviour
             }
 
             StartCoroutine(DelaySetActive(lightsParent, false, 2.5f));
+            pawPath.SetActive(false);
 
         }
     }
