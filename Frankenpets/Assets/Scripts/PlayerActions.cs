@@ -1249,6 +1249,8 @@ public class PlayerActions : MonoBehaviour
 
         // Make text always face frontHalf
         climbText.transform.LookAt(frontHalf.transform); 
+        Vector3 rot = climbText.transform.rotation.eulerAngles;
+        climbText.transform.rotation = Quaternion.Euler(0, rot.y, rot.z);
         
         // Flip the text to unmirror it
         // climbText.transform.rotation = Quaternion.Euler(0, climbText.transform.rotation.eulerAngles.y + 180, 0);
@@ -1283,6 +1285,8 @@ public class PlayerActions : MonoBehaviour
 
         // Make text always face frontHalf
         grabText.transform.LookAt(frontHalf.transform); 
+        Vector3 rot = grabText.transform.rotation.eulerAngles;
+        grabText.transform.rotation = Quaternion.Euler(0, rot.y, rot.z);
         
         // Flip the text to unmirror it
         // grabText.transform.rotation = Quaternion.Euler(0, grabText.transform.rotation.eulerAngles.y + 180, 0);
@@ -1308,6 +1312,10 @@ public class PlayerActions : MonoBehaviour
         pawText.SetActive(true);
         pawText.transform.position = other.transform.position;// + (Vector3.forward * 0.05f) - (Vector3.up * 0.10f);
 
+        Vector3 pos = pawText.transform.position;
+        
+        pawText.transform.position = new Vector3(pos.x, pos.y, frontHalf.transform.position.z) + (Vector3.forward * 0.3f);
+
         if (controllerAssignment.IsKeyboard())
         {
             if (P1.IsFront) pawText.transform.GetChild(0).gameObject.SetActive(true);
@@ -1317,6 +1325,8 @@ public class PlayerActions : MonoBehaviour
 
         // Make text always face frontHalf
         pawText.transform.LookAt(frontHalf.transform); 
+        Vector3 rot = pawText.transform.rotation.eulerAngles;
+        pawText.transform.rotation = Quaternion.Euler(0, rot.y, rot.z);
         
     }
 
