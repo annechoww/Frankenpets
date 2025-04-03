@@ -14,6 +14,9 @@ public class Fan : MonoBehaviour
     public GameObject pet;
     public PlayerManager playerManager; 
     private ConfigurableJoint joint;
+    private bool fanHasFallen = false;
+
+    public AudioClip fanFallingClip;
 
     private Rigidbody dogRb;
     private Rigidbody catRb;
@@ -36,7 +39,7 @@ public class Fan : MonoBehaviour
         // Check if dog grabbed bone 
         joint = dogFront.GetComponent<ConfigurableJoint>();
 
-        if (joint != null)
+        if (joint != null && !fanHasFallen)
         {
             if (joint.connectedBody == boneRigidbody)
             {
@@ -57,6 +60,8 @@ public class Fan : MonoBehaviour
         // Condition to drop the ceiling fan 
         if (stopwatch.Elapsed.TotalSeconds >= 3.0f)
         {
+            fanHasFallen = true;
+
             stopCeilingFan();
 
             gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
@@ -65,7 +70,8 @@ public class Fan : MonoBehaviour
 
             rope.GetComponent<MeshCollider>().enabled = true;
             Destroy(GetComponent<BoxCollider>());
-            Destroy(this); // Remove this script from fan gameobject
+
+            StartCoroutine(PlayFanFallingNoise());
         }
     }
 
@@ -102,5 +108,15 @@ public class Fan : MonoBehaviour
         catRb.constraints = RigidbodyConstraints.None;
         // dogRb.angularVelocity = Vector3.zero;
         // catRb.angularVelocity = Vector3.zero;
+    }
+
+    private IEnumerator PlayFanFallingNoise()
+    {
+        yield return new WaitForSeconds(0.2f);
+        AudioManager.Instance.PlaySFX(fanFallingClip);
+
+        yield return new WaitForSeconds(3.0f);
+
+        Destroy(this); // Remove this script from fan gameobject
     }
 }
