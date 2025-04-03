@@ -28,6 +28,12 @@ public class ButtonManager : MonoBehaviour
     private bool isColliding = false;
     private bool hasExploded = false;
 
+    [Header("Locate Task Variables")]
+    public GameObject taskLight;
+    public GameObject taskParticle;
+    public GameObject arrow;
+
+
     private void Start()
     {
         originalPosition = transform.localPosition;
@@ -99,6 +105,10 @@ public class ButtonManager : MonoBehaviour
             dogBack.constraints = RigidbodyConstraints.None;
             catBack.constraints = RigidbodyConstraints.None;
             dogFront.constraints = RigidbodyConstraints.None;
+
+            // Task complete
+            FindTasks.Instance.DestroyFindTaskMechanic(arrow, taskParticle, taskLight);
+            // Check mark
         }
     }
 }
