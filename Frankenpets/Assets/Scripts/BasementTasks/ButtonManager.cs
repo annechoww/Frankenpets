@@ -112,6 +112,7 @@ public class ButtonManager : MonoBehaviour
             dogFront.constraints = RigidbodyConstraints.None;
 
             // Task complete
+            taskItem.transform.GetChild(1).gameObject.SetActive(true);
             FindTasks.Instance.DestroyFindTaskMechanic(arrow, taskParticle, taskLight);
             task.IsComplete = true;
             TaskManager.Instance.CompleteTask();
