@@ -8,6 +8,8 @@ using System.Diagnostics;
 public class LevelHandler : MonoBehaviour
 {
     public LevelLoader levelLoader;
+    public GameObject closedBasementDoors;
+    public GameObject openBasementDoors;
     private List<Task> tasks;
     private Collider basementTrigger;
 
@@ -18,6 +20,8 @@ public class LevelHandler : MonoBehaviour
         {
             basementTrigger.enabled = false;
         }
+        closedBasementDoors.SetActive(true);
+        openBasementDoors.SetActive(false);
     }
 
     void Update()
@@ -35,6 +39,8 @@ public class LevelHandler : MonoBehaviour
         {
             basementTrigger.enabled = true;
         }
+        closedBasementDoors.SetActive(false);
+        openBasementDoors.SetActive(true);
     }
 
     void OnTriggerEnter(Collider other)
