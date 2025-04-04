@@ -113,11 +113,11 @@ public class DoorShatter : MonoBehaviour
            AudioManager.Instance.PlaySFX(shatterSound);
         }
 
-        // Instantiate the broken glass at the glass's position and rotation
-        Instantiate(brokenGlass, transform.position, transform.rotation);
-
         // Destroy the intact glass after shattering
         Destroy(gameObject);
+
+        // Instantiate the broken glass at the glass's position and rotation
+        Instantiate(brokenGlass, transform.position, transform.rotation);
 
         FinishTask();
     }
