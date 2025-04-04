@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Diagnostics;
-using Microsoft.Unity.VisualStudio.Editor;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 using UnityEngine.SceneManagement;

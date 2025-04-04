@@ -18,6 +18,8 @@ public class ControllerAssignment: MonoBehaviour
     
     private bool swapped = false;
     private bool finalized = false;
+
+    private bool isInitialized = false;
     
     private Gamepad[] gamepads => Gamepad.all.ToArray();
 
@@ -38,6 +40,11 @@ public class ControllerAssignment: MonoBehaviour
     {
         // Initial assignment
         AssignControllers();
+        isInitialized = true;
+    }
+
+    public bool IsInitialized() {
+        return isInitialized;
     }
     
     private void HandleDeviceChange(InputDevice device, InputDeviceChange change)
@@ -112,6 +119,9 @@ public class ControllerAssignment: MonoBehaviour
     // UI uses this to determine gamepad vs. keycaps display
     public bool IsKeyboard()
     {  
+        if (player1Input == null || player2Input == null) {
+            return false;
+        }
         return player1Input.currentControlScheme == keyboardScheme || player2Input.currentControlScheme == keyboardScheme;
     }
 
@@ -129,4 +139,5 @@ public class ControllerAssignment: MonoBehaviour
             Instance = null;
         }
     }
+    
 }
