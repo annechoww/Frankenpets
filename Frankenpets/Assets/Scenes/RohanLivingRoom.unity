@@ -7614,6 +7614,7 @@ MonoBehaviour:
   lidHinge: {fileID: 1915130580}
   openAngle: 90
   speed: 2
+  closeDelay: 5
   pedalSound: {fileID: 8300000, guid: b6b5b93ef84d840e98b35f84bf0c564b, type: 3}
 --- !u!1 &315138866
 GameObject:
@@ -20256,8 +20257,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbf571ac8742c4de5b207fe3949ec600, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  flipFlop1: {fileID: 4327546796781926769}
-  flipFlop2: {fileID: 2440120721089905276}
+  rollingPin: {fileID: 8320411353216793705}
   thrownInTrashSound: {fileID: 8300000, guid: d6b35b23c41b54cfcad246eaf34ed79f, type: 3}
   taskCompleteSound: {fileID: 8300000, guid: 7ede2ff7994054bccabde62d31c54d49, type: 3}
   taskItem: {fileID: 552741878}
@@ -51134,9 +51134,13 @@ GameObject:
   - component: {fileID: 8884961363210794348}
   - component: {fileID: 3128186739930879214}
   - component: {fileID: 4497372192228055994}
-  m_Layer: 0
+  - component: {fileID: 8884961363210794352}
+  - component: {fileID: 8884961363210794351}
+  - component: {fileID: 8884961363210794350}
+  - component: {fileID: 8884961363210794349}
+  m_Layer: 9
   m_Name: rolling pin
-  m_TagString: Untagged
+  m_TagString: Grabbable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -52326,13 +52330,103 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8320411353216793705}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.63725686, y: 0.30643722, z: -0.102621496, w: 0.69962054}
-  m_LocalPosition: {x: 0.66189575, y: -0.09401542, z: -0.016181946}
+  m_LocalRotation: {x: 0.10657329, y: 0.69902945, z: -0.69902945, w: 0.10657329}
+  m_LocalPosition: {x: 0.88, y: -0.144, z: 0.156}
   m_LocalScale: {x: 100.000015, y: 100, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 343677966}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 90, z: -72.663}
+--- !u!65 &8884961363210794349
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8320411353216793705}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.0026950191, y: 0.00041347367, z: 0.0004134737}
+  m_Center: {x: 6.2292424e-17, y: 0.000000030464435, z: 0.0000000074578566}
+--- !u!65 &8884961363210794350
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8320411353216793705}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.0026950191, y: 0.00041347367, z: 0.0004134737}
+  m_Center: {x: 6.2292424e-17, y: 6.621123e-10, z: 7.275962e-12}
+--- !u!54 &8884961363210794351
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8320411353216793705}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!114 &8884961363210794352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8320411353216793705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83951de92f845ea4b9ead8b26d4aa975, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  grabBehavior: 1
+  grabWeight: 2
+  movementPenalty: 0.2
+  dragResistance: 0.3
+  turnRestriction: 0
+  preventTurning: 0
+  springConstant: 1000
+  dampingConstant: 50
+  maxTetherForce: 2000
 --- !u!33 &8894691111631300374
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -52390,8 +52484,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.025072826, y: 0.0093632825, z: 0.0005398543}
-  m_Center: {x: 0.017634775, y: 0.0006816417, z: 0.0035235977}
+  m_Size: {x: 0.025072826, y: 0.008429845, z: 0.0005398543}
+  m_Center: {x: 0.017634775, y: 0.00021492274, z: 0.0035236129}
 --- !u!4 &8906773800894994627
 Transform:
   m_ObjectHideFlags: 0
