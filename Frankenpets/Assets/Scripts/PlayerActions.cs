@@ -79,6 +79,9 @@ public class PlayerActions : MonoBehaviour
     private float originalTurnSpeed;
     private bool turnRestricted = false;
 
+    // Respawn Variables
+    private PlayerRespawn playerRespawn;
+
     private PlayerManager playerManager; 
     private Player P1;
     private Player P2;
@@ -185,6 +188,7 @@ public class PlayerActions : MonoBehaviour
         controllerAssignment = ControllerAssignment.Instance;
         Scene currentScene = SceneManager.GetActiveScene();
         currentSceneName = currentScene.name;
+        playerRespawn = FindObjectOfType<PlayerRespawn>();
 
         // Set the Controls Menu to keycaps or gamepad
         if (controllerAssignment.IsKeyboard())
@@ -229,7 +233,7 @@ public class PlayerActions : MonoBehaviour
             runJumpLogic();
             runNoiseLogic();
             runTailLogic(); 
-
+            runRespawnLogic();
             if (!isTutorial)
             {
                 runClimbLogic();
@@ -1238,6 +1242,19 @@ public class PlayerActions : MonoBehaviour
 
     }
      
+////////////////////////////////////////// Respawn Action ////////////////////////////////////////////
+    public void runRespawnLogic()
+    {
+        if (player1Input.GetRespawnPressed())
+        {
+            playerRespawn.Respawn(P1);
+        }
+
+        if (player2Input.GetRespawnPressed())
+        {
+            playerRespawn.Respawn(P2);
+        }
+    }
 
 ////////////////////////////////////////// Actions UI ///////////////////////////////////////////////
 
