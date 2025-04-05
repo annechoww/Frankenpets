@@ -30,6 +30,7 @@ public class LivingRoomText : MonoBehaviour
     public GameObject pressEnterToContinueUI;
     public GameObject glowUI;
     public GameObject accessControlsUI;
+    public GameObject switchUI;
 
     public GameObject leftTutIcon;
     public GameObject rightTutIcon;
@@ -37,6 +38,9 @@ public class LivingRoomText : MonoBehaviour
     private Animator rightTutAnimator;
     private Animator continueTutAnimator;
     private Animator continueParentTutAnimator;
+
+    private List<Task> livingRoomTasks;
+
 
     [Header("Tutorial Overlay Sequence")]
     public List<TutorialOverlayStep> tutorialSteps = new List<TutorialOverlayStep>();
@@ -64,6 +68,10 @@ public class LivingRoomText : MonoBehaviour
     private ControlsCornerUI cornerControlsUI;
     private int tutOverlayStage = 1;
 
+    // Hints variables
+    private float stopwatchElapsedTime = 0f;
+    private float stopwatchInterval = 30f;
+
     void Awake()
     {
         messageManager = GameObject.Find("Messages").GetComponent<MessageManager>();
@@ -73,11 +81,36 @@ public class LivingRoomText : MonoBehaviour
         Screen.SetResolution(1920, 1080, true);
 
         StartCoroutine(WaitForControllerAssignment());
+
+        livingRoomTasks = TaskManager.GetAllTasksOfLevel(1);
     }
 
-    void Start()
+    void Update()
     {
+        if (TaskManager.CheckTaskCompletion(livingRoomTasks))
+        {
+            StartCoroutine(ShowMessage("There's something in the <u>backyard</u>!", "basement"));
+        }
 
+        // Display locate tasks hint
+        stopwatchElapsedTime += Time.deltaTime;
+        if (stopwatchElapsedTime >= stopwatchInterval)
+        {
+            Debug.Log($"Stopwatch: {stopwatchInterval} seconds have passed.");
+            StartCoroutine(ShowMessage("HINT: <u>Locate</u> to-do list tasks.", "glow"));
+            stopwatchElapsedTime = 0f;
+        }
+
+        if (AdvanceToBasement.Instance.antiDogClub)
+        {
+            StartCoroutine(ShowMessage("It's too dark; I can't see!", "antiDogClub"));
+        }
+
+        if (TaskManager.CheckTaskCompletion(livingRoomTasks) && AdvanceToBasement.Instance.hideAntiDogClub)
+        {
+            StartCoroutine(HideEffect(null, speechBubbleRight));
+        }
+        
     }
 
     private IEnumerator WaitForControllerAssignment()
@@ -209,8 +242,8 @@ public class LivingRoomText : MonoBehaviour
         // tutorial overlay starts first
 
         // speech bubbles start now
-        yield return ShowMessage("Try <u>locating</u> to-do list tasks.", "glow");
-        yield return ShowMessage("Check out the <u>controls menu</u>, too.", "menu");
+        yield return ShowMessage("HINT: <u>Locate</u> to-do list tasks.", "glow");
+        yield return ShowMessage("HINT: Check out the <u>controls menu</u>.", "menu");
 
         // messageManager.startPressEnterToHideTutorial();
         yield return ShowMessage("Let's play!", "end");
@@ -246,6 +279,16 @@ public class LivingRoomText : MonoBehaviour
             yield return ShowBottomUI(null, speechBubbleTwoTails, message);
             yield return new WaitForSeconds(3.0f);
             yield return HideEffect(null, speechBubbleTwoTails);
+        }
+        else if (special == "basement")
+        {
+            yield return ShowBottomUI(null, speechBubbleTwoTails, message);
+            yield return WaitForBasementDoor();
+            yield return HideEffect(null, speechBubbleTwoTails);
+        }
+        else if (special == "antiDogClub")
+        {
+            yield return ShowBottomUI(null, speechBubbleRight, message);
         }
     }
 
@@ -289,20 +332,23 @@ public class LivingRoomText : MonoBehaviour
 
     private IEnumerator WaitForGlow(float keyDownDuration)
     {
-        while (true) // Keep running indefinitely
+        float timeoutDuration = 20f; // Timeout after 30 seconds
+        float elapsedTime = 0f;
+        
+        while (elapsedTime < timeoutDuration) 
         {
-            float elapsedTime = 0f;
+            float keyHoldTime = 0f;
 
             // Wait until the key is held down for the required duration
-            while (elapsedTime < keyDownDuration)
+            while (keyHoldTime < keyDownDuration)
             {
                 if (player1Input.GetGlowPressed() || player2Input.GetGlowPressed())
                 {
-                    elapsedTime += Time.deltaTime;
+                    keyHoldTime += Time.deltaTime;
                 }
                 else
                 {
-                    elapsedTime = 0f; // Reset if the key is released
+                    keyHoldTime = 0f; // Reset if the key is released
                 }
 
                 yield return null; // Wait for the next frame
@@ -317,13 +363,39 @@ public class LivingRoomText : MonoBehaviour
 
             // Stop coroutine when player lifts key
             yield break;
+
+            elapsedTime += Time.deltaTime; // Track amount of time coroutine has been running
         }
     }
 
     private IEnumerator WaitForMenu()
     {
-        while (!player1Input.GetControlsMenuPressed() && !player2Input.GetControlsMenuPressed())
+        float timeoutDuration = 10f;
+        float elapsedTime = 0f;
+
+        // Wait until either player presses the menu button or timeout occurs
+        while (elapsedTime < timeoutDuration)
         {
+            if (player1Input.GetControlsMenuPressed() || player2Input.GetControlsMenuPressed())
+            {
+                yield break; // Exit coroutine if either player presses the menu button
+            }
+
+            elapsedTime += Time.deltaTime;
+
+            yield return null;
+        }
+    }
+
+    private IEnumerator WaitForBasementDoor()
+    {
+        while (true)
+        {
+            if (AdvanceToBasement.Instance.isAtBasementDoor)
+            {
+                yield break;
+            }
+
             yield return null;
         }
     }
@@ -333,7 +405,7 @@ public class LivingRoomText : MonoBehaviour
         speechBubbleTwoTails.SetActive(false);
         tutorialText.text = "";
         tutorialSmallText.text = "";
-        messageManager.cancelPressEnterToHideTutorial();
+        // messageManager.cancelPressEnterToHideTutorial();
         P1SpeechIcons.SetActive(false);
         P2SpeechIcons.SetActive(false);
 
