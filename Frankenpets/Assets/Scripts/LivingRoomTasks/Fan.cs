@@ -107,9 +107,9 @@ public class Fan : MonoBehaviour
         dogRb.constraints &= ~RigidbodyConstraints.FreezePositionY;
         dogRb.constraints |= RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
-
         catRb.constraints &= ~RigidbodyConstraints.FreezePositionY;
-        catRb.constraints |= RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        // DON'T FREEZE CAT BACK X Z ROTATIONS OR ANY BACK ROTATIIONS FOR THAT MATTER
+        // catRb.constraints |= RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
     }
 
