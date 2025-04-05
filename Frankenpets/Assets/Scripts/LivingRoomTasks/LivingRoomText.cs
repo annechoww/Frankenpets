@@ -1,7 +1,22 @@
 using System.Collections;
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
+
+[Serializable]
+public class TutorialOverlayStep
+{
+    public GameObject overlay;
+    public string description;
+    public bool useDoubleOverlay;
+    public bool adjustTodoListSorting;
+    public int todoListSortingOrder;
+    public bool hideOverlayAfter;
+
+    public bool moveContinueTextDown;
+}
 
 public class LivingRoomText : MonoBehaviour
 {
@@ -16,14 +31,19 @@ public class LivingRoomText : MonoBehaviour
     public GameObject glowUI;
     public GameObject accessControlsUI;
 
-    public GameObject overlay;
-    public GameObject overlayBG;
     public GameObject leftTutIcon;
     public GameObject rightTutIcon;
     private Animator leftTutAnimator;
     private Animator rightTutAnimator;
     private Animator continueTutAnimator;
     private Animator continueParentTutAnimator;
+
+    [Header("Tutorial Overlay Sequence")]
+    public List<TutorialOverlayStep> tutorialSteps = new List<TutorialOverlayStep>();
+    public GameObject overlay;
+    public GameObject overlayBG;
+    public GameObject singleOverlay;
+    public GameObject doubleOverlay;
 
     [Header("Icons")]
     public GameObject P1SpeechIcons;
@@ -43,9 +63,6 @@ public class LivingRoomText : MonoBehaviour
     private ControllerAssignment controllerAssignment;
     private ControlsCornerUI cornerControlsUI;
     private int tutOverlayStage = 1;
-
-    private GameObject singleOverlay;
-    private GameObject doubleOverlay;
 
     void Awake()
     {
@@ -86,41 +103,65 @@ public class LivingRoomText : MonoBehaviour
 
     private IEnumerator OverlaySequence()
     {
-        yield return WaitForKeyBoth();
-        yield return tutOverlayAdvance(2f);
-        todoListCanvas.sortingOrder = 100;
-        overlay.transform.GetChild(3).gameObject.SetActive(false);
-        overlay.transform.GetChild(4).gameObject.SetActive(true);
-
-        yield return WaitForKeyBoth();
-        yield return tutOverlayAdvance(2f);
-        todoListCanvas.sortingOrder = 0;
-        overlay.transform.GetChild(4).gameObject.SetActive(false);
-        overlay.transform.GetChild(8).gameObject.SetActive(true);
+        // Initialize overlay references (do this in Start or Awake instead if preferred)
+        singleOverlay = overlay.transform.GetChild(0).gameObject;
+        doubleOverlay = overlay.transform.GetChild(1).gameObject;
         
-        yield return WaitForKeyBoth();
-        yield return tutOverlayAdvance(2f);
-        overlay.transform.GetChild(8).gameObject.SetActive(false);
-        singleOverlay.SetActive(false);
-        overlay.transform.GetChild(7).gameObject.SetActive(true);
-        continueParentTutAnimator.SetBool("moveDown", true);
-        doubleOverlay.SetActive(true);
-
-        // yield return WaitForKeyBoth();
-        // overlay.transform.GetChild(7).gameObject.SetActive(false);
-        // overlay.transform.GetChild(10).gameObject.SetActive(true);
-        // doubleOverlay.SetActive(false);
-        // singleOverlay.SetActive(true);
+        // Make sure all overlays start inactive
+        foreach (var step in tutorialSteps)
+        {
+            if (step.overlay != null)
+                step.overlay.SetActive(false);
+        }
         
-        yield return WaitForKeyBoth();
-        overlay.transform.GetChild(7).gameObject.SetActive(false);
-        overlayBG.SetActive(false);
-        overlay.SetActive(false);
-        P1SpeechIcons.SetActive(true);
-        P2SpeechIcons.SetActive(true);
+        // Go through each tutorial step
+        for (int i = 0; i < tutorialSteps.Count; i++)
+        {
+            var step = tutorialSteps[i];
+            
+            // Set up single/double overlay display
+            singleOverlay.SetActive(!step.useDoubleOverlay);
+            doubleOverlay.SetActive(step.useDoubleOverlay);
 
-        cornerControlsUI.setShow(true);
-        StartCoroutine(TutorialSequence()); // Start tutorial progression
+            if (step.moveContinueTextDown) {
+                continueParentTutAnimator.SetBool("moveDown", true);
+            }
+            else {
+                continueParentTutAnimator.SetBool("moveDown", false);
+            }
+            
+            // Show current overlay
+            if (step.overlay != null)
+                step.overlay.SetActive(true);
+            
+            // Apply todo list sorting order if needed
+            if (step.adjustTodoListSorting)
+                todoListCanvas.sortingOrder = step.todoListSortingOrder;
+            
+            // Wait for player input
+            yield return WaitForKeyBoth();
+            
+            // Transition animation
+            yield return tutOverlayAdvance(2f);
+            
+            // Hide current overlay if specified
+            if (step.hideOverlayAfter && step.overlay != null)
+                step.overlay.SetActive(false);
+            
+            // Special handling for final step if needed
+            if (i == tutorialSteps.Count - 1)
+            {
+                // Final cleanup
+                overlayBG.SetActive(false);
+                overlay.SetActive(false);
+                P1SpeechIcons.SetActive(true);
+                P2SpeechIcons.SetActive(true);
+                cornerControlsUI.setShow(true);
+            }
+        }
+        
+        // Start the next phase of the tutorial
+        StartCoroutine(TutorialSequence());
     }
 
     private void overlayUI()
