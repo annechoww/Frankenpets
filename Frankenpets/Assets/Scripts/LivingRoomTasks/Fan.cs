@@ -103,11 +103,14 @@ public class Fan : MonoBehaviour
         stopwatch.Stop();
         stopwatch.Reset();
 
-        // Reset Rigidbody constraints and stop rotation
-        dogRb.constraints = RigidbodyConstraints.None;
-        catRb.constraints = RigidbodyConstraints.None;
-        // dogRb.angularVelocity = Vector3.zero;
-        // catRb.angularVelocity = Vector3.zero;
+        // Reset pet Rigidbody constraints
+        dogRb.constraints &= ~RigidbodyConstraints.FreezePositionY;
+        dogRb.constraints |= RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+
+
+        catRb.constraints &= ~RigidbodyConstraints.FreezePositionY;
+        catRb.constraints |= RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+
     }
 
     private IEnumerator PlayFanFallingNoise()
