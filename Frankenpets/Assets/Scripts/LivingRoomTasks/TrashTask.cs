@@ -4,11 +4,9 @@ using UnityEngine.UI;
 public class TrashTask : MonoBehaviour
 {
     [Header("References")]
-    public GameObject flipFlop1;
-    public GameObject flipFlop2;
+    public GameObject rollingPin;
     public AudioClip thrownInTrashSound;
-    private bool ff1InTrash = false;
-    private bool ff2InTrash = false;
+    private bool inTrash = false;
     public AudioClip taskCompleteSound;
     private AudioSource audioSource;
 
@@ -16,7 +14,7 @@ public class TrashTask : MonoBehaviour
     public GameObject taskItem;
     //public Color completedColor;
     //public TMPro.TextMeshProUGUI taskLabel;
-    public Task task = new Task("Throw away shoes", 1);
+    public Task task = new Task("Throw away rolling pin", 1);
 
     [Header("Locate Task Variables")]
     public GameObject taskLight;
@@ -33,15 +31,9 @@ public class TrashTask : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject == flipFlop1)
+        if (other.gameObject == rollingPin)
         {
-            ff1InTrash = true;
-            CheckTaskCompletion();
-        }
-
-        if (other.gameObject == flipFlop2)
-        {
-            ff2InTrash = true;
+            inTrash = true;
             CheckTaskCompletion();
         }
 
@@ -53,20 +45,15 @@ public class TrashTask : MonoBehaviour
 
     void OnTriggerExit(Collider other)
     {
-        if (other.gameObject == flipFlop1)
+        if (other.gameObject == rollingPin)
         {
-            ff1InTrash = false;
-        }
-
-        if (other.gameObject == flipFlop2)
-        {
-            ff2InTrash = false;
+            inTrash = false;
         }
     }
 
     void CheckTaskCompletion()
     {
-        if (ff1InTrash || ff2InTrash)
+        if (inTrash)
         {
             if (!task.IsComplete)
             {
