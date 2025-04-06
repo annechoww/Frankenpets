@@ -6,19 +6,20 @@ public class AdvanceToBasement : MonoBehaviour
     public static AdvanceToBasement Instance { get; private set; }
     public bool isAtBasementDoor = false;
     public bool antiDogClub = false;
-    public bool hideAntiDogClub = true;
     private List<Task> livingRoomTasks;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
-        livingRoomTasks = TaskManager.GetAllTasksOfLevel(1);
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(gameObject);
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        livingRoomTasks = TaskManager.GetAllTasksOfLevel(1);
     }
 
     void OnTriggerEnter(Collider other)
@@ -31,13 +32,21 @@ public class AdvanceToBasement : MonoBehaviour
         if (TaskManager.CheckTaskCompletion(livingRoomTasks) && other.CompareTag("dog front"))
         {
             antiDogClub = true;
-            hideAntiDogClub = false;
         }
 
         if (TaskManager.CheckTaskCompletion(livingRoomTasks) && other.CompareTag("cat front"))
         {
             antiDogClub = false;
-            hideAntiDogClub = true;
         }
+    }
+
+    public bool GetAntiDogClub()
+    {
+        return antiDogClub;
+    }
+
+    public bool GetIsAtBasementDoor()
+    {
+        return isAtBasementDoor;
     }
 }

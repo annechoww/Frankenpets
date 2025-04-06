@@ -40,6 +40,8 @@ public class LivingRoomText : MonoBehaviour
     private Animator continueParentTutAnimator;
 
     private List<Task> livingRoomTasks;
+    private bool finishedTasks = false;
+    private bool dogTryingToGetIn;
 
 
     [Header("Tutorial Overlay Sequence")]
@@ -81,13 +83,15 @@ public class LivingRoomText : MonoBehaviour
         Screen.SetResolution(1920, 1080, true);
 
         StartCoroutine(WaitForControllerAssignment());
-
-        livingRoomTasks = TaskManager.GetAllTasksOfLevel(1);
     }
 
     void Update()
     {
-        if (TaskManager.CheckTaskCompletion(livingRoomTasks))
+        livingRoomTasks = TaskManager.GetAllTasksOfLevel(1);
+        finishedTasks = TaskManager.CheckTaskCompletion(livingRoomTasks);
+        dogTryingToGetIn = AdvanceToBasement.Instance.GetAntiDogClub();
+        
+        if (finishedTasks)
         {
             StartCoroutine(ShowMessage("There's something in the <u>backyard</u>!", "basement"));
         }
@@ -96,17 +100,17 @@ public class LivingRoomText : MonoBehaviour
         stopwatchElapsedTime += Time.deltaTime;
         if (stopwatchElapsedTime >= stopwatchInterval)
         {
-            Debug.Log($"Stopwatch: {stopwatchInterval} seconds have passed.");
+            UnityEngine.Debug.Log($"Stopwatch: {stopwatchInterval} seconds have passed.");
             StartCoroutine(ShowMessage("HINT: <u>Locate</u> to-do list tasks.", "glow"));
             stopwatchElapsedTime = 0f;
         }
 
-        if (AdvanceToBasement.Instance.antiDogClub)
+        if (finishedTasks && dogTryingToGetIn)
         {
             StartCoroutine(ShowMessage("It's too dark; I can't see!", "antiDogClub"));
         }
 
-        if (TaskManager.CheckTaskCompletion(livingRoomTasks) && AdvanceToBasement.Instance.hideAntiDogClub)
+        if (finishedTasks && !dogTryingToGetIn)
         {
             StartCoroutine(HideEffect(null, speechBubbleRight));
         }
@@ -242,6 +246,7 @@ public class LivingRoomText : MonoBehaviour
         // tutorial overlay starts first
 
         // speech bubbles start now
+        yield return Highlight(bottomUIParentHighlight);
         yield return ShowMessage("HINT: <u>Locate</u> to-do list tasks.", "glow");
         yield return ShowMessage("HINT: Check out the <u>controls menu</u>.", "menu");
 
@@ -253,26 +258,19 @@ public class LivingRoomText : MonoBehaviour
 
     private IEnumerator ShowMessage(string message, string special = "")
     {
-        // tutorialText.text = message;
-
         if (special == "glow") 
         {
-            // glowUI.SetActive(true);
-            StartCoroutine(Highlight(bottomUIParentHighlight));
             yield return ShowBottomUI(glowUI, speechBubbleTwoTails, message);
             yield return WaitForGlow(0.7f);
             yield return HideEffect(glowUI, speechBubbleTwoTails);
-            // glowUI.SetActive(false);
         }
         else if (special == "menu") 
         {
-            // accessControlsUI.SetActive(true);
             yield return ShowBottomUI(accessControlsUI, speechBubbleTwoTails, message);
             yield return WaitForMenu(); // Wait to open menu
             // yield return new WaitForSeconds(0.5f);
             yield return WaitForMenu(); // Wait to close menu
             yield return HideEffect(accessControlsUI, speechBubbleTwoTails);
-            // accessControlsUI.SetActive(false);
         }
         else if (special == "end")
         {
@@ -282,6 +280,7 @@ public class LivingRoomText : MonoBehaviour
         }
         else if (special == "basement")
         {
+            yield return new WaitForSeconds(1.0f);
             yield return ShowBottomUI(null, speechBubbleTwoTails, message);
             yield return WaitForBasementDoor();
             yield return HideEffect(null, speechBubbleTwoTails);
@@ -488,7 +487,6 @@ public class LivingRoomText : MonoBehaviour
     {
         if (uiComponent != null) uiComponent.SetActive(true);
         if (bubble != null) bubble.SetActive(true);
-        
 
         if (playSound)
         {
