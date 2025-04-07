@@ -10,6 +10,7 @@ public class LevelHandler : MonoBehaviour
     public LevelLoader levelLoader;
     public GameObject closedBasementDoors;
     public GameObject openBasementDoors;
+    public GameObject basementDoorArrow;
     private List<Task> tasks;
     private Collider basementTrigger;
 
@@ -41,6 +42,7 @@ public class LevelHandler : MonoBehaviour
         }
         closedBasementDoors.SetActive(false);
         openBasementDoors.SetActive(true);
+        basementDoorArrow.SetActive(true);
     }
 
     void OnTriggerEnter(Collider other)
