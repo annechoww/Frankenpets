@@ -18,7 +18,7 @@ public class HintsManager : MonoBehaviour
     private bool startStopwatch = false;
     public bool showHint = false;
     private float stopwatchElapsedTime = 0f;
-    public float stopwatchInterval = 30f;
+    public float stopwatchInterval = 60f;
 
     void Awake()
     {
