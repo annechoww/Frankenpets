@@ -249,7 +249,7 @@ public class LivingRoomText : MonoBehaviour
         yield return ShowMessage("HINT: Check out the <u>controls menu</u>.", "menu");
 
         // messageManager.startPressEnterToHideTutorial();
-        yield return ShowMessage("Let's play!", "end");
+        // yield return ShowMessage("Let's play!", "end");
 
         EndTutorial();
     }
@@ -329,7 +329,7 @@ public class LivingRoomText : MonoBehaviour
 
     private IEnumerator WaitForGlow(float keyDownDuration)
     {
-        float timeoutDuration = 20f; // Timeout after 30 seconds
+        float timeoutDuration = 20f; // Timeout after 20 seconds
         float elapsedTime = 0f;
         
         while (elapsedTime < timeoutDuration) 
@@ -367,7 +367,7 @@ public class LivingRoomText : MonoBehaviour
 
     private IEnumerator WaitForMenu()
     {
-        float timeoutDuration = 10f;
+        float timeoutDuration = 20f;
         float elapsedTime = 0f;
 
         // Wait until either player presses the menu button or timeout occurs
