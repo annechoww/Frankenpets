@@ -1285,7 +1285,7 @@ public class PlayerActions : MonoBehaviour
     private void showClimbText(GameObject other)
     {
         climbText.SetActive(true);
-        climbText.transform.position = other.transform.position + (Vector3.forward * 0.05f);// - (Vector3.up * 0.10f);
+        climbText.transform.position = other.transform.position + (Vector3.forward * 0.055f);// - (Vector3.up * 0.10f);
         Vector3 pos = climbText.transform.position;
         climbText.transform.position = new Vector3(pos.x, frontHalf.transform.position.y + 0.5f, pos.z);
 
