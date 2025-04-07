@@ -2,14 +2,12 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-
 /*
     HintsManager does not check whether all tasks in the current level are done.
     It also does not check if the player is "attempting" a task.
 
     HintsManager.Instance.ShouldShowHint() returns true if the player is inside the box collider trigger(s).
 */
-
 
 public class HintsManager : MonoBehaviour
 {
@@ -19,6 +17,15 @@ public class HintsManager : MonoBehaviour
     public bool showHint = false;
     private float stopwatchElapsedTime = 0f;
     public float stopwatchInterval = 60f;
+
+    // Tags to detect
+    private string catFrontTag = "cat front";
+    private string catBackTag = "cat back";
+    private string dogBackTag = "dog back";
+    private string dogFrontTag = "dog front";
+
+
+    private HashSet<GameObject> halvesInTrigger = new HashSet<GameObject>();
 
     void Awake()
     {
@@ -40,9 +47,32 @@ public class HintsManager : MonoBehaviour
         this.enabled = true;
     }
 
-    // Update is called once per frame
     void Update()
     {
+        // Check if both specific tagged objects are inside
+        bool frontTagPresent = false;
+        bool backTagPresent = false;
+
+        foreach (var obj in halvesInTrigger)
+        {
+            if (obj != null)
+            {
+                if (obj.CompareTag(catFrontTag) || obj.CompareTag(dogFrontTag)) frontTagPresent = true;
+                if (obj.CompareTag(catBackTag) || obj.CompareTag(dogBackTag)) backTagPresent = true;
+            }
+        }
+
+        if (frontTagPresent && backTagPresent)
+        {
+            UnityEngine.Debug.Log("Trigger: Both halves are inside the no-hint trigger.");
+            startStopwatch = false;
+            showHint = false;
+        }
+        else
+        {
+            startStopwatch = true;
+        }
+
         if (startStopwatch)
         {
             stopwatchElapsedTime += Time.deltaTime;
@@ -51,24 +81,20 @@ public class HintsManager : MonoBehaviour
             if (stopwatchElapsedTime >= stopwatchInterval)
             {
                 UnityEngine.Debug.Log($"Stopwatch: {stopwatchInterval} seconds have passed.");
-                // StartCoroutine(ShowMessage("HINT: <u>Locate</u> to-do list tasks.", "glow"));
                 showHint = true;
                 stopwatchElapsedTime = 0f;
             }
         }
     }
 
-    void OnTriggerStay(Collider other)
+    void OnTriggerEnter(Collider other)
     {
-        if ((other.gameObject.CompareTag("cat front") && other.gameObject.CompareTag("dog back")) || 
-            (other.gameObject.CompareTag("cat back") && other.gameObject.CompareTag("dog front")))
-        {
-            startStopwatch = false;
-            showHint = false;
-        } else
-        {
-            startStopwatch = true;
-        }
+        halvesInTrigger.Add(other.gameObject);
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        halvesInTrigger.Remove(other.gameObject);
     }
 
     public bool ShouldShowHint()
