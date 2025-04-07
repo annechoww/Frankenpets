@@ -13,6 +13,8 @@ public class TutorialOverlayStep
     public bool useDoubleOverlay;
     public bool adjustTodoListSorting;
     public int todoListSortingOrder;
+    public bool adjustCornerControlsSorting;
+    public int cornerControlsSortingOrder;
     public bool hideOverlayAfter;
 
     public bool moveContinueTextDown;
@@ -59,26 +61,21 @@ public class LivingRoomText : MonoBehaviour
     [Header("Black Overlays and Highlight Variables")]
     public GameObject bottomUIParentHighlight;
     public Canvas todoListCanvas;
+    public Canvas cornerControlsCanvas;
 
     [Header("Player Inputs")]
     public InputHandler player1Input;
     public InputHandler player2Input;
     
-    private int currStage = 0;
     private MessageManager messageManager;
     private ControllerAssignment controllerAssignment;
-    private ControlsCornerUI cornerControlsUI;
-    private int tutOverlayStage = 1;
-
-    // Hints variables
-    private float stopwatchElapsedTime = 0f;
-    private float stopwatchInterval = 30f;
+    private ControlsCornerUI cornerControls;
 
     void Awake()
     {
         messageManager = GameObject.Find("Messages").GetComponent<MessageManager>();
         controllerAssignment = ControllerAssignment.Instance;
-        cornerControlsUI = GameObject.Find("MiniControlsUI").GetComponent<ControlsCornerUI>();
+        cornerControls = GameObject.Find("MiniControlsUI").GetComponent<ControlsCornerUI>();
 
         Screen.SetResolution(1920, 1080, true);
 
@@ -97,12 +94,9 @@ public class LivingRoomText : MonoBehaviour
         }
 
         // Display locate tasks hint
-        stopwatchElapsedTime += Time.deltaTime;
-        if (stopwatchElapsedTime >= stopwatchInterval)
+        if (!finishedTasks && HintsManager.Instance.ShouldShowHint())
         {
-            UnityEngine.Debug.Log($"Stopwatch: {stopwatchInterval} seconds have passed.");
             StartCoroutine(ShowMessage("HINT: <u>Locate</u> to-do list tasks.", "glow"));
-            stopwatchElapsedTime = 0f;
         }
 
         if (finishedTasks && dogTryingToGetIn)
@@ -174,6 +168,10 @@ public class LivingRoomText : MonoBehaviour
             // Apply todo list sorting order if needed
             if (step.adjustTodoListSorting)
                 todoListCanvas.sortingOrder = step.todoListSortingOrder;
+
+            // Apply corner controls sorting order if needed
+            if (step.adjustCornerControlsSorting)
+                cornerControlsCanvas.sortingOrder = step.cornerControlsSortingOrder;
             
             // Wait for player input
             yield return WaitForKeyBoth();
@@ -193,7 +191,7 @@ public class LivingRoomText : MonoBehaviour
                 overlay.SetActive(false);
                 P1SpeechIcons.SetActive(true);
                 P2SpeechIcons.SetActive(true);
-                cornerControlsUI.setShow(true);
+                cornerControls.setShow(true);
             }
         }
         
@@ -246,7 +244,7 @@ public class LivingRoomText : MonoBehaviour
         // tutorial overlay starts first
 
         // speech bubbles start now
-        yield return Highlight(bottomUIParentHighlight);
+        StartCoroutine(Highlight(bottomUIParentHighlight));
         yield return ShowMessage("HINT: <u>Locate</u> to-do list tasks.", "glow");
         yield return ShowMessage("HINT: Check out the <u>controls menu</u>.", "menu");
 
@@ -360,10 +358,10 @@ public class LivingRoomText : MonoBehaviour
                 yield return null;
             }
 
+            elapsedTime += Time.deltaTime; // Track amount of time coroutine has been running
+
             // Stop coroutine when player lifts key
             yield break;
-
-            elapsedTime += Time.deltaTime; // Track amount of time coroutine has been running
         }
     }
 

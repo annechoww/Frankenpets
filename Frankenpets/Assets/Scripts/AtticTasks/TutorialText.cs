@@ -112,7 +112,6 @@ public class TutorialText : MonoBehaviour
     private bool hasSplit = false;
     private bool hasReconnected = false;
     private bool hasSwitched = false;
-    private bool canLeaveAttic = false;
     private FixedJoint fixedJoint;
 
     // Other script references    

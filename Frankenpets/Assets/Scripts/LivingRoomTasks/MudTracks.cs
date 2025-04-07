@@ -10,7 +10,6 @@ public class MudTracks : MonoBehaviour
     public GameObject catPawPrintPrefab;
     public float spawnInterval = 0.5f; // Time between prints
     public float pawPrintsDuration = 6.0f; // How long the prints will appear 
-    private float timer = 0f;
     private Dictionary<GameObject, Coroutine> activePawPrints = new Dictionary<GameObject, Coroutine>();
 
     [Header("Targets for cat front's paw prints")]

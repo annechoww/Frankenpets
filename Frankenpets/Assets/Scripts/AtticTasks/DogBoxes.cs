@@ -4,7 +4,6 @@ using System.Diagnostics;
 
 public class DogBoxes : MonoBehaviour
 {
-    private bool coroutineIsDone = false;
     private RectTransform messageRectTransform;
     private TutorialText tutorialText;
     public GameObject message;
