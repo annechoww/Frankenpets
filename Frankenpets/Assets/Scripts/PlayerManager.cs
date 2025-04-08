@@ -1036,6 +1036,8 @@ public class PlayerManager : MonoBehaviour
         mainCamera.Follow = frontHalf.transform;
         mainCamera.LookAt = frontHalf.transform;
 
+        ControlsCornerUI.Instance.StartBounce(); // Make the controls corner bounce a few times to catch players' attention
+
         PlayerActions playerActions = frontHalf.GetComponent<PlayerActions>();
         if (playerActions != null)
         {

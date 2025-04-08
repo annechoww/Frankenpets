@@ -12,6 +12,16 @@ public class ControlsCornerUI : MonoBehaviour
     private GameObject P2ControlsDF;
     private GameObject P2ControlsDB;
 
+    [Header("Corner/mini Controls Bounce Movement")]
+    public static ControlsCornerUI Instance { get; private set; }
+    public float bounceHeight = 100f;
+    public float bounceDuration = 0.5f;
+    public int numberOfBounces = 4;
+
+    private RectTransform rectTransform;
+    private Vector2 originalBouncePosition;
+    private Coroutine bounceRoutine;
+
     [Header("Script references")]
     private ControllerAssignment controllerAssignment;
     public PlayerManager playerManager;
@@ -64,7 +74,10 @@ public class ControlsCornerUI : MonoBehaviour
 
     void Awake()
     {
-
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(gameObject);
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -88,6 +101,9 @@ public class ControlsCornerUI : MonoBehaviour
         P2ControlsDF = P2Controls.GetChild(0).gameObject;
         P2ControlsDB = P2Controls.GetChild(1).gameObject;
 
+        // Set up bounce variable stuff
+        rectTransform = cornerControlsUI.GetComponent<RectTransform>();
+        originalBouncePosition = rectTransform.anchoredPosition;
     }
 
     // Update is called once per frame
@@ -186,5 +202,48 @@ public class ControlsCornerUI : MonoBehaviour
             p2TailIcon.sprite = p2Input.GetSoundTailPressed() ? YPressed : YNormal;
             p2DashIcon.sprite = p2Input.GetSpecialActionPressed() ? XPressed : XNormal;
         }
+    }
+
+    // LOGIC FOR BOUNCING TEXT /////////////////////////
+    public void StartBounce()
+    {
+        if (bounceRoutine != null)
+            StopCoroutine(bounceRoutine);
+
+        bounceRoutine = StartCoroutine(BounceLoop(2, 0.5f)); 
+    }
+
+    private IEnumerator BounceLoop(int numLoops, float delayBetweenLoops)
+    {
+        for (int loop = 0; loop < numLoops; loop++)
+        {
+            float totalTime = numberOfBounces * bounceDuration;
+            float timeElapsed = 0f;
+
+            while (timeElapsed < totalTime)
+            {
+                // Current bounce
+                float t = timeElapsed % bounceDuration;
+                float normalizedTime = t / bounceDuration;
+                int bounceIndex = Mathf.FloorToInt(timeElapsed / bounceDuration);
+
+                // Damping factor (decreases each bounce)
+                float damping = Mathf.Pow(0.5f, bounceIndex);
+                float offsetY = Mathf.Sin(normalizedTime * Mathf.PI) * bounceHeight * damping;
+
+                rectTransform.anchoredPosition = originalBouncePosition + Vector2.up * offsetY;
+
+                timeElapsed += Time.deltaTime;
+                yield return null;
+            }
+
+            // Just to be safe, reset position after the loop
+            rectTransform.anchoredPosition = originalBouncePosition;
+
+            if (loop < numLoops - 1)
+                yield return new WaitForSeconds(delayBetweenLoops);
+        }
+
+        bounceRoutine = null;
     }
 }
