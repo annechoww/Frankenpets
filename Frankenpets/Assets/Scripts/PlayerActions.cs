@@ -146,6 +146,13 @@ public class PlayerActions : MonoBehaviour
     private bool player2Confirmed = false;   // For confirmation popup
     private bool inConfirmationPhase = false;
 
+    // Respawn variables
+    private float player1RespawnHoldTime = 0f;
+    private float player2RespawnHoldTime = 0f;
+    private const float REQUIRED_RESPAWN_HOLD_TIME = 1.5f; // Time in seconds players need to hold the button
+    private bool player1Respawning = false;
+    private bool player2Respawning = false;
+
     // Initial scene to load on restart
     public string initialSceneName = "Splash Screen";
 
@@ -1245,14 +1252,44 @@ public class PlayerActions : MonoBehaviour
 ////////////////////////////////////////// Respawn Action ////////////////////////////////////////////
     public void runRespawnLogic()
     {
+        // Player 1 respawn logic
         if (player1Input.GetRespawnPressed())
         {
-            playerRespawn.Respawn(P1);
+            // Increment hold time while button is pressed
+            player1RespawnHoldTime += Time.deltaTime;
+            
+            // Check if hold time requirement met and not already respawning
+            if (player1RespawnHoldTime >= REQUIRED_RESPAWN_HOLD_TIME && !player1Respawning)
+            {
+                player1Respawning = true;
+                playerRespawn.Respawn(P1);
+            }
+        }
+        else
+        {
+            // Reset hold time when button is released
+            player1RespawnHoldTime = 0f;
+            
+            // Reset respawning flag
+            player1Respawning = false;
         }
 
+        // Player 2 respawn logic (identical to Player 1)
         if (player2Input.GetRespawnPressed())
         {
-            playerRespawn.Respawn(P2);
+            player2RespawnHoldTime += Time.deltaTime;
+            
+            if (player2RespawnHoldTime >= REQUIRED_RESPAWN_HOLD_TIME && !player2Respawning)
+            {
+                player2Respawning = true;
+                playerRespawn.Respawn(P2);
+            }
+        }
+        else
+        {
+            player2RespawnHoldTime = 0f;
+            
+            player2Respawning = false;
         }
     }
 
