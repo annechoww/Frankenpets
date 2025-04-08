@@ -1,44 +1,51 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-public class ControllerAssignment: MonoBehaviour
+
+// Static helper class that allows other scripts to check input state
+// without needing a reference to the ControllerAssignment instance
+public static class InputHelper
 {
-    [SerializeField] private PlayerInput player1Input;
-    [SerializeField] private PlayerInput player2Input;
+    public static bool IsKeyboardActive()
+    {
+        return PlayerPrefs.GetInt("UsingKeyboard", 0) == 1;
+    }
+    
+    public static void SetKeyboardActive(bool isActive)
+    {
+        PlayerPrefs.SetInt("UsingKeyboard", isActive ? 1 : 0);
+        PlayerPrefs.Save();
+    }
+}
+
+public class ControllerAssignment : MonoBehaviour
+{
+    [SerializeField] private PlayerInput player1Input; // Cat
+    [SerializeField] private PlayerInput player2Input; // Dog
     
     [Header("Control Schemes")]
-    [SerializeField] private string player1Scheme = "GamepadPlayer1";
-    [SerializeField] private string player2Scheme = "GamepadPlayer2";
+    [SerializeField] private string player1Scheme = "GamepadPlayer1"; // Cat's scheme
+    [SerializeField] private string player2Scheme = "GamepadPlayer2"; // Dog's scheme
     [SerializeField] private string keyboardScheme = "Keyboard"; // "Keyboard&Mouse"
     
     [Header("Settings")]
     [SerializeField] private bool useKeyboardFallback = true;
     [SerializeField] private bool reassignOnConnect = true;
-
-    public static ControllerAssignment Instance {get; private set;}
     
-    private bool swapped = false;
-    private bool finalized = false;
-
+    // Track initialization for other scripts to check
     private bool isInitialized = false;
     
+    // Helper to get all connected gamepads
     private Gamepad[] gamepads => Gamepad.all.ToArray();
 
     private void Awake()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
-        // Register for device changes
+        // Register for device connection/disconnection events
         InputSystem.onDeviceChange += HandleDeviceChange;
     }
     
     private void Start()
     {
-        // Initial assignment
+        // Initial assignment of controllers
         AssignControllers();
         isInitialized = true;
     }
@@ -49,7 +56,7 @@ public class ControllerAssignment: MonoBehaviour
     
     private void HandleDeviceChange(InputDevice device, InputDeviceChange change)
     {
-        if (!finalized && (change == InputDeviceChange.Added || change == InputDeviceChange.Removed) && reassignOnConnect)
+        if ((change == InputDeviceChange.Added || change == InputDeviceChange.Removed) && reassignOnConnect)
         {
             Debug.Log($"Input device change: {device.name} was {change}");
             AssignControllers();
@@ -60,84 +67,49 @@ public class ControllerAssignment: MonoBehaviour
     {
         Debug.Log($"Found {gamepads.Length} connected gamepads");
         
-        // Assign first gamepad to Player 1
+        bool usingKeyboard = false;
+        
+        // Player 1 (Cat) always uses the controller with Player 1 light (first in array)
         if (gamepads.Length > 0)
         {
-            if (swapped && gamepads.Length > 1)
-            {
-                player1Input.SwitchCurrentControlScheme(player2Scheme, gamepads[1]);
-                Debug.Log($"(Swapped) Assigned {gamepads[1].name} to Player 1 (Cat)");
-            }
-            else
-            {
-                player1Input.SwitchCurrentControlScheme(player1Scheme, gamepads[0]);
-                Debug.Log($"Assigned {gamepads[0].name} to Player 1 (Cat)");
-            }
+            player1Input.SwitchCurrentControlScheme(player1Scheme, gamepads[0]);
+            Debug.Log($"Assigned {gamepads[0].name} to Player 1 (Cat)");
         }
         else if (useKeyboardFallback)
         {
             player1Input.SwitchCurrentControlScheme(keyboardScheme, Keyboard.current, Mouse.current);
-            Debug.Log("Using keyboard fallback for Player 1");
+            Debug.Log("Using keyboard fallback for Player 1 (Cat)");
+            usingKeyboard = true;
         }
         
-        // Assign second gamepad to Player 2
+        // Player 2 (Dog) always uses the controller with Player 2 light (second in array)
         if (gamepads.Length > 1)
         {
-            if (swapped)
-            {
-                player2Input.SwitchCurrentControlScheme(player1Scheme, gamepads[0]);
-                Debug.Log($"(Swapped) Assigned {gamepads[0].name} to Player 2 (Dog)");
-            }
-            else
-            {
-                player2Input.SwitchCurrentControlScheme(player2Scheme, gamepads[1]);
-                Debug.Log($"Assigned {gamepads[1].name} to Player 2 (Dog)");
-            }
+            player2Input.SwitchCurrentControlScheme(player2Scheme, gamepads[1]);
+            Debug.Log($"Assigned {gamepads[1].name} to Player 2 (Dog)");
         }
         else if (useKeyboardFallback)
         {
             player2Input.SwitchCurrentControlScheme(keyboardScheme, Keyboard.current, Mouse.current);
-            Debug.Log("Using keyboard fallback for Player 2");
+            Debug.Log("Using keyboard fallback for Player 2 (Dog)");
+            usingKeyboard = true;
         }
+        
+        // Update the keyboard status for other scripts to reference
+        InputHelper.SetKeyboardActive(usingKeyboard);
     }
-
-    public void FinalizeAssignment(bool player1ShouldbeCat) {
-        if (finalized) {
-            Debug.Log("assignment already finalized");
-            return;
-        }
-
-        if (!player1ShouldbeCat) {
-            swapped = true;
-        }
-
-        AssignControllers();
-
-        finalized = true;
-        Debug.Log("Controller assignments have been finalized");
-    }
+    
     // UI uses this to determine gamepad vs. keycaps display
     public bool IsKeyboard()
     {  
-        if (player1Input == null || player2Input == null) {
-            return false;
-        }
-        return player1Input.currentControlScheme == keyboardScheme || player2Input.currentControlScheme == keyboardScheme;
-    }
-
-    public bool isFinalized() {
-        return finalized;
-    }
-    public bool isSwapped() {
-        return swapped;
+        bool isKeyboard = (player1Input?.currentControlScheme == keyboardScheme || 
+                          player2Input?.currentControlScheme == keyboardScheme);
+        InputHelper.SetKeyboardActive(isKeyboard);
+        return isKeyboard;
     }
 
     private void OnDestroy() {
+        // Unregister event handler to prevent memory leaks
         InputSystem.onDeviceChange -= HandleDeviceChange;
-
-        if (Instance == this) {
-            Instance = null;
-        }
     }
-    
 }

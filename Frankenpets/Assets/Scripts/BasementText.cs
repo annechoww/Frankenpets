@@ -59,7 +59,7 @@ public class BasementText : MonoBehaviour
 
     void Start()
     {
-        controllerAssignment = ControllerAssignment.Instance;
+        controllerAssignment = FindFirstObjectByType<ControllerAssignment>();
         SetupControlsUI(); // Configure UI based on input method
         overlayUI();
         singleOverlay = overlay.transform.GetChild(0).gameObject;

@@ -64,29 +64,14 @@ public class ControlsCornerUI : MonoBehaviour
 
     void Awake()
     {
-        StartCoroutine(WaitForControllerAssignment());
-    }
 
-    private IEnumerator WaitForControllerAssignment() {
-        // Wait for the ControllerAssignment singleton to exist
-        while (ControllerAssignment.Instance == null)
-            yield return null;
-            
-        // Wait for it to be fully initialized
-        while (!ControllerAssignment.Instance.IsInitialized())
-            yield return null;
-            
-        // Now it's safe to use
-        controllerAssignment = ControllerAssignment.Instance;
-        
-        // Initialize your UI
-        InitializeControlsUI();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        controllerAssignment = ControllerAssignment.Instance;
+        controllerAssignment = FindFirstObjectByType<ControllerAssignment>();
+        InitializeControlsUI();
 
 
         if (controllerAssignment.IsKeyboard()) cornerControlsUI = cornerControlsUIParent.transform.GetChild(0).gameObject;
@@ -122,9 +107,6 @@ public class ControlsCornerUI : MonoBehaviour
 
     void InitializeControlsUI()
     {
-        // Get controller assignment if needed
-        if (controllerAssignment == null)
-            controllerAssignment = ControllerAssignment.Instance;
             
         if (playerManager == null)
             playerManager = FindAnyObjectByType<PlayerManager>();

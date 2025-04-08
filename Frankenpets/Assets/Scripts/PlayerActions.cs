@@ -185,10 +185,10 @@ public class PlayerActions : MonoBehaviour
     private void Start()
     {   
         getPlayerManager();
-        controllerAssignment = ControllerAssignment.Instance;
+        controllerAssignment = FindFirstObjectByType<ControllerAssignment>();
         Scene currentScene = SceneManager.GetActiveScene();
         currentSceneName = currentScene.name;
-        playerRespawn = FindObjectOfType<PlayerRespawn>();
+        playerRespawn = FindFirstObjectByType<PlayerRespawn>();
 
         // Set the Controls Menu to keycaps or gamepad
         if (controllerAssignment.IsKeyboard())
@@ -1671,7 +1671,6 @@ public class PlayerActions : MonoBehaviour
         yield return new WaitForSeconds(1.0f);
         
         // Load the initial scene
-        Destroy(ControllerAssignment.Instance.gameObject);
         Destroy(AudioManager.Instance.gameObject);
         SceneManager.LoadScene(initialSceneName);
     }

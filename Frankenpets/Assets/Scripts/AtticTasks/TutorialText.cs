@@ -152,7 +152,7 @@ public class TutorialText : MonoBehaviour
         boxesLights = boxesLightsParent.GetComponentsInChildren<Light>();
         rugLights = rugLightsParent.GetComponentsInChildren<Light>();
 
-        controllerAssignment = ControllerAssignment.Instance;
+        controllerAssignment = FindFirstObjectByType<ControllerAssignment>();   
 
         // Set the instructions UI according to keycaps or gamepad
         isKeyboard = controllerAssignment.IsKeyboard();
