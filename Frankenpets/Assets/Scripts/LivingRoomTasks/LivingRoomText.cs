@@ -258,14 +258,12 @@ public class LivingRoomText : MonoBehaviour
                 SetCurrAdvBasementStage(1);
                 break;
             case 1:
-                UnityEngine.Debug.Log("case 1");
                 // yield return new WaitForSeconds(1.0f);
                 yield return ShowBottomUI(switchUI, speechBubbleRight, "It's too dark; I can't see!");
                 // yield return WaitForSwitch();
                 // SetCurrAdvBasementStage(2);
                 break;
             case 2:
-             UnityEngine.Debug.Log("case 2");
                 yield return HideEffect(switchUI, speechBubbleRight);
                 break;
         }
@@ -274,7 +272,6 @@ public class LivingRoomText : MonoBehaviour
     public void SetCurrAdvBasementStage(int stage)
     {
         currAdvBasementStage = stage;
-        UnityEngine.Debug.Log($"Current Stage: {currAdvBasementStage}");
         StartCoroutine(AdvanceToBasementSequence());
     }
 
@@ -458,7 +455,6 @@ public class LivingRoomText : MonoBehaviour
     private bool isCoroutineRunning = false;
     private IEnumerator SlideUpEffect(RectTransform rectTransform)
     {
-        Debug.Log("SlideUpEffect started");
         while (isCoroutineRunning)
             yield return null;
 
@@ -475,12 +471,10 @@ public class LivingRoomText : MonoBehaviour
         }
 
         isCoroutineRunning = false;
-        Debug.Log("SlideUpEffect ended");
     }
 
     private IEnumerator SlideDownEffect(RectTransform rectTransform)
     {
-        Debug.Log("SlidedownEffect started");
         while (isCoroutineRunning)
             yield return null;
 
@@ -496,12 +490,10 @@ public class LivingRoomText : MonoBehaviour
         }
 
         isCoroutineRunning = false;
-        Debug.Log("SlidedownEffect ended");
     }
 
     private IEnumerator HideEffect(GameObject uiComponent = null, GameObject bubble = null)
     {
-        Debug.Log("hideeffect Coroutine started");
         while (isCoroutineRunning)
             yield return null;
 
@@ -525,7 +517,6 @@ public class LivingRoomText : MonoBehaviour
         if (bubble != null) bubble.SetActive(false);
         
         isCoroutineRunning = false;
-                Debug.Log("hideeffect Coroutine ednded");
 
         yield return null;
         
@@ -533,7 +524,6 @@ public class LivingRoomText : MonoBehaviour
 
     private IEnumerator ShowBottomUI(GameObject uiComponent = null, GameObject bubble = null, string largeText = "", string smallText = "", bool playSound = true)
     {
-        Debug.Log("ShowBottomUI Coroutine started");
         if (uiComponent != null) uiComponent.SetActive(true);
         if (bubble != null) bubble.SetActive(true);
 
@@ -554,7 +544,6 @@ public class LivingRoomText : MonoBehaviour
 
         yield return StartCoroutine(SlideUpEffect(bottomUIParent));
         yield return StartCoroutine(SlideDownEffect(bottomUIParent));
-Debug.Log("ShowBottomUI Coroutine ended");
     }
 
 
