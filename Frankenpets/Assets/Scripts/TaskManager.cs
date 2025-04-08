@@ -115,7 +115,7 @@ public class TaskManager : MonoBehaviour
         while (Vector2.Distance(bannerChildRectTransform.anchoredPosition, target) > 1f)
         {
             bannerChildRectTransform.anchoredPosition = Vector2.Lerp(bannerChildRectTransform.anchoredPosition, target, moveSpeed * Time.deltaTime);
-            bannerTextChildRectTransform.anchoredPosition = Vector2.Lerp(bannerTextChildRectTransform.anchoredPosition, target + new Vector2(0, 197), moveSpeed * Time.deltaTime);
+            bannerTextChildRectTransform.anchoredPosition = Vector2.Lerp(bannerTextChildRectTransform.anchoredPosition, target + new Vector2(0, 27), moveSpeed * Time.deltaTime); // hardcoding the y offset B)
 
             yield return null;
         }

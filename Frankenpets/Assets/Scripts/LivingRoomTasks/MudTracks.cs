@@ -9,8 +9,7 @@ public class MudTracks : MonoBehaviour
     public GameObject dogPawPrintPrefab;
     public GameObject catPawPrintPrefab;
     public float spawnInterval = 0.5f; // Time between prints
-    public float pawPrintsDuration = 6.0f; // How long the prints will appear 
-    private float timer = 0f;
+    public float pawPrintsDuration = 5.0f; // How long the prints will appear 
     private Dictionary<GameObject, Coroutine> activePawPrints = new Dictionary<GameObject, Coroutine>();
 
     [Header("Targets for cat front's paw prints")]
@@ -109,8 +108,8 @@ public class MudTracks : MonoBehaviour
             GameObject pawPrint2 = Instantiate(pawPrintPrefab, foot2Position, pawPrintRotation);
 
             // Destroy paw print after 5 seconds
-            StartCoroutine(FadeAndDestroy(pawPrint1, 5.0f));
-            StartCoroutine(FadeAndDestroy(pawPrint2, 5.0f));
+            // StartCoroutine(FadeAndDestroy(pawPrint1, 5.0f));
+            // StartCoroutine(FadeAndDestroy(pawPrint2, 5.0f));
 
             yield return new WaitForSeconds(spawnInterval);
             elapsedTime += spawnInterval;

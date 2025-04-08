@@ -13,6 +13,8 @@ public class TutorialOverlayStep
     public bool useDoubleOverlay;
     public bool adjustTodoListSorting;
     public int todoListSortingOrder;
+    public bool adjustCornerControlsSorting;
+    public int cornerControlsSortingOrder;
     public bool hideOverlayAfter;
 
     public bool moveContinueTextDown;
@@ -30,6 +32,7 @@ public class LivingRoomText : MonoBehaviour
     public GameObject pressEnterToContinueUI;
     public GameObject glowUI;
     public GameObject accessControlsUI;
+    public GameObject switchUI;
 
     public GameObject leftTutIcon;
     public GameObject rightTutIcon;
@@ -37,6 +40,11 @@ public class LivingRoomText : MonoBehaviour
     private Animator rightTutAnimator;
     private Animator continueTutAnimator;
     private Animator continueParentTutAnimator;
+
+    private List<Task> livingRoomTasks;
+    private bool finishedTasks = false;
+    private bool hasShownBackyardMessage = false;
+    private bool dogTryingToGetIn;
 
     [Header("Tutorial Overlay Sequence")]
     public List<TutorialOverlayStep> tutorialSteps = new List<TutorialOverlayStep>();
@@ -53,23 +61,22 @@ public class LivingRoomText : MonoBehaviour
     [Header("Black Overlays and Highlight Variables")]
     public GameObject bottomUIParentHighlight;
     public Canvas todoListCanvas;
+    public Canvas cornerControlsCanvas;
 
     [Header("Player Inputs")]
     public InputHandler player1Input;
     public InputHandler player2Input;
     
-    private int currStage = 0;
     private MessageManager messageManager;
     private ControllerAssignment controllerAssignment;
-    private ControlsCornerUI cornerControlsUI;
-    private int tutOverlayStage = 1;
+    private ControlsCornerUI cornerControls;
 
     void Awake()
     {
         messageManager = GameObject.Find("Messages").GetComponent<MessageManager>();
         controllerAssignment = ControllerAssignment.Instance;
-        cornerControlsUI = GameObject.Find("MiniControlsUI").GetComponent<ControlsCornerUI>();
-
+        cornerControls = GameObject.Find("MiniControlsUI").GetComponent<ControlsCornerUI>();
+        
         Screen.SetResolution(1920, 1080, true);
 
         StartCoroutine(WaitForControllerAssignment());
@@ -77,7 +84,25 @@ public class LivingRoomText : MonoBehaviour
 
     void Start()
     {
+        livingRoomTasks = TaskManager.GetAllTasksOfLevel(1);
+    }
 
+    void Update()
+    {
+        finishedTasks = TaskManager.CheckTaskCompletion(livingRoomTasks);
+        dogTryingToGetIn = AdvanceToBasement.Instance.GetAntiDogClub();
+        
+        if (finishedTasks && !hasShownBackyardMessage)
+        {
+            StartCoroutine(AdvanceToBasementSequence());
+            hasShownBackyardMessage = true;
+        }
+
+        // Display locate tasks hint
+        if (!finishedTasks && HintsManager.Instance.ShouldShowHint())
+        {
+            StartCoroutine(ShowMessage("HINT: <u>Locate</u> to-do list tasks.", "glow"));
+        }
     }
 
     private IEnumerator WaitForControllerAssignment()
@@ -137,12 +162,16 @@ public class LivingRoomText : MonoBehaviour
             // Apply todo list sorting order if needed
             if (step.adjustTodoListSorting)
                 todoListCanvas.sortingOrder = step.todoListSortingOrder;
+
+            // Apply corner controls sorting order if needed
+            if (step.adjustCornerControlsSorting)
+                cornerControlsCanvas.sortingOrder = step.cornerControlsSortingOrder;
             
             // Wait for player input
             yield return WaitForKeyBoth();
             
             // Transition animation
-            yield return tutOverlayAdvance(2f);
+            yield return tutOverlayAdvance(0.5f);
             
             // Hide current overlay if specified
             if (step.hideOverlayAfter && step.overlay != null)
@@ -156,7 +185,7 @@ public class LivingRoomText : MonoBehaviour
                 overlay.SetActive(false);
                 P1SpeechIcons.SetActive(true);
                 P2SpeechIcons.SetActive(true);
-                cornerControlsUI.setShow(true);
+                cornerControls.setShow(true);
             }
         }
         
@@ -209,42 +238,87 @@ public class LivingRoomText : MonoBehaviour
         // tutorial overlay starts first
 
         // speech bubbles start now
-        yield return ShowMessage("Try <u>locating</u> to-do list tasks.", "glow");
-        yield return ShowMessage("Check out the <u>controls menu</u>, too.", "menu");
+        StartCoroutine(Highlight(bottomUIParentHighlight));
+        yield return ShowMessage("HINT: <u>Locate</u> to-do list tasks.", "glow");
+        yield return ShowMessage("HINT: Check out the <u>controls menu</u>.", "menu");
 
         // messageManager.startPressEnterToHideTutorial();
-        yield return ShowMessage("Let's play!", "end");
+        // yield return ShowMessage("Let's play!", "end");
 
-        EndTutorial();
+        // EndTutorial();
+    }
+
+    public int currAdvBasementStage = 0;
+    private IEnumerator AdvanceToBasementSequence()
+    {
+        switch (currAdvBasementStage)
+        {
+            case 0:
+                yield return ShowMessage("There's something in the <u>backyard</u>!", "basement");
+                SetCurrAdvBasementStage(1);
+                break;
+            case 1:
+                // yield return new WaitForSeconds(1.0f);
+                yield return ShowBottomUI(switchUI, speechBubbleRight, "It's too dark; I can't see!");
+                // yield return WaitForSwitch();
+                // SetCurrAdvBasementStage(2);
+                break;
+            case 2:
+                yield return HideEffect(switchUI, speechBubbleRight);
+                break;
+        }
+    }
+
+    public void SetCurrAdvBasementStage(int stage)
+    {
+        currAdvBasementStage = stage;
+        StartCoroutine(AdvanceToBasementSequence());
+    }
+
+    private IEnumerator WaitForSwitch()
+    {
+        while (dogTryingToGetIn)
+        {
+            yield return null;
+        }
+
+        // SetCurrAdvBasementStage(2); This is done in AdvanceToBasement.cs
+    }
+
+    private IEnumerator DelayFirstAntiDog()
+    {
+        yield return new WaitForSeconds(1f);
+        SetCurrAdvBasementStage(1);
     }
 
     private IEnumerator ShowMessage(string message, string special = "")
     {
-        // tutorialText.text = message;
-
         if (special == "glow") 
         {
-            // glowUI.SetActive(true);
-            StartCoroutine(Highlight(bottomUIParentHighlight));
             yield return ShowBottomUI(glowUI, speechBubbleTwoTails, message);
             yield return WaitForGlow(0.7f);
             yield return HideEffect(glowUI, speechBubbleTwoTails);
-            // glowUI.SetActive(false);
         }
         else if (special == "menu") 
         {
-            // accessControlsUI.SetActive(true);
             yield return ShowBottomUI(accessControlsUI, speechBubbleTwoTails, message);
             yield return WaitForMenu(); // Wait to open menu
             // yield return new WaitForSeconds(0.5f);
             yield return WaitForMenu(); // Wait to close menu
             yield return HideEffect(accessControlsUI, speechBubbleTwoTails);
-            // accessControlsUI.SetActive(false);
         }
         else if (special == "end")
         {
             yield return ShowBottomUI(null, speechBubbleTwoTails, message);
             yield return new WaitForSeconds(3.0f);
+            yield return HideEffect(null, speechBubbleTwoTails);
+        }
+        else if (special == "basement")
+        {
+            yield return HideEffect(accessControlsUI, speechBubbleTwoTails); // In case "menu" case is not finished
+            yield return new WaitForSeconds(5.0f);
+            yield return ShowBottomUI(null, speechBubbleTwoTails, message);
+            yield return WaitForBasementDoor();
             yield return HideEffect(null, speechBubbleTwoTails);
         }
     }
@@ -289,20 +363,31 @@ public class LivingRoomText : MonoBehaviour
 
     private IEnumerator WaitForGlow(float keyDownDuration)
     {
-        while (true) // Keep running indefinitely
+        float timeoutDuration = 20f; // Timeout after 20 seconds
+        float elapsedTime = 0f;
+        
+        while (elapsedTime < timeoutDuration) 
         {
-            float elapsedTime = 0f;
+            float keyHoldTime = 0f;
 
             // Wait until the key is held down for the required duration
-            while (elapsedTime < keyDownDuration)
+            while (keyHoldTime < keyDownDuration)
             {
                 if (player1Input.GetGlowPressed() || player2Input.GetGlowPressed())
                 {
-                    elapsedTime += Time.deltaTime;
+                    keyHoldTime += Time.deltaTime;
                 }
                 else
                 {
-                    elapsedTime = 0f; // Reset if the key is released
+                    keyHoldTime = 0f; // Reset if the key is released
+                }
+
+                elapsedTime += Time.deltaTime; // Track amount of time coroutine has been running
+
+                // Break out if exceeded the timeout duration
+                if (elapsedTime >= timeoutDuration)
+                {
+                    yield break;
                 }
 
                 yield return null; // Wait for the next frame
@@ -322,8 +407,32 @@ public class LivingRoomText : MonoBehaviour
 
     private IEnumerator WaitForMenu()
     {
-        while (!player1Input.GetControlsMenuPressed() && !player2Input.GetControlsMenuPressed())
+        float timeoutDuration = 10f;
+        float elapsedTime = 0f;
+
+        // Wait until either player presses the menu button or timeout occurs
+        while (elapsedTime < timeoutDuration)
         {
+            if (player1Input.GetControlsMenuPressed() || player2Input.GetControlsMenuPressed())
+            {
+                yield break; // Exit coroutine if either player presses the menu button
+            }
+
+            elapsedTime += Time.deltaTime;
+
+            yield return null;
+        }
+    }
+
+    private IEnumerator WaitForBasementDoor()
+    {
+        while (true)
+        {
+            if (AdvanceToBasement.Instance.GetIsAtBasementDoor())
+            {
+                yield break;
+            }
+
             yield return null;
         }
     }
@@ -333,9 +442,9 @@ public class LivingRoomText : MonoBehaviour
         speechBubbleTwoTails.SetActive(false);
         tutorialText.text = "";
         tutorialSmallText.text = "";
-        messageManager.cancelPressEnterToHideTutorial();
-        P1SpeechIcons.SetActive(false);
-        P2SpeechIcons.SetActive(false);
+        // messageManager.cancelPressEnterToHideTutorial();
+        // P1SpeechIcons.SetActive(false);
+        // P2SpeechIcons.SetActive(false);
 
         // Show player icons
         // miniPlayerIcons.transform.GetChild(0).gameObject.SetActive(true);
@@ -398,7 +507,7 @@ public class LivingRoomText : MonoBehaviour
         while (Vector2.Distance(rectTransform.anchoredPosition, targetPosition) > 1f)
         {
             rectTransform.anchoredPosition = Vector2.Lerp(rectTransform.anchoredPosition, targetPosition, Time.deltaTime * moveSpeed);
-            
+            yield return null;
         }
 
         tutorialSmallText.text = "";
@@ -408,6 +517,7 @@ public class LivingRoomText : MonoBehaviour
         if (bubble != null) bubble.SetActive(false);
         
         isCoroutineRunning = false;
+
         yield return null;
         
     }
@@ -416,7 +526,6 @@ public class LivingRoomText : MonoBehaviour
     {
         if (uiComponent != null) uiComponent.SetActive(true);
         if (bubble != null) bubble.SetActive(true);
-        
 
         if (playSound)
         {
@@ -435,7 +544,6 @@ public class LivingRoomText : MonoBehaviour
 
         yield return StartCoroutine(SlideUpEffect(bottomUIParent));
         yield return StartCoroutine(SlideDownEffect(bottomUIParent));
-
     }
 
 

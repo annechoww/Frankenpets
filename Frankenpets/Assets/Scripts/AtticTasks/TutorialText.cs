@@ -112,7 +112,6 @@ public class TutorialText : MonoBehaviour
     private bool hasSplit = false;
     private bool hasReconnected = false;
     private bool hasSwitched = false;
-    private bool canLeaveAttic = false;
     private FixedJoint fixedJoint;
 
     // Other script references    
@@ -253,7 +252,7 @@ public class TutorialText : MonoBehaviour
                 // Only when both players have pressed do we advance
                 if (p1GlowPressed && p2GlowPressed)
                 {
-                    StartCoroutine(TutOverlayAdvance(3.0f));
+                    StartCoroutine(TutOverlayAdvance(0.5f));
                     //tutOverlayOrder++;
 
                     // Reset for the next stage

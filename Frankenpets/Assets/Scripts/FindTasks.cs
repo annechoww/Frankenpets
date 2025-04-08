@@ -84,7 +84,7 @@ public class FindTasks : MonoBehaviour
 
         StartCoroutine(DimRoomLights());
 
-        arrowsAndParticlesParent.SetActive(true);
+        // arrowsAndParticlesParent.SetActive(true);
 
         foreach (GameObject taskLight in taskLights)
         {
@@ -112,7 +112,7 @@ public class FindTasks : MonoBehaviour
             }
         }
 
-        arrowsAndParticlesParent.SetActive(false);
+        // arrowsAndParticlesParent.SetActive(false);
 
         StartCoroutine(BrightenRoomLights());
 
