@@ -74,17 +74,22 @@ public class LivingRoomText : MonoBehaviour
     void Awake()
     {
         messageManager = GameObject.Find("Messages").GetComponent<MessageManager>();
-        controllerAssignment = ControllerAssignment.Instance;
+        
         cornerControls = GameObject.Find("MiniControlsUI").GetComponent<ControlsCornerUI>();
         
         Screen.SetResolution(1920, 1080, true);
-
-        StartCoroutine(WaitForControllerAssignment());
     }
 
     void Start()
     {
+        controllerAssignment = FindFirstObjectByType<ControllerAssignment>();
         livingRoomTasks = TaskManager.GetAllTasksOfLevel(1);
+
+        SetupControlsUI();
+        overlayUI();
+        singleOverlay = overlay.transform.GetChild(0).gameObject;
+        doubleOverlay = overlay.transform.GetChild(1).gameObject;
+        StartCoroutine(OverlaySequence());
     }
 
     void Update()
@@ -103,27 +108,6 @@ public class LivingRoomText : MonoBehaviour
         {
             StartCoroutine(ShowMessage("HINT: <u>Locate</u> to-do list tasks.", "glow"));
         }
-    }
-
-    private IEnumerator WaitForControllerAssignment()
-    {
-        // Wait for the ControllerAssignment singleton to exist
-        while (ControllerAssignment.Instance == null)
-            yield return null;
-            
-        // Wait for it to be fully initialized
-        while (!ControllerAssignment.Instance.IsInitialized())
-            yield return null;
-            
-        // Now it's safe to use
-        controllerAssignment = ControllerAssignment.Instance;
-        
-        // Continue with initialization
-        SetupControlsUI();
-        overlayUI();
-        singleOverlay = overlay.transform.GetChild(0).gameObject;
-        doubleOverlay = overlay.transform.GetChild(1).gameObject;
-        StartCoroutine(OverlaySequence());
     }
 
     private IEnumerator OverlaySequence()

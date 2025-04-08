@@ -85,8 +85,8 @@ public class AudioManager : MonoBehaviour
             case "RohanLivingRoom":
                 PlayLevelIntroThenMusic(levelCompleteMusic, livingRoomMusic);
                 break;
-            case "UpdatedBasement":
-                PlayLevelIntroThenMusic(levelCompleteMusic, basementMusic);
+            case "JasonUpdatedBasement":
+                PlayMusic(basementMusic);
                 break;
             default:
                 PlayMusic(null);
