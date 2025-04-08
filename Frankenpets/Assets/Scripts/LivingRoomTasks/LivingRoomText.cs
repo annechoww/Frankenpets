@@ -45,8 +45,6 @@ public class LivingRoomText : MonoBehaviour
     private bool finishedTasks = false;
     private bool hasShownBackyardMessage = false;
     private bool dogTryingToGetIn;
-    private bool hasShownAntiDogMessage = false;
-
 
     [Header("Tutorial Overlay Sequence")]
     public List<TutorialOverlayStep> tutorialSteps = new List<TutorialOverlayStep>();
@@ -91,7 +89,6 @@ public class LivingRoomText : MonoBehaviour
 
     void Update()
     {
-        
         finishedTasks = TaskManager.CheckTaskCompletion(livingRoomTasks);
         dogTryingToGetIn = AdvanceToBasement.Instance.GetAntiDogClub();
         
@@ -106,28 +103,6 @@ public class LivingRoomText : MonoBehaviour
         {
             StartCoroutine(ShowMessage("HINT: <u>Locate</u> to-do list tasks.", "glow"));
         }
-
-        // if (finishedTasks && dogTryingToGetIn)
-        // {
-        //     StartCoroutine(DelayFirstAntiDog());
-        // } 
-        // else if (finishedTasks && !dogTryingToGetIn)
-        // {
-        //     SetCurrAdvBasementStage(2);
-        // }
-
-        // if (finishedTasks && dogTryingToGetIn && !hasShownAntiDogMessage)
-        // {
-        //     StartCoroutine(ShowMessage("It's too dark; I can't see!", "antiDogClub"));
-        //     hasShownAntiDogMessage = true;
-        // }
-
-        // if (finishedTasks && !dogTryingToGetIn)
-        // {
-        //     StartCoroutine(HideEffect(null, speechBubbleRight));
-        //     hasShownAntiDogMessage = false;
-        // }
-        
     }
 
     private IEnumerator WaitForControllerAssignment()
@@ -196,7 +171,7 @@ public class LivingRoomText : MonoBehaviour
             yield return WaitForKeyBoth();
             
             // Transition animation
-            yield return tutOverlayAdvance(2f);
+            yield return tutOverlayAdvance(0.5f);
             
             // Hide current overlay if specified
             if (step.hideOverlayAfter && step.overlay != null)
@@ -280,16 +255,18 @@ public class LivingRoomText : MonoBehaviour
         {
             case 0:
                 yield return ShowMessage("There's something in the <u>backyard</u>!", "basement");
+                SetCurrAdvBasementStage(1);
                 break;
             case 1:
                 UnityEngine.Debug.Log("case 1");
-                yield return new WaitForSeconds(1f);
-                yield return ShowBottomUI(null, speechBubbleRight, "It's too dark; I can't see!");
-                yield return WaitForSwitch();
+                // yield return new WaitForSeconds(1.0f);
+                yield return ShowBottomUI(switchUI, speechBubbleRight, "It's too dark; I can't see!");
+                // yield return WaitForSwitch();
+                // SetCurrAdvBasementStage(2);
                 break;
             case 2:
              UnityEngine.Debug.Log("case 2");
-                yield return HideEffect(null, speechBubbleRight);
+                yield return HideEffect(switchUI, speechBubbleRight);
                 break;
         }
     }
@@ -298,6 +275,7 @@ public class LivingRoomText : MonoBehaviour
     {
         currAdvBasementStage = stage;
         UnityEngine.Debug.Log($"Current Stage: {currAdvBasementStage}");
+        StartCoroutine(AdvanceToBasementSequence());
     }
 
     private IEnumerator WaitForSwitch()
@@ -307,7 +285,7 @@ public class LivingRoomText : MonoBehaviour
             yield return null;
         }
 
-        SetCurrAdvBasementStage(2);
+        // SetCurrAdvBasementStage(2); This is done in AdvanceToBasement.cs
     }
 
     private IEnumerator DelayFirstAntiDog()
@@ -340,19 +318,11 @@ public class LivingRoomText : MonoBehaviour
         }
         else if (special == "basement")
         {
-            yield return new WaitForSeconds(5.5f);
+            yield return HideEffect(accessControlsUI, speechBubbleTwoTails); // In case "menu" case is not finished
+            yield return new WaitForSeconds(5.0f);
             yield return ShowBottomUI(null, speechBubbleTwoTails, message);
             yield return WaitForBasementDoor();
             yield return HideEffect(null, speechBubbleTwoTails);
-
-            // if (dogTryingToGetIn)
-            // {
-            //     SetCurrAdvBasementStage(1);
-            // } 
-            // else
-            // {
-            //     SetCurrAdvBasementStage(2);
-            // }
         }
     }
 

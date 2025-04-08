@@ -4,6 +4,7 @@ using System.Collections.Generic;
 public class AdvanceToBasement : MonoBehaviour
 {
     public static AdvanceToBasement Instance { get; private set; }
+    public GameObject basementBlocker;
     public bool isAtBasementDoor = false;
     public bool antiDogClub = false;
     private List<Task> livingRoomTasks;
@@ -30,21 +31,20 @@ public class AdvanceToBasement : MonoBehaviour
         if (TaskManager.CheckTaskCompletion(livingRoomTasks) && (other.CompareTag("dog front") || other.CompareTag("cat front") || other.CompareTag("dog back") || other.CompareTag("dog back")))
         {
             isAtBasementDoor = true;
-
         }
 
         if (TaskManager.CheckTaskCompletion(livingRoomTasks) && other.CompareTag("dog front"))
         {
             antiDogClub = true;
-            UnityEngine.Debug.Log("antidog");
+            basementBlocker.SetActive(true);
             livingRoomManager.SetCurrAdvBasementStage(1);
         }
 
         if (TaskManager.CheckTaskCompletion(livingRoomTasks) && other.CompareTag("cat front"))
         {
-            UnityEngine.Debug.Log("no antidog");
-            livingRoomManager.SetCurrAdvBasementStage(2);
             antiDogClub = false;
+            basementBlocker.SetActive(false);
+            livingRoomManager.SetCurrAdvBasementStage(2);
         }
     }
 
