@@ -43,7 +43,10 @@ public class TutorialText : MonoBehaviour
     [Header("Controls Corner Variables")]
     public GameObject controlsCornerUIParent;
     private GameObject controlsCornerUIChild;
-    public GameObject P2ControlsGrab;
+    public GameObject P2ControlsGrabKeyboard;
+    public GameObject P2ControlsGrabController;
+    private GameObject P2ControlsGrab;
+    public GameObject P1ControlsUnknown;
     private GameObject P1ControlsCF;
     // private GameObject P1ControlsDF; 
     private GameObject P1ControlsCB;
@@ -188,8 +191,8 @@ public class TutorialText : MonoBehaviour
         // P2ControlsCB = controlsCornerUIChild.transform.GetChild(1).transform.GetChild(2).gameObject;
         P2ControlsDB = controlsCornerUIChild.transform.GetChild(1).transform.GetChild(1).gameObject; // old index was 3
 
-        P2ControlsGrab.transform.GetChild(0).gameObject.SetActive(isKeyboard);
-        P2ControlsGrab.transform.GetChild(1).gameObject.SetActive(!isKeyboard);
+        if (isKeyboard) P2ControlsGrab = P2ControlsGrabKeyboard;
+        else P2ControlsGrab = P2ControlsGrabController;
 
         if (isKeyboard){
             overlay.transform.GetChild(2).GetChild(0).GetChild(0).gameObject.SetActive(true);
@@ -471,9 +474,11 @@ public class TutorialText : MonoBehaviour
                 revealTaskTodo(vaseTaskTodo);
                 // Turn on controls UI (reveals jump control since it's already set as active)
                 controlsCornerUIParent.SetActive(true);
+                P1ControlsUnknown.SetActive(true);
 
                 yield return new WaitForSeconds(2.0f);
-                yield return StartCoroutine(Bounce(controlsCornerUIChild.transform));
+                // yield return StartCoroutine(Bounce(controlsCornerUIChild.transform));
+                // ControlsCornerUI.Instance.StartBounce();
 
                 break;
 
@@ -568,6 +573,7 @@ public class TutorialText : MonoBehaviour
                 yield return StartCoroutine(HideEffect(reconnectUI, speechBubbleTwoTails));
                 
                 // Reveal reconnect control in controls corner
+                P1ControlsUnknown.SetActive(false);
                 yield return StartCoroutine(RevealControlsCornerUI(1));
                                    
                 // Light
@@ -647,6 +653,7 @@ public class TutorialText : MonoBehaviour
                 yield return new WaitForSeconds(1.0f);
                 yield return StartCoroutine(RevealControlsCornerUI(3));
                 // yield return StartCoroutine(Bounce(controlsCornerUIChild.transform));
+                // ControlsCornerUI.Instance.StartBounce();
 
                 // next case activated in AtticPrevention.cs
                 break;
