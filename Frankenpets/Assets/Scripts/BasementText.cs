@@ -74,7 +74,7 @@ public class BasementText : MonoBehaviour
 
        yield return WaitForKeyBoth();
 
-       yield return tutOverlayAdvance(2f);
+       yield return tutOverlayAdvance(0.8f); // prev 2.5f
        
         
         overlayBG.SetActive(false);
@@ -272,8 +272,7 @@ public class BasementText : MonoBehaviour
         isCoroutineRunning = true;
         
         float moveSpeed = 5.0f;
-        // Vector2 targetPosition = new Vector2(-10, -710);
-        Vector2 targetPosition = new Vector2(-10, -465);
+        Vector2 targetPosition = new Vector2(0, -465);
     
         while (Vector2.Distance(rectTransform.anchoredPosition, targetPosition) > 1f)
         {
@@ -292,7 +291,7 @@ public class BasementText : MonoBehaviour
         isCoroutineRunning = true;
 
         float moveSpeed = 5.0f;
-        Vector2 targetPosition = new Vector2(-10, -650);
+        Vector2 targetPosition = new Vector2(0, -650);
     
         while (Vector2.Distance(rectTransform.anchoredPosition, targetPosition) > 1f)
         {
@@ -313,7 +312,7 @@ public class BasementText : MonoBehaviour
         RectTransform rectTransform = bottomUIParent;
 
         float moveSpeed = 5.0f;
-        Vector2 targetPosition = new Vector2(-10, -1086);
+        Vector2 targetPosition = new Vector2(0, -1086);
     
         while (Vector2.Distance(rectTransform.anchoredPosition, targetPosition) > 1f)
         {
@@ -348,7 +347,7 @@ public class BasementText : MonoBehaviour
             }
         }
 
-        bottomUIParent.anchoredPosition = new Vector2(-10, -1086);
+        bottomUIParent.anchoredPosition = new Vector2(0, -1086);
 
         tutorialSmallText.text = smallText;
         tutorialText.text = largeText;
