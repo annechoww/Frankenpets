@@ -43,10 +43,16 @@ public class TutorialText : MonoBehaviour
     [Header("Controls Corner Variables")]
     public GameObject controlsCornerUIParent;
     private GameObject controlsCornerUIChild;
+    public GameObject controlsHeadersKeyboard;
+    public GameObject controlsHeadersController;
+    private GameObject controlsHeaders;
     public GameObject P2ControlsGrabKeyboard;
     public GameObject P2ControlsGrabController;
     private GameObject P2ControlsGrab;
     public GameObject P1ControlsUnknown;
+    public GameObject P2ControlsJumpKeyboard;
+    public GameObject P2ControlsJumpController;
+    private GameObject P2ControlsJump;
     private GameObject P1ControlsCF;
     // private GameObject P1ControlsDF; 
     private GameObject P1ControlsCB;
@@ -179,8 +185,23 @@ public class TutorialText : MonoBehaviour
         controlsCornerUIParent.transform.GetChild(0).gameObject.SetActive(isKeyboard);
         controlsCornerUIParent.transform.GetChild(1).gameObject.SetActive(!isKeyboard);
 
-        if (isKeyboard) controlsCornerUIChild = controlsCornerUIParent.transform.GetChild(0).gameObject; // update variable to be either its keyboard or gamepad child
-        else controlsCornerUIChild = controlsCornerUIParent.transform.GetChild(1).gameObject;
+        // update variable to be either its keyboard or gamepad child
+        if (isKeyboard)
+        {
+            controlsCornerUIChild = controlsCornerUIParent.transform.GetChild(0).gameObject; 
+            P2ControlsGrab = P2ControlsGrabKeyboard;
+            P2ControlsJump = P2ControlsJumpKeyboard;
+            controlsHeaders = controlsHeadersKeyboard;
+        }
+        else 
+        {
+            controlsCornerUIChild = controlsCornerUIParent.transform.GetChild(1).gameObject;
+            P2ControlsGrab = P2ControlsGrabController;
+            P2ControlsJump = P2ControlsJumpController;
+            controlsHeaders = controlsHeadersController;
+        }
+
+        controlsCornerUIParent.SetActive(true);
 
         P1ControlsCF = controlsCornerUIChild.transform.GetChild(0).transform.GetChild(0).gameObject;
         // P1ControlsDF = controlsCornerUIChild.transform.GetChild(0).transform.GetChild(1).gameObject;
@@ -190,9 +211,6 @@ public class TutorialText : MonoBehaviour
         P2ControlsDF = controlsCornerUIChild.transform.GetChild(1).transform.GetChild(0).gameObject; // old index was 1
         // P2ControlsCB = controlsCornerUIChild.transform.GetChild(1).transform.GetChild(2).gameObject;
         P2ControlsDB = controlsCornerUIChild.transform.GetChild(1).transform.GetChild(1).gameObject; // old index was 3
-
-        if (isKeyboard) P2ControlsGrab = P2ControlsGrabKeyboard;
-        else P2ControlsGrab = P2ControlsGrabController;
 
         if (isKeyboard){
             overlay.transform.GetChild(2).GetChild(0).GetChild(0).gameObject.SetActive(true);
@@ -206,7 +224,6 @@ public class TutorialText : MonoBehaviour
         //doubleOverlay = overlay.transform.GetChild(1).gameObject;
         overlayUI();
         
-
         playerManager.setCanSwitch(false);
         playerManager.setCanReconnect(false);
         playerManager.setCanSplit(false);
@@ -255,7 +272,7 @@ public class TutorialText : MonoBehaviour
                 // Only when both players have pressed do we advance
                 if (p1GlowPressed && p2GlowPressed)
                 {
-                    StartCoroutine(TutOverlayAdvance(0.5f));
+                    StartCoroutine(TutOverlayAdvance(0.8f)); // prev 2.5f
                     //tutOverlayOrder++;
 
                     // Reset for the next stage
@@ -390,8 +407,8 @@ public class TutorialText : MonoBehaviour
         yield return new WaitForSeconds(delay);
         tutOverlayOrder++;
 
-        leftTutAnimator.Play("P1 Tut icon", 0, 0f);
-        rightTutAnimator.Play("P2 Tut icon", 0, 0f);
+        leftTutAnimator.Play("P1 Tut icon", 0, 0.0f);
+        rightTutAnimator.Play("P2 Tut icon", 0, 0.0f);
         continueTutAnimator.Play("Instruction continue animation", 0, 0f);
         leftTutAnimator.SetBool("pressed", false);
         rightTutAnimator.SetBool("pressed", false);
@@ -472,8 +489,10 @@ public class TutorialText : MonoBehaviour
                 // Tell player to break the vase
                 StartCoroutine(Highlight(todoListHighlight));
                 revealTaskTodo(vaseTaskTodo);
-                // Turn on controls UI (reveals jump control since it's already set as active)
-                controlsCornerUIParent.SetActive(true);
+
+                // Reveal jump control + control headers
+                P2ControlsJump.SetActive(true);
+                controlsHeaders.SetActive(true);
                 P1ControlsUnknown.SetActive(true);
 
                 yield return new WaitForSeconds(2.0f);
@@ -879,7 +898,7 @@ public class TutorialText : MonoBehaviour
         
         float moveSpeed = 5.0f;
         // Vector2 targetPosition = new Vector2(-10, -710);
-        Vector2 targetPosition = new Vector2(-10, -465);
+        Vector2 targetPosition = new Vector2(0, -465);
     
         while (Vector2.Distance(rectTransform.anchoredPosition, targetPosition) > 1f)
         {
@@ -898,7 +917,7 @@ public class TutorialText : MonoBehaviour
         isCoroutineRunning = true;
 
         float moveSpeed = 5.0f;
-        Vector2 targetPosition = new Vector2(-10, -710);
+        Vector2 targetPosition = new Vector2(0, -710);
     
         while (Vector2.Distance(rectTransform.anchoredPosition, targetPosition) > 1f)
         {
@@ -958,7 +977,7 @@ public class TutorialText : MonoBehaviour
             }
         }
 
-        bottomUIParent.anchoredPosition = new Vector2(-10, -1086);
+        bottomUIParent.anchoredPosition = new Vector2(0, -1086);
 
         tutorialSmallText.text = smallText;
         tutorialText.text = largeText;
