@@ -300,7 +300,7 @@ public class LivingRoomText : MonoBehaviour
         else if (special == "basement")
         {
             yield return HideEffect(accessControlsUI, speechBubbleTwoTails); // In case "menu" case is not finished
-            yield return new WaitForSeconds(5.0f);
+            yield return new WaitForSeconds(5.5f);
             yield return ShowBottomUI(null, speechBubbleTwoTails, message);
             yield return WaitForBasementDoor();
             yield return HideEffect(null, speechBubbleTwoTails);
