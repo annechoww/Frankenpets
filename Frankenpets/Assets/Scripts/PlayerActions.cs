@@ -100,7 +100,7 @@ public class PlayerActions : MonoBehaviour
     
     public Transform objectGrabPoint;
     public bool isPaw; // MudTracks.cs listens to this bool, so leave it as public!
-    //public Transform objectDragPoint;
+    public Transform objectDragPoint;
     private bool isStanding = false;
 
     [Header("UI Variables")]
@@ -593,6 +593,11 @@ public class PlayerActions : MonoBehaviour
 
             isDraggableObject = currentGrabbableObject.grabBehavior == GrabbableObject.GrabBehavior.Draggable;
             
+            if (isDraggableObject){
+                mouthPosition = objectDragPoint.position;
+            } else{
+                mouthPosition = objectGrabPoint.position;
+            }
             // Use closest point on the collider as the grab point
             grabPoint = grabbableObject.ClosestPoint(mouthPosition);
             
@@ -602,6 +607,7 @@ public class PlayerActions : MonoBehaviour
                 // Cast a ray from mouth to object to find surface point
                 Vector3 direction = (grabbableObject.transform.position - mouthPosition).normalized;
                 Ray ray = new Ray(mouthPosition, direction);
+                UnityEngine.Debug.DrawRay(ray.origin, direction, Color.red, 10.0f);
                 
                 if (grabbableObject.Raycast(ray, out RaycastHit hitInfo, 10f))
                 {
@@ -858,7 +864,7 @@ public class PlayerActions : MonoBehaviour
         configureJoint(grabJoint);
 
         // Get mouth position
-        mouthPosition = objectGrabPoint.position;
+        
         
         // Determine if this is a portable object
         bool isPortable = false;
@@ -870,6 +876,7 @@ public class PlayerActions : MonoBehaviour
         }
         
         if (isPortable) {
+            mouthPosition = objectGrabPoint.position;
             // Set the anchor point at the dog's mouth
             grabJoint.anchor = transform.InverseTransformPoint(mouthPosition);
             
@@ -882,6 +889,7 @@ public class PlayerActions : MonoBehaviour
             // grabJoint.zMotion = ConfigurableJointMotion.Limited;
 
         } else {
+            mouthPosition = objectDragPoint.position;
             // For draggable objects using the joint system
             grabRiggingScript.drag();
             
