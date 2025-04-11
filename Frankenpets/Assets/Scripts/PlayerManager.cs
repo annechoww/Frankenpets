@@ -417,16 +417,18 @@ public class PlayerManager : MonoBehaviour
         // Determine if players are pulling in opposite directions based on their positions
         bool frontPullingForward = false;
         bool backPullingBackward = false;
+
+        float inputThreshold = 0.5f;
         
         if (P1.IsFront)
         {
-            frontPullingForward = player1YInput > 0;
-            backPullingBackward = player2YInput < 0;
+            frontPullingForward = player1YInput > inputThreshold;
+            backPullingBackward = player2YInput < -inputThreshold;
         }
         else // P2 is front
         {
-            frontPullingForward = player2YInput > 0;
-            backPullingBackward = player1YInput < 0;
+            frontPullingForward = player2YInput > inputThreshold;
+            backPullingBackward = player1YInput < -inputThreshold;
         }
 
         splitCondition = frontPullingForward && backPullingBackward;
