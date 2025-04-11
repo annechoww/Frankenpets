@@ -210,7 +210,7 @@ public class ControlsCornerUI : MonoBehaviour
         if (bounceRoutine != null)
             StopCoroutine(bounceRoutine);
 
-        bounceRoutine = StartCoroutine(BounceLoop(2, 0.5f)); 
+        bounceRoutine = StartCoroutine(BounceLoop(1, 0.5f)); 
     }
 
     private IEnumerator BounceLoop(int numLoops, float delayBetweenLoops)
