@@ -1,4 +1,7 @@
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine.SceneManagement;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,6 +19,7 @@ public class BasementText : MonoBehaviour
     public GameObject glowUI;
     public GameObject accessControlsUI;
 
+    [Header("Intro Overlay Variables")]
     public GameObject overlay;
     public GameObject overlayBG;
     public GameObject leftTutIcon;
@@ -24,6 +28,14 @@ public class BasementText : MonoBehaviour
     private Animator rightTutAnimator;
     private Animator continueTutAnimator;
     private Animator continueParentTutAnimator;
+
+    [Header("End Overlay Variables")]
+    public GameObject gameOverOverlay;
+    public GameObject leftEndIcon;
+    public GameObject rightEndIcon;
+    private Animator leftEndAnimator;
+    private Animator rightEndAnimator;
+    private Animator restartGameAnimator;
 
     [Header("Icons")]
     public GameObject P1SpeechIcons;
@@ -44,6 +56,8 @@ public class BasementText : MonoBehaviour
     private ControlsCornerUI cornerControlsUI;
     private int tutOverlayStage = 1;
 
+    private List<Task> tasks;
+    private bool gameComplete = false;
     private GameObject singleOverlay;
     private GameObject doubleOverlay;
 
@@ -69,6 +83,17 @@ public class BasementText : MonoBehaviour
         //StartCoroutine(TutorialSequence()); // Start tutorial progression
     }
 
+    private void Update()
+    {
+        tasks = TaskManager.GetAllTasksOfLevel(2);
+        if (TaskManager.CheckTaskCompletion(tasks) && !gameComplete)
+        {
+            StartCoroutine(EndOverlaySequence());
+            gameComplete = true;
+
+        }
+    }
+
     private IEnumerator OverlaySequence()
     {
 
@@ -82,6 +107,19 @@ public class BasementText : MonoBehaviour
         yield return null;
     }
 
+    private IEnumerator EndOverlaySequence()
+    {
+
+        yield return new WaitForSeconds(2.0f);
+        gameOverOverlay.SetActive(true);
+        yield return WaitForKeyBoth();
+        yield return endOverlayAdvance(0.8f);
+
+        gameOverOverlay.SetActive(false);
+        StartCoroutine(PerformRestart());
+        yield return null;
+    }
+
     private void overlayUI()
     {
         leftTutAnimator = leftTutIcon.GetComponent<Animator>();
@@ -91,6 +129,14 @@ public class BasementText : MonoBehaviour
         leftTutAnimator.Play("P1 Tut icon", 0, 0f);
         rightTutAnimator.Play("P2 Tut icon", 0, 0f);
         continueTutAnimator.Play("Instruction continue animation", 0, 0f);
+
+        leftEndAnimator = leftTutIcon.GetComponent<Animator>();
+        rightEndAnimator = rightTutIcon.GetComponent<Animator>();
+        restartGameAnimator = overlay.transform.GetChild(2).GetChild(0).gameObject.GetComponent<Animator>();
+        leftEndAnimator.Play("P1 Tut icon", 0, 0f);
+        rightEndAnimator.Play("P2 Tut icon", 0, 0f);
+        restartGameAnimator.Play("Instruction continue animation", 0, 0f);
+        
         todoListCanvas.sortingOrder = 0;
     }
 
@@ -102,6 +148,16 @@ public class BasementText : MonoBehaviour
         continueTutAnimator.Play("Instruction continue animation", 0, 0f);
         leftTutAnimator.SetBool("pressed", false);
         rightTutAnimator.SetBool("pressed", false);
+    }
+
+    private IEnumerator endOverlayAdvance(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        leftEndAnimator.Play("P1 Tut icon", 0, 0f);
+        rightEndAnimator.Play("P2 Tut icon", 0, 0f);
+        restartGameAnimator.Play("Instruction continue animation", 0, 0f);
+        leftEndAnimator.SetBool("pressed", false);
+        rightEndAnimator.SetBool("pressed", false);
     }
 
     private void SetupControlsUI()
@@ -118,8 +174,10 @@ public class BasementText : MonoBehaviour
 
         if (isKeyboard){
             overlay.transform.GetChild(2).GetChild(0).GetChild(0).gameObject.SetActive(true);
+            gameOverOverlay.transform.GetChild(2).GetChild(0).GetChild(0).gameObject.SetActive(true);
         } else if (!isKeyboard){
             overlay.transform.GetChild(2).GetChild(0).GetChild(1).gameObject.SetActive(true);
+            gameOverOverlay.transform.GetChild(2).GetChild(0).GetChild(1).gameObject.SetActive(true);
         }
     }
 
@@ -260,6 +318,23 @@ public class BasementText : MonoBehaviour
         // Show player icons
         // miniPlayerIcons.transform.GetChild(0).gameObject.SetActive(true);
         // miniPlayerIcons.transform.GetChild(1).gameObject.SetActive(true);
+    }
+
+    private IEnumerator PerformRestart()
+    {
+        
+        // // Show a loading message or transition effect
+        // if (confirmPromptText != null)
+        // {
+        //     confirmPromptText.text = "Restarting game...";
+        // }
+        
+        // Wait a short time for feedback
+        yield return new WaitForSeconds(1.0f);
+        
+        // Load the initial scene
+        Destroy(AudioManager.Instance.gameObject);
+        SceneManager.LoadScene("Splash Screen");
     }
 
     // BOTTOM SPEECH UI ///////////////////////////////////////////////
