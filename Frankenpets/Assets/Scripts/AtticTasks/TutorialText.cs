@@ -67,6 +67,7 @@ public class TutorialText : MonoBehaviour
     public GameObject P2IconLarge;
     // public GameObject playerIcons;
     public AudioClip whineSound;
+    public AudioClip uiClickSound;
 
     [Header("Player Inputs")]
     public InputHandler player1Input;
@@ -253,6 +254,7 @@ public class TutorialText : MonoBehaviour
             
             if (isKeyboard && Input.GetKeyDown(KeyCode.Space))
             {
+                AudioManager.Instance.PlaySFX(uiClickSound);
                 tutOverlayOrder++;
             }
             else if (!isKeyboard)
@@ -261,11 +263,13 @@ public class TutorialText : MonoBehaviour
                 if (player1Input.GetGlowJustPressed())
                 {
                     p1GlowPressed = true;
+                    AudioManager.Instance.PlaySFX(uiClickSound);
                     leftTutAnimator.SetBool("pressed", true);
                 }
                 if (player2Input.GetGlowJustPressed())
                 {
                     p2GlowPressed = true;
+                    AudioManager.Instance.PlaySFX(uiClickSound);
                     rightTutAnimator.SetBool("pressed", true);
                 }
                 

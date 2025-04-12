@@ -71,6 +71,9 @@ public class LivingRoomText : MonoBehaviour
     private ControllerAssignment controllerAssignment;
     private ControlsCornerUI cornerControls;
 
+    [Header("Sound Effects")]
+    public AudioClip uiClickSound;
+
     void Awake()
     {
         messageManager = GameObject.Find("Messages").GetComponent<MessageManager>();
@@ -334,10 +337,12 @@ public class LivingRoomText : MonoBehaviour
         while ((!player1Pressed || !player2Pressed) && !Input.GetKeyDown(KeyCode.Space)) {
             if (player1Input.GetGlowJustPressed()){
                 player1Pressed = true;
+                AudioManager.Instance.PlaySFX(uiClickSound);
                 leftTutAnimator.SetBool("pressed", true);
             }
             if (player2Input.GetGlowJustPressed()){
                 player2Pressed = true;
+                AudioManager.Instance.PlaySFX(uiClickSound);
                 rightTutAnimator.SetBool("pressed", true);
             }
             yield return null;  // Allow waiting until the next frame.

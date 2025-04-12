@@ -62,6 +62,9 @@ public class BasementText : MonoBehaviour
     private GameObject singleOverlay;
     private GameObject doubleOverlay;
 
+    [Header("Sound Effects")]
+    public AudioClip uiClickSound;
+
     void Awake()
     {
         messageManager = GameObject.Find("Messages").GetComponent<MessageManager>();
@@ -258,10 +261,12 @@ public class BasementText : MonoBehaviour
         while ((!player1Pressed || !player2Pressed) && !Input.GetKeyDown(KeyCode.Space)) {
             if (player1Input.GetGlowJustPressed()){
                 player1Pressed = true;
+                AudioManager.Instance.PlaySFX(uiClickSound);
                 leftTutAnimator.SetBool("pressed", true);
             }
             if (player2Input.GetGlowJustPressed()){
                 player2Pressed = true;
+                AudioManager.Instance.PlaySFX(uiClickSound);
                 rightTutAnimator.SetBool("pressed", true);
             }
             yield return null;  // Allow waiting until the next frame.
