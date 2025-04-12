@@ -62,7 +62,7 @@ public class BasementText : MonoBehaviour
     private GameObject singleOverlay;
     private GameObject doubleOverlay;
 
-    [Header("Sound Effects")]
+    // [Header("Sound Effects")]
 
     void Awake()
     {
