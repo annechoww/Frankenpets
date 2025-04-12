@@ -62,8 +62,6 @@ public class BasementText : MonoBehaviour
     private GameObject singleOverlay;
     private GameObject doubleOverlay;
 
-    // [Header("Sound Effects")]
-
     void Awake()
     {
         messageManager = GameObject.Find("Messages").GetComponent<MessageManager>();
