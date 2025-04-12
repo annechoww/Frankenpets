@@ -35,7 +35,6 @@ public class OutroComicManager : MonoBehaviour
     // References to other components
     private InputHandler player1Input;
     private InputHandler player2Input;
-    private Startup startupScript;
 
     // Coroutine references
     private Coroutine panelSequenceCoroutine;
@@ -45,13 +44,11 @@ public class OutroComicManager : MonoBehaviour
     /// </summary>
     /// <param name="p1Input">Player 1 input handler</param>
     /// <param name="p2Input">Player 2 input handler</param>
-    /// <param name="startup">Reference to the startup script</param>
-    public void StartComic(InputHandler p1Input, InputHandler p2Input, Startup startup)
+    public void StartComic(InputHandler p1Input, InputHandler p2Input)
     {
         // Store references
         player1Input = p1Input;
         player2Input = p2Input;
-        startupScript = startup;
         
         // Reset state
         currentPanelIndex = -1;
@@ -280,10 +277,10 @@ public class OutroComicManager : MonoBehaviour
         comicActive = false;
         
         // Tell the startup script we're done
-        if (startupScript != null)
-        {
-            startupScript.OnComicComplete();
-        }
+        // if (startupScript != null)
+        // {
+        //     startupScript.OnComicComplete();
+        // }
     }
     
     /// <summary>

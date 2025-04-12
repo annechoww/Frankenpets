@@ -50,6 +50,9 @@ public class BasementText : MonoBehaviour
     public InputHandler player1Input;
     public InputHandler player2Input;
     
+    public OutroComicManager outroComicManager;
+    public GameObject outroComicCanvas;
+
     private int currStage = 0;
     private MessageManager messageManager;
     private ControllerAssignment controllerAssignment;
@@ -89,6 +92,9 @@ public class BasementText : MonoBehaviour
         tasks = TaskManager.GetAllTasksOfLevel(2);
         if (TaskManager.CheckTaskCompletion(tasks) && !taskComplete)
         {
+            outroComicCanvas.SetActive(true);
+            outroComicManager.StartComic(player1Input, player2Input);
+            outroComicCanvas.SetActive(false);
             StartCoroutine(EndOverlaySequence());
             taskComplete = true;
 
