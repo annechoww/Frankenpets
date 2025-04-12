@@ -253,6 +253,7 @@ public class TutorialText : MonoBehaviour
             
             if (isKeyboard && Input.GetKeyDown(KeyCode.Space))
             {
+                AudioManager.Instance.playUIClickSFX();
                 tutOverlayOrder++;
             }
             else if (!isKeyboard)
@@ -261,11 +262,13 @@ public class TutorialText : MonoBehaviour
                 if (player1Input.GetGlowJustPressed())
                 {
                     p1GlowPressed = true;
+                    AudioManager.Instance.playUIClickSFX();
                     leftTutAnimator.SetBool("pressed", true);
                 }
                 if (player2Input.GetGlowJustPressed())
                 {
                     p2GlowPressed = true;
+                    AudioManager.Instance.playUIClickSFX();
                     rightTutAnimator.SetBool("pressed", true);
                 }
                 
