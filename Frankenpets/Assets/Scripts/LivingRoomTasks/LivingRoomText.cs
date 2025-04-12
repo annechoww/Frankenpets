@@ -239,7 +239,7 @@ public class LivingRoomText : MonoBehaviour
         {
             case 0:
                 yield return ShowMessage("There's something in the <u>backyard</u>!", "basement");
-                SetCurrAdvBasementStage(1);
+                // SetCurrAdvBasementStage(1);
                 break;
             case 1:
                 // yield return new WaitForSeconds(1.0f);
