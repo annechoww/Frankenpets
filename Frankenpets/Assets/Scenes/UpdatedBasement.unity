@@ -8488,6 +8488,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   levelLoader: {fileID: 0}
+  closedBasementDoors: {fileID: 0}
+  openBasementDoors: {fileID: 0}
+  basementDoorArrow: {fileID: 0}
 --- !u!4 &703257240
 Transform:
   m_ObjectHideFlags: 0
@@ -17392,6 +17395,103 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!1001 &38981265487533818
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1755042709340241498, guid: c313c7eccad8d4ab8b4e396768e829e6, type: 3}
+      propertyPath: m_Name
+      value: OutroComicCanvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 8425741865965361076, guid: c313c7eccad8d4ab8b4e396768e829e6, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8425741865965361076, guid: c313c7eccad8d4ab8b4e396768e829e6, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8425741865965361076, guid: c313c7eccad8d4ab8b4e396768e829e6, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8425741865965361076, guid: c313c7eccad8d4ab8b4e396768e829e6, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8425741865965361076, guid: c313c7eccad8d4ab8b4e396768e829e6, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8425741865965361076, guid: c313c7eccad8d4ab8b4e396768e829e6, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8425741865965361076, guid: c313c7eccad8d4ab8b4e396768e829e6, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8425741865965361076, guid: c313c7eccad8d4ab8b4e396768e829e6, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8425741865965361076, guid: c313c7eccad8d4ab8b4e396768e829e6, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8425741865965361076, guid: c313c7eccad8d4ab8b4e396768e829e6, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8425741865965361076, guid: c313c7eccad8d4ab8b4e396768e829e6, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8425741865965361076, guid: c313c7eccad8d4ab8b4e396768e829e6, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8425741865965361076, guid: c313c7eccad8d4ab8b4e396768e829e6, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8425741865965361076, guid: c313c7eccad8d4ab8b4e396768e829e6, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8425741865965361076, guid: c313c7eccad8d4ab8b4e396768e829e6, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8425741865965361076, guid: c313c7eccad8d4ab8b4e396768e829e6, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8425741865965361076, guid: c313c7eccad8d4ab8b4e396768e829e6, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8425741865965361076, guid: c313c7eccad8d4ab8b4e396768e829e6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8425741865965361076, guid: c313c7eccad8d4ab8b4e396768e829e6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8425741865965361076, guid: c313c7eccad8d4ab8b4e396768e829e6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: c313c7eccad8d4ab8b4e396768e829e6, type: 3}
 --- !u!222 &133703398255463090
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -22909,16 +23009,22 @@ MonoBehaviour:
   pressEnterToContinueUI: {fileID: 5561663950522226965}
   glowUI: {fileID: 2094454843158961763}
   accessControlsUI: {fileID: 6804814612859744253}
-  overlay: {fileID: 88920463}
-  overlayBG: {fileID: 563400129}
+  switchUI: {fileID: 0}
   leftTutIcon: {fileID: 798024395}
   rightTutIcon: {fileID: 46589433}
+  tutorialSteps: []
+  overlay: {fileID: 88920463}
+  overlayBG: {fileID: 563400129}
+  singleOverlay: {fileID: 0}
+  doubleOverlay: {fileID: 0}
   P1SpeechIcons: {fileID: 747770150826867561}
   P2SpeechIcons: {fileID: 8289308003835170639}
   bottomUIParentHighlight: {fileID: 108511702}
   todoListCanvas: {fileID: 0}
+  cornerControlsCanvas: {fileID: 0}
   player1Input: {fileID: 1473620268}
   player2Input: {fileID: 1473620267}
+  currAdvBasementStage: 0
 --- !u!114 &7700266452998693105
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22944,6 +23050,9 @@ MonoBehaviour:
   overlayBG: {fileID: 563400129}
   leftTutIcon: {fileID: 798024395}
   rightTutIcon: {fileID: 46589433}
+  gameOverOverlay: {fileID: 0}
+  leftEndIcon: {fileID: 0}
+  rightEndIcon: {fileID: 0}
   P1SpeechIcons: {fileID: 747770150826867561}
   P2SpeechIcons: {fileID: 8289308003835170639}
   bottomUIParentHighlight: {fileID: 108511702}
@@ -23742,3 +23851,4 @@ SceneRoots:
   - {fileID: 1651501491}
   - {fileID: 1252282760}
   - {fileID: 575510834}
+  - {fileID: 38981265487533818}
