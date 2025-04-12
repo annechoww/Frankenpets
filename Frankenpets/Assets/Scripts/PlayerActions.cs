@@ -1247,7 +1247,7 @@ public class PlayerActions : MonoBehaviour
     private void runTailLogic()
     {
         // if (((Input.GetKeyDown(KeyCode.Z) && !P1.IsFront) || (Input.GetKeyDown(KeyCode.Period) && !P2.IsFront)))
-        if ((player1Input.GetSoundTailJustPressed() && !P1.IsFront) || (player2Input.GetSoundTailJustPressed() && !P2.IsFront))
+        if ((player1Input.GetSoundTailPressed() && !P1.IsFront) || (player2Input.GetSoundTailPressed() && !P2.IsFront))
         {
             tailRiggingScript.useTail();
         }

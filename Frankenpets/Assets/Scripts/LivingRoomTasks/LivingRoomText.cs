@@ -239,7 +239,7 @@ public class LivingRoomText : MonoBehaviour
         {
             case 0:
                 yield return ShowMessage("There's something in the <u>backyard</u>!", "basement");
-                SetCurrAdvBasementStage(1);
+                // SetCurrAdvBasementStage(1);
                 break;
             case 1:
                 // yield return new WaitForSeconds(1.0f);
@@ -300,7 +300,7 @@ public class LivingRoomText : MonoBehaviour
         else if (special == "basement")
         {
             yield return HideEffect(accessControlsUI, speechBubbleTwoTails); // In case "menu" case is not finished
-            yield return new WaitForSeconds(5.0f);
+            yield return new WaitForSeconds(5.5f);
             yield return ShowBottomUI(null, speechBubbleTwoTails, message);
             yield return WaitForBasementDoor();
             yield return HideEffect(null, speechBubbleTwoTails);
