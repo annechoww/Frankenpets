@@ -286,7 +286,7 @@ public class BasementText : MonoBehaviour
                 resetGame = true;
             }
             if (player2Input.GetGlowJustPressed()){
-                player1Pressed = true;
+                player2Pressed = true;
                 resetGame = true;
             }
             
