@@ -104,11 +104,13 @@ MonoBehaviour:
     m_Bits: 2048
   otherFoot: {fileID: 2222440316714128948}
   stepDistance: 0.05
-  stepHeight: 0.05
-  stepLength: 0.01
-  footSpacing: 0.05
+  stepHeight: 0.03
+  stepLength: 0.03
   speed: 3
-  defaultTargetBody: {fileID: 3806210327394824665}
+  horizontalFootSpacing: 0.04
+  verticalFootSpacing: 0
+  halve: {fileID: 2877803563898386325}
+  defaultTargetBody: {fileID: 7790518986837224238}
   altTargetBody: {fileID: 7371729376302830331}
   footOffset: {x: 0, y: 0, z: 0}
 --- !u!1 &3340252086354391454
@@ -160,11 +162,13 @@ MonoBehaviour:
     m_Bits: 2048
   otherFoot: {fileID: 7499134211837921533}
   stepDistance: 0.05
-  stepHeight: 0.05
-  stepLength: 0.01
-  footSpacing: -0.05
+  stepHeight: 0.03
+  stepLength: 0.03
   speed: 3
-  defaultTargetBody: {fileID: 3806210327394824665}
+  horizontalFootSpacing: -0.04
+  verticalFootSpacing: 0
+  halve: {fileID: 2877803563898386325}
+  defaultTargetBody: {fileID: 7790518986837224238}
   altTargetBody: {fileID: 7371729376302830331}
   footOffset: {x: 0, y: 0, z: 0}
 --- !u!1 &3861069108574848743
@@ -325,8 +329,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Weight: 1
   m_Data:
-    m_Root: {fileID: 8926283500192698700}
-    m_Mid: {fileID: 6066303523848720773}
+    m_Root: {fileID: 6066303523848720773}
+    m_Mid: {fileID: 8384890768724566672}
     m_Tip: {fileID: 6443326525133781522}
     m_Target: {fileID: 347026326250075828}
     m_Hint: {fileID: 7653288637381749555}
@@ -519,8 +523,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Weight: 1
   m_Data:
-    m_Root: {fileID: 2791922633463927430}
-    m_Mid: {fileID: 2390195349520638917}
+    m_Root: {fileID: 2390195349520638917}
+    m_Mid: {fileID: 1898339495788725066}
     m_Tip: {fileID: 2925965442253425749}
     m_Target: {fileID: 7399009598966233358}
     m_Hint: {fileID: 7804601796258676079}

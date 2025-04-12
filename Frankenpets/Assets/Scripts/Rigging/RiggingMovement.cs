@@ -6,15 +6,23 @@ public class RiggingMovement : MonoBehaviour
 
     public LayerMask terrainLayer;
     public RiggingMovement otherFoot;
-    public float stepDistance, stepHeight, stepLength, footSpacing, speed;
+    public float stepDistance, stepHeight, stepLength, speed;
+
+    [Header("Spacing")]
+    public float horizontalFootSpacing;
+    public float verticalFootSpacing;
+
+    [Header("Component")]
+    public Transform halve; // for direction purposes
+
+    [Header("Target")]
     public Transform defaultTargetBody;
     public Transform altTargetBody;
-    //public Transform stillBody;
     public Vector3 footOffset;
 
-    Vector3 oldPosition, newPosition, currentPosition;
-    Vector3 oldNormal, currentNormal, newNormal;
-    float lerp; // lerp = 1 = move; lerp < 1 = can't move 
+    private Vector3 oldPosition, newPosition, currentPosition;
+    private Vector3 oldNormal, currentNormal, newNormal;
+    private float lerp; // lerp = 1 = move; lerp < 1 = can't move 
     private Transform body;
 
     void Start()
@@ -40,9 +48,9 @@ public class RiggingMovement : MonoBehaviour
     {
         transform.position = currentPosition;
         transform.up = currentNormal;
-        Ray ray =  new Ray(body.position + (body.right * footSpacing), Vector3.down);
+        Ray ray =  new Ray(body.position + (halve.forward * verticalFootSpacing) + (halve.right * horizontalFootSpacing), Vector3.down);
         // Ray ray2 =  new Ray(body.position, Vector3.down);
-        //Debug.DrawRay(ray.origin, ray.direction * 2f, Color.red);
+        //Debug.DrawRay(ray.origin, ray.direction * 2f, Color.green);
         // Debug.DrawRay(ray2.origin, ray2.direction * 2f, Color.blue);
 
         if (Physics.Raycast(ray, out RaycastHit hit, 10, terrainLayer.value))
@@ -51,7 +59,7 @@ public class RiggingMovement : MonoBehaviour
             {
                 lerp = 0;
                 int direction = body.InverseTransformPoint(hit.point).z > body.InverseTransformPoint(newPosition).z ? 1 : -1;
-                newPosition = hit.point + (body.forward * stepLength * direction) + footOffset;
+                newPosition = hit.point + (halve.forward * stepLength * direction) + footOffset;
                 newNormal = hit.normal;
             }
         }
