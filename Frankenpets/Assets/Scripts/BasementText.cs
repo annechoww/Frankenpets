@@ -63,7 +63,6 @@ public class BasementText : MonoBehaviour
     private GameObject doubleOverlay;
 
     [Header("Sound Effects")]
-    public AudioClip uiClickSound;
 
     void Awake()
     {
@@ -261,12 +260,12 @@ public class BasementText : MonoBehaviour
         while ((!player1Pressed || !player2Pressed) && !Input.GetKeyDown(KeyCode.Space)) {
             if (player1Input.GetGlowJustPressed()){
                 player1Pressed = true;
-                AudioManager.Instance.PlaySFX(uiClickSound);
+                AudioManager.Instance.playUIClickSFX();
                 leftTutAnimator.SetBool("pressed", true);
             }
             if (player2Input.GetGlowJustPressed()){
                 player2Pressed = true;
-                AudioManager.Instance.PlaySFX(uiClickSound);
+                AudioManager.Instance.playUIClickSFX();
                 rightTutAnimator.SetBool("pressed", true);
             }
             yield return null;  // Allow waiting until the next frame.
@@ -282,30 +281,36 @@ public class BasementText : MonoBehaviour
         while (!player1Pressed || !player2Pressed) {
             // Play again
             if (Input.GetKeyDown(KeyCode.Space)) {
+                AudioManager.Instance.playUIClickSFX();
                 resetGame = true;
                 player1Pressed = true;
                 player2Pressed = true;
             }
             if (player1Input.GetGlowJustPressed()){
+                AudioManager.Instance.playUIClickSFX();
                 player1Pressed = true;
                 resetGame = true;
             }
             if (player2Input.GetGlowJustPressed()){
+                AudioManager.Instance.playUIClickSFX();
                 player2Pressed = true;
                 resetGame = true;
             }
             
             // Exploring basement
             if (Input.GetKeyDown(KeyCode.Slash)) {
+                AudioManager.Instance.playUIClickSFX();
                 resetGame = false;
                 player1Pressed = true;
                 player2Pressed = true;
             }
             if (player1Input.GetSpecialActionJustPressed()){
+                AudioManager.Instance.playUIClickSFX();
                 player1Pressed = true;
                 resetGame = false;
             }
             if (player2Input.GetSpecialActionJustPressed()){
+                AudioManager.Instance.playUIClickSFX();
                 player2Pressed = true;
                 resetGame = false;
             }
