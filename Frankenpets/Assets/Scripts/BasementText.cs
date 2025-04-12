@@ -57,7 +57,8 @@ public class BasementText : MonoBehaviour
     private int tutOverlayStage = 1;
 
     private List<Task> tasks;
-    private bool gameComplete = false;
+    private bool taskComplete = false;
+    private bool resetGame = false;
     private GameObject singleOverlay;
     private GameObject doubleOverlay;
 
@@ -86,10 +87,10 @@ public class BasementText : MonoBehaviour
     private void Update()
     {
         tasks = TaskManager.GetAllTasksOfLevel(2);
-        if (TaskManager.CheckTaskCompletion(tasks) && !gameComplete)
+        if (TaskManager.CheckTaskCompletion(tasks) && !taskComplete)
         {
             StartCoroutine(EndOverlaySequence());
-            gameComplete = true;
+            taskComplete = true;
 
         }
     }
@@ -109,14 +110,16 @@ public class BasementText : MonoBehaviour
 
     private IEnumerator EndOverlaySequence()
     {
-
         yield return new WaitForSeconds(8.0f);
         gameOverOverlay.SetActive(true);
-        yield return WaitForKeyBoth();
+        yield return WaitForSelectionBoth();
         yield return endOverlayAdvance(0.8f);
 
         gameOverOverlay.SetActive(false);
-        StartCoroutine(PerformRestart());
+        if (resetGame)
+        {
+            StartCoroutine(PerformRestart());
+        }
         yield return null;
     }
 
@@ -175,9 +178,11 @@ public class BasementText : MonoBehaviour
         if (isKeyboard){
             overlay.transform.GetChild(2).GetChild(0).GetChild(0).gameObject.SetActive(true);
             gameOverOverlay.transform.GetChild(2).GetChild(0).GetChild(0).gameObject.SetActive(true);
+            gameOverOverlay.transform.GetChild(2).GetChild(1).GetChild(0).gameObject.SetActive(true);
         } else if (!isKeyboard){
             overlay.transform.GetChild(2).GetChild(0).GetChild(1).gameObject.SetActive(true);
             gameOverOverlay.transform.GetChild(2).GetChild(0).GetChild(1).gameObject.SetActive(true);
+            gameOverOverlay.transform.GetChild(2).GetChild(1).GetChild(1).gameObject.SetActive(true);
         }
     }
 
@@ -262,6 +267,45 @@ public class BasementText : MonoBehaviour
             yield return null;  // Allow waiting until the next frame.
         }
         UnityEngine.Debug.Log("pressed space");
+        yield return null;
+    }
+
+    private IEnumerator WaitForSelectionBoth() {
+        bool player1Pressed = false;
+        bool player2Pressed = false;
+
+        while (!player1Pressed || !player2Pressed) {
+            // Play again
+            if (Input.GetKeyDown(KeyCode.Space)) {
+                resetGame = true;
+                player1Pressed = true;
+                player2Pressed = true;
+            }
+            if (player1Input.GetGlowJustPressed()){
+                player1Pressed = true;
+                resetGame = true;
+            }
+            if (player2Input.GetGlowJustPressed()){
+                player1Pressed = true;
+                resetGame = true;
+            }
+            
+            // Exploring basement
+            if (Input.GetKeyDown(KeyCode.Slash)) {
+                resetGame = false;
+                player1Pressed = true;
+                player2Pressed = true;
+            }
+            if (player1Input.GetSpecialActionJustPressed()){
+                player1Pressed = true;
+                resetGame = false;
+            }
+            if (player2Input.GetSpecialActionJustPressed()){
+                player2Pressed = true;
+                resetGame = false;
+            }
+            yield return null;  // Allow waiting until the next frame.
+        }
         yield return null;
     }
 
