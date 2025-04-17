@@ -2,10 +2,10 @@ using UnityEngine;
 
 public class Arrow : MonoBehaviour
 {
+    public float rotationSpeed = 70.0f; // degrees per second
     public float bounceSpeed = 3.0f;
     public float bounceDistance = 0.05f;
-    public float rotationSpeed = 70.0f; // degrees per second
-
+    
     private Vector3 startPos;
 
     void Start()
