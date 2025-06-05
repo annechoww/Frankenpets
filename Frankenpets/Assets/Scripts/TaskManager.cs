@@ -96,6 +96,12 @@ public class TaskManager : MonoBehaviour
         StartCoroutine(ShowBanner());
     }
 
+    public static void ResetTasks()
+    {
+        allTasks.Clear();
+    }
+
+
     private IEnumerator ShowBanner()
     {
         AudioManager.Instance.PlayTaskCompletionSound();
