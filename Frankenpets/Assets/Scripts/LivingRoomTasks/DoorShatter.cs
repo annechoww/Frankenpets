@@ -16,19 +16,13 @@ public class DoorShatter : MonoBehaviour
 
     [Header("Required Object")]
     public Collider specificCollider;
-    
 
     [Header("Task Manager")]
     public GameObject taskItem;
-    //public Color completedColor;
-    //public TMPro.TextMeshProUGUI taskLabel;
 
     public Task task = new Task("Shatter Door", 1);
     private bool isShattered = false;
     private bool isCracked = false;
-
-
-    // private TutorialText tutorialText;
 
     [Header("Locate Task Variables")]
     public GameObject taskLight;
@@ -39,7 +33,6 @@ public class DoorShatter : MonoBehaviour
 
     void Awake()
     {
-        // tutorialText = GameObject.Find("TutorialTextManager").GetComponent<TutorialText>();
         TaskManager.RegisterTask(task);
 
         glassRenderer = GetComponent<Renderer>();
@@ -125,7 +118,6 @@ public class DoorShatter : MonoBehaviour
     private void FinishTask(){
         task.IsComplete = true;
         IsComplete();
-        // GetComponent<FindTasks>().DestroyFindTaskMechanic(arrow, taskParticle, taskLight);
     }
 
     private void IsComplete()
@@ -135,8 +127,6 @@ public class DoorShatter : MonoBehaviour
         Debug.Log(taskComplete);
         if (taskComplete)
         {
-            //taskItem.color = completedColor;
-            //taskLabel.fontStyle = TMPro.FontStyles.Strikethrough;
             taskItem.transform.GetChild(1).gameObject.SetActive(true);
 
             FindTasks.Instance.DestroyFindTaskMechanic(arrow, taskParticle, taskLight);

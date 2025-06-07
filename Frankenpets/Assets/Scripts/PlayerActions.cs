@@ -1717,6 +1717,8 @@ public class PlayerActions : MonoBehaviour
         
         // Load the initial scene
         Destroy(AudioManager.Instance.gameObject);
+        Destroy(TaskManager.Instance.gameObject);
+
         SceneManager.LoadScene(initialSceneName);
     }
 
