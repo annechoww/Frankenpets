@@ -10,15 +10,9 @@ public class BasementSmallLadder : MonoBehaviour
         gameObject.SetActive(true);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("cat front")) 
+        if (other.gameObject.CompareTag("cat front") || other.gameObject.CompareTag("dog front")) 
         {
             gameObject.SetActive(false);
             BasementLargeLadder.SetActive(true);
