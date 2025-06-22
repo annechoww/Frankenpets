@@ -224,7 +224,7 @@ public class LivingRoomText : MonoBehaviour
         // speech bubbles start now
         StartCoroutine(Highlight(bottomUIParentHighlight));
         yield return ShowMessage("HINT: <u>Locate</u> to-do list tasks.", "glow");
-        yield return ShowMessage("HINT: Check out the <u>controls menu</u>.", "menu");
+        // yield return ShowMessage("HINT: Check out the <u>controls menu</u>.", "menu");
 
         // messageManager.startPressEnterToHideTutorial();
         // yield return ShowMessage("Let's play!", "end");
