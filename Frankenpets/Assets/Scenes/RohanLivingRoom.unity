@@ -37795,6 +37795,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 543450652130646368}
+  - component: {fileID: 919132148475347932}
+  - component: {fileID: 919132148475347931}
   m_Layer: 0
   m_Name: BASEMENT ENTRY
   m_TagString: Untagged
@@ -37802,6 +37804,42 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!65 &919132148475347931
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919132148475347930}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.6226307, y: 1.460305, z: 1.7339014}
+  m_Center: {x: -1.2640886, y: 0.61722696, z: 1.203869}
+--- !u!114 &919132148475347932
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919132148475347930}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c82298e73093d46d7ae1091b7100a65a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  basementBlocker: {fileID: 401667907}
+  isAtBasementDoor: 0
+  antiDogClub: 0
 --- !u!1 &921391925428793130
 GameObject:
   m_ObjectHideFlags: 0
@@ -50462,7 +50500,7 @@ GameObject:
   - component: {fileID: 1656291181657034202}
   - component: {fileID: 6208995605579499301}
   - component: {fileID: 3688255086504317805}
-  - component: {fileID: 8375139196826398483}
+  - component: {fileID: 8375139196826398484}
   m_Layer: 0
   m_Name: concrete part
   m_TagString: Untagged
@@ -50470,21 +50508,28 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &8375139196826398483
-MonoBehaviour:
+--- !u!64 &8375139196826398484
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8375139196826398482}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c82298e73093d46d7ae1091b7100a65a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  basementBlocker: {fileID: 401667907}
-  isAtBasementDoor: 0
-  antiDogClub: 0
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 7985078725361029333, guid: 4f114ef30450b4a9f93ba3fec2994f0f, type: 3}
 --- !u!23 &8391255556317497391
 MeshRenderer:
   m_ObjectHideFlags: 0

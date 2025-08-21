@@ -54,7 +54,7 @@ public class Balloon : MonoBehaviour
             dogRb.isKinematic = true;
             dogRb.useGravity = false;
             boneRb.useGravity = false;
-            dogRb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
+            // dogRb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
 
             // Pet and bone should follow the balloon's transform 
             // dogRb.MovePosition(Vector3.Lerp(dogRb.position, bone.transform.position, Time.deltaTime / 10f)); // cat back will follow dog front if they're connected
@@ -75,7 +75,7 @@ public class Balloon : MonoBehaviour
             dogRb.useGravity = true;
             boneRb.useGravity = true;
             boneRb.constraints = RigidbodyConstraints.None;
-            dogRb.constraints &= ~(RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ);
+            // dogRb.constraints &= ~(RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ);
             boneRb.transform.SetParent(null);
 
             // Freeze the rigidbody’s rotation around the X-axis and Z-axis
