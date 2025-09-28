@@ -39,6 +39,7 @@ public class Balloon : MonoBehaviour
     void FixedUpdate()
     {
         petJoint = playerManager.getJoint();
+
         // Check if dog grabbed bone 
         joint = dogFront.GetComponent<ConfigurableJoint>();
 
@@ -46,13 +47,13 @@ public class Balloon : MonoBehaviour
         {
             // Balloon rises
             balloonStartedRising = true;
-            balloonRb.MovePosition(balloonRb.position + Vector3.up * riseSpeed * Time.fixedDeltaTime);
-            boneRb.constraints = RigidbodyConstraints.None;
+            // balloonRb.MovePosition(balloonRb.position + Vector3.up * riseSpeed * Time.fixedDeltaTime);
+            // boneRb.constraints = RigidbodyConstraints.None;
 
             // Pet and bone should float with balloon: disable gravity and freeze sideways rotations
-            boneRb.transform.SetParent(balloonRb.transform, true);
             dogRb.isKinematic = true;
             dogRb.useGravity = false;
+            boneRb.isKinematic = true;
             boneRb.useGravity = false;
             // dogRb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
 
@@ -62,6 +63,7 @@ public class Balloon : MonoBehaviour
 
             if (petJoint)
             {
+                catRb.isKinematic = true;
                 catRb.useGravity = false;
                 // catRb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
             }
@@ -73,10 +75,11 @@ public class Balloon : MonoBehaviour
             // Reset pet Rigidbody constraints
             dogRb.isKinematic = false;
             dogRb.useGravity = true;
+            boneRb.isKinematic = false;
             boneRb.useGravity = true;
-            boneRb.constraints = RigidbodyConstraints.None;
+            // boneRb.constraints = RigidbodyConstraints.None;
             // dogRb.constraints &= ~(RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ);
-            boneRb.transform.SetParent(null);
+            // boneRb.transform.SetParent(null);
 
             // Freeze the rigidbody’s rotation around the X-axis and Z-axis
             dogRb.constraints |= RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
@@ -84,15 +87,28 @@ public class Balloon : MonoBehaviour
 
             if (petJoint)
             {
+                catRb.isKinematic = false;
                 catRb.useGravity = true;
                 // catRb.constraints &= ~(RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ);
             }
         }
 
         // Balloon continues to rise if it has started rising
-        if (balloonRb && balloonStartedRising)
+        if (balloonStartedRising)
         {
             balloonRb.MovePosition(balloonRb.position + Vector3.up * riseSpeed * Time.fixedDeltaTime);
+
+            // Force bone & dog to follow balloon while attached
+            if (joint != null && joint.connectedBody == boneRb)
+            {
+                boneRb.MovePosition(balloonRb.position + Vector3.down * 0.5f); // bone just under balloon
+                dogRb.MovePosition(boneRb.position + Vector3.down * 0.5f);     // dog under bone
+                if (petJoint)
+                {
+                    catRb.MovePosition(dogRb.position + Vector3.back * 0.5f);
+
+                }
+            }
         }
 
         // Destroy balloon if it goes too high
