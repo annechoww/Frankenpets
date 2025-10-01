@@ -1714,8 +1714,9 @@ public class PlayerActions : MonoBehaviour
         
         // Wait a short time for feedback
         yield return new WaitForSeconds(1.0f);
-        
+
         // Load the initial scene
+        TaskManager.ResetTasks();
         Destroy(AudioManager.Instance.gameObject);
         Destroy(TaskManager.Instance.gameObject);
 

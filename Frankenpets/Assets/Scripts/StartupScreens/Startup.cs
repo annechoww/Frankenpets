@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 
-public class Startup : MonoBehaviour
+public class Startup : MonoBehaviour, IComicFlow
 {
     [Header("Controller Input")]
     public ControllerAssignment controllerAssignment;
@@ -107,8 +107,7 @@ public class Startup : MonoBehaviour
     // Add method for comic to call when finished
     public void OnComicComplete()
     {
-        
-        //load the next level
+        // Load the next level
         if (levelLoader != null)
         {
             levelLoader.LoadNextLevel();
