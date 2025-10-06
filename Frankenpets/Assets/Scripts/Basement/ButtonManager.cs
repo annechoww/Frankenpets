@@ -40,10 +40,16 @@ public class ButtonManager : MonoBehaviour
     [Header("Reference to Basement Door GameObject")]
     public GameObject basementDoor;
 
+    void Awake()
+    {
+        // Register the task with the TaskManager
+        TaskManager.RegisterTask(task);
+        print("Task registered: " + task.Name);
+    }
+
     private void Start()
     {
         originalPosition = transform.localPosition;
-        TaskManager.RegisterTask(task);
     }
 
     private void OnCollisionEnter(Collision collision)

@@ -109,7 +109,7 @@ public class BasementText : MonoBehaviour
 
     private IEnumerator EndOverlaySequence()
     {
-        yield return new WaitForSeconds(8.0f);
+        // yield return new WaitForSeconds(1.0f);
         gameOverOverlay.SetActive(true);
         yield return WaitForSelectionBoth();
         yield return endOverlayAdvance(0.8f);

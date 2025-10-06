@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class EndComic : MonoBehaviour, IComicFlow
 {
@@ -7,6 +8,8 @@ public class EndComic : MonoBehaviour, IComicFlow
     public ComicManager comicManager;
     public GameObject comicPanel;
     public GameObject comicCanvas;
+    [Header("Fade Variables")]
+    public Image fadeOverlay;
 
     [Header("Player Inputs")]
     public InputHandler player1Input;
@@ -14,6 +17,7 @@ public class EndComic : MonoBehaviour, IComicFlow
 
     [Header("Reference to Basement Logic Handler")]
     public BasementText basementText;
+    private bool isEnding = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -37,17 +41,18 @@ public class EndComic : MonoBehaviour, IComicFlow
 
     private void OnTriggerEnter(Collider other)
     {
+        if (isEnding) return;
+        
         if (other.GetComponent<Collider>().CompareTag("dog front") || other.GetComponent<Collider>().CompareTag("cat front") ||
             other.GetComponent<Collider>().CompareTag("dog back") || other.GetComponent<Collider>().CompareTag("cat back"))
         {
+            isEnding = true;
             StartCoroutine(TransitionToComic());
         }
     }
 
     public IEnumerator TransitionToComic()
     {
-        yield return StartCoroutine(comicManager.FadeToBlack());
-
         // Activate comic canvas and panel
         if (comicCanvas != null)
         {
@@ -57,21 +62,51 @@ public class EndComic : MonoBehaviour, IComicFlow
         {
             comicPanel.SetActive(true);
         }
-    
+
+        // not working properly >:(
+        // yield return StartCoroutine(CustomFadeToBlack());
+
         // Start the comic sequence with the input handlers
         // Player 1 (with Player 1 light) is always Cat
         // Player 2 (with Player 2 light) is always Dog
         comicManager.StartComic(player1Input, player2Input, this);
+        
+        yield return null;
     }
-    
-    public void OnComicComplete()
+
+    public IEnumerator CustomFadeToBlack()
     {
-        StartCoroutine(comicManager.UnfadeFromBlack());
+        float fadeToBlackTime = 6f;
+        // Set the fade overlay color to black
+        fadeOverlay.color = Color.black;
+        CanvasGroup fadeGroup = fadeOverlay.GetComponent<CanvasGroup>();
+
+        // Start with overlay invisible
+        fadeGroup.alpha = 0f;
+
+        // Fade to black
+        float timer = 0f;
+        while (timer < fadeToBlackTime)
+        {
+            fadeGroup.alpha = timer / fadeToBlackTime;
+            timer += Time.deltaTime;
+
+        }
+
+        // Ensure overlay is fully black
+        fadeGroup.alpha = 1f;
+        yield return null;
+    }
+
+    private IEnumerator UnfadeAndStopComic()
+    {
+        // eff this i cant get it to work
+        // yield return comicManager.UnfadeFromBlack();
 
         if (basementText != null)
         {
             basementText.PlayEndOverlaySequence();
-            
+
             if (comicCanvas != null)
             {
                 comicCanvas.SetActive(false);
@@ -85,5 +120,12 @@ public class EndComic : MonoBehaviour, IComicFlow
         {
             Debug.LogError("BasementText not assigned to EndComic.cs!");
         }
+        
+        yield return null;
+    }
+
+    public void OnComicComplete()
+    {
+        StartCoroutine(UnfadeAndStopComic());
     }
 }

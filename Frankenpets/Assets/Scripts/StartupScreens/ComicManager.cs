@@ -191,6 +191,8 @@ public class ComicManager : MonoBehaviour
         // Ensure overlay is fully transparent
         fadeGroup.alpha = 0f;
 
+        yield return null;
+
         // Hide the last panel - but keep the black overlay
         // comicPanels[comicPanels.Count - 1].SetActive(false);
     }

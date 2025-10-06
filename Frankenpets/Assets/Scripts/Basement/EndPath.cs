@@ -8,32 +8,34 @@ public class EndPath : MonoBehaviour
     public GameObject arrow;
     public GameObject lightsParent;
     private Light[] lights;
-    public TaskManager taskManager;
     private List<Task> basementTasks;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        endPathContainer.gameObject.SetActive(false);
+        endPathContainer.SetActive(false);
         lights = lightsParent.GetComponentsInChildren<Light>();
         basementTasks = TaskManager.GetAllTasksOfLevel(2);
     }
 
     private void Update()
     {
-        if (TaskManager.CheckTaskCompletion(basementTasks) && !gameObject.activeSelf)
+        if (TaskManager.CheckTaskCompletion(basementTasks) && !endPathContainer.activeSelf)
         {
-            endPathContainer.gameObject.SetActive(true);
+            Debug.Log("free pet task completed - activating end path");
 
-            lightsParent.gameObject.SetActive(true);
+            endPathContainer.SetActive(true);
+
+            lightsParent.SetActive(true);
             foreach (Light light in lights)
             {
-                StartCoroutine(LerpLightIntensity(light, 0.0f, 2.0f));
+                light.gameObject.SetActive(true);
+                StartCoroutine(LerpLightIntensity(light, 0.5f, 2.0f));
             }
         }
     }
 
-    void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("cat front") || other.gameObject.CompareTag("dog front"))
         {
