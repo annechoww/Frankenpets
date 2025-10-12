@@ -35,7 +35,7 @@ public class ComicManager : MonoBehaviour
     // References to other components
     private InputHandler player1Input;
     private InputHandler player2Input;
-    private Startup startupScript;
+    private IComicFlow comicScript;
 
     // Coroutine references
     private Coroutine panelSequenceCoroutine;
@@ -45,13 +45,13 @@ public class ComicManager : MonoBehaviour
     /// </summary>
     /// <param name="p1Input">Player 1 input handler</param>
     /// <param name="p2Input">Player 2 input handler</param>
-    /// <param name="startup">Reference to the startup script</param>
-    public void StartComic(InputHandler p1Input, InputHandler p2Input, Startup startup)
+    /// <param name="comicScript">Reference to the startup script</param>
+    public void StartComic(InputHandler p1Input, InputHandler p2Input, IComicFlow comicScript)
     {
         // Store references
         player1Input = p1Input;
         player2Input = p2Input;
-        startupScript = startup;
+        this.comicScript = comicScript;
         
         // Reset state
         currentPanelIndex = -1;
@@ -143,7 +143,7 @@ public class ComicManager : MonoBehaviour
         EndComic();
     }
 
-    private IEnumerator FadeToBlack()
+    public IEnumerator FadeToBlack()
     {
         float fadeToBlackTime = 3f;
         // Set the fade overlay color to black
@@ -168,6 +168,34 @@ public class ComicManager : MonoBehaviour
         // Hide the last panel - but keep the black overlay
         comicPanels[comicPanels.Count - 1].SetActive(false);
     }
+
+    public IEnumerator UnfadeFromBlack()
+    {
+        float fadeToBlackTime = 2f;
+        // Set the fade overlay color to black
+        fadeOverlay.color = Color.black;
+        CanvasGroup fadeGroup = fadeOverlay.GetComponent<CanvasGroup>();
+
+        // Start with overlay solid
+        fadeGroup.alpha = 1f;
+
+        // Fade to black
+        float timer = 0f;
+        while (timer < fadeToBlackTime && !skipping)
+        {
+            fadeGroup.alpha = 1f - (timer / fadeToBlackTime);
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        // Ensure overlay is fully transparent
+        fadeGroup.alpha = 0f;
+
+        yield return null;
+
+        // Hide the last panel - but keep the black overlay
+        // comicPanels[comicPanels.Count - 1].SetActive(false);
+    }
     
     /// <summary>
     /// Shows a specific panel with proper effects
@@ -175,16 +203,16 @@ public class ComicManager : MonoBehaviour
     private IEnumerator ShowPanel(int panelIndex)
     {
         currentPanelIndex = panelIndex;
-    
+
         // Play sound effect if available
         if (panelIndex < panelSoundEffects.Count && panelSoundEffects[panelIndex] != null)
         {
             AudioManager.Instance.PlaySFX(panelSoundEffects[panelIndex]);
         }
-        
+
         // Get the panel and prepare for transition
         GameObject panel = comicPanels[panelIndex];
-        
+
         // If using fade transition
         if (useFadeTransition[panelIndex])
         {
@@ -192,13 +220,13 @@ public class ComicManager : MonoBehaviour
             // Set the fade overlay color
             fadeOverlay.color = fadeColor;
             CanvasGroup fadeGroup = fadeOverlay.GetComponent<CanvasGroup>();
-            
+
             // Start with overlay visible
             fadeGroup.alpha = 1f;
-            
+
             // Show the panel (it will be behind the overlay)
             panel.SetActive(true);
-            
+
             // Fade out the overlay to reveal the panel
             float timer = 0f;
             while (timer < fadeTime && !skipping)
@@ -207,7 +235,7 @@ public class ComicManager : MonoBehaviour
                 timer += Time.deltaTime;
                 yield return null;
             }
-            
+
             // Ensure overlay is invisible at the end
             if (!skipping)
             {
@@ -280,9 +308,9 @@ public class ComicManager : MonoBehaviour
         comicActive = false;
         
         // Tell the startup script we're done
-        if (startupScript != null)
+        if (comicScript != null)
         {
-            startupScript.OnComicComplete();
+            comicScript.OnComicComplete();
         }
     }
     

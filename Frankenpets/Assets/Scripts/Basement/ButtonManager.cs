@@ -37,11 +37,19 @@ public class ButtonManager : MonoBehaviour
     public GameObject taskParticle;
     public GameObject arrow;
 
+    [Header("Reference to Basement Door GameObject")]
+    public GameObject basementDoor;
+
+    void Awake()
+    {
+        // Register the task with the TaskManager
+        TaskManager.RegisterTask(task);
+        print("Task registered: " + task.Name);
+    }
 
     private void Start()
     {
         originalPosition = transform.localPosition;
-        TaskManager.RegisterTask(task);
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -82,10 +90,10 @@ public class ButtonManager : MonoBehaviour
         {
             Vector3 leftPos = leftTube.transform.position;
             Vector3 rightPos = rightTube.transform.position;
-            
+
             Destroy(leftTube);
             Destroy(rightTube);
-            
+
             GameObject brokenLeft = Instantiate(brokenLeftTubePrefab, leftPos, Quaternion.identity);
             GameObject brokenRight = Instantiate(brokenRightTubePrefab, rightPos, Quaternion.identity);
 
@@ -99,7 +107,7 @@ public class ButtonManager : MonoBehaviour
             {
                 rb.AddExplosionForce(explosionForce, brokenLeft.transform.position, 2f);
             }
-            
+
             foreach (Rigidbody rb in brokenRight.GetComponentsInChildren<Rigidbody>())
             {
                 rb.AddExplosionForce(explosionForce, brokenRight.transform.position, 2f);
@@ -116,6 +124,9 @@ public class ButtonManager : MonoBehaviour
             FindTasks.Instance.DestroyFindTaskMechanic(arrow, taskParticle, taskLight);
             task.IsComplete = true;
             TaskManager.Instance.CompleteTask();
+
+            // Open the basement door
+            basementDoor.SetActive(false);
         }
     }
 }

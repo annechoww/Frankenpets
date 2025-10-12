@@ -49,7 +49,7 @@ public class BasementText : MonoBehaviour
     [Header("Player Inputs")]
     public InputHandler player1Input;
     public InputHandler player2Input;
-    
+
     private int currStage = 0;
     private MessageManager messageManager;
     private ControllerAssignment controllerAssignment;
@@ -65,8 +65,8 @@ public class BasementText : MonoBehaviour
     void Awake()
     {
         messageManager = GameObject.Find("Messages").GetComponent<MessageManager>();
-        
-        
+
+
         cornerControlsUI = GameObject.Find("MiniControlsUI").GetComponent<ControlsCornerUI>();
 
         Screen.SetResolution(1920, 1080, true);
@@ -80,29 +80,28 @@ public class BasementText : MonoBehaviour
         singleOverlay = overlay.transform.GetChild(0).gameObject;
         doubleOverlay = overlay.transform.GetChild(1).gameObject;
         StartCoroutine(OverlaySequence());
-        
+
         //StartCoroutine(TutorialSequence()); // Start tutorial progression
     }
 
-    private void Update()
+    public void PlayEndOverlaySequence()
     {
         tasks = TaskManager.GetAllTasksOfLevel(2);
         if (TaskManager.CheckTaskCompletion(tasks) && !taskComplete)
         {
             StartCoroutine(EndOverlaySequence());
             taskComplete = true;
-
         }
     }
 
     private IEnumerator OverlaySequence()
     {
 
-       yield return WaitForKeyBoth();
+        yield return WaitForKeyBoth();
 
-       yield return tutOverlayAdvance(0.8f); // prev 2.5f
-       
-        
+        yield return tutOverlayAdvance(0.8f); // prev 2.5f
+
+
         overlayBG.SetActive(false);
         overlay.SetActive(false);
         yield return null;
@@ -110,7 +109,7 @@ public class BasementText : MonoBehaviour
 
     private IEnumerator EndOverlaySequence()
     {
-        yield return new WaitForSeconds(8.0f);
+        // yield return new WaitForSeconds(1.0f);
         gameOverOverlay.SetActive(true);
         yield return WaitForSelectionBoth();
         yield return endOverlayAdvance(0.8f);
@@ -139,7 +138,7 @@ public class BasementText : MonoBehaviour
         leftEndAnimator.Play("P1 Tut icon", 0, 0f);
         rightEndAnimator.Play("P2 Tut icon", 0, 0f);
         restartGameAnimator.Play("Instruction continue animation", 0, 0f);
-        
+
         todoListCanvas.sortingOrder = 0;
     }
 
@@ -175,11 +174,14 @@ public class BasementText : MonoBehaviour
         accessControlsUI.transform.GetChild(1).gameObject.SetActive(!isKeyboard);
         pressEnterToContinueUI.transform.GetChild(1).gameObject.SetActive(!isKeyboard);
 
-        if (isKeyboard){
+        if (isKeyboard)
+        {
             overlay.transform.GetChild(2).GetChild(0).GetChild(0).gameObject.SetActive(true);
             gameOverOverlay.transform.GetChild(2).GetChild(0).GetChild(0).gameObject.SetActive(true);
             gameOverOverlay.transform.GetChild(2).GetChild(1).GetChild(0).gameObject.SetActive(true);
-        } else if (!isKeyboard){
+        }
+        else if (!isKeyboard)
+        {
             overlay.transform.GetChild(2).GetChild(0).GetChild(1).gameObject.SetActive(true);
             gameOverOverlay.transform.GetChild(2).GetChild(0).GetChild(1).gameObject.SetActive(true);
             gameOverOverlay.transform.GetChild(2).GetChild(1).GetChild(1).gameObject.SetActive(true);
@@ -187,7 +189,7 @@ public class BasementText : MonoBehaviour
     }
 
     private IEnumerator TutorialSequence()
-    {   
+    {
         // tutorial overlay starts first
 
         // speech bubbles start now
@@ -204,7 +206,7 @@ public class BasementText : MonoBehaviour
     {
         // tutorialText.text = message;
 
-        if (special == "glow") 
+        if (special == "glow")
         {
             // glowUI.SetActive(true);
             StartCoroutine(Highlight(bottomUIParentHighlight));
@@ -213,7 +215,7 @@ public class BasementText : MonoBehaviour
             yield return HideEffect(glowUI, speechBubbleTwoTails);
             // glowUI.SetActive(false);
         }
-        else if (special == "menu") 
+        else if (special == "menu")
         {
             // accessControlsUI.SetActive(true);
             yield return ShowBottomUI(accessControlsUI, speechBubbleTwoTails, message);
@@ -251,17 +253,21 @@ public class BasementText : MonoBehaviour
         }
     }
 
-    private IEnumerator WaitForKeyBoth() {
+    private IEnumerator WaitForKeyBoth()
+    {
         bool player1Pressed = false;
         bool player2Pressed = false;
 
-        while ((!player1Pressed || !player2Pressed) && !Input.GetKeyDown(KeyCode.Space)) {
-            if (player1Input.GetGlowJustPressed()){
+        while ((!player1Pressed || !player2Pressed) && !Input.GetKeyDown(KeyCode.Space))
+        {
+            if (player1Input.GetGlowJustPressed())
+            {
                 player1Pressed = true;
                 AudioManager.Instance.playUIClickSFX();
                 leftTutAnimator.SetBool("pressed", true);
             }
-            if (player2Input.GetGlowJustPressed()){
+            if (player2Input.GetGlowJustPressed())
+            {
                 player2Pressed = true;
                 AudioManager.Instance.playUIClickSFX();
                 rightTutAnimator.SetBool("pressed", true);
@@ -272,46 +278,54 @@ public class BasementText : MonoBehaviour
         yield return null;
     }
 
-    private IEnumerator WaitForSelectionBoth() {
+    private IEnumerator WaitForSelectionBoth()
+    {
         bool player1Pressed = false;
         bool player2Pressed = false;
 
-        while (!player1Pressed || !player2Pressed) {
+        while (!player1Pressed || !player2Pressed)
+        {
             // Play again
-            if (Input.GetKeyDown(KeyCode.Space)) {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
                 AudioManager.Instance.playUIClickSFX();
                 resetGame = true;
                 player1Pressed = true;
                 player2Pressed = true;
             }
-            if (player1Input.GetGlowJustPressed()){
+            if (player1Input.GetGlowJustPressed())
+            {
                 AudioManager.Instance.playUIClickSFX();
                 player1Pressed = true;
                 resetGame = true;
             }
-            if (player2Input.GetGlowJustPressed()){
+            if (player2Input.GetGlowJustPressed())
+            {
                 AudioManager.Instance.playUIClickSFX();
                 player2Pressed = true;
                 resetGame = true;
             }
-            
+
             // Exploring basement
-            if (Input.GetKeyDown(KeyCode.Slash)) {
-                AudioManager.Instance.playUIClickSFX();
-                resetGame = false;
-                player1Pressed = true;
-                player2Pressed = true;
-            }
-            if (player1Input.GetSpecialActionJustPressed()){
-                AudioManager.Instance.playUIClickSFX();
-                player1Pressed = true;
-                resetGame = false;
-            }
-            if (player2Input.GetSpecialActionJustPressed()){
-                AudioManager.Instance.playUIClickSFX();
-                player2Pressed = true;
-                resetGame = false;
-            }
+            // if (Input.GetKeyDown(KeyCode.Slash))
+            // {
+            //     AudioManager.Instance.playUIClickSFX();
+            //     resetGame = false;
+            //     player1Pressed = true;
+            //     player2Pressed = true;
+            // }
+            // if (player1Input.GetSpecialActionJustPressed())
+            // {
+            //     AudioManager.Instance.playUIClickSFX();
+            //     player1Pressed = true;
+            //     resetGame = false;
+            // }
+            // if (player2Input.GetSpecialActionJustPressed())
+            // {
+            //     AudioManager.Instance.playUIClickSFX();
+            //     player2Pressed = true;
+            //     resetGame = false;
+            // }
             yield return null;  // Allow waiting until the next frame.
         }
         yield return null;
@@ -374,16 +388,16 @@ public class BasementText : MonoBehaviour
 
     private IEnumerator PerformRestart()
     {
-        
+
         // // Show a loading message or transition effect
         // if (confirmPromptText != null)
         // {
         //     confirmPromptText.text = "Restarting game...";
         // }
-        
+
         // Wait a short time for feedback
         yield return new WaitForSeconds(1.0f);
-        
+
         // Load the initial scene
         Destroy(AudioManager.Instance.gameObject);
         SceneManager.LoadScene("Splash Screen");
@@ -397,10 +411,10 @@ public class BasementText : MonoBehaviour
             yield return null;
 
         isCoroutineRunning = true;
-        
+
         float moveSpeed = 5.0f;
         Vector2 targetPosition = new Vector2(0, -465);
-    
+
         while (Vector2.Distance(rectTransform.anchoredPosition, targetPosition) > 1f)
         {
             rectTransform.anchoredPosition = Vector2.Lerp(rectTransform.anchoredPosition, targetPosition, Time.deltaTime * moveSpeed);
@@ -419,7 +433,7 @@ public class BasementText : MonoBehaviour
 
         float moveSpeed = 5.0f;
         Vector2 targetPosition = new Vector2(0, -650);
-    
+
         while (Vector2.Distance(rectTransform.anchoredPosition, targetPosition) > 1f)
         {
             rectTransform.anchoredPosition = Vector2.Lerp(rectTransform.anchoredPosition, targetPosition, Time.deltaTime * moveSpeed);
@@ -440,11 +454,11 @@ public class BasementText : MonoBehaviour
 
         float moveSpeed = 5.0f;
         Vector2 targetPosition = new Vector2(0, -1086);
-    
+
         while (Vector2.Distance(rectTransform.anchoredPosition, targetPosition) > 1f)
         {
             rectTransform.anchoredPosition = Vector2.Lerp(rectTransform.anchoredPosition, targetPosition, Time.deltaTime * moveSpeed);
-            
+
         }
 
         tutorialSmallText.text = "";
@@ -452,17 +466,17 @@ public class BasementText : MonoBehaviour
 
         if (uiComponent != null) uiComponent.SetActive(false);
         if (bubble != null) bubble.SetActive(false);
-        
+
         isCoroutineRunning = false;
         yield return null;
-        
+
     }
 
     private IEnumerator ShowBottomUI(GameObject uiComponent = null, GameObject bubble = null, string largeText = "", string smallText = "", bool playSound = true)
     {
         if (uiComponent != null) uiComponent.SetActive(true);
         if (bubble != null) bubble.SetActive(true);
-        
+
 
         if (playSound)
         {
@@ -532,7 +546,7 @@ public class BasementText : MonoBehaviour
             elapsedTime += Time.deltaTime;
             float alpha = Mathf.Lerp(0.85f, 0.0f, elapsedTime / duration);
             image.color = new Color(startColor.r, startColor.g, startColor.b, alpha);
-            yield return null; 
+            yield return null;
         }
 
         image.color = new Color(startColor.r, startColor.g, startColor.b, 0.0f); // Ensure it's fully invisible
